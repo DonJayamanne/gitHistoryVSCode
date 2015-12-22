@@ -1,8 +1,8 @@
 # Git History
 
-View the history of a file (Git log) or the history of a line in a file (Git Blame).<br>
-View a previous copy of the file.<br>
-Compare a previous version with the version in the workspace or another.<br>
+View the history of a file (Git log) or the history of a line in a file (Git Blame).
+View a previous copy of the file.
+Compare a previous version with the version in the workspace or another.
 View commit log details for a selected commit.
 
 ##Features
