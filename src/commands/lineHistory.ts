@@ -11,15 +11,14 @@ export function run(outChannel: vscode.OutputChannel): any {
 		return;
 	}
 
-	var relativeFilePath = path.relative(vscode.workspace.rootPath, vscode.window.activeTextEditor.document.fileName);
-	if (relativeFilePath.startsWith('..')) {
-		vscode.window.showErrorMessage("File doesn't belong to the  local repository!");
-		return;
-	}
+    historyUtil.getGitRepositoryPath(vscode.window.activeTextEditor.document.fileName).then(
+        (gitRepositoryPath) => {
+
+        let relativeFilePath = path.relative(gitRepositoryPath, vscode.window.activeTextEditor.document.fileName);
 
 	var currentLineNumber = vscode.window.activeTextEditor.selection.start.line + 1;
 
-	historyUtil.getLineHistory(vscode.workspace.rootPath, relativeFilePath, currentLineNumber).then(displayHistory, genericErrorHandler);
+        historyUtil.getLineHistory(gitRepositoryPath, relativeFilePath, currentLineNumber).then(displayHistory, genericErrorHandler);
 
 	function displayHistory(log: any[]) {
 		if (log.length === 0) {
@@ -65,5 +64,6 @@ export function run(outChannel: vscode.OutputChannel): any {
 		outChannel.show();
 		vscode.window.showErrorMessage("There was an error, please view details in output log");
 	}
+    });
 }
 

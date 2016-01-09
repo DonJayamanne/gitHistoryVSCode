@@ -8,13 +8,12 @@ export function run(outChannel: vscode.OutputChannel): any {
 		return;
 	}
 
-	var relativeFilePath = path.relative(vscode.workspace.rootPath, vscode.window.activeTextEditor.document.fileName);
-	if (relativeFilePath.startsWith('..')) {
-		vscode.window.showErrorMessage("File doesn't belong to the  local repository!");
-		return;
-	}
+    historyUtil.getGitRepositoryPath(vscode.window.activeTextEditor.document.fileName).then(
+        (gitRepositoryPath) => {
 
-	historyUtil.getFileHistory(vscode.workspace.rootPath, relativeFilePath).then(displayHistory, genericErrorHandler);
+        let relativeFilePath = path.relative(gitRepositoryPath, vscode.window.activeTextEditor.document.fileName);
+
+        historyUtil.getFileHistory(gitRepositoryPath, relativeFilePath).then(displayHistory, genericErrorHandler);
 
 	function displayHistory(log: any[]) {
 		if (log.length === 0) {
@@ -130,6 +129,7 @@ export function run(outChannel: vscode.OutputChannel): any {
 			}, genericErrorHandler);
 		}, genericErrorHandler);
 	}
+    });
 }
 
 function getFile(commitSha1: string, localFilePath: string): Thenable<string> {

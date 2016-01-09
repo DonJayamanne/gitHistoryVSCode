@@ -12,6 +12,34 @@ function getGitPath() {
         return 'git';
 }
 
+export function getGitRepositoryPath(fileName: string): Thenable<string> {
+
+    return new Promise<string>((resolve, reject) => {
+        var options = { cwd: path.dirname(fileName) }
+		var util = require('util'),
+			spawn = require('child_process').spawn,
+            //git rev-parse --git-dir
+			ls = spawn(getGitPath(), ['rev-parse', '--git-dir'], options);
+
+		var log = "";
+		var error = "";
+		ls.stdout.on('data', function(data) {
+			log += data + "\n";
+		});
+
+		ls.stderr.on('data', function(data) {
+			error += data;
+		});
+
+		ls.on('exit', function(code) {
+			if (error.length > 0) {
+				reject(error);
+				return;
+			}
+            resolve(path.dirname(log));
+		});
+    });
+}
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
 	return new Promise<any[]>((resolve, reject) => {
