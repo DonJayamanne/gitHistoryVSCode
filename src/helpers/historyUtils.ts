@@ -1,13 +1,24 @@
 import * as vscode from 'vscode';
 import * as parser from '../logParser';
 import * as fs from 'fs';
+import * as path from 'path';
+
+function getGitPath() {
+    var git = <string>vscode.workspace.getConfiguration('git').get('path');
+
+    if (git)
+        return git;
+    else
+        return 'git';
+}
+
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
 	return new Promise<any[]>((resolve, reject) => {
 		var options = { cwd: rootDir }
 		var util = require('util'),
 			spawn = require('child_process').spawn,
-			ls = spawn('git', ['log', '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', relativeFilePath], options);
+			ls = spawn(getGitPath(), ['log', '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', relativeFilePath], options);
 
 		var log = "";
 		var error = "";
@@ -37,7 +48,7 @@ export function getLineHistory(rootDir: string, relativeFilePath: string, lineNu
 		var lineArgs = "-L" + lineNumber + "," + lineNumber + ":" + relativeFilePath.replace(/\\/g, '/');
 		var util = require('util'),
 			spawn = require('child_process').spawn,
-			ls = spawn('git', ['log', lineArgs, '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--numstat', '--topo-order', '--raw'], options);
+			ls = spawn(getGitPath(), ['log', lineArgs, '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--numstat', '--topo-order', '--raw'], options);
 
 		var log = "";
 		var error = "";
@@ -66,7 +77,7 @@ export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: s
 		var options = { cwd: rootDir }
 		var objectId = `${commitSha1}:` + sourceFilePath.replace(/\\/g, '/');
 		var spawn = require('child_process').spawn,
-			ls = spawn('git', ['show', objectId], options);
+			ls = spawn(getGitPath(), ['show', objectId], options);
 
 		var log = "";
 		var error = "";
