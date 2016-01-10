@@ -67,6 +67,10 @@ export function getFileHistory(rootDir: string, relativeFilePath: string): Thena
 			var parsedLog = parser.parseLogContents(log);
 			resolve(parsedLog);
 		});
+        
+        ls.on('error', function(error) {
+            reject(error);
+        });
 	});
 }
 
@@ -97,6 +101,10 @@ export function getLineHistory(rootDir: string, relativeFilePath: string, lineNu
 			var parsedLog = parser.parseLogContents(log);
 			resolve(parsedLog);
 		});
+        
+        ls.on('error', function(error) {
+            reject(error);
+        });
 	});
 }
 
