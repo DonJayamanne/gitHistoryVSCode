@@ -21,6 +21,8 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
 
+## Change Log 
+[View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
 
 ## Source
 
