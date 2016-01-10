@@ -9,6 +9,7 @@ View commit log details for a selected commit.
 * View the details of a commit, such as author name, email, date, committer name, email, date and comments.
 * View a previous copy of the file or compare it against the local workspace version or a previous version.
 * View the changes to the active line in the editor (Git Blame).
+* Configure the information displayed in the list
 
 Open the file to view the history, and then 
 Press F1 and select/type "Git: View History".
