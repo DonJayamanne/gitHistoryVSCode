@@ -31,7 +31,23 @@
         "command": "extension.viewGitHistory",
         "title": "Git: View History"
       }
-    ]
+    ],
+    "configuration": {
+        "type": "object",
+        "title": "Git History configuration",
+        "properties": {
+            "gitHistory.displayLabel": {
+                "type": "string",
+                "default": "${name} <${email}> on ${date}",
+                "description": "Informations to display in history as label"
+            },
+            "gitHistory.displayDescription": {
+                "type": "string",
+                "default": "${message}",
+                "description": "Informations to display in history as description"
+            }
+        }
+    }
   },
   "scripts": {
     "vscode:prepublish": "node ./node_modules/vscode/bin/compile",

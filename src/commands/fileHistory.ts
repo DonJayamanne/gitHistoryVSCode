@@ -23,8 +23,15 @@ export function run(outChannel: vscode.OutputChannel): any {
 
 		var itemPickList: vscode.QuickPickItem[] = log.map(item=> {
 			var dateTime = new Date(Date.parse(item.author_date)).toLocaleString();
-			var label = `${item.author_name} <${item.author_email}> on ${dateTime}`;
-			var description = item.message;
+
+                var label = <string>vscode.workspace.getConfiguration('gitHistory').get('displayLabel'),
+                    description = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDescription');
+
+                label = label.replace('${date}', dateTime).replace('${name}', item.author_name)
+                             .replace('${email}', item.author_email).replace('${message}', item.message);
+                description = description.replace('${date}', dateTime).replace('${name}', item.author_name)
+                                         .replace('${email}', item.author_email).replace('${message}', item.message);
+
 			return { label: label, description: description, data: item };
 		});
 
