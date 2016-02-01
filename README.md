@@ -27,7 +27,7 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ## Source
 
-[Github](https://github.com/DonJayamanne/bowerVSCode)
+[Github](https://github.com/DonJayamanne/gitHistoryVSCode)
                 
 ## License
 
