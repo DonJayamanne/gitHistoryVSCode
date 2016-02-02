@@ -36,7 +36,10 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 				reject(error);
 				return;
 			}
-            resolve(path.dirname(log));
+			var repositoryPath = path.dirname(log);
+			if (!path.isAbsolute(repositoryPath))
+				repositoryPath = path.join(path.dirname(fileName), repositoryPath);
+			resolve(repositoryPath);
 		});
     });
 }
