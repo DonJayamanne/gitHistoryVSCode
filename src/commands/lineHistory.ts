@@ -60,9 +60,13 @@ export function run(outChannel: vscode.OutputChannel): any {
 	}
 
 	function genericErrorHandler(error) {
-		outChannel.appendLine("error:" + error);
-		outChannel.show();
-		vscode.window.showErrorMessage("There was an error, please view details in output log");
+        if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
+            vscode.window.showErrorMessage("Cannot find the git installation");
+        } else {
+            outChannel.appendLine(error);
+            outChannel.show();
+            vscode.window.showErrorMessage("There was an error, please view details in output log");
+        }
 	}
     });
 }
