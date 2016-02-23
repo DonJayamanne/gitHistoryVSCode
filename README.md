@@ -10,9 +10,17 @@ View commit log details for a selected commit.
 * View a previous copy of the file or compare it against the local workspace version or a previous version.
 * View the changes to the active line in the editor (Git Blame).
 * Configure the information displayed in the list
+* Use keyboard shortcuts to view history of a file or line
 
 Open the file to view the history, and then 
-Press F1 and select/type "Git: View History".
+Press F1 and select/type "Git: View File History" or "Git: View Line History".
+
+##Available Commands
+* View File History (git.viewFileHistory)
+* View Line History (git.viewLineHistory)
+
+##Keyboard Shortcuts
+You can add keyboard short cuts for the above commands by following the directions in the on the website [customization documentation](https://code.visualstudio.com/docs/customization/keybindings).
 
 NOTE: The file for which the history is to be viewed, must already be opened.
  

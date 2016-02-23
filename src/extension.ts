@@ -16,32 +16,16 @@ export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "githistory" is now active!');
 	var outChannel: vscode.OutputChannel;
 	outChannel = vscode.window.createOutputChannel('Git');
-	//outChannel.clear();
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	var disposable = vscode.commands.registerCommand('extension.viewGitHistory', () => {
-		var itemPickList: vscode.QuickPickItem[] = [
-			{ label: "View File History", description: "" },
-			{ label: "View Line History", description: "" }
-		];
-
-		vscode.window.showQuickPick(itemPickList).then(item=> {
-			if (!item) {
-				return;
-			}
-
-			outChannel.clear();
-			if (item.label === itemPickList[0].label) {
-				history.run(outChannel);
-			}
-			else {
-				lineHistory.run(outChannel);
-			}
-		});
+    var disposable = vscode.commands.registerTextEditorCommand('git.viewFileHistory', () => {
+        outChannel.clear();
+		history.run(outChannel);
 	});
+	context.subscriptions.push(disposable);
 
 
+	disposable = vscode.commands.registerTextEditorCommand('git.viewLineHistory', () => {
+        outChannel.clear();
+		lineHistory.run(outChannel);
+	});
 	context.subscriptions.push(disposable);
 }
