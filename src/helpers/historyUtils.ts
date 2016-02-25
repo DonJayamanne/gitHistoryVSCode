@@ -110,7 +110,7 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
                     repositoryPath = path.join(path.dirname(fileName), repositoryPath);
                 resolve(repositoryPath);
             });
-        });
+        }));
 }
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
@@ -149,7 +149,7 @@ function getLog(rootDir: string, relativeFilePath: string, args: string[]): Then
                 var parsedLog = parser.parseLogContents(log);
                 resolve(parsedLog);
             });
-        });
+        }));
 }
 
 export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: string, targetFile: string): Thenable<any> {
