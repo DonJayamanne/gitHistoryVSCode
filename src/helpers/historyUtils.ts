@@ -10,14 +10,14 @@ function getGitPath(): Promise<string> {
         if (typeof gitPath === "string" && gitPath.length > 0) {
             resolve(gitPath);
         }
-        
+
         if (process.platform !== 'win32') {
             // Default: search in PATH environment variable
             resolve('git');
         } else {
             // in Git for Windows, the recommendation is not to put git into the PATH.
             // Instead, there is an entry in the Registry.
-            
+
             let regQueryInstallPath: (location: string, view: string) => Promise<string> = (location, view) => {
                 return new Promise((resolve, reject) => {
                     let callback = function(error, stdout, stderr) {
@@ -83,33 +83,34 @@ function getGitPath(): Promise<string> {
 
 export function getGitRepositoryPath(fileName: string): Thenable<string> {
 
-    return new Promise<string>((resolve, reject) => {
-        var options = { cwd: path.dirname(fileName) }
-		var spawn = require('child_process').spawn,
-            //git rev-parse --git-dir
-			ls = spawn(getGitPath(), ['rev-parse', '--git-dir'], options);
+    return getGitPath().then((gitExecutable) =>
+        new Promise<string>((resolve, reject) => {
+            var options = { cwd: path.dirname(fileName) }
+            var spawn = require('child_process').spawn,
+                //git rev-parse --git-dir
+                ls = spawn(gitExecutable, ['rev-parse', '--git-dir'], options);
 
-		var log = "";
-		var error = "";
-		ls.stdout.on('data', function(data) {
-			log += data + "\n";
-		});
+            var log = "";
+            var error = "";
+            ls.stdout.on('data', function(data) {
+                log += data + "\n";
+            });
 
-		ls.stderr.on('data', function(data) {
-			error += data;
-		});
+            ls.stderr.on('data', function(data) {
+                error += data;
+            });
 
-		ls.on('exit', function(code) {
-			if (error.length > 0) {
-				reject(error);
-				return;
-			}
-			var repositoryPath = path.dirname(log);
-			if (!path.isAbsolute(repositoryPath))
-				repositoryPath = path.join(path.dirname(fileName), repositoryPath);
-			resolve(repositoryPath);
-		});
-    });
+            ls.on('exit', function(code) {
+                if (error.length > 0) {
+                    reject(error);
+                    return;
+                }
+                var repositoryPath = path.dirname(log);
+                if (!path.isAbsolute(repositoryPath))
+                    repositoryPath = path.join(path.dirname(fileName), repositoryPath);
+                resolve(repositoryPath);
+            });
+        });
 }
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
@@ -122,31 +123,33 @@ export function getLineHistory(rootDir: string, relativeFilePath: string, lineNu
 }
 
 function getLog(rootDir: string, relativeFilePath: string, args: string[]): Thenable<any[]> {
-	return new Promise<any[]>((resolve, reject) => {
-		var options = { cwd: rootDir }
-		var spawn = require('child_process').spawn,
-			ls = spawn(getGitPath(), ['log', ...args], options);
 
-		var log = "";
-		var error = "";
-		ls.stdout.on('data', function(data) {
-			log += data + "\n";
-		});
+    return getGitPath().then((gitExecutable) =>
+        new Promise<any[]>((resolve, reject) => {
+            var options = { cwd: rootDir }
+            var spawn = require('child_process').spawn,
+                ls = spawn(gitExecutable, ['log', ...args], options);
 
-		ls.stderr.on('data', function(data) {
-			error += data;
-		});
+            var log = "";
+            var error = "";
+            ls.stdout.on('data', function(data) {
+                log += data + "\n";
+            });
 
-		ls.on('exit', function(code) {
-			if (error.length > 0) {
-				reject(error);
-				return;
-			}
+            ls.stderr.on('data', function(data) {
+                error += data;
+            });
 
-			var parsedLog = parser.parseLogContents(log);
-			resolve(parsedLog);
-		});
-	});
+            ls.on('exit', function(code) {
+                if (error.length > 0) {
+                    reject(error);
+                    return;
+                }
+
+                var parsedLog = parser.parseLogContents(log);
+                resolve(parsedLog);
+            });
+        });
 }
 
 export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: string, targetFile: string): Thenable<any> {
