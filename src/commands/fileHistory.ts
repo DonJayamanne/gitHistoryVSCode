@@ -173,19 +173,22 @@ function displayFile(commitSha1: string, localFilePath: string): Thenable<string
 }
 
 
-function compareFileWithLocalCopy(commitSha1: string, localFilePath: string): Thenable<string> {
+function compareFileWithLocalCopy(commitSha1: string, relativeFilePath: string): Thenable<string> {
 	//The way the command "workbench.files.action.compareFileWith" works is:
 	//It first selects the currently active editor for comparison
 	//Then launches the open file dropdown
 	//& as soon as a file/text document is opened, that is used as the text document for comparison
 	//So, all we need to do is invoke the comparison command
 	//Then open our file
+  const localFilePath = vscode.window.activeTextEditor.document.fileName;
 	return new Promise((resolve, reject) => {
-		getFile(commitSha1, localFilePath).then((tmpFilePath) => {
+		getFile(commitSha1, relativeFilePath).then((tmpFilePath) => {
+      vscode.workspace.openTextDocument(tmpFilePath).then(d => {
+        vscode.window.showTextDocument(d);
 			vscode.commands.executeCommand("workbench.files.action.compareFileWith");
-			vscode.workspace.openTextDocument(tmpFilePath).then(d=> {
-				vscode.window.showTextDocument(d);
-				resolve(tmpFilePath);
+        vscode.workspace.openTextDocument(localFilePath).then(d2 => {
+          vscode.window.showTextDocument(d2, vscode.ViewColumn.One);
+          resolve(relativeFilePath);
 			});
 		}, reject);
 	});
