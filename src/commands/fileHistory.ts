@@ -119,16 +119,9 @@ export function run(outChannel: vscode.OutputChannel): any {
 	}
 
 	function launchFileCompareWithPrevious(details) {
-		function getFile1(): Thenable<any> {
-			return getFile(details.sha1, relativeFilePath);
-		}
-		function getFile2(): Thenable<any> {
-			return getFile(details.previousSha1, relativeFilePath);
-		}
-
-		getFile(details.sha1, relativeFilePath).then(file1=> {
+		getFile(details.previousSha1, relativeFilePath).then(file1 => {
 			//Ok, now get file2
-			getFile(details.previousSha1, relativeFilePath).then(file2=> {
+			getFile(details.sha1, relativeFilePath).then(file2=> {
 				vscode.workspace.openTextDocument(file1).then(d=> {
 					vscode.window.showTextDocument(d).then(() => {
 						vscode.commands.executeCommand("workbench.files.action.compareFileWith");
