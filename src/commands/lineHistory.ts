@@ -51,7 +51,7 @@ export function run(outChannel: vscode.OutputChannel): any {
 		var log = `sha1 : ${details.sha1}\n` +
 			`Author : ${details.author_name} <${details.author_email}>\n` +
 			`Author Date : ${authorDate}\n` +
-			`Committer Name : ${details.author_email} <${details.author_email}>\n` +
+			`Committer Name : ${details.committer_name} <${details.committer_email}>\n` +
 			`Commit Date : ${committerDate}\n` +
 			`Message : ${details.message}`;
 
