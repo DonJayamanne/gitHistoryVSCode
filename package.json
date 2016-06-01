@@ -4,7 +4,7 @@
     "description": "View file or line History",
     "version": "0.0.6",
     "publisher": "donjayamanne",
-    "license": "SEE LICENSE IN LICENSE or README.MD",
+    "license": "MIT",
     "homepage": "https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/README.md",
     "repository": {
         "type": "git",
