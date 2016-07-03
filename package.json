@@ -4,6 +4,10 @@
     "description": "View file or line History",
     "version": "0.0.6",
     "publisher": "donjayamanne",
+    "author": {
+        "name": "Don Jayamanne",
+        "email": "don.jayamanne@yahoo.com"
+    },
     "license": "MIT",
     "homepage": "https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/README.md",
     "repository": {
@@ -11,12 +15,15 @@
         "url": "https://github.com/DonJayamanne/gitHistoryVSCode"
     },
     "icon": "images/icon.png",
+    "bugs": {
+        "url": "https://github.com/DonJayamanne/gitHistoryVSCode/issues"
+    },
     "galleryBanner": {
         "color": "#0000FF",
         "theme": "dark"
     },
     "engines": {
-        "vscode": "^0.10.1"
+        "vscode": "^0.10.8"
     },
     "categories": [
         "Other"
@@ -56,11 +63,12 @@
     },
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
-        "typescript": "^1.6.2",
-        "vscode": "0.10.x"
+        "typescript": "^1.7.5",
+        "vscode": "^0.11.0"
     },
     "dependencies": {
         "tmp": "0.0.28"
