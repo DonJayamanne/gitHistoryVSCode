@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.6
+* Updated to make use of VS Code API for file comparison
+* Fixed issue where history is reversed [#15](https://github.com/DonJayamanne/gitHistoryVSCode/pull/15)
+
 ## Version 0.0.5
 * Added custom commands for file and line history, allowing the ability to add keyboard shortcuts
 * Remove the old command and replaced it with two separate commands
