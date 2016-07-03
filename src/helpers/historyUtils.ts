@@ -88,7 +88,7 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
             var options = { cwd: path.dirname(fileName) }
             var spawn = require('child_process').spawn,
                 //git rev-parse --git-dir
-                ls = spawn(gitExecutable, ['rev-parse', '--git-dir'], options);
+                ls = spawn(gitExecutable, ['rev-parse', '--show-toplevel'], options);
 
             var log = "";
             var error = "";
@@ -105,7 +105,7 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
                     reject(error);
                     return;
                 }
-                var repositoryPath = path.dirname(log);
+                var repositoryPath = log.trim();
                 if (!path.isAbsolute(repositoryPath))
                     repositoryPath = path.join(path.dirname(fileName), repositoryPath);
                 resolve(repositoryPath);
