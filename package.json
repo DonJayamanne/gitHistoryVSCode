@@ -44,6 +44,14 @@
                 "title": "Git: View Line History"
             }
         ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "git.viewFileHistory",
+                    "group": "git"
+                }
+            ]
+        },
         "configuration": {
             "type": "object",
             "title": "Git History configuration",

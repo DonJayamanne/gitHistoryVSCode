@@ -3,15 +3,14 @@ import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
 import * as fs from 'fs';
 
-export function run(outChannel: vscode.OutputChannel): any {
-	if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
-		return;
-	}
+let outChannel: vscode.OutputChannel
+export function run(outputChannel: vscode.OutputChannel, fileName: string): any {
+	outChannel = outputChannel;
 
-    historyUtil.getGitRepositoryPath(vscode.window.activeTextEditor.document.fileName).then(
+    historyUtil.getGitRepositoryPath(fileName).then(
         (gitRepositoryPath) => {
 
-			let relativeFilePath = path.relative(gitRepositoryPath, vscode.window.activeTextEditor.document.fileName);
+			let relativeFilePath = path.relative(gitRepositoryPath, fileName);
 
 			historyUtil.getFileHistory(gitRepositoryPath, relativeFilePath).then(displayHistory, genericErrorHandler);
 
@@ -105,25 +104,25 @@ export function run(outChannel: vscode.OutputChannel): any {
 			}
 
 			function launchFileCompareWithLocal(details) {
-				compareFileWithLocalCopy(details.sha1, relativeFilePath).then(() => { }, genericErrorHandler);
-			}
-
-			function genericErrorHandler(error) {
-				if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
-					vscode.window.showErrorMessage("Cannot find the git installation");
-				} else {
-					outChannel.appendLine(error);
-					outChannel.show();
-					vscode.window.showErrorMessage("There was an error, please view details in output log");
-				}
+				compareFileWithLocalCopy(details.sha1, fileName, relativeFilePath).then(() => { }, genericErrorHandler);
 			}
 
 			function launchFileCompareWithPrevious(details) {
-				Promise.all<string>([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]).then(files=>{
+				Promise.all<string>([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]).then(files => {
 					return vscode.commands.executeCommand("vscode.diff", vscode.Uri.file(files[0]), vscode.Uri.file(files[1]));
 				}).catch(genericErrorHandler);
 			}
-		});
+		}).then(() => { }, error => genericErrorHandler(error));;
+}
+
+function genericErrorHandler(error) {
+				if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
+		vscode.window.showErrorMessage("Cannot find the git installation");
+				} else {
+		outChannel.appendLine(error);
+		outChannel.show();
+		vscode.window.showErrorMessage("There was an error, please view details in output log");
+				}
 }
 
 function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
@@ -156,8 +155,7 @@ function displayFile(commitSha1: string, localFilePath: string): Thenable<string
 }
 
 
-function compareFileWithLocalCopy(commitSha1: string, relativeFilePath: string): Thenable<string> {
-	const localFilePath = vscode.window.activeTextEditor.document.fileName;
+function compareFileWithLocalCopy(commitSha1: string, localFilePath: string, relativeFilePath: string): Thenable<string> {
 	return getFile(commitSha1, relativeFilePath).then((tmpFilePath) => {
 		return vscode.commands.executeCommand("vscode.diff", vscode.Uri.file(localFilePath), vscode.Uri.file(tmpFilePath));
 	});

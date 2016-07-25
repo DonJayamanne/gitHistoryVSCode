@@ -16,15 +16,24 @@ export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "githistory" is now active!');
 	var outChannel: vscode.OutputChannel;
 	outChannel = vscode.window.createOutputChannel('Git');
-    var disposable = vscode.commands.registerTextEditorCommand('git.viewFileHistory', () => {
+    var disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
         outChannel.clear();
-		history.run(outChannel);
+		let fileName = '';
+		if (fileUri) {
+			fileName = fileUri.fsPath;
+		}
+		else {
+			if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
+				return;
+			}
+			fileName = vscode.window.activeTextEditor.document.fileName
+		}
+		history.run(outChannel, fileName);
 	});
 	context.subscriptions.push(disposable);
 
-
 	disposable = vscode.commands.registerTextEditorCommand('git.viewLineHistory', () => {
-        outChannel.clear();
+		outChannel.clear();
 		lineHistory.run(outChannel);
 	});
 	context.subscriptions.push(disposable);
