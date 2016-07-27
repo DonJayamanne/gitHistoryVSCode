@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
     var disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
         outChannel.clear();
 		let fileName = '';
-		if (fileUri) {
+		if (fileUri && fileUri.fsPath) {
 			fileName = fileUri.fsPath;
 		}
 		else {

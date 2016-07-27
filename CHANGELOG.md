@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.0.8
+* Fixe for issue [#27](https://github.com/DonJayamanne/gitHistoryVSCode/issues/27)
+
 ## Version 0.0.7
 * Updated to make use of VS Code API for file comparison
 * Added ability to view file history from explorer context menu
