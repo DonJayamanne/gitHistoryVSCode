@@ -117,7 +117,9 @@ export function getFileHistory(rootDir: string, relativeFilePath: string): Thena
     return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', relativeFilePath]);
 }
 
-export function getHistory(rootDir: string, next:stringÏ): Promise<parser.LogEntry[]> {
+const LOG_FORMAT = `--format="34806ad9-833a-4524-8cd6-18ca4aa74f14%ncommit=%H%ncommitAbbrev=%h%ntree=%T%ntreeAbbrev=%t%nparents=%P%nparentsAbbrev=%p%nauthor=%an <%ae> %at%ncommitter=%cn <%ce> %ct%nsubject=%s%nbody=%b%n34806ad9-833a-4524-8cd6-18ca4aa74f15%nnotes=%N%n34806ad9-833a-4524-8cd6-18ca4aa74f16"`;
+export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: number = 100): Promise<parser.LogEntry[]> {
+    let args = [LOG_FORMAT, `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--numstat', '--topo-order'];
     let args = ['log', '--date-order', '--pretty=raw', '--decorate=full' ,'--max-count=500']
     return getGitPath().then(gitExecutable => {
         return new Promise<any[]>((resolve, reject) => {
