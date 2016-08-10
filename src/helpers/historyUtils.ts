@@ -20,7 +20,7 @@ function getGitPath(): Promise<string> {
 
             let regQueryInstallPath: (location: string, view: string) => Promise<string> = (location, view) => {
                 return new Promise((resolve, reject) => {
-                    let callback = function(error, stdout, stderr) {
+                    let callback = function (error, stdout, stderr) {
                         if (error && error.code !== 0) {
                             error.stdout = stdout.toString();
                             error.stderr = stderr.toString();
@@ -92,15 +92,15 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 
             var log = "";
             var error = "";
-            ls.stdout.on('data', function(data) {
+            ls.stdout.on('data', function (data) {
                 log += data + "\n";
             });
 
-            ls.stderr.on('data', function(data) {
+            ls.stderr.on('data', function (data) {
                 error += data;
             });
 
-            ls.on('exit', function(code) {
+            ls.on('exit', function (code) {
                 if (error.length > 0) {
                     reject(error);
                     return;
@@ -114,7 +114,37 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 }
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', relativeFilePath]);
+    return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', relativeFilePath]);
+}
+
+export function getHistory(rootDir: string, next:stringÏ): Promise<parser.LogEntry[]> {
+    let args = ['log', '--date-order', '--pretty=raw', '--decorate=full' ,'--max-count=500']
+    return getGitPath().then(gitExecutable => {
+        return new Promise<any[]>((resolve, reject) => {
+            var options = { cwd: rootDir }
+            var spawn = require('child_process').spawn,
+                ls = spawn(gitExecutable, ['log', ...args], options);
+
+            var log = "";
+            var error = "";
+            ls.stdout.on('data', function (data) {
+                log += data + "\n";
+            });
+
+            ls.stderr.on('data', function (data) {
+                error += data;
+            });
+
+            ls.on('exit', function (code) {
+                if (error.length > 0) {
+                    reject(error);
+                    return;
+                }
+
+                resolve(parser.parseLogEntries(log));
+            });
+        });
+    });
 }
 
 export function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number): Thenable<any[]> {
@@ -132,15 +162,15 @@ function getLog(rootDir: string, relativeFilePath: string, args: string[]): Then
 
             var log = "";
             var error = "";
-            ls.stdout.on('data', function(data) {
+            ls.stdout.on('data', function (data) {
                 log += data + "\n";
             });
 
-            ls.stderr.on('data', function(data) {
+            ls.stderr.on('data', function (data) {
                 error += data;
             });
 
-            ls.on('exit', function(code) {
+            ls.on('exit', function (code) {
                 if (error.length > 0) {
                     reject(error);
                     return;
@@ -162,15 +192,15 @@ export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: s
 
             var log = "";
             var error = "";
-            ls.stdout.on('data', function(data) {
+            ls.stdout.on('data', function (data) {
                 fs.appendFile(targetFile, data);
             });
 
-            ls.stderr.on('data', function(data) {
+            ls.stderr.on('data', function (data) {
                 error += data;
             });
 
-            ls.on('exit', function(code) {
+            ls.on('exit', function (code) {
                 if (error.length > 0) {
                     reject(error);
                     return;
