@@ -1,0 +1,174 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+#log-view svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+#log-view svg ~ div {
+    margin: 0;
+    padding: 0 0.3em;
+}
+
+.log-entry {
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 0.1em;
+    margin: 0.3em auto;
+    border-radius: 0.2em;
+    padding: 0.3em;
+    height: 3.7em;
+    xdisplay: flex;
+    display: block;
+    width: 100%;
+    position: relative;
+}
+
+.log-entry .messageLink {
+    display: block;
+    height: 1em;
+    position: absolute;
+    color: transparent;
+}
+
+.log-entry .messageLink:hover ~ .message, .log-entry .messageLink ~ .message:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.message {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+    xflex-grow: 1;
+    xwidth: 1%;
+    float: left;
+    max-width: 100%;
+    margin-bottom: 0.2em;
+}
+
+.log-entry div {
+    display: flex;
+    width: 100%;
+    margin: 0.3em 0 0 0;
+}
+
+.committer {
+    margin-top: 0.2em;
+    position: relative;
+}
+
+.committer a:hover ~ span .name {
+    text-decoration: underline;
+}
+
+.committer a {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: transparent;
+}
+
+span.hash {
+    flex-grow: 1;
+    text-align: right;
+}
+
+
+/*.hash .clipboard,
+.hash .badge {
+    height: 1.6em;
+    border-style: solid;
+    border-width: 0.1em;
+    margin: 0;
+    xfloat: right;
+    padding: 0.2em;
+    cursor: pointer;
+    box-sizing: border-box;
+}*/
+
+
+/*.badgeparent, .clipboardparent {
+    float:right;
+    margin: 0;
+    xfloat: right;
+}*/
+
+
+/*.hash .badge {
+    border-radius: 0 0.25em 0.25em 0;
+    padding-right:0.35em;
+    padding-left:0.3em;
+    font-weight: bold;
+}
+
+.hash .clipboard {
+    border-radius: 0.25em 0 0 0.25em;
+    border-right-width: 0;
+}*/
+
+
+/*.hash .clipboard:hover {
+    border-width: 0.15em;
+    padding-top: 0.1em;
+    border-right-width: 0;
+}
+
+.hash .badge:hover {
+    border-width: 0.15em;
+    padding-top: 0.1em;
+    padding-right: 0.25em;
+    padding-left: 0.35em;
+    border-left-width: 0.1em;
+}*/
+
+ul.hash {
+    list-style: disc;
+    box-sizing: border-box;
+    border-radius: 0.25em;
+    display: inline-block;
+    line-height: 1.4em;
+    border-style: solid;
+    border-width: 1px;
+    xpadding: 0.2em;
+    cursor: pointer;
+}
+
+ul.hash li {
+    display: inline;
+}
+
+ul.hash li span {
+    display: block;
+    float: left;
+    margin: 0 0.2em;
+    line-height: 1.4em;
+    border-style: solid;
+}
+
+ul.hash li:first-child span.hint--bottom {
+    width: 1.4em;
+    border-right-width: 0.1em;
+}
+
+.clipboard ~ a {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width:1em;
+    line-height: 1.4em;
+    background-color:transparent;
+    color:transparent;
+    width: 1.4em;
+}

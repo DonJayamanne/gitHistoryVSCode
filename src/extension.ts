@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import * as history from './commands/fileHistory';
 import * as lineHistory from './commands/lineHistory';
+import * as viewer from './logViewer/main';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -37,4 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
 		lineHistory.run(outChannel);
 	});
 	context.subscriptions.push(disposable);
+
+	viewer.activate(context, outChannel);
 }

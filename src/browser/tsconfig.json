@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es5",
+		"outDir": "../out",
+		"sourceMap": true,
+		"inlineSources": true,
+		"watch": true,
+		"noLib": false
+	},
+	"exclude": [
+		"node_modules",
+		"client"
+	],
+	"filesGlob": [
+		"*.ts",
+		"typings/*.d.ts"
+	]
+}

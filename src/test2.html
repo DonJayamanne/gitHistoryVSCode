@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
+
+    <script src="https://rawgit.com/Teun/git-flow-vis/master/Vis/Web/Scripts/gitflow-visualize.js"></script>
+    <script>
+        $(function () {
+            var element = document.getElementById('drawhere');
+            var dataCallback = function (done) { 
+                window.setTimeout(function () { 
+                    done(
+                    {
+                        branches: { 
+                            values: [
+                                { "id": "refs/heads/develop", "displayId": "develop", "latestChangeset": "611d320cd97e40871a557fbb4308b9b1762b1f8f"}, 
+                                { "id": "refs/heads/master", "displayId": "master", "latestChangeset": "c7c09e5378cae08a4c52107ba58c0318577cf557"  }
+                                ] 
+                            }
+                        ,tags: { 
+                            values: [
+                                { "id": "refs/tags/r1", "displayId": "r1", "latestChangeset": "d3a4299520bc9e5b76ecec831553737982dd1b37"}
+                                ]
+                            }
+                        ,commits: 
+                            [
+                            {
+                                values: [
+                                { "id": "c7c09e5378cae08a4c52107ba58c0318577cf557", "displayId": "c7c09e5", "author": { "emailAddress": "github@duynstee.com", "displayName": "Teun Duynstee"}, "authorTimestamp": 1405595690000, "message": "Merge branch 'release/r2'\n\nConflicts:\n\ttest.txt", "parents": [{ "id": "d3a4299520bc9e5b76ecec831553737982dd1b37", "displayId": "d3a4299" }, { "id": "0aabee3cc5a668e1dffd3c464b18890caf98e6e9", "displayId": "0aabee3" }] }, 
+                                { "id": "d3a4299520bc9e5b76ecec831553737982dd1b37", "displayId": "d3a4299", "author": { "emailAddress": "github@duynstee.com", "displayName": "Teun Duynstee"}, "authorTimestamp": 1405596337000, "message": "merge to master'", "parents": [{ "id": "12a048fd7a67e4a1690e67cb242e589d7a2594f4", "displayId": "12a048f" }, { "id": "98d09ca2ea0dc6a0ab6397e5d85b54c1b7551a8d", "displayId": "98d09ca" }] }, 
+                                { "id": "611d320cd97e40871a557fbb4308b9b1762b1f8f", "displayId": "611d320", "author": { "emailAddress": "github@duynstee.com", "displayName": "Teun Duynstee"}, "authorTimestamp": 1405596347000, "message": "later commit on develop", "parents": [{ "id": "98d09ca2ea0dc6a0ab6397e5d85b54c1b7551a8d", "displayId": "98d09ca" }, { "id": "ee268f9d33d940722d974ac1c12cd20cb85bc768", "displayId": "ee268f9" }] }, 
+                                { "id": "98d09ca2ea0dc6a0ab6397e5d85b54c1b7551a8d", "displayId": "98d09ca", "author": { "emailAddress": "github@duynstee.com", "displayName": "Teun Duynstee"}, "authorTimestamp": 1405596328000, "message": "commit on develop", "parents": [{ "id": "19f5bebe9d537f56385f2e7a18f41358dba35013", "displayId": "19f5beb" }] }
+                                ]
+                               }
+                            ]
+                        
+                    }
+                        ); 
+                }, 100); 
+            };
+            var moreDataCallback = function (from, done) {
+                done(from, null);
+            }
+            var options = {
+                dataCallback: dataCallback,
+                moreDataCallback: moreDataCallback
+            };
+            GitFlowVisualize.draw(element, options);
+        });
+    </script>
+    <title></title>
+</head>
+<body>
+    <div id="drawhere"></div>
+</body>
+</html>

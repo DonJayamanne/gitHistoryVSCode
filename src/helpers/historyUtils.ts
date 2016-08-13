@@ -3,8 +3,10 @@ import * as parser from '../logParser';
 import * as fs from 'fs';
 import * as path from 'path';
 import { exec, spawn } from 'child_process';
+import * as os from 'os';
+import {ActionedDetails, LogEntry, Sha1} from '../contracts';
 
-function getGitPath(): Promise<string> {
+export function getGitPath(): Promise<string> {
     return new Promise((resolve, reject) => {
         var gitPath = <string>vscode.workspace.getConfiguration('git').get('path');
         if (typeof gitPath === "string" && gitPath.length > 0) {
@@ -117,23 +119,21 @@ export function getFileHistory(rootDir: string, relativeFilePath: string): Thena
     return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', relativeFilePath]);
 }
 
-const LOG_FORMAT = `--format="34806ad9-833a-4524-8cd6-18ca4aa74f14%ncommit=%H%ncommitAbbrev=%h%ntree=%T%ntreeAbbrev=%t%nparents=%P%nparentsAbbrev=%p%nauthor=%an <%ae> %at%ncommitter=%cn <%ce> %ct%nsubject=%s%nbody=%b%n34806ad9-833a-4524-8cd6-18ca4aa74f15%nnotes=%N%n34806ad9-833a-4524-8cd6-18ca4aa74f16"`;
-export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: number = 100): Promise<parser.LogEntry[]> {
-    let args = [LOG_FORMAT, `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--numstat', '--topo-order'];
-    let args = ['log', '--date-order', '--pretty=raw', '--decorate=full' ,'--max-count=500']
+function execGitCommand(rootDir: string, cmd: string, args: string[]): Promise<string> {
     return getGitPath().then(gitExecutable => {
-        return new Promise<any[]>((resolve, reject) => {
+        return new Promise<string>((resolve, reject) => {
             var options = { cwd: rootDir }
-            var spawn = require('child_process').spawn,
-                ls = spawn(gitExecutable, ['log', ...args], options);
+            let ls = spawn(gitExecutable, [cmd, ...args], options);
 
-            var log = "";
             var error = "";
-            ls.stdout.on('data', function (data) {
-                log += data + "\n";
+            let output = '';
+            ls.stdout.setEncoding('utf8');
+            ls.stdout.on('data', (data: string) => {
+                output += data;
             });
 
-            ls.stderr.on('data', function (data) {
+            ls.stderr.setEncoding('utf8');
+            ls.stderr.on('data', (data: string) => {
                 error += data;
             });
 
@@ -143,11 +143,12 @@ export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: num
                     return;
                 }
 
-                resolve(parser.parseLogEntries(log));
+                resolve(output);
             });
         });
     });
 }
+
 
 export function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number): Thenable<any[]> {
     var lineArgs = "-L" + lineNumber + "," + lineNumber + ":" + relativeFilePath.replace(/\\/g, '/');

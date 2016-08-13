@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import {ActionedDetails, LogEntry, Sha1} from './contracts';
 
 var author_regex = /([^<]+)<([^>]+)>/;
 var headers = {
@@ -132,68 +133,172 @@ export function parseLogContents(contents) {
     return parse_git_log(contents);
 }
 
+/*
+    refs= (HEAD -> refs/heads/master, refs/remotes/origin/master, refs/remotes/origin/HEAD)
+    commit=666ed83a2d465257201cdac215a553ddee3cccbe
+    commitAbbrev=666ed83
+    tree=943fbb83770c3aabd4b4a9370130cb63f2af0965
+    treeAbbrev=943fbb8
+    parents=0baba80028fbc4852d327872b1dd020146200ca0
+    parentsAbbrev=0baba80
+    author=Andre Weinand <aweinand@microsoft.com> 1470819523
+    committer=Andre Weinand <aweinand@microsoft.com> 1470819523
+    subject=Revert "update node-debug for xhr caching"
+    body=This reverts commit ae91d66546e3976c0e61bfa9f07675cfbd90f7c0.
 
-const REGEXP = /commit=([a-f0-9]+)\ncommitAbbrev=([a-f0-9]+)\ntree=([a-f0-9]+)\ntreeAbbrev=([a-f0-9]+)\nparents=([a-f0-9 ]+)\nparentsAbbrev=([a-f0-9 ]+)\nauthor=(.+)<(.+)>\s+(\d+)\ncommitter=(.+)<(.+)>\s+(\d+)\nsubject=(.*)\nbody=[\s\S]*?34806ad9-833a-4524-8cd6-18ca4aa74f15\nnotes=[\s\S]*?34806ad9-833a-4524-8cd6-18ca4aa74f16\n{0,2}((^(\d+|-)\s+(\d+|-)\s+(.*)$\n)*)/gm;
-const NAMED_REGEXP = /commit=(:<sha1>[a-f0-9]+)\ncommitAbbrev=(:<sha1Abbrev>[a-f0-9]+)\ntree=(:<tree>[a-f0-9]+)\ntreeAbbrev=(:<treeAbbrev>[a-f0-9]+)\nparents=(:<parents>[a-f0-9 ]+)\nparentsAbbrev=(:<parentsAbbrev>[a-f0-9 ]+)\nauthor=(:<author>(.+)<(.+)>\s+(\d+))\ncommitter=(:<committer>(.+)<(.+)>\s+(\d+))\nsubject=(:<subject>.*)\nbody=(:<body>[\s\S]*?34806ad9-833a-4524-8cd6-18ca4aa74f15)\nnotes=(:<notes>[\s\S]*?34806ad9-833a-4524-8cd6-18ca4aa74f16)\n{0,2}(:<files>(^(\d+|-)\s+(\d+|-)\s+(.*)$\n)*)/gm;
 
-export function parseLogEntries(contents: string): LogEntry[] {
-    //git log --format="34806ad9-833a-4524-8cd6-18ca4aa74f14%ncommit=%H%ntree=%T%nparents=%P%nauthor=%an <%ae> %at%ncommitter=%cn <%ce> %ct%nsubject=%s%nbody=%b%n34806ad9-833a-4524-8cd6-18ca4aa74f15%nnotes=%N%n34806ad9-833a-4524-8cd6-18ca4aa74f16" --numstat
-    let matches = contents.match(REGEXP);
-    if (!Array.isArray(matches)) {
-        return [];
-    }
+    notes=
 
-    const namedRegExp = require('named-js-regexp');
-    return matches.map(match => {
-        let compiledRegexp = namedRegExp(NAMED_REGEXP);
-        let rawMatch = compiledRegexp.exec(match);
-        const commit = rawMatch.groups();
 
-        commit.body = commit.body.replace("\n34806ad9-833a-4524-8cd6-18ca4aa74f15", "");
-        commit.notes = commit.notes.replace("\n34806ad9-833a-4524-8cd6-18ca4aa74f16", "");
-        commit.author = parseAuthCommitter(commit.author);
-        commit.committer = parseAuthCommitter(commit.committer);
-        commit.sha1 = <Sha1>{ full: commit.sha1, short: commit.sha1Abbrev };
-        commit.tree = <Sha1>{ full: commit.tree, short: commit.treeAbbrev };
-        delete commit.commit;
-        delete commit.commitAbbret;
-        delete commit.treeAbbrev;
-        if (commit.parents.indexOf(' ') > 0) {
-            let parents = commit.parents.split(' ').filter(parent => parent.trim().length > 0) as string[];
-            let parentAbbrevs = commit.parentsAbbrev.split(' ').filter(parent => parent.trim().length > 0) as string[];
-            commit.parents = parents.map((value, index) => { return <Sha1>{ full: value, short: parentAbbrevs[index] }; });
-        }
+    commit=0baba80028fbc4852d327872b1dd020146200ca0
+*/
 
-        if (typeof commit.files === "string") {
-            let changes = commit.files.split(/\r?\n/g) as string[];
-            commit.changes = changes.filter(change => change.trim().length > 0).map(change => {
-                // Using regexp in here just causes js to go nuts
-                // No idea, something nice to raise on stack overflow
-                change = change.trim();
-                let pos = change.indexOf(' ');
-                let added = change.substring(0, pos);
-                change = change.substring(pos).trim();
+const prefixes = {
+    refs: 'refs=',
+    commit: 'commit=',
+    commitAbbrev: 'commitAbbrev=',
+    tree: 'tree=',
+    treeAbbrev: 'treeAbbrev=',
+    parents: 'parents=',
+    parentsAbbrev: 'parentsAbbrev=',
+    author: 'author=',
+    committer: 'committer=',
+    subject: 'subject=',
+    body: 'body=',
+    notes: 'notes='
+};
+const prefixLengths = {
+    refs: prefixes.refs.length,
+    commit: prefixes.commit.length,
+    commitAbbrev: prefixes.commitAbbrev.length,
+    tree: prefixes.tree.length,
+    treeAbbrev: prefixes.treeAbbrev.length,
+    parents: prefixes.parents.length,
+    parentsAbbrev: prefixes.parentsAbbrev.length,
+    author: prefixes.author.length,
+    committer: prefixes.committer.length,
+    subject: prefixes.subject.length,
+    body: prefixes.body.length,
+    notes: prefixes.notes.length
+}
+export function parseLogEntry(lines: string[]): LogEntry {
+    let logEntry: LogEntry = {} as LogEntry;
+    let multiLineProperty = null;
+    lines.forEach((line, index, lines) => {
+        if (line.indexOf(prefixes.refs) === 0) {
+            logEntry.refs = line.substring(prefixLengths.refs).split(',').map((item, index, items) => {
+                // remove the leading (
+                if (index === 0) {
+                    item = item.trim().substring(1);
+                    // remove the trailing (                    
+                    if (items.length === 1) {
+                        item = item.substring(0, item.length - 2);
+                    }
 
-                pos = change.indexOf(' ');
-                let deleted = change.substring(0, pos);
-                let file = change.substring(pos).trim();
-
-                return {
-                    added: parseInt(added), deleted: parseInt(deleted), file: file
-                };
+                    item = item.trim();
+                }
+                else {
+                    // remove the trailing (
+                    if (index === items.length - 1) {
+                        item = item.trim();
+                        item = item.substring(0, item.length - 2).trim();
+                    }
+                }
+                
+                return item;
             });
+            return;
         }
-        else {
-            commit.changes = [];
+        if (line.indexOf(prefixes.commit) === 0) {
+            logEntry.sha1 = { full: line.substring(prefixLengths.commit).trim(), short: '' };
+            return;
         }
-
-        if (commit.files) {
-            delete commit.files;
-
+        if (line.indexOf(prefixes.commitAbbrev) === 0) {
+            logEntry.sha1.short = line.substring(prefixLengths.commitAbbrev).trim();
+            return;
         }
-
-        return commit as LogEntry;
+        if (line.indexOf(prefixes.tree) === 0) {
+            logEntry.tree = { full: line.substring(prefixLengths.tree).trim(), short: '' };
+            return;
+        }
+        if (line.indexOf(prefixes.treeAbbrev) === 0) {
+            logEntry.tree.short = line.substring(prefixLengths.treeAbbrev).trim();
+            return;
+        }
+        if (line.indexOf(prefixes.parents) === 0) {
+            logEntry.parents = line.substring(prefixLengths.parents).trim().split(' ').map(shaLong => {
+                return { full: shaLong, short: '' };
+            });
+            return;
+        }
+        if (line.indexOf(prefixes.parentsAbbrev) === 0) {
+            line.substring(prefixLengths.parentsAbbrev).trim().split(' ').forEach((shaShort, index) => {
+                logEntry.parents[index].short = shaShort;
+            });
+            return;
+        }
+        if (line.indexOf(prefixes.author) === 0) {
+            logEntry.author = parseAuthCommitter(line.substring(prefixLengths.author));
+            return;
+        }
+        if (line.indexOf(prefixes.committer) === 0) {
+            logEntry.committer = parseAuthCommitter(line.substring(prefixLengths.committer));
+            return;
+        }
+        if (line.indexOf(prefixes.committer) === 0) {
+            logEntry.committer = parseAuthCommitter(line.substring(prefixLengths.committer));
+            return;
+        }
+        if (line.indexOf(prefixes.subject) === 0) {
+            logEntry.subject = line.substring(prefixLengths.subject).trim();
+            return;
+        }
+        if (line.indexOf(prefixes.body) === 0) {
+            logEntry.body = line.substring(prefixLengths.body);
+            multiLineProperty = 'body';
+            return;
+        }
+        if (line.indexOf(prefixes.notes) === 0) {
+            logEntry.notes = line.substring(prefixLengths.notes);
+            multiLineProperty = 'notes';
+            return;
+        }
+        if (logEntry && line && multiLineProperty) {
+            logEntry[multiLineProperty] += line;
+            return;
+        }
     });
+
+    return logEntry;
+    // if (typeof commit.files === "string") {
+    //     let changes = commit.files.split(/\r?\n/g) as string[];
+    //     commit.changes = changes.filter(change => change.trim().length > 0).map(change => {
+    //         // Using regexp in here just causes js to go nuts
+    //         // No idea, something nice to raise on stack overflow
+    //         change = change.trim();
+    //         let pos = change.indexOf(' ');
+    //         let added = change.substring(0, pos);
+    //         change = change.substring(pos).trim();
+
+    //         pos = change.indexOf(' ');
+    //         let deleted = change.substring(0, pos);
+    //         let file = change.substring(pos).trim();
+
+    //         return {
+    //             added: parseInt(added), deleted: parseInt(deleted), file: file
+    //         };
+    //     });
+    // }
+    // else {
+    //     commit.changes = [];
+    // }
+
+    // if (commit.files) {
+    //     delete commit.files;
+
+    // }
+
+    // return commit as LogEntry;
 }
 
 function parseAuthCommitter(details: string): ActionedDetails {
@@ -207,25 +312,4 @@ function parseAuthCommitter(details: string): ActionedDetails {
         name: details.substring(0, startPos - 1).trim(),
         email: details.substring(startPos + 1, pos)
     }
-}
-export interface ActionedDetails {
-    name: string;
-    email: string;
-    date: Date;
-}
-export interface LogEntry {
-    author: ActionedDetails;
-    committer: ActionedDetails;
-    parents: Sha1[];
-    sha1: Sha1;
-    tree: Sha1;
-    subject: string;
-    body: string;
-    notes: string;
-    changes: [number, number, string][];
-}
-
-export interface Sha1 {
-    full: string;
-    short: string;
 }
