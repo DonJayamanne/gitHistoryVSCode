@@ -51,6 +51,8 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
     let fictionalBranches: { path: string, x?: number }[] = [];
     // let fictionalBranch2;
     let tabbedOnce = false;
+    let fictionalBranchesUsed = false;
+    let branched = false;
     for (let i = startAt; i < content.children.length; ++i) {
         if (i >= entries.length) {
             break;
@@ -78,6 +80,7 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
                     branch.path.setAttribute('d', branch.path.cmds + currentY);
                     if (entry.parents.length === 0) {
                         branches.splice(j, 1);
+                        branched = true;
                     } else {
                         branch.sha1 = entry.parents[0].full;
                     }
@@ -88,6 +91,7 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
                     let x = (index + 1) * xOffset;
                     branch.path.setAttribute('d', branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
                     branches.splice(j, 1);
+                    branched = true;
                     ++removedBranches;
                 }
                 ++childCount;
@@ -121,10 +125,16 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
                     path: svgPath,
                     wasFictional: false
                 };
-                if (fictionalBranches.length === 0) {
+                if (fictionalBranches.length === 0 || !fictionalBranchesUsed) {
+                    // Re-set the fictional branches if they haven't been used
+                    // In case we have a merge as the very first step,
+                    // Why? If we have a merge as the first step, then the fictional branch will have to move to the right
+                    // due to the second parent which will take another index
+                    if (!fictionalBranchesUsed) {
+                        fictionalBranches = [];
+                    }
                     let newOrigX = (index + 1 + 1) * xOffset;
                     let newX = (index + j + 1 + 1) * xOffset;
-                    //fictionalBranch2 = 'M ' + newOrigX + ' ' + topMostY + ' L ' + newOrigX + ' ' + (currentY - logEntryHeight - logEntryHeight) + ' L ' + newOrigX + ' ';
                     // Generate at least 10 fictional branches, so we can lay them out neatly
                     for (let counter = 1; counter < 11; counter++) {
                         let newOrigX = (index + 1 + counter) * xOffset;
@@ -145,8 +155,7 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
                     streamColor = 0;
                 }
                 svgPath.setAttribute('style', 'stroke:' + webui.COLORS[streamColor]);
-                // let origX = (index + 1) * xOffset;
-                // (svgPath as any).cmds = 'M ' + origX + ' ' + currentY + ' L ' + origX + ' ' + (topMostY + logEntryHeight) + ' ' + ' L ' + origX + ' ';
+                fictionalBranchesUsed = true;
                 let fictionalBranch = fictionalBranches.splice(0, 1)[0];
                 xFromFictionalBranch = fictionalBranch.x;
                 (svgPath as any).cmds = fictionalBranch.path;
@@ -160,6 +169,12 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
                 // We need to padd all parent log entries to take this into account
                 padParentCount += 1;
             }
+
+            // Incremental updates for debugging
+            for (let i = 0; i < branches.length; ++i) {
+                let branch = branches[i];
+                branch.path.setAttribute('d', branch.path.cmds + currentY);
+            }
         }
 
         // What does this do?
@@ -170,16 +185,8 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
             let x = (j + 1) * xOffset;
             branch.path.cmds += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY + ' L ' + x + ' ';
         }
+        tabBranch = tabBranch ? tabBranch : (entry.parents.length > 1 || branched);
         if (tabBranch && fictionalBranches.length > 0) {
-            //fictionalBranch += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + (currentY) + ' L ' + x + ' ';
-            // if (tabbedOnce) {
-            //     fictionalBranch2 += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + (currentY) + ' L ' + x + ' ';
-            // }
-            // else {
-            //     tabbedOnce = true;
-            //     fictionalBranch2 += (currentY - logEntryHeight) + ' L ' + x + ' ' + (currentY - logEntryHeight / 2) + ' L ' + x + ' ';
-            // }
-
             for (let counter = 0; counter < fictionalBranches.length; counter++) {
                 let x = (j + 1 + counter) * xOffset;
                 let fictionalBranch = fictionalBranches[counter];
@@ -187,7 +194,12 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
                     fictionalBranch.path += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + (currentY) + ' L ' + x + ' ';
                 }
                 else {
-                    fictionalBranch.path += (currentY - logEntryHeight) + ' L ' + x + ' ' + (currentY - logEntryHeight / 2) + ' L ' + x + ' ';
+                    if (currentY <= logEntryHeight) {
+                        fictionalBranch.path += currentY + ' L ' + x + ' ' + logEntryHeight + ' L ' + x + ' ';
+                    }
+                    else {
+                        fictionalBranch.path += (currentY - logEntryHeight) + ' L ' + x + ' ' + (currentY - logEntryHeight / 2) + ' L ' + x + ' ';
+                    }
                 }
                 fictionalBranch.x = x;
             }
@@ -199,7 +211,7 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
         if (xFromFictionalBranch > 0) {
             cx = xFromFictionalBranch;
         }
-        //svgCircle.setAttribute('cx', ((index + 1) * xOffset).toString());
+
         svgCircle.setAttribute('cx', cx.toString());
         svgCircle.setAttribute('cy', currentY.toString());
         svgCircle.setAttribute('r', '4');
@@ -208,8 +220,6 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
 
         (entryElement as any).webuiLeft = Math.max((entryElement as any).webuiLeft, branches.length);
         maxLeft = Math.max(maxLeft, (entryElement as any).webuiLeft);
-        // Debug log
-        //console.log(entry.commit, entry.parents, $.extend(true, [], streams));
 
         currentY += logEntryHeight;
         lastXOffset = xOffset;

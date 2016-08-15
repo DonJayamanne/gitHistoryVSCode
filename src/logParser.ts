@@ -201,10 +201,10 @@ export function parseLogEntry(lines: string[]): LogEntry {
                     // remove the trailing (
                     if (index === items.length - 1) {
                         item = item.trim();
-                        item = item.substring(0, item.length - 2).trim();
+                        item = item.substring(0, item.length - 1).trim();
                     }
                 }
-                
+
                 return item;
             });
             return;

@@ -9,7 +9,7 @@ const LOG_FORMAT = `--format="%nrefs=%d%ncommit=%H%ncommitAbbrev=%h%ntree=%T%ntr
 export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: number = 100, branchName: string = 'master'): Promise<LogEntry[]> {
     let args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, branchName, '--']
     // This is how you can view the log across all branches
-    //args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--']
+    args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--']
     return getGitPath().then(gitExecutable => {
         return new Promise<LogEntry[]>((resolve, reject) => {
             var options = { cwd: rootDir }
