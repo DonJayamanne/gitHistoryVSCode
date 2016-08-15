@@ -198,7 +198,8 @@ function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts
                         fictionalBranch.path += currentY + ' L ' + x + ' ' + logEntryHeight + ' L ' + x + ' ';
                     }
                     else {
-                        fictionalBranch.path += (currentY - logEntryHeight) + ' L ' + x + ' ' + (currentY - logEntryHeight / 2) + ' L ' + x + ' ';
+                        //fictionalBranch.path += (currentY - logEntryHeight) + ' L ' + x + ' ' + (currentY - logEntryHeight / 2) + ' L ' + x + ' ';
+                        fictionalBranch.path += currentY + ' L ' + x + ' ' + (currentY + logEntryHeight / 2) + ' L ' + x + ' ';
                     }
                 }
                 fictionalBranch.x = x;

@@ -14,6 +14,9 @@ export interface LogEntry {
     body: string;
     notes: string;
     changes: [number, number, string][];
+    tags: string[];
+    branch: string;
+    isHead: boolean;
 }
 
 export interface Sha1 {

@@ -207,6 +207,8 @@ export function parseLogEntry(lines: string[]): LogEntry {
 
                 return item;
             });
+
+            // Check if we have branch or tags
             return;
         }
         if (line.indexOf(prefixes.commit) === 0) {
