@@ -10,10 +10,12 @@ import * as htmlResources from './htmlResources';
 
 const gitHistorySchema = 'git-history-viewer';
 
-let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/gi-history');
+let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
 let historyRetrieved: boolean;
 let pageIndex = 0;
 let pageSize = 500;
+let canGoPrevious = false;
+let canGoNext = true;
 
 enum ViewStatus {
     Unknown,
@@ -34,14 +36,20 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
         if (!historyRetrieved) {
             historyRetrieved = true;
             currentStatus = ViewStatus.Loading;
+            let that = this;
             gitHist.getHistory(vscode.workspace.rootPath, pageIndex, pageSize).then(entries => {
+                canGoPrevious = pageIndex > 0;
+                canGoNext = entries.length === pageSize;
+
                 currentStatus = ViewStatus.Idle;
                 this.entries = entries;
                 this.lastError = null;
-                this.update(uri);
+                previewUri = vscode.Uri.parse(gitHistorySchema + '://authorityx/git-history' + new Date().getTime().toString());
+                that.update(previewUri);
             }).catch(error => {
                 currentStatus = ViewStatus.Error;
                 this.lastError = error;
+                previewUri = vscode.Uri.parse(gitHistorySchema + '://authorityx/git-history' + new Date().getTime().toString());
                 this.update(uri);
             });
         }
@@ -92,7 +100,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
             case ViewStatus.Idle: {
                 // menuStyles = htmlGenerator.MENU_STYLES;
                 // menuHtml = htmlGenerator.generateHtmlForMenu(testManager.status, this.tests);
-                innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries);
+                innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, canGoPrevious, canGoNext);
                 // styles = htmlGenerator.HISTORY_STYLES;
                 break;
             }
@@ -102,7 +110,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                 <head>
                 <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/reset.css">
                 <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/hint.base.min.css">
-                <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/font-awesome-4.6.3/css/font-awesome.css">
+                <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/octicons/font/octicons.css">
                 <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/main.css">
                 ${styles}
                 ${menuStyles}
@@ -113,6 +121,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                     <div class="hidden">
                         <div class="script">file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/node_modules/jquery/dist/jquery.min.js</div>
                         <div class="script">file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/node_modules/clipboard/dist/clipboard.min.js</div>
+                        <div class="script">file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/out/src/browser/svgGenerator.js</div>
                     </div>
                 </body>
                 `;
@@ -124,6 +133,13 @@ export function activate(context: vscode.ExtensionContext, outputChannel: vscode
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
     let disposable = vscode.commands.registerCommand('git.viewHistory', () => {
+        // Unique name everytime, so that we always refresh the history log
+        // historyRetrieved = false;
+        // pageIndex = 0;
+        // pageSize = 500;
+        // canGoPrevious = false;
+        // canGoNext = true;
+        //previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history' + new Date().getTime().toString());
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History').then((success) => {
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
@@ -132,7 +148,12 @@ export function activate(context: vscode.ExtensionContext, outputChannel: vscode
     context.subscriptions.push(disposable, registration);
 
     disposable = vscode.commands.registerCommand('git.copyText', (sha: string) => {
-        let x = 1 + 2;
+        vscode.window.showInformationMessage(sha);
+    });
+
+    disposable = vscode.commands.registerCommand('git.logNavigate', (direction: string) => {
+        pageIndex = pageIndex + (direction === 'next' ? 1 : -1);
+        provider.update(previewUri);
     });
 
     context.subscriptions.push(disposable);

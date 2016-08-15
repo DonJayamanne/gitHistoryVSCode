@@ -5,16 +5,24 @@ html, body {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #log-view svg {
     position: absolute;
     top: 0;
     left: 0;
-    display: none;
 }
+#log-view svg path {
+  stroke-width: 2;
+  fill: none;
+}
+#log-view svg circle {
+  stroke: white;
+  stroke-width: 0.1em;
+  fill: #555555;
 
+}
 #log-view svg ~ div {
     margin: 0;
     padding: 0 0.3em;
@@ -27,11 +35,12 @@ html, body {
     margin: 0.3em auto;
     border-radius: 0.2em;
     padding: 0.3em;
-    height: 3.7em;
+    xheight: 3.7em;
+    height:3.5em;
     xdisplay: flex;
     display: block;
     width: 100%;
-    position: relative;
+    position: relative;    
 }
 
 .log-entry .messageLink {
@@ -61,19 +70,19 @@ html, body {
 .log-entry div {
     display: flex;
     width: 100%;
-    margin: 0.3em 0 0 0;
+    margin: 0em 0 0 0;
 }
 
-.committer {
+.author {
     margin-top: 0.2em;
     position: relative;
 }
 
-.committer a:hover ~ span .name {
+.author a:hover ~ span .name {
     text-decoration: underline;
 }
 
-.committer a {
+.author a {
     position: absolute;
     left: 0;
     top: 0;
@@ -85,7 +94,9 @@ span.hash {
     text-align: right;
 }
 
-
+.hash .sha.short {
+    min-width:3.5em;
+}
 /*.hash .clipboard,
 .hash .badge {
     height: 1.6em;
@@ -166,9 +177,73 @@ ul.hash li:first-child span.hint--bottom {
     position: absolute;
     left: 0;
     top: 0;
-    width:1em;
+    width: 1em;
     line-height: 1.4em;
-    background-color:transparent;
-    color:transparent;
+    background-color: transparent;
+    color: transparent;
     width: 1.4em;
+}
+
+
+/* Navigation*/
+
+.navigation {
+    text-align: right;
+    margin-bottom: 0.5em;
+    position: relative;
+}
+
+.navigation ul {
+    list-style: disc;
+    box-sizing: border-box;
+    border-radius: 0.25em;
+    display: inline-block;
+    line-height: 1.4em;
+    border-style: solid;
+    border-width: 1px;
+    xpadding: 0.2em;
+    cursor: pointer;
+}
+
+.navigation ul li {
+    display: inline;
+    position: relative;
+}
+
+.navigation ul li span {
+    display: block;
+    float: left;
+    margin: 0 0.2em;
+    line-height: 1.4em;
+    border-style: solid;
+}
+
+.navigation ul li:first-child span:first-child {
+    margin-right: 0;
+}
+
+.navigation ul li:first-child span:nth-of-type(2) {
+    border-right-width: 0.1em;
+    padding-right: 0.3em;
+    margin-left: 0;
+}
+
+.navigation a.previous {
+    position: absolute;
+    top: 0;
+    right: 4em;
+    color: transparent;
+    height: 1.5em;
+    width: 5em;
+}
+.navigation a.next {
+    position: absolute;
+    top: 0;
+    right: 0em;
+    color: transparent;
+    height: 1.5em;
+    width: 4em;
+}
+.not-allowed {
+    cursor: not-allowed;
 }

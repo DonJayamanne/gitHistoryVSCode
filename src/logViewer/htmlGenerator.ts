@@ -1,4 +1,5 @@
 import {ActionedDetails, LogEntry, Sha1} from '../contracts';
+import * as moment from 'moment';
 
 export var crap = '';
 export function generateErrorView(msg: string, error: any): string {
@@ -23,57 +24,53 @@ export function generateProgressHtmlView(progressMessage: string): string {
         `;
 }
 
-function generateHistoryListContainer(entriesHtml: string): string {
+function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, canGoPrevious: boolean, canGoNext: boolean): string {
+    let previousHref = canGoPrevious ? encodeURI('command:git.logNavigate?' + JSON.stringify(['previous'])) : '#previous';
+    let nextHref = canGoPrevious ? encodeURI('command:git.logNavigate?' + JSON.stringify(['next'])) : '#next';
+
+    let previousLink = `<a href="${previousHref}" class="previous ${canGoPrevious ? '' : 'not-allowed'}">previous</a>`;
+    let nextLink = `<a id="next" href="${nextHref}" class="next ${canGoPrevious ? '' : 'not-allowed'}">next</a>`;
+
     return `
             <div id="log-view" class="list-group">
                 <svg xmlns="http://www.w3.org/2000/svg"></svg>
                 <div>
-                <style>
-				iframe[seamless]{
-					background-color: transparent;
-					border: 0px none transparent; 
-					padding: 0px;
-					overflow: hidden;
-				} 
-                
-                </style>
-                    <div id="contentPlaceholder">1234</div>
-                    <button onClick="contentPlaceholder.innerHTML = '123';return false;">TEst</button>
-<button onClick="var script = document.createElement('script');script.setAttribute('src', 'file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/out/src/browser/proxy.js');script.setAttribute('type', 'text/javascript');document.getElementById('myBody').appendChild(script);return false;">TEst</button>
-<button onClick="updateText();return false">Try Now</button>
-<button onClick="eval(document.getElementById('myscript').innerHTML);return false">Use Eval</button>
-                    <div id="item">1234</div>
-                    <div id="myscript">
-                    try {
-                        var script = document.createElement('script');
-                        script.setAttribute('src', 'file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/out/src/browser/proxy.js');
-                        script.setAttribute('type', 'text/javascript');document.getElementById('myBody')[0].appendChild(script);
-                        document.getElementById('contentPlaceholder').innherHTML = 'succss';
-                    }
-                    catch(ex){
-                        document.getElementById('contentPlaceholder').innherHTML = 'failed ' + ex.message; 
-                    }
-                    </div>
-                    <div id="item2">1234</div>
-                    <iframe style="width:100%;height:200px;" src='file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/iframeContent.html'></iframe>
-                    <br>
                     ${entriesHtml}
+                    <div class="navigation">
+                        <ul>
+                            <li class="previous">
+                                <span class="octicon octicon-chevron-left"></span>
+                                <span>Previous</span>
+                            </li>
+                            <li class="next">
+                                <span>Next</span>
+                                <span class="octicon octicon-chevron-right"></span>
+                            </li>
+                        </ul>
+                        ${previousLink}
+                        ${nextLink}
+                    </div>             
+                    <div class="json entries hidden">${JSON.stringify(entries)}</div>                           
+                    <iframe class="hidden" src='file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/iframeContent.html'></iframe>
                 </div>
             </div>
             `;
 }
 
-export function generateHistoryHtmlView(entries: LogEntry[]): string {
+export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: boolean, canGoNext: boolean): string {
     const entriesHtml = entries.map(entry => {
         return `
             <div class="log-entry list-group-item">
                 <a href="#1234" class="messageLink">${entry.subject}</a>
                 <span class="message">${entry.subject}</span>
                 <div>
-                    <span class="committer">
-                        <a href="${entry.committer.email}">${entry.committer.name}</a>
+                    <span class="author">
+                        <a class="hint--bottom  hint--rounded hidden" 
+                            aria-label="${entry.author.email}" 
+                            href="${entry.author.email}">${entry.author.name}</a>
                         <span>
-                            <span class="name">${entry.committer.name}</span> commited on ${entry.committer.date.toLocaleDateString()}
+                            <span class="name hint--right hint--rounded"  
+                                aria-label="${entry.author.email}">${entry.author.name}</span> on ${moment(entry.author.date).format('MMM Do YYYY, h:mm:ss a')}
                         </span>
                     </span>
                     <span class="hash">
@@ -82,8 +79,8 @@ export function generateHistoryHtmlView(entries: LogEntry[]): string {
                                 <span class="btn clipboard hint--bottom  hint--rounded" 
                                     data-clipboard-text="${entry.sha1.full}" 
                                     aria-label="Copy the full SHA">
-                                    <span class="clipboard fa fa-clipboard"></span>
-                                    <a class="btn clipboardLink" href="${encodeURI('command:git.copyText?' + entry.sha1.full)}">x</a>
+                                    <span class="clipboard octicon octicon-clippy"></span>
+                                    <a class="btn clipboardLink" href="${encodeURI('command:git.copyText?' + JSON.stringify([entry.sha1.full]))}">x</a>
                                 </span>
                             </li>
                             <li>
@@ -109,5 +106,5 @@ export function generateHistoryHtmlView(entries: LogEntry[]): string {
         //         </div>`;
     }).join('');
 
-    return generateHistoryListContainer(entriesHtml);
+    return generateHistoryListContainer(entries, entriesHtml, canGoPrevious, canGoNext);
 }

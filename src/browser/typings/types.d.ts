@@ -9,3 +9,5 @@ interface Copy {
     (value:string):void;
 }
 declare var copy:Copy;
+
+declare var generateSVG:Function;

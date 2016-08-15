@@ -1,22 +1,21 @@
 /// <reference path="typings/types.d.ts" />
+
 (function () {
 
-    function addScripts(logEle: HTMLElement, done: Function) {
+    function addScripts(done: Function) {
         let scripts = document.querySelectorAll('div.script');
         const scriptCount = scripts.length;
         let scriptsLoaded = 0;
-        logEle.innerHTML += ', Script count = ' + scripts.length.toString();
         for (let counter = 0; counter < scripts.length; counter++) {
-            addScriptFile(logEle, scripts[counter].innerHTML.trim(), () => {
+            addScriptFile(scripts[counter].innerHTML.trim(), () => {
                 scriptsLoaded += 1;
-                logEle.innerHTML += ', Script loaded = ' + scriptsLoaded.toString();
                 if (scriptsLoaded >= scriptCount) {
                     done();
                 }
             });
         }
     }
-    function addScriptFile(logEle: HTMLElement, scriptFilePath: string, onload: (ev: Event) => any) {
+    function addScriptFile(scriptFilePath: string, onload: (ev: Event) => any) {
         let script = document.createElement('script');
         script.setAttribute('src', scriptFilePath.replace('/\\/g', '/'));
         document.getElementById('myBody').appendChild(script);
@@ -34,29 +33,17 @@
         clipboard = new Clipboard('.btn.clipboard');
         clipboard.on('success', onCopied);
     }
- 
+
     function onCopied(e) {
         e.clearSelection();
         // let $ele = $(e.trigger).attr('title', 'Copied');
         // ($ele as any).tooltip('fixTitle').tooltip('show');
     }
-    const logEle = document.getElementById('h');
-    try {
-        logEle.innerHTML = 'step1';
-        // addScripts(logEle, () => {
-        //     try {
-        //         logEle.innerHTML = 'step2';
-        //         initializeClipboard();
-        //         logEle.innerHTML = 'step3';
-        //     }
-        //     catch (ex2) {
-        //         logEle.innerHTML = 'error = ' + ex2.message;
-        //     }
-        // });
-    }
-    catch (ex) {
-        logEle.innerHTML = 'error = ' + ex.message;
-    }
+
+    addScripts(() => {
+        initializeClipboard();
+        generateSVG();
+    });
 })();
 
 // function initShaClipboard() {

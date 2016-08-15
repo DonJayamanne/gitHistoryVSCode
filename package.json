@@ -87,6 +87,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "clipboard": "^1.5.12",
+    "moment": "^2.14.1",
     "tmp": "0.0.28"
   }
 }
