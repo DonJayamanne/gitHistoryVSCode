@@ -8,21 +8,35 @@ html, body {
     display: none !important;
 }
 
+#log-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow-y: scroll;
+}
+
+.with-details {
+    bottom: 15em;
+}
+
 #log-view svg {
     position: absolute;
     top: 0;
     left: 0;
 }
-#log-view svg path {
-  stroke-width: 2;
-  fill: none;
-}
-#log-view svg circle {
-  stroke: white;
-  stroke-width: 0.1em;
-  fill: #555555;
 
+#log-view svg path {
+    stroke-width: 2;
+    fill: none;
 }
+
+#log-view svg circle {
+    stroke: white;
+    stroke-width: 0.1em;
+    fill: #555555;
+}
+
 #log-view svg ~ div {
     margin: 0;
     padding: 0 0.3em;
@@ -36,11 +50,11 @@ html, body {
     border-radius: 0.2em;
     padding: 0.3em;
     xheight: 3.7em;
-    height:3.5em;
+    height: 3.5em;
     xdisplay: flex;
     display: block;
     width: 100%;
-    position: relative;    
+    position: relative;
 }
 
 .log-entry .messageLink {
@@ -76,10 +90,20 @@ html, body {
 .author {
     margin-top: 0.2em;
     position: relative;
+    white-space: nowrap;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .author a:hover ~ span .name {
     text-decoration: underline;
+}
+
+.author .details {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .author a {
@@ -90,13 +114,16 @@ html, body {
 }
 
 span.hash {
-    flex-grow: 1;
+    flex: 1;
     text-align: right;
+    min-width: 9em;
 }
 
 .hash .sha.short {
-    min-width:3.5em;
+    min-width: 3.5em;
 }
+
+
 /*.hash .clipboard,
 .hash .badge {
     height: 1.6em;
@@ -145,7 +172,7 @@ span.hash {
 }*/
 
 ul.hash {
-    list-style: disc;
+    list-style: none;
     box-sizing: border-box;
     border-radius: 0.25em;
     display: inline-block;
@@ -194,7 +221,7 @@ ul.hash li:first-child span.hint--bottom {
 }
 
 .navigation ul {
-    list-style: disc;
+    list-style: none;
     box-sizing: border-box;
     border-radius: 0.25em;
     display: inline-block;
@@ -236,6 +263,7 @@ ul.hash li:first-child span.hint--bottom {
     height: 1.5em;
     width: 5em;
 }
+
 .navigation a.next {
     position: absolute;
     top: 0;
@@ -244,6 +272,170 @@ ul.hash li:first-child span.hint--bottom {
     height: 1.5em;
     width: 4em;
 }
+
 .not-allowed {
     cursor: not-allowed;
+}
+
+
+/* Errors */
+
+.errorContents {
+    height: 200px;
+    width: 100%;
+    text-align: center;
+    margin-top: 2em;
+}
+
+.errorContents div:first-child {
+    font-size: 1.3em;
+    font-weight: bold;
+    padding: 1em;
+}
+
+.errorContents i {
+    padding-right: 0.3em;
+}
+
+
+/* Details View */
+
+#detailsView {
+    box-sizing: border-box;
+    padding: 0.3em;
+    display: block;
+    width: 100%;
+    height: 15em;
+    position: absolute;
+    bottom: 0;
+}
+
+#detailsView h1 {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#detailsView div.view {
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 0.2em;
+    border-radius: 0.2em;
+    padding: 0.3em;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+#detailsView div:first-child .body {
+    margin-top: 0.3em;
+    border-top: 0.1em solid;
+}
+
+#detailsView div:first-child .body, #detailsView div:first-child .notes {
+    padding: 0.2em;
+    margin-bottom: 0.3em;
+    border-bottom: 0.1em solid;
+}
+
+#detailsView div:first-child .body:empty, #detailsView div:first-child .notes:empty {
+    display: none;
+}
+
+#detailsView .name {
+    margin: 0.2em;
+}
+
+#detailsView ul {
+    list-style: none;
+    margin-top: 1em;
+}
+
+#detailsView ul ul {
+    list-style: none;
+    box-sizing: border-box;
+    border-radius: 0.25em;
+    display: inline-block;
+    line-height: 1.4em;
+    border-style: solid;
+    border-width: 1px;
+    xpadding: 0.2em;
+    cursor: pointer;
+}
+
+#detailsView li.added, #detailsView li.deleted {
+    display: inline;
+    position: relative;
+}
+
+#detailsView li.added span, #detailsView li.deleted span {
+    display: block;
+    float: left;
+    line-height: 1.4em;
+    border-style: solid;
+}
+
+#detailsView li.added span:first-child, #detailsView li.deleted span:first-child {
+    padding-left: 0.2em;
+}
+
+#detailsView li.added span {
+    background-color: #cfc;
+    color: #399839
+}
+
+#detailsView li.deleted span {
+    background-color: #fdd;
+    color: #c33
+}
+
+#detailsView label.changes {
+    clear: both;
+    display: block;
+}
+
+#detailsView ul.changes {
+    float: left;
+    margin-top: 0;
+}
+
+div.fileName {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    /* border: 1px solid; */
+    padding: 0.3em;
+}
+
+
+/* Dropdown Menu */
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 0.2em;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }

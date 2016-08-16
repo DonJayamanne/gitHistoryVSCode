@@ -1,5 +1,6 @@
 import * as fs from 'fs';
-import {ActionedDetails, LogEntry, Sha1} from './contracts';
+import {ActionedDetails, LogEntry, Sha1, FileStat} from './contracts';
+export const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA1';
 
 var author_regex = /([^<]+)<([^>]+)>/;
 var headers = {
@@ -184,6 +185,12 @@ const prefixLengths = {
 export function parseLogEntry(lines: string[]): LogEntry {
     let logEntry: LogEntry = {} as LogEntry;
     let multiLineProperty = null;
+    let filesAltered: string[] = [];
+    let processingNumStat = false;
+    if (lines.filter(line => line.trim().length > 0).length === 0) {
+        return null;
+    }
+
     lines.forEach((line, index, lines) => {
         if (line.indexOf(prefixes.refs) === 0) {
             logEntry.refs = line.substring(prefixLengths.refs).split(',').map((item, index, items) => {
@@ -265,12 +272,24 @@ export function parseLogEntry(lines: string[]): LogEntry {
             multiLineProperty = 'notes';
             return;
         }
+        if (line.indexOf(STATS_SEPARATOR) === 0) {
+            processingNumStat = true;
+            return;
+        }
+        if (processingNumStat) {
+            filesAltered.push(line.trim());
+            return;
+        }
         if (logEntry && line && multiLineProperty) {
             logEntry[multiLineProperty] += line;
             return;
         }
     });
 
+    if (Object.keys(logEntry).length === 0) {
+        return null;
+    }
+    logEntry.fileStats = parseAlteredFiles(filesAltered);
     return logEntry;
     // if (typeof commit.files === "string") {
     //     let changes = commit.files.split(/\r?\n/g) as string[];
@@ -303,6 +322,20 @@ export function parseLogEntry(lines: string[]): LogEntry {
     // return commit as LogEntry;
 }
 
+function parseAlteredFiles(alteredFiles: string[]): FileStat[] {
+    let stats: FileStat[] = [];
+    alteredFiles.filter(line => line.trim().length > 0).map(line => {
+        const parts = line.split('\t').filter(part => part.trim().length > 0);
+        if (parts.length !== 3) {
+            return;
+        }
+        const add = parts[0] === '-' ? null : parseInt(parts[0]);
+        const del = parts[1] === '-' ? null : parseInt(parts[1]);
+        stats.push({ additions: add, deletions: del, path: parts[2] });
+    });
+
+    return stats;
+}
 function parseAuthCommitter(details: string): ActionedDetails {
     let pos = details.lastIndexOf(">");
     let time = parseInt(details.substring(pos + 1));

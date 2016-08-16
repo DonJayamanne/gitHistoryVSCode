@@ -6,55 +6,33 @@ import * as fs from 'fs';
 import * as gitHist from '../helpers/gitHistory';
 import * as parser from'../logParser';
 import {ActionedDetails, LogEntry, Sha1} from '../contracts';
-import * as htmlResources from './htmlResources';
+import * as path from 'path';
 
 const gitHistorySchema = 'git-history-viewer';
-
+const PAGE_SIZE = 500;
 let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
 let historyRetrieved: boolean;
 let pageIndex = 0;
-let pageSize = 500;
+let pageSize = PAGE_SIZE;
 let canGoPrevious = false;
 let canGoNext = true;
 
-enum ViewStatus {
-    Unknown,
-    Loading,
-    Idle,
-    Error
-}
-let currentStatus: ViewStatus = ViewStatus.Unknown;
-
-
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
-    private lastError: any;
     private lastUri: vscode.Uri;
     private entries: LogEntry[];
 
-    public provideTextDocumentContent(uri: vscode.Uri): string {
-        if (!historyRetrieved) {
-            historyRetrieved = true;
-            currentStatus = ViewStatus.Loading;
-            let that = this;
-            gitHist.getHistory(vscode.workspace.rootPath, pageIndex, pageSize).then(entries => {
-                canGoPrevious = pageIndex > 0;
-                canGoNext = entries.length === pageSize;
-
-                currentStatus = ViewStatus.Idle;
-                this.entries = entries;
-                this.lastError = null;
-                previewUri = vscode.Uri.parse(gitHistorySchema + '://authorityx/git-history' + new Date().getTime().toString());
-                that.update(previewUri);
-            }).catch(error => {
-                currentStatus = ViewStatus.Error;
-                this.lastError = error;
-                previewUri = vscode.Uri.parse(gitHistorySchema + '://authorityx/git-history' + new Date().getTime().toString());
-                this.update(uri);
-            });
-        }
-
-        return this.createHistoryView();
+    public provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Thenable<string> {
+        return gitHist.getHistory(vscode.workspace.rootPath, pageIndex, pageSize).then(entries => {
+            canGoPrevious = pageIndex > 0;
+            canGoNext = entries.length === pageSize;
+            this.entries = entries;
+            let html = this.generateHistoryView();
+            // fs.writeFileSync(path.join(__dirname, '..', '..', 'src', 'test.html'), html);
+            return html;
+        }).catch(error => {
+            return this.generateErrorView(error);
+        });
     }
 
     get onDidChange(): vscode.Event<vscode.Uri> {
@@ -65,66 +43,57 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
         this._onDidChange.fire(uri);
     }
 
-    private createHistoryView(): string {
-        if (this.lastError) {
-            this.lastError = null;
-            return htmlGenerator.generateErrorView('Unknown Error', this.lastError);
-        } else {
-            let vw = this.generateHistoryView();
-            fs.writeFileSync('/Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/src/test.html', vw);
-            return vw;
-        }
+    private getStyleSheetPath(resourceName: string): string {
+        return vscode.Uri.file(path.join(__dirname, '..', '..', 'resources', resourceName)).toString();
+    }
+    private getScriptFilePath(resourceName: string): string {
+        return vscode.Uri.file(path.join(__dirname, '..', 'browser', resourceName)).toString();
+    }
+    private getNodeModulesPath(resourceName: string): string {
+        return vscode.Uri.file(path.join(__dirname, resourceName)).toString();
     }
 
-    private errorMessage(error: string): string {
+    private generateErrorView(error: string): string {
+        const resourcesPath = path.join(__dirname, '..', '..', 'resources');
         return `
+            <head>
+                <link rel="stylesheet" href="${this.getStyleSheetPath('reset.css')}" >
+                <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('octicons', 'font', 'octicons.css'))}" >
+                <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('font-awesome-4.6.3', 'css', 'font-awesome.min.css'))}" >
+                <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
+            </head>
             <body>
-                ${error}
-            </body>`;
+                <style>
+                </style>
+                <div class="errorContents">
+                    <div><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Error</div>
+                    <div>${error}</div>
+                </div>
+            </body>
+            `;
     }
 
     private generateHistoryView(): string {
-        const now = new Date().toString();
-        let innerHtml = '';
-        let menuHtml = '';
-        let menuStyles = '';
-        let styles = '';
-
-        switch (currentStatus) {
-            case ViewStatus.Unknown:
-            case ViewStatus.Loading: {
-                innerHtml = htmlGenerator.generateProgressHtmlView('Loading');
-                styles = htmlResources.PROGRESS_STYLES;
-                break;
-            }
-            case ViewStatus.Idle: {
-                // menuStyles = htmlGenerator.MENU_STYLES;
-                // menuHtml = htmlGenerator.generateHtmlForMenu(testManager.status, this.tests);
-                innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, canGoPrevious, canGoNext);
-                // styles = htmlGenerator.HISTORY_STYLES;
-                break;
-            }
-        }
-
+        const innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, canGoPrevious, canGoNext);
         return `
                 <head>
-                <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/reset.css">
-                <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/hint.base.min.css">
-                <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/octicons/font/octicons.css">
-                <link rel="stylesheet" href="file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/main.css">
-                ${styles}
-                ${menuStyles}
+                    <link rel="stylesheet" href="${this.getStyleSheetPath('reset.css')}" >
+                    <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('octicons', 'font', 'octicons.css'))}" >
+                    <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('font-awesome-4.6.3', 'css', 'font-awesome.min.css'))}" >
+                    <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('hint.base.min.css'))}" >
+                    <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
                 </head>
-                <body id="myBody" onload="var script = document.createElement('script');script.setAttribute('src', 'file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/out/src/browser/proxy.js');script.setAttribute('type', 'text/javascript');document.getElementById('myBody').appendChild(script);">
-                    ${menuHtml}
+                <body id= "myBody" onload="var script = document.createElement('script');script.setAttribute('src', '${this.getScriptFilePath('proxy.js')}');script.setAttribute('type', 'text/javascript');document.getElementById('myBody').appendChild(script);">
                     ${innerHtml}
-                    <div class="hidden">
-                        <div class="script">file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/node_modules/jquery/dist/jquery.min.js</div>
-                        <div class="script">file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/node_modules/clipboard/dist/clipboard.min.js</div>
-                        <div class="script">file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/out/src/browser/svgGenerator.js</div>
-                    </div>
+                <div class="hidden">
+                    <div class="script">${this.getScriptFilePath(path.join('jquery','dist','jquery.min.js'))}</div>
+                    <div class="script">${this.getScriptFilePath(path.join('clipboard','dist','clipboard.min.js'))}</div>
+                    <div class="script">${this.getScriptFilePath(path.join('moment','min','moment.min.js'))}</div>
+                    <div class="script">${this.getScriptFilePath('svgGenerator.js')}</div>
+                    <div class="script">${this.getScriptFilePath('detailsView.js')}</div>
+                </div>
                 </body>
-                `;
+            `;
     }
 }
 
@@ -134,12 +103,12 @@ export function activate(context: vscode.ExtensionContext, outputChannel: vscode
 
     let disposable = vscode.commands.registerCommand('git.viewHistory', () => {
         // Unique name everytime, so that we always refresh the history log
-        // historyRetrieved = false;
-        // pageIndex = 0;
-        // pageSize = 500;
-        // canGoPrevious = false;
-        // canGoNext = true;
-        //previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history' + new Date().getTime().toString());
+        // Untill we add a refresh button to the view
+        historyRetrieved = false;
+        pageIndex = 0;
+        canGoPrevious = false;
+        canGoNext = true;
+        previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?x=' + new Date().getTime().toString());
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History').then((success) => {
         }, (reason) => {
             vscode.window.showErrorMessage(reason);

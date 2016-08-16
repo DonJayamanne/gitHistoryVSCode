@@ -13,6 +13,7 @@ export interface LogEntry {
     subject: string;
     body: string;
     notes: string;
+    fileStats: FileStat[];
     changes: [number, number, string][];
     tags: string[];
     branch: string;
@@ -22,4 +23,10 @@ export interface LogEntry {
 export interface Sha1 {
     full: string;
     short: string;
+}
+
+export interface FileStat {
+    path: string;
+    additions?: number;
+    deletions?: number;
 }

@@ -1,8 +1,9 @@
 /// <reference path="lib.dom.d.ts" />
 /// <reference path="../../../typings/globals/jquery/index.d.ts" />
+/// <reference path="../../..//node_modules/moment/moment.d.ts" />
 
 /// npm install --save @types/clipboard
-/// <reference path="/Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/node_modules/@types/clipboard/index.d.ts" />
+/// <reference path="../../../node_modules/@types/clipboard/index.d.ts" />
 
 
 interface Copy {
@@ -11,3 +12,5 @@ interface Copy {
 declare var copy:Copy;
 
 declare var generateSVG:Function;
+
+declare var moment:Function;

@@ -5,16 +5,18 @@ import {ActionedDetails, LogEntry, Sha1} from '../contracts';
 import {getGitPath} from './historyUtils';
 
 const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
-const LOG_FORMAT = `--format="%nrefs=%d%ncommit=%H%ncommitAbbrev=%h%ntree=%T%ntreeAbbrev=%t%nparents=%P%nparentsAbbrev=%p%nauthor=%an <%ae> %at%ncommitter=%cn <%ce> %ct%nsubject=%s%nbody=%b%n%nnotes=%N%n${LOG_ENTRY_SEPARATOR}%n"`;
+const STATS_SEPARATOR = parser.STATS_SEPARATOR;
+const LOG_FORMAT = `--format="%n${LOG_ENTRY_SEPARATOR}%nrefs=%d%ncommit=%H%ncommitAbbrev=%h%ntree=%T%ntreeAbbrev=%t%nparents=%P%nparentsAbbrev=%p%nauthor=%an <%ae> %at%ncommitter=%cn <%ce> %ct%nsubject=%s%nbody=%b%n%nnotes=%N%n${STATS_SEPARATOR}%n"`;
 export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: number = 100, branchName: string = 'master'): Promise<LogEntry[]> {
-    let args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, branchName, '--']
+    let args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, branchName, '--numstat', '--'];
+    args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--numstat', '--'];
     // This is how you can view the log across all branches
-    args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--']
+    // args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--']
     return getGitPath().then(gitExecutable => {
         return new Promise<LogEntry[]>((resolve, reject) => {
-            var options = { cwd: rootDir }
+            let options = { cwd: rootDir };
             let ls = spawn(gitExecutable, args, options);
-            var error = "";
+            let error = '';
             let outputLines = [''];
             const entries: LogEntry[] = [];
 
@@ -28,9 +30,9 @@ export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: num
                             entries.push(entry);
                         }
                         else {
-                            let x = "";
+                            let x = '';
                         }
-                        outputLines = [];
+                        outputLines = [''];
                     }
                     if (index === 0) {
                         if (data.startsWith(os.EOL)) {

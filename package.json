@@ -85,8 +85,8 @@
     "vscode": "^0.11.0"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
     "clipboard": "^1.5.12",
+    "htmlencode": "0.0.4",
     "moment": "^2.14.1",
     "tmp": "0.0.28"
   }
