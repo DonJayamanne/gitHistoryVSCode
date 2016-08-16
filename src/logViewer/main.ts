@@ -28,7 +28,8 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
             canGoNext = entries.length === pageSize;
             this.entries = entries;
             let html = this.generateHistoryView();
-            // fs.writeFileSync(path.join(__dirname, '..', '..', 'src', 'test.html'), html);
+            const fsPath = path.join(__dirname, '..', '..', '..', 'src', 'test.html');
+            fs.writeFileSync(fsPath, html);
             return html;
         }).catch(error => {
             return this.generateErrorView(error);
@@ -44,17 +45,17 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 
     private getStyleSheetPath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, '..', '..', 'resources', resourceName)).toString();
+        return vscode.Uri.file(path.join(__dirname, '..', '..', '..', 'resources', resourceName)).toString();
     }
     private getScriptFilePath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, '..', 'browser', resourceName)).toString();
+        return vscode.Uri.file(path.join(__dirname, '..', '..', 'src', 'browser', resourceName)).toString();
     }
     private getNodeModulesPath(resourceName: string): string {
-        return vscode.Uri.file(path.join(__dirname, resourceName)).toString();
+        return vscode.Uri.file(path.join(__dirname, '..', '..', '..', 'node_modules', resourceName)).toString();
     }
 
     private generateErrorView(error: string): string {
-        const resourcesPath = path.join(__dirname, '..', '..', 'resources');
+        const resourcesPath = path.join(__dirname, '..', '..', '..', 'resources');
         return `
             <head>
                 <link rel="stylesheet" href="${this.getStyleSheetPath('reset.css')}" >
@@ -86,9 +87,9 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                 <body id= "myBody" onload="var script = document.createElement('script');script.setAttribute('src', '${this.getScriptFilePath('proxy.js')}');script.setAttribute('type', 'text/javascript');document.getElementById('myBody').appendChild(script);">
                     ${innerHtml}
                 <div class="hidden">
-                    <div class="script">${this.getScriptFilePath(path.join('jquery','dist','jquery.min.js'))}</div>
-                    <div class="script">${this.getScriptFilePath(path.join('clipboard','dist','clipboard.min.js'))}</div>
-                    <div class="script">${this.getScriptFilePath(path.join('moment','min','moment.min.js'))}</div>
+                    <div class="script">${this.getNodeModulesPath(path.join('jquery','dist','jquery.min.js'))}</div>
+                    <div class="script">${this.getNodeModulesPath(path.join('clipboard','dist','clipboard.min.js'))}</div>
+                    <div class="script">${this.getNodeModulesPath(path.join('moment','min','moment.min.js'))}</div>
                     <div class="script">${this.getScriptFilePath('svgGenerator.js')}</div>
                     <div class="script">${this.getScriptFilePath('detailsView.js')}</div>
                 </div>
