@@ -28,8 +28,6 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
             canGoNext = entries.length === pageSize;
             this.entries = entries;
             let html = this.generateHistoryView();
-            const fsPath = path.join(__dirname, '..', '..', '..', 'src', 'test.html');
-            fs.writeFileSync(fsPath, html);
             return html;
         }).catch(error => {
             return this.generateErrorView(error);

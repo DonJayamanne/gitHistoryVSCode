@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.0.10
+* Bug fix to remove debug code [#29](https://github.com/DonJayamanne/gitHistoryVSCode/issues/29)
+
 ## Version 0.0.9
 * Added new feature to view git history with graphs and details
 

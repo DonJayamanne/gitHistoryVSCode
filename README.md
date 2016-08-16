@@ -44,6 +44,7 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 ## Change Log 
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
 * Added new feature to view git history with graphs and details
+* Bug fix to remove debug code [#29](https://github.com/DonJayamanne/gitHistoryVSCode/issues/29)
 
 ## Source
 
