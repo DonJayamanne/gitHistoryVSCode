@@ -35,6 +35,12 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
 
+## Roadmap   
+- Cleander details view   
+- View individual file changes (diff, compare)
+- View git log for all branches   
+- View refs (branch, tags)   
+
 ## Change Log 
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
 * Added new feature to view git history with graphs and details
