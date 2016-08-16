@@ -1,7 +1,10 @@
 # Change Log
 
+## Version 0.0.9
+* Added new feature to view git history with graphs and details
+
 ## Version 0.0.8
-* Fixe for issue [#27](https://github.com/DonJayamanne/gitHistoryVSCode/issues/27)
+* Fix for issue [#27](https://github.com/DonJayamanne/gitHistoryVSCode/issues/27)
 
 ## Version 0.0.7
 * Updated to make use of VS Code API for file comparison

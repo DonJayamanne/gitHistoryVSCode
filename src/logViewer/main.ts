@@ -110,7 +110,7 @@ export function activate(context: vscode.ExtensionContext, outputChannel: vscode
         canGoPrevious = false;
         canGoNext = true;
         previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?x=' + new Date().getTime().toString());
-        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History').then((success) => {
+        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History (git log)').then((success) => {
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });

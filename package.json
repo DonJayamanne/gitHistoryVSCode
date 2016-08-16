@@ -1,8 +1,8 @@
 {
   "name": "githistory",
-  "displayName": "Git History",
-  "description": "View file or line History",
-  "version": "0.0.8",
+  "displayName": "Git History (git log)",
+  "description": "View git log, file or line History",
+  "version": "0.0.9",
   "publisher": "donjayamanne",
   "author": {
     "name": "Don Jayamanne",
@@ -46,7 +46,7 @@
       },
       {
         "command": "git.viewHistory",
-        "title": "Git: View History"
+        "title": "Git: View History (git log)"
       }
     ],
     "menus": {
