@@ -51,7 +51,6 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
                         ${nextLink}
                     </div>             
                     <div class="json entries hidden">${htmlEncode(JSON.stringify(entries))}</div>                           
-                    <iframe class="hidden" src='file:///Users/donjayamanne/Desktop/Development/vscode/gitHistoryVSCode/resources/iframeContent.html'></iframe>
                 </div>
             </div>
             <div id="detailsView" class="hidden">
