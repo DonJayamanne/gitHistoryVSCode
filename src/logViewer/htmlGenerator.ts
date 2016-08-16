@@ -28,7 +28,7 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
     let previousHref = canGoPrevious ? encodeURI('command:git.logNavigate?' + JSON.stringify(['previous'])) : '#previous';
     let nextHref = canGoNext ? encodeURI('command:git.logNavigate?' + JSON.stringify(['next'])) : '#next';
 
-    let previousLink = `<a href="${previousHref}" class="previous ${canGoPrevious ? '' : 'not-allowed'}">previous</a>`;
+    let previousLink = `<a id="previous" href="${previousHref}" class="previous ${canGoPrevious ? '' : 'not-allowed'}">previous</a>`;
     let nextLink = `<a id="next" href="${nextHref}" class="next ${canGoNext ? '' : 'not-allowed'}">next</a>`;
 
     return `
