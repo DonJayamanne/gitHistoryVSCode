@@ -116,7 +116,7 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 }
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', relativeFilePath]);
+    return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', relativeFilePath]);
 }
 
 function execGitCommand(rootDir: string, cmd: string, args: string[]): Promise<string> {
