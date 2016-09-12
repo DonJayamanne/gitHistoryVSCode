@@ -36,15 +36,16 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 ![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
 
 ## Roadmap   
-- Cleander details view   
+- Cleaner details view   
 - View individual file changes (diff, compare)
 - View git log for all branches   
 - View refs (branch, tags)   
+- Search git history
 
 ## Change Log 
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
-* Added new feature to view git history with graphs and details
-* Bug fix to remove debug code [#29](https://github.com/DonJayamanne/gitHistoryVSCode/issues/29)
+* Bug fix to deleted temporary files [#32](https://github.com/DonJayamanne/gitHistoryVSCode/issues/32)
+* Fix to restore following changes to file names [#26](https://github.com/DonJayamanne/gitHistoryVSCode/issues/26)
 
 ## Source
 
