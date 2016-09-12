@@ -4,6 +4,21 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 let outChannel: vscode.OutputChannel
+const tmpFileCleanup = new Map<string, Function>();
+
+vscode.workspace.onDidCloseTextDocument(textDocument => {
+	if (!textDocument || tmpFileCleanup.has(textDocument.fileName)) {
+		return;
+	}
+
+	try {
+		tmpFileCleanup.get(textDocument.fileName)()
+	}
+	catch (ex) {
+	}
+	tmpFileCleanup.delete(textDocument.fileName);
+});
+
 export function run(outputChannel: vscode.OutputChannel, fileName: string): any {
 	outChannel = outputChannel;
 
@@ -116,13 +131,13 @@ export function run(outputChannel: vscode.OutputChannel, fileName: string): any 
 }
 
 function genericErrorHandler(error) {
-				if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
+	if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
 		vscode.window.showErrorMessage("Cannot find the git installation");
-				} else {
+	} else {
 		outChannel.appendLine(error);
 		outChannel.show();
 		vscode.window.showErrorMessage("There was an error, please view details in output log");
-				}
+	}
 }
 
 function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
@@ -130,12 +145,13 @@ function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
 	return new Promise((resolve, reject) => {
 		var ext = path.extname(localFilePath);
 		var tmp = require("tmp");
-		tmp.file({ postfix: ext }, function _tempFileCreated(err, tmpFilePath, fd) {
+		tmp.file({ postfix: ext }, function _tempFileCreated(err, tmpFilePath, fd, cleanupCallback) {
 			if (err) {
 				reject(err);
 				return;
 			}
 			historyUtil.writeFile(rootDir, commitSha1, localFilePath, tmpFilePath).then(() => {
+				tmpFileCleanup.set(tmpFilePath, cleanupCallback);
 				resolve(tmpFilePath);
 			}, reject);
 		});
