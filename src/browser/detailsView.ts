@@ -6,15 +6,15 @@ import * as contracts from '../contracts';
     let $detailsView: JQuery;
     let $fileListTemplate: JQuery;
     (window as any).GITHISTORY.initializeDetailsView = function () {
-        $detailsView = $('#detailsView');
-        $fileListTemplate = $('li.template', $detailsView);
+        $detailsView = $('#details-view');
+        $fileListTemplate = $('.diff-row', $detailsView);
         logEntries = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML);
         addEventHandlers();
     };
 
     function addEventHandlers() {
-        $('.messageLink').addClass('hidden');
-        $('span.message').on('click', evt => {
+        $('.commit-subject-link').addClass('hidden');
+        $('.commit-subject').on('click', evt => {
             let entryIndex = evt.target.getAttribute('data-entry-index');
             displayDetails(logEntries[parseInt(entryIndex)]);
         });
@@ -31,18 +31,41 @@ import * as contracts from '../contracts';
             $detailsView.removeClass('hidden');
         }
 
-        $('#subject').html(entry.subject);
-        $('span.name', $detailsView).attr('aria-label', entry.author.email).html(entry.author.name);
-        $('span.when', $detailsView).html(moment(entry.author.date).format('MMM Do YYYY, h:mm:ss a'));
-        $('div.body', $detailsView).html(entry.body);
-        $('div.notes', $detailsView).html(entry.notes);
-        let $files = $('ul.files', $detailsView);
+        $('.commit-subject', $detailsView).html(entry.subject);
+        $('.commit-author .name', $detailsView)
+          .attr('aria-label', entry.author.email)
+          .html(entry.author.name);
+        $('.commit-author .timestamp', $detailsView)
+          .html(moment(entry.author.date).format('[on ]MMM Do YYYY, h:mm:ss a'));
+
+        $('.commit-body', $detailsView)
+          .html(entry.body);
+        $('.commit-notes', $detailsView).html(entry.notes);
+        let $files = $('.committed-files', $detailsView);
         $files.html('');
         entry.fileStats.forEach(stat => {
             let $fileItem = $fileListTemplate.clone(false);
-            $('.added .count', $fileItem).html((stat.additions ? stat.additions : 0).toString());
-            $('.deleted .count', $fileItem).html((stat.deletions ? stat.deletions : 0).toString());
-            $('.fileName', $fileItem).html(stat.path);
+            let { additions, deletions } = stat;
+            let totalDiffs = additions + deletions;
+
+            if (totalDiffs > 5) {
+              additions = Math.ceil(5 * additions / totalDiffs);
+              deletions = 5 - additions;
+            }
+
+            /* show the original number of changes in the title and count */
+            $('.diff-stats', $fileItem).attr('aria-label', `added ${stat.additions} & deleted ${stat.deletions}`);
+            $('.diff-count', $fileItem).html(totalDiffs.toString());
+            /* colour the blocks in addition:deletion ratio */
+            $('.diff-block', $fileItem).each((index: number, el: Element) => {
+                let $el = $(el);
+                if (index < additions) {
+                    $el.addClass('added')
+                } else if (index < totalDiffs) {
+                    $el.addClass('deleted')
+                }
+            });
+            $('.file-name', $fileItem).html(stat.path);
             $files.append($fileItem);
         });
     }

@@ -19,13 +19,13 @@
     function addScriptFile(scriptFilePath: string, onload: (ev: Event) => any) {
         let script = document.createElement('script');
         script.setAttribute('src', scriptFilePath.replace('/\\/g', '/'));
-        document.getElementById('myBody').appendChild(script);
+        document.body.appendChild(script);
         script.onload = onload;
     }
 
     let clipboard = null;
     function initializeClipboard() {
-        $('a.clipboardLink').addClass('hidden');
+        $('a.clipboard-link').addClass('hidden');
         // ($('.btn.clipboard') as any).tooltip({
         //     placement: 'down'
         // });

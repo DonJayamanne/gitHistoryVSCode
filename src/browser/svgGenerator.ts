@@ -46,7 +46,7 @@ import * as contracts from '../contracts';
         drawGitGraph(0, height, items);
     };
 
-    function drawGitGraph(startAt, logEntryHeight: number = 60.8, entries: contracts.LogEntry[]) {
+    function drawGitGraph(startAt: number, logEntryHeight: number = 60.8, entries: contracts.LogEntry[]) {
         // Draw the graph
         let currentY = (0 + 0.5) * logEntryHeight;
         let topMostY = (0 + 0.5) * logEntryHeight;
