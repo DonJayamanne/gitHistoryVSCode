@@ -1,11 +1,41 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
 html, body {
     height: 100%;
     width: 100%;
     margin: 0;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe WPC,Segoe UI,HelveticaNeue-Light,Ubuntu,Droid Sans,sans-serif;
+    padding: 0;
 }
 
 .hidden {
     display: none !important;
+}
+.disabled {
+    cursor: not-allowed;
+}
+.btn {
+    cursor: pointer;
+}
+
+.media {
+    display: flex;
+    align-items: flex-start;
+}
+.media .media-image {
+    margin: 0 1em 0 0;
+}
+.media .media-content {
+    flex: 1;
+}
+.media.right {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+.media.right .media-image {
+    margin: 0 0 0 1em;
 }
 
 #log-view {
@@ -27,67 +57,55 @@ html, body {
 }
 
 #log-view svg path {
-    stroke-width: 2;
+    stroke-width: 3;
     fill: none;
 }
 
 #log-view svg circle {
     stroke: white;
     stroke-width: 0.1em;
-    fill: #555555;
+    fill: #333;
 }
 
-#log-view svg ~ div {
-    margin: 0;
-    padding: 0 0.3em;
+#commit-history {
+    padding: 0;
 }
 
 .log-entry {
-    box-sizing: border-box;
-    border-style: solid;
-    border-width: 0.1em;
-    margin: 0.3em auto;
-    border-radius: 0.2em;
-    padding: 0.3em;
-    xheight: 3.7em;
-    height: 3.5em;
-    xdisplay: flex;
-    display: block;
-    width: 100%;
+    padding: 1em;
     position: relative;
+    border-bottom: 1px solid hsla(0,0%,100%,0.3);
 }
 
-.log-entry .messageLink {
+.log-entry .media-content {
+    position: relative;
+}
+.log-entry .media-image {
+    flex-basis: 6em;
+}
+
+.log-entry .commit-subject-link {
     display: block;
     height: 1em;
     position: absolute;
+    width: 100%;
     color: transparent;
 }
 
-.log-entry .messageLink:hover ~ .message, .log-entry .messageLink ~ .message:hover {
+.log-entry .commit-subject-link:hover ~ .commit-subject,
+.log-entry .commit-subject-link ~ .commit-subject:hover {
     text-decoration: underline;
     cursor: pointer;
 }
 
-.message {
+.commit-subject {
+    font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-weight: bold;
-    xflex-grow: 1;
-    xwidth: 1%;
-    float: left;
-    max-width: 100%;
-    margin-bottom: 0.2em;
 }
 
-.log-entry div {
-    display: flex;
-    width: 100%;
-    margin: 0em 0 0 0;
-}
-
-.author {
+.commit-author {
     margin-top: 0.2em;
     position: relative;
     white-space: nowrap;
@@ -95,317 +113,203 @@ html, body {
     text-overflow: ellipsis;
     overflow: hidden;
 }
-
-.author a:hover ~ span .name {
-    text-decoration: underline;
+.commit-author .timestamp {
+    color: hsla(0,0%,100%,0.5);
 }
 
-.author .details {
-    text-overflow: ellipsis;
+.commit-hash-container {
+    background-color: hsla(204,80%,40%,1);
     white-space: nowrap;
-    overflow: hidden;
 }
 
-.author a {
-    position: absolute;
-    left: 0;
-    top: 0;
-    color: transparent;
-}
-
-span.hash {
-    flex: 1;
-    text-align: right;
-    min-width: 9em;
-}
-
-.hash .sha.short {
-    min-width: 3.5em;
-}
-
-
-/*.hash .clipboard,
-.hash .badge {
-    height: 1.6em;
-    border-style: solid;
-    border-width: 0.1em;
-    margin: 0;
-    xfloat: right;
-    padding: 0.2em;
-    cursor: pointer;
-    box-sizing: border-box;
-}*/
-
-
-/*.badgeparent, .clipboardparent {
-    float:right;
-    margin: 0;
-    xfloat: right;
-}*/
-
-
-/*.hash .badge {
-    border-radius: 0 0.25em 0.25em 0;
-    padding-right:0.35em;
-    padding-left:0.3em;
-    font-weight: bold;
-}
-
-.hash .clipboard {
-    border-radius: 0.25em 0 0 0.25em;
-    border-right-width: 0;
-}*/
-
-
-/*.hash .clipboard:hover {
-    border-width: 0.15em;
-    padding-top: 0.1em;
-    border-right-width: 0;
-}
-
-.hash .badge:hover {
-    border-width: 0.15em;
-    padding-top: 0.1em;
-    padding-right: 0.25em;
-    padding-left: 0.35em;
-    border-left-width: 0.1em;
-}*/
-
-ul.hash {
-    list-style: none;
-    box-sizing: border-box;
-    border-radius: 0.25em;
+.commit-hash-container .commit-hash,
+.commit-hash-container .copy-button {
     display: inline-block;
-    line-height: 1.4em;
-    border-style: solid;
-    border-width: 1px;
-    xpadding: 0.2em;
-    cursor: pointer;
+    color: white;
+    padding: 0.4em;
+}
+.commit-hash-container .commit-hash:hover {
+    background-color: hsla(0,0%,100%,0.12);
 }
 
-ul.hash li {
-    display: inline;
+.commit-hash-container .copy-button {
+    position: relative;
+    /* compensate for octicon margin */
+    padding-left: 0.8em;
 }
-
-ul.hash li span {
-    display: block;
-    float: left;
-    margin: 0 0.2em;
-    line-height: 1.4em;
-    border-style: solid;
+.copy-button .clipboard {
+    opacity: 0.8;
 }
-
-ul.hash li:first-child span.hint--bottom {
-    width: 1.4em;
-    border-right-width: 0.1em;
+.copy-button .clipboard:hover {
+    opacity: 1;
 }
-
-.clipboard ~ a {
+.copy-button .clipboard-link {
     position: absolute;
     left: 0;
     top: 0;
-    width: 1em;
-    line-height: 1.4em;
-    background-color: transparent;
-    color: transparent;
-    width: 1.4em;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
 }
 
+.sha-code {
+    font-family: Consolas, 'Courier New', monospace;
+}
+.sha-code.short {
+    width: 7em;
+}
 
 /* Navigation*/
 
-.navigation {
+#history-navbar {
     text-align: right;
-    margin-bottom: 0.5em;
+    margin: 1em 0 0.5em;
     position: relative;
 }
-
-.navigation ul {
+#history-navbar .navbar {
     list-style: none;
-    box-sizing: border-box;
-    border-radius: 0.25em;
-    display: inline-block;
-    line-height: 1.4em;
-    border-style: solid;
-    border-width: 1px;
-    xpadding: 0.2em;
+    display: inline-flex;
+    font-size: 12px;
+    border: 1px solid hsla(0,0%,0%,0.2);
+    background-color: hsla(204,70%,40%,1);
+    padding: 0;
+}
+.navbar .navbar-item {
+    text-align: center;
+    color: white;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.navbar-item .navbar-link {
+    color: currentcolor;
+    text-decoration: none;
     cursor: pointer;
-}
-
-.navigation ul li {
-    display: inline;
-    position: relative;
-}
-
-.navigation ul li span {
     display: block;
-    float: left;
-    margin: 0 0.2em;
-    line-height: 1.4em;
-    border-style: solid;
+    line-height: 22px;
+    padding: 0 1em;
 }
-
-.navigation ul li:first-child span:first-child {
-    margin-right: 0;
+.navbar-item .navbar-link:hover {
+    /* hover style for the link, uses vscode's styles */
+    background-color: hsla(0,0%,100%,0.12);
 }
-
-.navigation ul li:first-child span:nth-of-type(2) {
-    border-right-width: 0.1em;
-    padding-right: 0.3em;
-    margin-left: 0;
+.navbar-item.previous .navbar-link {
+    border-right: 1px solid hsla(0,0%,100%,0.5);
 }
-
-.navigation a.previous {
-    position: absolute;
-    top: 0;
-    right: 4em;
-    color: transparent;
-    height: 1.5em;
-    width: 5em;
+.navbar-item .octicon {
+    /* align the icons with text */
+    vertical-align: -10%;
 }
-
-.navigation a.next {
-    position: absolute;
-    top: 0;
-    right: 0em;
-    color: transparent;
-    height: 1.5em;
-    width: 4em;
+.navbar-item.previous .octicon {
+    margin: 0 5px 0 0;
 }
-
-.not-allowed {
-    cursor: not-allowed;
+.navbar-item.next .octicon {
+    margin: 0 -5px 0 5px;
+}
+.navbar-item.disabled {
+    color: hsla(0,0%,100%,0.5);
 }
 
 
 /* Errors */
 
-.errorContents {
-    height: 200px;
-    width: 100%;
+.error-box {
     text-align: center;
-    margin-top: 2em;
+    color: #c33;
+    padding: 2rem;
 }
 
-.errorContents div:first-child {
-    font-size: 1.3em;
-    font-weight: bold;
-    padding: 1em;
+.error-box {
+  animation-duration: 0.75s;
 }
 
-.errorContents i {
-    padding-right: 0.3em;
+.error-box .error-icon > i {
+    font-size: 4em;
+    margin-right: 0;
+}
+
+.error-box .error-title {
+    font-weight: lighter;
+}
+
+.error-box .error-details {
+    font-weight: normal;
 }
 
 
 /* Details View */
 
-#detailsView {
-    box-sizing: border-box;
-    padding: 0.3em;
-    display: block;
-    width: 100%;
-    height: 15em;
+#details-view {
     position: absolute;
     bottom: 0;
+    left: 0;
+    right: 0;
+    height: 15em;
+    overflow: auto;
+    padding: 1em;
+    border: 1px solid hsla(0,0%,100%,0.12);
+    border-top: 1px solid white;
+    border-bottom: none;
 }
 
-#detailsView h1 {
-    font-size: 1.2em;
-    font-weight: bold;
+#details-view .commit-subject {
+    font-size: 1.4em;
+    font-weight: lighter;
 }
 
-#detailsView div.view {
-    box-sizing: border-box;
-    border-style: solid;
-    border-width: 0.2em;
-    border-radius: 0.2em;
-    padding: 0.3em;
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow-y: scroll;
+#details-view .commit-body,
+#details-view .commit-notes {
+    margin: 2em 0;
 }
 
-#detailsView div:first-child .body {
-    margin-top: 0.3em;
-    border-top: 0.1em solid;
-}
-
-#detailsView div:first-child .body, #detailsView div:first-child .notes {
-    padding: 0.2em;
-    margin-bottom: 0.3em;
-    border-bottom: 0.1em solid;
-}
-
-#detailsView div:first-child .body:empty, #detailsView div:first-child .notes:empty {
+#details-view .commit-body:empty,
+#details-view .commit-notes:empty {
     display: none;
 }
 
-#detailsView .name {
-    margin: 0.2em;
-}
-
-#detailsView ul {
+#details-view .committed-files {
     list-style: none;
-    margin-top: 1em;
+    margin: 1em 0 0;
 }
 
-#detailsView ul ul {
-    list-style: none;
-    box-sizing: border-box;
-    border-radius: 0.25em;
-    display: inline-block;
-    line-height: 1.4em;
-    border-style: solid;
-    border-width: 1px;
-    xpadding: 0.2em;
-    cursor: pointer;
-}
-
-#detailsView li.added, #detailsView li.deleted {
-    display: inline;
-    position: relative;
-}
-
-#detailsView li.added span, #detailsView li.deleted span {
-    display: block;
-    float: left;
-    line-height: 1.4em;
-    border-style: solid;
-}
-
-#detailsView li.added span:first-child, #detailsView li.deleted span:first-child {
-    padding-left: 0.2em;
-}
-
-#detailsView li.added span {
-    background-color: #cfc;
-    color: #399839
-}
-
-#detailsView li.deleted span {
-    background-color: #fdd;
-    color: #c33
-}
-
-#detailsView label.changes {
-    clear: both;
-    display: block;
-}
-
-#detailsView ul.changes {
-    float: left;
-    margin-top: 0;
-}
-
-div.fileName {
+.committed-files .diff-row {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    /* border: 1px solid; */
-    padding: 0.3em;
+    margin: 0.5em 0;
 }
+.committed-files .file-name {
+    display: inline-block;
+    padding-left: 0.5em;
+}
+.diff-row .diff-stats {
+    display: inline-block;
+    vertical-align: -0.1em;
+}
+
+.diff-stats .diff-count {
+    display: inline-block;
+    vertical-align: middle;
+    font-family: Consolas, Courier New, monospace;
+    font-size: 0.9em;
+    color: lightgray;
+    text-align: right;
+    width: 4em;
+}
+.diff-stats .diff-block {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-left: 1px;
+    color: gray;
+    background-color: currentcolor;
+}
+.diff-block.added {
+    background-color: green;
+}
+.diff-block.deleted {
+    background-color: maroon;
+}
+
 
 
 /* Dropdown Menu */

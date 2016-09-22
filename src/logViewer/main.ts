@@ -23,15 +23,16 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     private entries: LogEntry[];
 
     public provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Thenable<string> {
-        return gitHist.getHistory(vscode.workspace.rootPath, pageIndex, pageSize).then(entries => {
-            canGoPrevious = pageIndex > 0;
-            canGoNext = entries.length === pageSize;
-            this.entries = entries;
-            let html = this.generateHistoryView();
-            return html;
-        }).catch(error => {
-            return this.generateErrorView(error);
-        });
+        return gitHist.getHistory(vscode.workspace.rootPath, pageIndex, pageSize)
+          .then(entries => {
+              canGoPrevious = pageIndex > 0;
+              canGoNext = entries.length === pageSize;
+              this.entries = entries;
+              let html = this.generateHistoryView();
+              return html;
+          }).catch(error => {
+              return this.generateErrorView(error);
+          });
     }
 
     get onDidChange(): vscode.Event<vscode.Uri> {
@@ -53,37 +54,32 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 
     private generateErrorView(error: string): string {
-        const resourcesPath = path.join(__dirname, '..', '..', '..', 'resources');
         return `
             <head>
-                <link rel="stylesheet" href="${this.getStyleSheetPath('reset.css')}" >
+                <link rel="stylesheet" href="${this.getNodeModulesPath(path.join('normalize.css', 'normalize.css'))}" >
                 <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('octicons', 'font', 'octicons.css'))}" >
-                <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('font-awesome-4.6.3', 'css', 'font-awesome.min.css'))}" >
+                <link rel="stylesheet" href="${this.getStyleSheetPath('animate.min.css')}" >
                 <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
             </head>
             <body>
-                <style>
-                </style>
-                <div class="errorContents">
-                    <div><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Error</div>
-                    <div>${error}</div>
-                </div>
+                ${htmlGenerator.generateErrorView(error)}
             </body>
-            `;
+        `;
     }
 
     private generateHistoryView(): string {
         const innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, canGoPrevious, canGoNext);
         return `
-                <head>
-                    <link rel="stylesheet" href="${this.getStyleSheetPath('reset.css')}" >
-                    <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('octicons', 'font', 'octicons.css'))}" >
-                    <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('font-awesome-4.6.3', 'css', 'font-awesome.min.css'))}" >
-                    <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('hint.base.min.css'))}" >
-                    <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
-                </head>
-                <body id= "myBody" onload="var script = document.createElement('script');script.setAttribute('src', '${this.getScriptFilePath('proxy.js')}');script.setAttribute('type', 'text/javascript');document.getElementById('myBody').appendChild(script);">
-                    ${innerHtml}
+            <head>
+                <link rel="stylesheet" href="${this.getNodeModulesPath(path.join('normalize.css', 'normalize.css'))}" >
+                <link rel="stylesheet" href="${this.getStyleSheetPath(path.join('octicons', 'font', 'octicons.css'))}" >
+                <link rel="stylesheet" href="${this.getStyleSheetPath('animate.min.css')}" >
+                <link rel="stylesheet" href="${this.getStyleSheetPath('hint.min.css')}" >
+                <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
+            </head>
+
+            <body onload="var script = document.createElement('script');script.setAttribute('src', '${this.getScriptFilePath('proxy.js')}');script.setAttribute('type', 'text/javascript');document.body.appendChild(script);">
+                ${innerHtml}
                 <div class="hidden">
                     <div class="script">${this.getNodeModulesPath(path.join('jquery','dist','jquery.min.js'))}</div>
                     <div class="script">${this.getNodeModulesPath(path.join('clipboard','dist','clipboard.min.js'))}</div>
@@ -91,8 +87,8 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                     <div class="script">${this.getScriptFilePath('svgGenerator.js')}</div>
                     <div class="script">${this.getScriptFilePath('detailsView.js')}</div>
                 </div>
-                </body>
-            `;
+            </body>
+        `;
     }
 }
 
