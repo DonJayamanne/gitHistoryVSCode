@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.0.12
+* Improved look and feel [#35](https://github.com/DonJayamanne/gitHistoryVSCode/pull/35)
+
 ## Version 0.0.11
 * Bug fix to deleted temporary files [#32](https://github.com/DonJayamanne/gitHistoryVSCode/issues/32)
 * Fix to restore following changes to file names [#26](https://github.com/DonJayamanne/gitHistoryVSCode/issues/26)

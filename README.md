@@ -42,10 +42,13 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 - View refs (branch, tags)   
 - Search git history
 
+## Thanks 
+- [Kumar Harsh](https://github.com/kumarharsh)
+    + Improved look and feel [#35](https://github.com/DonJayamanne/gitHistoryVSCode/pull/35)
+
 ## Change Log 
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
-* Bug fix to deleted temporary files [#32](https://github.com/DonJayamanne/gitHistoryVSCode/issues/32)
-* Fix to restore following changes to file names [#26](https://github.com/DonJayamanne/gitHistoryVSCode/issues/26)
+* Improved look and feel 
 
 ## Source
 
