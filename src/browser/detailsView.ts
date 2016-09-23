@@ -15,23 +15,37 @@ import * as contracts from '../contracts';
     };
 
     function addEventHandlers() {
-        $('.commit-subject-link').addClass('hidden');
-        $('.commit-subject').on('click', evt => {
-            let entryIndex = evt.target.getAttribute('data-entry-index');
-            displayDetails(logEntries[parseInt(entryIndex)], $(evt.target).closest('.log-entry'));
-        });
-        $('.commit-hash').on('click', evt => {
-            let entryIndex = evt.target.getAttribute('data-entry-index');
+        $('.commit-subject-link', $logView).addClass('hidden');
+
+        // delegate the events
+        $logView
+          .on('click', '.commit-subject', evt => {
+              let entryIndex = evt.target.getAttribute('data-entry-index');
+              displayDetails(logEntries[parseInt(entryIndex)], event.target);
+          })
+          .on('click', '.commit-hash', evt => {
+              let entryIndex = evt.target.getAttribute('data-entry-index');
+              let $logEntry = $(evt.target).closest('.log-entry');
+              displayDetails(logEntries[parseInt(entryIndex)], event.target);
+          })
+        ;
+
             displayDetails(logEntries[parseInt(entryIndex)], $(evt.target).closest('.log-entry'));
         });
     }
 
     let detailsViewShown = false;
-    function displayDetails(entry: contracts.LogEntry, $targetEntry: JQuery) {
+    function displayDetails(entry: contracts.LogEntry, eventTarget: Element) {
+        let $logEntry = $(eventTarget).closest('.log-entry');
+
+        // mark this log entry as selected
+        $('.log-entry', $logView).removeClass('active');
+        $logEntry.addClass('active');
+
         if (!detailsViewShown) {
             $logView.addClass('with-details');
             $logView.animate({
-              scrollTop: $targetEntry.offset().top - $logView.offset().top + $logView.scrollTop()
+              scrollTop: $logEntry.offset().top - $logView.offset().top + $logView.scrollTop()
             });
             $detailsView.removeClass('hidden');
         }

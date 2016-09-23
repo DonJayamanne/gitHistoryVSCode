@@ -110,6 +110,7 @@ body {
 }
 
 .commit-author {
+    font-size: 0.8em;
     margin-top: 0.2em;
     position: relative;
     white-space: nowrap;
@@ -118,7 +119,7 @@ body {
     overflow: hidden;
 }
 .commit-author .timestamp {
-    color: hsla(0,0%,100%,0.5);
+    opacity: 0.7;
 }
 
 .commit-hash-container {
@@ -161,6 +162,16 @@ body {
 }
 .sha-code.short {
     width: 7em;
+}
+
+.log-entry.active .commit-hash-container {
+  background-color: yellowgreen;
+}
+.log-entry.active .commit-subject {
+  color: yellowgreen;
+}
+.log-entry.active .commit-author {
+  color: yellowgreen;
 }
 
 /* Navigation*/
@@ -251,8 +262,9 @@ body {
     overflow: auto;
     padding: 1rem;
     border: 1px solid hsla(0,0%,100%,0.12);
-    border-top: 1px solid white;
+    border-top: 1px solid hsla(0,0%,100%,0.50);
     border-bottom: none;
+}
 }
 
 #details-view .commit-subject {
