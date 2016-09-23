@@ -3,9 +3,11 @@ import * as contracts from '../contracts';
 
 (function () {
     let logEntries: contracts.LogEntry[];
+    let $logView: JQuery;
     let $detailsView: JQuery;
     let $fileListTemplate: JQuery;
     (window as any).GITHISTORY.initializeDetailsView = function () {
+        $logView = $('#log-view');
         $detailsView = $('#details-view');
         $fileListTemplate = $('.diff-row', $detailsView);
         logEntries = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML);
@@ -16,18 +18,21 @@ import * as contracts from '../contracts';
         $('.commit-subject-link').addClass('hidden');
         $('.commit-subject').on('click', evt => {
             let entryIndex = evt.target.getAttribute('data-entry-index');
-            displayDetails(logEntries[parseInt(entryIndex)]);
+            displayDetails(logEntries[parseInt(entryIndex)], $(evt.target).closest('.log-entry'));
         });
-        $('span.sha.short').on('click', evt => {
+        $('.commit-hash').on('click', evt => {
             let entryIndex = evt.target.getAttribute('data-entry-index');
-            displayDetails(logEntries[parseInt(entryIndex)]);
+            displayDetails(logEntries[parseInt(entryIndex)], $(evt.target).closest('.log-entry'));
         });
     }
 
     let detailsViewShown = false;
-    function displayDetails(entry: contracts.LogEntry) {
+    function displayDetails(entry: contracts.LogEntry, $targetEntry: JQuery) {
         if (!detailsViewShown) {
-            $('#log-view').addClass('with-details');
+            $logView.addClass('with-details');
+            $logView.animate({
+              scrollTop: $targetEntry.offset().top - $logView.offset().top + $logView.scrollTop()
+            });
             $detailsView.removeClass('hidden');
         }
 
