@@ -79,6 +79,7 @@ html, body {
 
 .log-entry .media-content {
     position: relative;
+    overflow: hidden;
 }
 .log-entry .media-image {
     flex-basis: 6em;
