@@ -9,6 +9,12 @@ html, body {
     font-family: -apple-system,BlinkMacSystemFont,Segoe WPC,Segoe UI,HelveticaNeue-Light,Ubuntu,Droid Sans,sans-serif;
     padding: 0;
 }
+html {
+  font-size: 62.5%; /* make 1rem = 10px */
+}
+body {
+    font-size: 16px;
+}
 
 .hidden {
     display: none !important;
@@ -39,15 +45,13 @@ html, body {
 }
 
 #log-view {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    overflow-y: scroll;
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
 }
 
-.with-details {
-    bottom: 15em;
+#log-view.with-details {
+    height: calc(100% - 20rem);
 }
 
 #log-view svg {
@@ -107,6 +111,7 @@ html, body {
 }
 
 .commit-author {
+    font-size: 0.8em;
     margin-top: 0.2em;
     position: relative;
     white-space: nowrap;
@@ -115,7 +120,7 @@ html, body {
     overflow: hidden;
 }
 .commit-author .timestamp {
-    color: hsla(0,0%,100%,0.5);
+    opacity: 0.7;
 }
 
 .commit-hash-container {
@@ -158,6 +163,16 @@ html, body {
 }
 .sha-code.short {
     width: 7em;
+}
+
+.log-entry.active .commit-hash-container {
+  background-color: yellowgreen;
+}
+.log-entry.active .commit-subject {
+  color: yellowgreen;
+}
+.log-entry.active .commit-author {
+  color: yellowgreen;
 }
 
 /* Navigation*/
@@ -216,7 +231,7 @@ html, body {
 .error-box {
     text-align: center;
     color: #c33;
-    padding: 2rem;
+    padding: 3rem;
 }
 
 .error-box {
@@ -244,17 +259,34 @@ html, body {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 15em;
+    height: 20rem;
     overflow: auto;
-    padding: 1em;
+    padding: 1rem;
     border: 1px solid hsla(0,0%,100%,0.12);
-    border-top: 1px solid white;
+    border-top: 1px solid hsla(0,0%,100%,0.50);
     border-bottom: none;
+}
+
+#details-view .close-btn {
+    font-size: 1.2rem;
+    position: absolute;
+    padding: 1rem; /* increases the hit-area */
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    opacity: 0.8;
+    z-index: 5;
+}
+#details-view .close-btn:hover {
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
 }
 
 #details-view .commit-subject {
     font-size: 1.4em;
     font-weight: lighter;
+    line-height: 2;
+    margin: 0;
 }
 
 #details-view .commit-body,

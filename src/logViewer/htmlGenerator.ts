@@ -56,6 +56,7 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
         </div>
 
         <div id="details-view" class="hidden">
+            <a class="close-btn"><i class="octicon octicon-x"></i></a>
             <h1 class="commit-subject">Merged Pull request from some bug fix area</h1>
             <div class="commit-author">
                 <span class="name hint--right hint--rounded hint--bounce" aria-label="don.jayamanne@yahoo.com" title="don.jayamanne@yahoo.com">Don Jayamanne</span>
@@ -109,7 +110,7 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                         </div>
                     </div>
                     <div class="media-content">
-                        <a href="#popup1" class="commit-subject-link">${htmlEncode(entry.subject)}</a>
+                        <a class="commit-subject-link">${htmlEncode(entry.subject)}</a>
                         <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry.subject)}</div>
                         <div class="commit-author">
                             <span class="name hint--right hint--rounded hint--bounce" aria-label="${entry.author.email}">${htmlEncode(entry.author.name)}</span>

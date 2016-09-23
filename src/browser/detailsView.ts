@@ -3,9 +3,11 @@ import * as contracts from '../contracts';
 
 (function () {
     let logEntries: contracts.LogEntry[];
+    let $logView: JQuery;
     let $detailsView: JQuery;
     let $fileListTemplate: JQuery;
     (window as any).GITHISTORY.initializeDetailsView = function () {
+        $logView = $('#log-view');
         $detailsView = $('#details-view');
         $fileListTemplate = $('.diff-row', $detailsView);
         logEntries = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML);
@@ -13,21 +15,39 @@ import * as contracts from '../contracts';
     };
 
     function addEventHandlers() {
-        $('.commit-subject-link').addClass('hidden');
-        $('.commit-subject').on('click', evt => {
-            let entryIndex = evt.target.getAttribute('data-entry-index');
-            displayDetails(logEntries[parseInt(entryIndex)]);
-        });
-        $('span.sha.short').on('click', evt => {
-            let entryIndex = evt.target.getAttribute('data-entry-index');
-            displayDetails(logEntries[parseInt(entryIndex)]);
-        });
+        $('.commit-subject-link', $logView).addClass('hidden');
+
+        // delegate the events
+        $logView
+          .on('click', '.commit-subject', evt => {
+              let entryIndex = evt.target.getAttribute('data-entry-index');
+              displayDetails(logEntries[parseInt(entryIndex)], event.target);
+          })
+          .on('click', '.commit-hash', evt => {
+              let entryIndex = evt.target.getAttribute('data-entry-index');
+              let $logEntry = $(evt.target).closest('.log-entry');
+              displayDetails(logEntries[parseInt(entryIndex)], event.target);
+          })
+        ;
+
+        $detailsView
+          .on('click', '.close-btn', hideDetails)
+        ;
     }
 
     let detailsViewShown = false;
-    function displayDetails(entry: contracts.LogEntry) {
+    function displayDetails(entry: contracts.LogEntry, eventTarget: Element) {
+        let $logEntry = $(eventTarget).closest('.log-entry');
+
+        // mark this log entry as selected
+        $('.log-entry', $logView).removeClass('active');
+        $logEntry.addClass('active');
+
         if (!detailsViewShown) {
-            $('#log-view').addClass('with-details');
+            $logView.addClass('with-details');
+            $logView.animate({
+              scrollTop: $logEntry.offset().top - $logView.offset().top + $logView.scrollTop()
+            });
             $detailsView.removeClass('hidden');
         }
 
@@ -68,5 +88,11 @@ import * as contracts from '../contracts';
             $('.file-name', $fileItem).html(stat.path);
             $files.append($fileItem);
         });
+    }
+
+    function hideDetails() {
+      detailsViewShown = false;
+      $detailsView.addClass('hidden');
+      $logView.removeClass('with-details');
     }
 })();
