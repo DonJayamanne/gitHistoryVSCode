@@ -265,6 +265,20 @@ body {
     border-top: 1px solid hsla(0,0%,100%,0.50);
     border-bottom: none;
 }
+
+#details-view .close-btn {
+    font-size: 1.2rem;
+    position: absolute;
+    padding: 1rem; /* increases the hit-area */
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    opacity: 0.8;
+    z-index: 5;
+}
+#details-view .close-btn:hover {
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
 }
 
 #details-view .commit-subject {

@@ -30,8 +30,9 @@ import * as contracts from '../contracts';
           })
         ;
 
-            displayDetails(logEntries[parseInt(entryIndex)], $(evt.target).closest('.log-entry'));
-        });
+        $detailsView
+          .on('click', '.close-btn', hideDetails)
+        ;
     }
 
     let detailsViewShown = false;
@@ -87,5 +88,11 @@ import * as contracts from '../contracts';
             $('.file-name', $fileItem).html(stat.path);
             $files.append($fileItem);
         });
+    }
+
+    function hideDetails() {
+      detailsViewShown = false;
+      $detailsView.addClass('hidden');
+      $logView.removeClass('with-details');
     }
 })();
