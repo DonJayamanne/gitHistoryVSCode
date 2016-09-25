@@ -21,12 +21,12 @@ import * as contracts from '../contracts';
         $logView
           .on('click', '.commit-subject', evt => {
               let entryIndex = evt.target.getAttribute('data-entry-index');
-              displayDetails(logEntries[parseInt(entryIndex)], event.target);
+              displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
           })
           .on('click', '.commit-hash', evt => {
               let entryIndex = evt.target.getAttribute('data-entry-index');
               let $logEntry = $(evt.target).closest('.log-entry');
-              displayDetails(logEntries[parseInt(entryIndex)], event.target);
+              displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
           })
         ;
 
@@ -80,9 +80,9 @@ import * as contracts from '../contracts';
             $('.diff-block', $fileItem).each((index: number, el: Element) => {
                 let $el = $(el);
                 if (index < additions) {
-                    $el.addClass('added')
+                    $el.addClass('added');
                 } else if (index < totalDiffs) {
-                    $el.addClass('deleted')
+                    $el.addClass('deleted');
                 }
             });
             $('.file-name', $fileItem).html(stat.path);
