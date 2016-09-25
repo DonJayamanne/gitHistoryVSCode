@@ -27,7 +27,7 @@ You can add keyboard short cuts for the above commands by following the directio
 
 NOTE: The file for which the history is to be viewed, must already be opened.
  
-![Image of Git Log](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/gitLog.gif)
+![Image of Git Log](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/gitLogv2.gif)
 
 ![Image of File History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/fileHistoryCommand.gif)
 
