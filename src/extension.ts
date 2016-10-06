@@ -8,15 +8,8 @@ import * as viewer from './logViewer/main';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	var outChannel: vscode.OutputChannel;
-	outChannel = vscode.window.createOutputChannel('Git');
-	//outChannel.clear();
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "githistory" is now active!');
-	var outChannel: vscode.OutputChannel;
-	outChannel = vscode.window.createOutputChannel('Git');
+	const outChannel = vscode.window.createOutputChannel('Git');
+	history.activate(outChannel);
     var disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
         outChannel.clear();
 		let fileName = '';
@@ -29,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			fileName = vscode.window.activeTextEditor.document.fileName
 		}
-		history.run(outChannel, fileName);
+		history.run(fileName);
 	});
 	context.subscriptions.push(disposable);
 

@@ -8,6 +8,9 @@ import * as fs from 'fs';
 let outChannel: vscode.OutputChannel
 const tmpFileCleanup = new Map<string, Function>();
 
+export function activate(outputChannel: vscode.OutputChannel){
+	outChannel = outputChannel;
+}
 vscode.workspace.onDidCloseTextDocument(textDocument => {
 	if (!textDocument || tmpFileCleanup.has(textDocument.fileName)) {
 		return;
@@ -38,9 +41,7 @@ vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, rela
 		vscode.window.showErrorMessage(`There was an error in retrieving the file history. (${ex.message ? ex.message : ex + ''})`);
 	});
 });
-export function run(outputChannel: vscode.OutputChannel, fileName: string): any {
-	outChannel = outputChannel;
-
+export function run(fileName: string): any {
     historyUtil.getGitRepositoryPath(fileName).then(
         (gitRepositoryPath) => {
 			let relativeFilePath = path.relative(gitRepositoryPath, fileName);
