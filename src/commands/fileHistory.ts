@@ -3,6 +3,8 @@ import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
 import * as fs from 'fs';
 
+//TODO:Clean up this mess
+
 let outChannel: vscode.OutputChannel
 const tmpFileCleanup = new Map<string, Function>();
 
@@ -18,13 +20,29 @@ vscode.workspace.onDidCloseTextDocument(textDocument => {
 	}
 	tmpFileCleanup.delete(textDocument.fileName);
 });
-
+vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
+	const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
+	const gitRepositoryPath = vscode.workspace.rootPath;
+	historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, sha1, isoStrictDateTime).then((data: any[]) => {
+		const historyItem: any = data.find(data => data.sha1 === sha1);
+		const previousItems = data.filter(data => data.sha1 !== sha1);
+		historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
+		const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
+			label: '',
+			description: '',
+			data: historyItem,
+			isLast: historyItem.previousSha1.length === 0
+		};
+		onItemSelected(item, fileName, relativeFilePath);
+	}, ex => {
+		vscode.window.showErrorMessage(`There was an error in retrieving the file history. (${ex.message ? ex.message : ex + ''})`);
+	});
+});
 export function run(outputChannel: vscode.OutputChannel, fileName: string): any {
 	outChannel = outputChannel;
 
     historyUtil.getGitRepositoryPath(fileName).then(
         (gitRepositoryPath) => {
-
 			let relativeFilePath = path.relative(gitRepositoryPath, fileName);
 
 			historyUtil.getFileHistory(gitRepositoryPath, relativeFilePath).then(displayHistory, genericErrorHandler);
@@ -62,72 +80,73 @@ export function run(outputChannel: vscode.OutputChannel, fileName: string): any 
 					if (!item) {
 						return;
 					}
-					onItemSelected(item);
+					onItemSelected(item, fileName, relativeFilePath);
 				})
 			}
-
-			function onItemSelected(item: vscode.QuickPickItem) {
-				var itemPickList: vscode.QuickPickItem[] = [];
-				itemPickList.push({ label: "View Change Log", description: "Author, committer and message" });
-				itemPickList.push({ label: "View File Contents", description: "" });
-				itemPickList.push({ label: "Compare against workspace file", description: "" });
-				if (!(<any>item).isLast) {
-					itemPickList.push({ label: "Compare against previous version", description: "" });
-				}
-
-				vscode.window.showQuickPick(itemPickList, { placeHolder: item.label, matchOnDescription: true }).then(cmd => {
-					if (!cmd) {
-						return;
-					}
-
-					var data = (<any>item).data;
-					if (cmd.label === itemPickList[0].label) {
-						viewLog(data);
-						return;
-					}
-					if (cmd.label === itemPickList[1].label) {
-						viewFile(data);
-						return;
-					}
-					if (cmd.label === itemPickList[2].label) {
-						launchFileCompareWithLocal(data);
-						return;
-					}
-					if (itemPickList.length > 3 && cmd.label === itemPickList[3].label) {
-						launchFileCompareWithPrevious(data);
-						return;
-					}
-				});
-			}
-
-			function viewFile(details) {
-				displayFile(details.sha1, relativeFilePath).then(() => { }, genericErrorHandler);
-			}
-
-			function viewLog(details) {
-				var authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
-				var committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
-				var log = `sha1 : ${details.sha1}\n` +
-					`Author : ${details.author_name} <${details.author_email}>\n` +
-					`Author Date : ${authorDate}\n` +
-					`Committer Name : ${details.committer_name} <${details.committer_email}>\n` +
-					`Commit Date : ${committerDate}\n` +
-					`Message : ${details.message}`;
-
-				outChannel.append(log);
-				outChannel.show();
-			}
-
-			function launchFileCompareWithLocal(details) {
-				compareFileWithLocalCopy(details.sha1, fileName, relativeFilePath).then(() => { }, genericErrorHandler);
-			}
-
-			function launchFileCompareWithPrevious(details) {
-				Promise.all<string>([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]).then(files => {
-					return vscode.commands.executeCommand("vscode.diff", vscode.Uri.file(files[0]), vscode.Uri.file(files[1]));
-				}).catch(genericErrorHandler);
-			}
 		}).then(() => { }, error => genericErrorHandler(error));;
+}
+
+
+function onItemSelected(item: vscode.QuickPickItem, fileName, relativeFilePath) {
+	var itemPickList: vscode.QuickPickItem[] = [];
+	itemPickList.push({ label: "View Change Log", description: "Author, committer and message" });
+	itemPickList.push({ label: "View File Contents", description: "" });
+	itemPickList.push({ label: "Compare against workspace file", description: "" });
+	if (!(<any>item).isLast) {
+		itemPickList.push({ label: "Compare against previous version", description: "" });
+	}
+
+	vscode.window.showQuickPick(itemPickList, { placeHolder: item.label, matchOnDescription: true }).then(cmd => {
+		if (!cmd) {
+			return;
+		}
+
+		var data = (<any>item).data;
+		if (cmd.label === itemPickList[0].label) {
+			viewLog(data);
+			return;
+		}
+		if (cmd.label === itemPickList[1].label) {
+			viewFile(data, relativeFilePath);
+			return;
+		}
+		if (cmd.label === itemPickList[2].label) {
+			launchFileCompareWithLocal(data, fileName, relativeFilePath);
+			return;
+		}
+		if (itemPickList.length > 3 && cmd.label === itemPickList[3].label) {
+			launchFileCompareWithPrevious(data, relativeFilePath);
+			return;
+		}
+	});
+}
+
+function viewFile(details, relativeFilePath) {
+	displayFile(details.sha1, relativeFilePath).then(() => { }, genericErrorHandler);
+}
+
+function viewLog(details) {
+	var authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
+	var committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
+	var log = `sha1 : ${details.sha1}\n` +
+		`Author : ${details.author_name} <${details.author_email}>\n` +
+		`Author Date : ${authorDate}\n` +
+		`Committer Name : ${details.committer_name} <${details.committer_email}>\n` +
+		`Commit Date : ${committerDate}\n` +
+		`Message : ${details.message}`;
+
+	outChannel.append(log);
+	outChannel.show();
+}
+
+function launchFileCompareWithLocal(details, fileName, relativeFilePath) {
+	compareFileWithLocalCopy(details.sha1, fileName, relativeFilePath).then(() => { }, genericErrorHandler);
+}
+
+function launchFileCompareWithPrevious(details, relativeFilePath) {
+	Promise.all<string>([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]).then(files => {
+		return vscode.commands.executeCommand("vscode.diff", vscode.Uri.file(files[0]), vscode.Uri.file(files[1]));
+	}).catch(genericErrorHandler);
 }
 
 function genericErrorHandler(error) {

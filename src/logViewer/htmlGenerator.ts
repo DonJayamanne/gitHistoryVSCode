@@ -74,7 +74,7 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
                         <span class="diff-block"></span>
                         <span class="diff-block"></span>
                     </span>
-                    <span class="file-name">resources/iframeContent.ts</span>
+                    <a class="file-name">resources/iframeContent.ts</a>
                     <div class="dropdown hidden">
                         <span>&nbsp;[Test]</span>
                         <div class="dropdown-content">
