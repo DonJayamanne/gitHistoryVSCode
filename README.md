@@ -36,7 +36,6 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 ![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
 
 ## Roadmap   
-- View individual file changes (diff, compare)
 - View git log for all branches   
 - View refs (branch, tags)   
 - Search git history
@@ -47,7 +46,7 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ## Change Log 
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
-* Improved look and feel 
+* Viewing individual file commit details in commit list [#44](https://github.com/DonJayamanne/gitHistoryVSCode/issues/44) 
 
 ## Source
 

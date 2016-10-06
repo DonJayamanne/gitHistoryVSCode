@@ -2,7 +2,7 @@
   "name": "githistory",
   "displayName": "Git History (git log)",
   "description": "View git log, file or line History",
-  "version": "0.0.12",
+  "version": "0.1.0",
   "publisher": "donjayamanne",
   "author": {
     "name": "Don Jayamanne",

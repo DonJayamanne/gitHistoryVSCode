@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.1.0
+* Viewing individual file commit details in commit list [#44](https://github.com/DonJayamanne/gitHistoryVSCode/issues/44)
+
 ## Version 0.0.12
 * Improved look and feel [#35](https://github.com/DonJayamanne/gitHistoryVSCode/pull/35)
 
