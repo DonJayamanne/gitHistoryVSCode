@@ -199,7 +199,7 @@ export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: s
             var log = "";
             var error = "";
             ls.stdout.on('data', function (data) {
-                fs.appendFile(targetFile, data);
+                fs.appendFileSync(targetFile, data);
             });
 
             ls.stderr.on('data', function (data) {
