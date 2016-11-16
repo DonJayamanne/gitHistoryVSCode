@@ -193,6 +193,6 @@ function displayFile(commitSha1: string, localFilePath: string): Thenable<string
 
 function compareFileWithLocalCopy(commitSha1: string, localFilePath: string, relativeFilePath: string): Thenable<string> {
 	return getFile(commitSha1, relativeFilePath).then((tmpFilePath) => {
-		return vscode.commands.executeCommand("vscode.diff", vscode.Uri.file(localFilePath), vscode.Uri.file(tmpFilePath));
+		return vscode.commands.executeCommand("vscode.diff", vscode.Uri.file(tmpFilePath), vscode.Uri.file(localFilePath));
 	});
 }
