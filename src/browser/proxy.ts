@@ -1,4 +1,5 @@
 /// <reference path="typings/types.d.ts" />
+import * as Clipboard from 'clipboard';
 
 (function () {
     (window as any).GITHISTORY = {};
