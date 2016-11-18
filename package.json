@@ -80,7 +80,7 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
-    "@types/clipboard": "^1.5.28",
+    "@types/clipboard": "1.5.29",
     "typescript": "^1.7.5",
     "vscode": "^0.11.0"
   },
