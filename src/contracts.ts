@@ -2,6 +2,7 @@ export interface ActionedDetails {
     name: string;
     email: string;
     date: Date;
+    localisedDate: string;
 }
 export interface LogEntry {
     author: ActionedDetails;

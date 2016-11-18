@@ -3,11 +3,15 @@
 		"module": "commonjs",
 		"target": "es5",
 		"outDir": "out",
-		"noLib": true,
-		"sourceMap": true
+		"lib": ["dom","es6"],
+		"sourceMap": true,
+		"noImplicitAny": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"noUnusedLocals": true,
+		"rootDir": "."
 	},
 	"exclude": [
 		"node_modules",
-		"src/browser/types.d.ts"
+		".vscode-test"
 	]
 }

@@ -1,6 +1,5 @@
-import {ActionedDetails, LogEntry, Sha1} from '../contracts';
-import * as moment from 'moment';
-const htmlEncode = require('htmlencode').htmlEncode;
+import { LogEntry } from '../contracts';
+import { encode as htmlEncode } from 'he';
 
 export function generateErrorView(error: any): string {
     return `
@@ -114,7 +113,7 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                         <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry.subject)}</div>
                         <div class="commit-author">
                             <span class="name hint--right hint--rounded hint--bounce" aria-label="${entry.author.email}">${htmlEncode(entry.author.name)}</span>
-                            <span class="timestamp">${moment(entry.author.date).format('[on ]MMM Do YYYY, h:mm:ss a')}</span>
+                            <span class="timestamp">on ${entry.author.localisedDate}</span>
                         </div>
                     </div>
                 </div>

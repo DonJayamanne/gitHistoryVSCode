@@ -2,10 +2,8 @@
 
 import * as vscode from 'vscode';
 import * as htmlGenerator from './htmlGenerator';
-import * as fs from 'fs';
 import * as gitHist from '../helpers/gitHistory';
-import * as parser from'../logParser';
-import {ActionedDetails, LogEntry, Sha1} from '../contracts';
+import { LogEntry } from '../contracts';
 import * as path from 'path';
 
 const gitHistorySchema = 'git-history-viewer';
@@ -19,7 +17,6 @@ let canGoNext = true;
 
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
-    private lastUri: vscode.Uri;
     private entries: LogEntry[];
 
     public provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Thenable<string> {
@@ -83,7 +80,6 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                 <div class="hidden">
                     <div class="script">${this.getNodeModulesPath(path.join('jquery','dist','jquery.min.js'))}</div>
                     <div class="script">${this.getNodeModulesPath(path.join('clipboard','dist','clipboard.min.js'))}</div>
-                    <div class="script">${this.getNodeModulesPath(path.join('moment','min','moment.min.js'))}</div>
                     <div class="script">${this.getScriptFilePath('svgGenerator.js')}</div>
                     <div class="script">${this.getScriptFilePath('detailsView.js')}</div>
                 </div>

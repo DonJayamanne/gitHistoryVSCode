@@ -1,5 +1,3 @@
-/// <reference path="typings/types.d.ts" />
-
 (function () {
     (window as any).GITHISTORY = {};
 
@@ -23,7 +21,7 @@
         script.onload = onload;
     }
 
-    let clipboard = null;
+    let clipboard: Clipboard = null;
     function initializeClipboard() {
         $('a.clipboard-link').addClass('hidden');
         // ($('.btn.clipboard') as any).tooltip({
@@ -33,7 +31,7 @@
         clipboard.on('success', onCopied);
     }
 
-    function onCopied(e) {
+    function onCopied(e: ClipboardEvent) {
         e.clearSelection();
         // let $ele = $(e.trigger).attr('title', 'Copied');
         // ($ele as any).tooltip('fixTitle').tooltip('show');
