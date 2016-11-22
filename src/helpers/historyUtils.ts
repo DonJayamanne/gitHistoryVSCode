@@ -3,8 +3,6 @@ import * as parser from '../logParser';
 import * as fs from 'fs';
 import * as path from 'path';
 import { exec, spawn } from 'child_process';
-import * as os from 'os';
-import {ActionedDetails, LogEntry, Sha1} from '../contracts';
 
 export function getGitPath(): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -22,7 +20,7 @@ export function getGitPath(): Promise<string> {
 
             let regQueryInstallPath: (location: string, view: string) => Promise<string> = (location, view) => {
                 return new Promise((resolve, reject) => {
-                    let callback = function (error, stdout, stderr) {
+                    let callback = function (error: any, stdout: any, stderr: any) {
                         if (error && error.code !== 0) {
                             error.stdout = stdout.toString();
                             error.stderr = stderr.toString();
@@ -88,9 +86,9 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
     return getGitPath().then((gitExecutable) =>
         new Promise<string>((resolve, reject) => {
             var options = { cwd: path.dirname(fileName) }
-            var spawn = require('child_process').spawn,
-                //git rev-parse --git-dir
-                ls = spawn(gitExecutable, ['rev-parse', '--show-toplevel'], options);
+
+            //git rev-parse --git-dir
+            var ls = spawn(gitExecutable, ['rev-parse', '--show-toplevel'], options);
 
             var log = "";
             var error = "";
@@ -119,39 +117,8 @@ export function getFileHistory(rootDir: string, relativeFilePath: string): Thena
     return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', relativeFilePath]);
 }
 export function getFileHistoryBefore(rootDir: string, relativeFilePath: string, sha1: string, isoStrictDateTime: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, [`--max-count=10`, '--decorate=full', '--date=local', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, relativeFilePath]);
+    return getLog(rootDir, relativeFilePath, [`--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, relativeFilePath]);
 }
-
-function execGitCommand(rootDir: string, cmd: string, args: string[]): Promise<string> {
-    return getGitPath().then(gitExecutable => {
-        return new Promise<string>((resolve, reject) => {
-            var options = { cwd: rootDir }
-            let ls = spawn(gitExecutable, [cmd, ...args], options);
-
-            var error = "";
-            let output = '';
-            ls.stdout.setEncoding('utf8');
-            ls.stdout.on('data', (data: string) => {
-                output += data;
-            });
-
-            ls.stderr.setEncoding('utf8');
-            ls.stderr.on('data', (data: string) => {
-                error += data;
-            });
-
-            ls.on('exit', function (code) {
-                if (error.length > 0) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(output);
-            });
-        });
-    });
-}
-
 
 export function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number): Thenable<any[]> {
     var lineArgs = "-L" + lineNumber + "," + lineNumber + ":" + relativeFilePath.replace(/\\/g, '/');
@@ -163,8 +130,7 @@ function getLog(rootDir: string, relativeFilePath: string, args: string[]): Then
     return getGitPath().then((gitExecutable) =>
         new Promise<any[]>((resolve, reject) => {
             var options = { cwd: rootDir }
-            var spawn = require('child_process').spawn,
-                ls = spawn(gitExecutable, ['log', ...args], options);
+            var ls = spawn(gitExecutable, ['log', ...args], options);
 
             var log = "";
             var error = "";
@@ -193,10 +159,8 @@ export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: s
         (gitExecutable) => new Promise((resolve, reject) => {
             var options = { cwd: rootDir }
             var objectId = `${commitSha1}:` + sourceFilePath.replace(/\\/g, '/');
-            var spawn = require('child_process').spawn,
-                ls = spawn(gitExecutable, ['show', objectId], options);
+            var ls = spawn(gitExecutable, ['show', objectId], options);
 
-            var log = "";
             var error = "";
             ls.stdout.on('data', function (data) {
                 fs.appendFileSync(targetFile, data);

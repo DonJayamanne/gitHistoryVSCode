@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
-import * as fs from 'fs';
+import * as tmp from 'tmp';
 
 //TODO:Clean up this mess
 
@@ -88,7 +88,7 @@ export function run(fileName: string): any {
 }
 
 
-function onItemSelected(item: vscode.QuickPickItem, fileName, relativeFilePath) {
+function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFilePath: string) {
 	var itemPickList: vscode.QuickPickItem[] = [];
 	itemPickList.push({ label: "View Change Log", description: "Author, committer and message" });
 	itemPickList.push({ label: "View File Contents", description: "" });
@@ -101,12 +101,12 @@ function onItemSelected(item: vscode.QuickPickItem, fileName, relativeFilePath) 
 		if (!cmd) {
 			return;
 		}
-
 		var data = (<any>item).data;
 		if (cmd.label === itemPickList[0].label) {
 			viewLog(data);
 			return;
 		}
+		
 		if (cmd.label === itemPickList[1].label) {
 			viewFile(data, relativeFilePath);
 			return;
@@ -122,11 +122,11 @@ function onItemSelected(item: vscode.QuickPickItem, fileName, relativeFilePath) 
 	});
 }
 
-function viewFile(details, relativeFilePath) {
+function viewFile(details: any, relativeFilePath: string) {
 	displayFile(details.sha1, relativeFilePath).then(() => { }, genericErrorHandler);
 }
 
-function viewLog(details) {
+function viewLog(details: any) {
 	var authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
 	var committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
 	var log = `sha1 : ${details.sha1}\n` +
@@ -140,17 +140,17 @@ function viewLog(details) {
 	outChannel.show();
 }
 
-function launchFileCompareWithLocal(details, fileName, relativeFilePath) {
+function launchFileCompareWithLocal(details: any, fileName: string, relativeFilePath: string) {
 	compareFileWithLocalCopy(details.sha1, fileName, relativeFilePath).then(() => { }, genericErrorHandler);
 }
 
-function launchFileCompareWithPrevious(details, relativeFilePath) {
+function launchFileCompareWithPrevious(details: any, relativeFilePath: string) {
 	Promise.all<string>([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]).then(files => {
 		return vscode.commands.executeCommand("vscode.diff", vscode.Uri.file(files[0]), vscode.Uri.file(files[1]));
 	}).catch(genericErrorHandler);
 }
 
-function genericErrorHandler(error) {
+function genericErrorHandler(error: any) {
 	if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
 		vscode.window.showErrorMessage("Cannot find the git installation");
 	} else {
@@ -164,8 +164,7 @@ function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
 	var rootDir = vscode.workspace.rootPath;
 	return new Promise((resolve, reject) => {
 		var ext = path.extname(localFilePath);
-		var tmp = require("tmp");
-		tmp.file({ postfix: ext }, function _tempFileCreated(err, tmpFilePath, fd, cleanupCallback) {
+		tmp.file({ postfix: ext }, function _tempFileCreated(err: any, tmpFilePath: string, fd: number, cleanupCallback: () => void) {
 			if (err) {
 				reject(err);
 				return;
