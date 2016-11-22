@@ -102,6 +102,10 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
                 error += data;
             });
 
+            ls.on('error', function(err) {
+                console.error(err);
+            });
+
             ls.on('exit', function (code) {
                 if (error.length > 0) {
                     reject(error);
@@ -140,6 +144,10 @@ function execGitCommand(rootDir: string, cmd: string, args: string[]): Promise<s
                 error += data;
             });
 
+            ls.on('error', function(err) {
+                console.error(err);
+            });
+
             ls.on('exit', function (code) {
                 if (error.length > 0) {
                     reject(error);
@@ -176,6 +184,10 @@ function getLog(rootDir: string, relativeFilePath: string, args: string[]): Then
                 error += data;
             });
 
+            ls.on('error', function(err) {
+                console.error(err);
+            });
+
             ls.on('exit', function (code) {
                 if (error.length > 0) {
                     reject(error);
@@ -204,6 +216,10 @@ export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: s
 
             ls.stderr.on('data', function (data) {
                 error += data;
+            });
+
+            ls.on('error', function(err) {
+                console.error(err);
             });
 
             ls.on('exit', function (code) {
