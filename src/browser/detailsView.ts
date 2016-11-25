@@ -1,4 +1,3 @@
-/// <reference path="typings/types.d.ts" />
 import * as contracts from '../contracts';
 
 (function () {
@@ -10,8 +9,20 @@ import * as contracts from '../contracts';
         $logView = $('#log-view');
         $detailsView = $('#details-view');
         $fileListTemplate = $('.diff-row', $detailsView);
-        logEntries = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML);
+        logEntries = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML, dateReviver);
+
         addEventHandlers();
+    };
+
+    // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+    // Used to deserialise dates to dates instead of strings (default behaviour)
+    function dateReviver(key: string, value: any) {
+        const dateTest = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
+        if (typeof value === 'string' && dateTest.exec(value)) {
+            return new Date(value);
+        }
+
+        return value;
     };
 
     function addEventHandlers() {
@@ -25,7 +36,6 @@ import * as contracts from '../contracts';
           })
           .on('click', '.commit-hash', evt => {
               let entryIndex = evt.target.getAttribute('data-entry-index');
-              let $logEntry = $(evt.target).closest('.log-entry');
               displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
           })
         ;
@@ -55,8 +65,9 @@ import * as contracts from '../contracts';
         $('.commit-author .name', $detailsView)
           .attr('aria-label', entry.author.email)
           .html(entry.author.name);
+        
         $('.commit-author .timestamp', $detailsView)
-          .html(moment(entry.author.date).format('[on ]MMM Do YYYY, h:mm:ss a'));
+          .html(entry.author.date.toLocaleString());
 
         $('.commit-body', $detailsView)
           .html(entry.body);
@@ -86,7 +97,7 @@ import * as contracts from '../contracts';
                 }
             });
             $('.file-name', $fileItem).html(stat.path);
-            let uri = encodeURI('command:git.viewFileCommitDetails?' + JSON.stringify([entry.sha1.full, stat.path, moment(entry.author.date).format('YYYY-MM-DD HH:mm:ss ZZ')]))
+            let uri = encodeURI('command:git.viewFileCommitDetails?' + JSON.stringify([entry.sha1.full, stat.path, entry.committer.date.toISOString()]))
             $('.file-name', $fileItem).attr('href', uri);
             $files.append($fileItem);
         });

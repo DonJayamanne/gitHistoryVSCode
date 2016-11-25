@@ -1,10 +1,9 @@
-import * as fs from 'fs';
-import {ActionedDetails, LogEntry, Sha1, FileStat} from './contracts';
+import { ActionedDetails, LogEntry, FileStat } from './contracts';
 export const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA1';
 
 var author_regex = /([^<]+)<([^>]+)>/;
 var headers = {
-    'Author': function (current_commit, author) {
+    'Author': function (current_commit: any, author: string) {
         var capture = author_regex.exec(author);
         if (capture) {
             current_commit.author_name = capture[1].trim();
@@ -13,7 +12,7 @@ var headers = {
             current_commit.author_name = author;
         }
     },
-    'Commit': function (current_commit, author) {
+    'Commit': function (current_commit: any, author: string) {
         var capture = author_regex.exec(author);
         if (capture) {
             current_commit.committer_name = capture[1].trim();
@@ -24,15 +23,15 @@ var headers = {
         }
     },
 
-    'AuthorDate': function (current_commit, date) {
+    'AuthorDate': function (current_commit: any, date: Date) {
         current_commit.author_date = date;
     },
 
-    'CommitDate': function (current_commit, date) {
+    'CommitDate': function (current_commit: any, date: Date) {
         current_commit.commit_date = date;
     },
 
-    'Reflog': function (current_commit, data) {
+    'Reflog': function (current_commit: any, data: any) {
         current_commit.reflog_name = data.substring(0, data.indexOf(' '));
         var author = data.substring(data.indexOf(' ') + 2, data.length - 1);
         var capture = author_regex.exec(author);
@@ -46,16 +45,16 @@ var headers = {
     },
 };
 
-var parse_git_log = function (data) {
-    var commits = [];
-    var current_commit;
-    var temp_file_change = [];
+var parse_git_log = function (data: any) {
+    var commits: any[] = [];
+    var current_commit: any;
+    var temp_file_change: string[] = [];
 
-    var parse_commit_line = function (row) {
+    var parse_commit_line = function (row: string) {
         if (!row.trim()) return;
         current_commit = { refs: [], file_line_diffs: [] };
         var ss = row.split('(');
-        var sha1s = ss[0].split(' ').slice(1).filter(function (sha1) { return sha1 && sha1.length; });
+        var sha1s = ss[0].split(' ').slice(1).filter(function (sha1: string) { return sha1 && sha1.length; });
         current_commit.sha1 = sha1s[0];
         current_commit.parents = sha1s.slice(1);
         if (ss[1]) {
@@ -65,7 +64,7 @@ var parse_git_log = function (data) {
         commits.push(current_commit);
         parser = parse_header_line;
     }
-    var parse_header_line = function (row) {
+    var parse_header_line = function (row: string) {
         if (row.trim() == '') {
             parser = parse_commit_message;
         } else {
@@ -77,7 +76,7 @@ var parse_git_log = function (data) {
             }
         }
     }
-    var parse_commit_message = function (row, index) {
+    var parse_commit_message = function (row: string, index: number) {
         if (/:[\d]+\s[\d]+\s[\d|\w]+.../g.test(rows[index + 1])) {
             //if (/[\d-]+\t[\d-]+\t.+/g.test(rows[index + 1])) {
             parser = parse_file_changes;
@@ -92,7 +91,7 @@ var parse_git_log = function (data) {
         else current_commit.message = '';
         current_commit.message += row.trim();
     }
-    var parse_file_changes = function (row, index) {
+    var parse_file_changes = function (row: string, index: number) {
         if (rows.length === index + 1 || rows[index + 1] && rows[index + 1].indexOf('commit ') === 0) {
             var total: any = [0, 0, 'Total'];
             for (var n = 0; n < current_commit.file_line_diffs.length; n++) {
@@ -120,7 +119,7 @@ var parse_git_log = function (data) {
     var parser: any = parse_commit_line;
     var rows = data.split('\n');
 
-    rows.forEach(function (row, index) {
+    rows.forEach(function (row: string, index: number) {
         parser(row, index);
     });
 
@@ -130,7 +129,7 @@ var parse_git_log = function (data) {
 
 //module.exports = parse_git_log;
 
-export function parseLogContents(contents) {
+export function parseLogContents(contents: string) {
     return parse_git_log(contents);
 }
 
@@ -184,7 +183,7 @@ const prefixLengths = {
 }
 export function parseLogEntry(lines: string[]): LogEntry {
     let logEntry: LogEntry = {} as LogEntry;
-    let multiLineProperty = null;
+    let multiLineProperty: string = null;
     let filesAltered: string[] = [];
     let processingNumStat = false;
     if (lines.filter(line => line.trim().length > 0).length === 0) {

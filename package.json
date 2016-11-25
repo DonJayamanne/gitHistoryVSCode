@@ -75,21 +75,26 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
-    "@types/clipboard": "^1.5.28",
-    "typescript": "^1.7.5",
-    "vscode": "^0.11.0"
+    "typescript": "^2.0.10",
+    "vscode": "^1.0.3",
+    "mocha": "^2.3.3",
+    "@types/node": "^6.0.49",
+    "@types/mocha": "^2.2.32",
+    "@types/jquery": "^2.0.34",
+    "@types/clipboard": "1.5.29",
+    "@types/he": "^0.5.29",
+    "@types/tmp": "0.0.31"
   },
   "dependencies": {
-    "clipboard": "^1.5.12",
-    "htmlencode": "0.0.4",
-    "jquery": "^3.1.0",
-    "moment": "^2.14.1",
-    "normalize.css": "^4.2.0",
-    "tmp": "0.0.28"
+    "jquery": "^3.1.1",
+    "clipboard": "^1.5.15",
+    "he": "^1.1.0",
+    "tmp": "^0.0.31",
+    "normalize.css": "^5.0.0"
   }
 }
