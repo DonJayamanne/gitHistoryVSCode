@@ -86,7 +86,7 @@ import * as contracts from '../contracts';
                 }
             });
             $('.file-name', $fileItem).html(stat.path);
-            let uri = encodeURI('command:git.viewFileCommitDetails?' + JSON.stringify([entry.sha1.full, stat.path, moment(entry.author.date).format('YYYY-MM-DD HH:mm:ss ZZ')]))
+            let uri = encodeURI('command:git.viewFileCommitDetails?' + JSON.stringify([entry.sha1.full, stat.path, moment(entry.committer.date).format('YYYY-MM-DD HH:mm:ss ZZ')]))
             $('.file-name', $fileItem).attr('href', uri);
             $files.append($fileItem);
         });
