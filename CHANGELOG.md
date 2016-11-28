@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.1.2
+* Underlining file history details link on hover [#48](https://github.com/DonJayamanne/gitHistoryVSCode/issues/48), [#54](https://github.com/DonJayamanne/gitHistoryVSCode/issues/54)
+
 ## Version 0.1.1
 * Fixed styling of file history details [#48](https://github.com/DonJayamanne/gitHistoryVSCode/issues/48), [#54](https://github.com/DonJayamanne/gitHistoryVSCode/issues/54)
 * Updated to TypeScript 2.0 [#68](https://github.com/DonJayamanne/gitHistoryVSCode/pull/68)
