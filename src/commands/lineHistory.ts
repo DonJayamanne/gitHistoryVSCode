@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
-import * as fs from 'fs';
 
 export function run(outChannel: vscode.OutputChannel): any {
 	if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
@@ -45,7 +44,7 @@ export function run(outChannel: vscode.OutputChannel): any {
 		viewLog((<any>item).data);
 	}
 
-	function viewLog(details) {
+	function viewLog(details: any) {
 		var authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
 		var committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
 		var log = `sha1 : ${details.sha1}\n` +
@@ -59,7 +58,7 @@ export function run(outChannel: vscode.OutputChannel): any {
 		outChannel.show();
 	}
 
-	function genericErrorHandler(error) {
+	function genericErrorHandler(error : any) {
         if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
             vscode.window.showErrorMessage("Cannot find the git installation");
         } else {

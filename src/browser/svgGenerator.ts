@@ -1,4 +1,3 @@
-/// <reference path="typings/types.d.ts" />
 import * as contracts from '../contracts';
 
 (function () {
@@ -26,15 +25,13 @@ import * as contracts from '../contracts';
     let svg: SVGAElement;
     let content: HTMLElement;
 
-    let currentSelection = null;
-    let lineHeight = null;
     let branches: { sha1: string, path: any, x?: number, wasFictional: boolean }[] = [];
     let branchColor = 0;
 
     (window as any).GITHISTORY.generateSVG = function () {
         svg = document.getElementById('log-view').children[0] as SVGAElement;
         content = document.getElementById('log-view').children[1] as HTMLElement;
-        let items = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML) as contracts.LogEntry[];
+        let items = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML, dateReviver) as contracts.LogEntry[];
         svg.setAttribute('height', $(content).outerHeight().toString());
         svg.setAttribute('width', $(content).outerWidth().toString());
         if (items.length === 0) {
@@ -44,6 +41,17 @@ import * as contracts from '../contracts';
         const $logEntry = $('.log-entry').filter(':first');
         const height = $logEntry.outerHeight() + parseFloat($logEntry.css('marginTop'));
         drawGitGraph(0, height, items);
+    };
+
+    // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+    // Used to deserialise dates to dates instead of strings (default behaviour)
+    function dateReviver(key: string, value: any) {
+        const dateTest = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
+        if (typeof value === 'string' && dateTest.exec(value)) {
+            return new Date(value);
+        }
+
+        return value;
     };
 
     function drawGitGraph(startAt: number, logEntryHeight: number = 60.8, entries: contracts.LogEntry[]) {
@@ -60,7 +68,7 @@ import * as contracts from '../contracts';
             content.children[i].className = 'hidden';
         }
         // Use this for new orphaned branches
-        let circlesToAppend = [];
+        let circlesToAppend: SVGCircleElement[] = [];
         let fictionalBranches: { path: string, x?: number }[] = [];
         // let fictionalBranch2;
         let tabbedOnce = false;
@@ -146,12 +154,9 @@ import * as contracts from '../contracts';
                         if (!fictionalBranchesUsed) {
                             fictionalBranches = [];
                         }
-                        let newOrigX = (index + 1 + 1) * xOffset;
-                        let newX = (index + j + 1 + 1) * xOffset;
                         // Generate at least 10 fictional branches, so we can lay them out neatly
                         for (let counter = 1; counter < 11; counter++) {
                             let newOrigX = (index + 1 + counter) * xOffset;
-                            let newX = (index + j + 1 + counter) * xOffset;
                             let fictionalBranch = 'M ' + newOrigX + ' ' + currentY + ' L ' + newOrigX + ' ' + topMostY + ' L ' + newOrigX + ' ';
                             fictionalBranches.push({ path: fictionalBranch, x: newOrigX });
                         }

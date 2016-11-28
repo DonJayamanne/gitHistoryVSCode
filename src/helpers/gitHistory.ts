@@ -1,8 +1,8 @@
 import * as parser from '../logParser';
-import { exec, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import * as os from 'os';
-import {ActionedDetails, LogEntry, Sha1} from '../contracts';
-import {getGitPath} from './historyUtils';
+import { LogEntry } from '../contracts';
+import { getGitPath } from './historyUtils';
 
 const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
 const STATS_SEPARATOR = parser.STATS_SEPARATOR;
@@ -22,15 +22,12 @@ export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: num
 
             ls.stdout.setEncoding('utf8');
             ls.stdout.on('data', (data: string) => {
-                console.log(data);
+                // console.log(data);
                 data.split(/\r?\n/g).forEach((line, index, lines) => {
                     if (line === LOG_ENTRY_SEPARATOR) {
                         let entry = parser.parseLogEntry(outputLines);
                         if (entry) {
                             entries.push(entry);
-                        }
-                        else {
-                            let x = '';
                         }
                         outputLines = [''];
                     }
