@@ -310,9 +310,23 @@ body {
     text-overflow: ellipsis;
     margin: 0.5em 0;
 }
+.diff-row div.file-name-cnt {
+    display: inline-block;
+    position:relative;    
+}
 .committed-files .file-name {
     display: inline-block;
     padding-left: 0.5em;
+}
+.committed-files a.file-name {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: transparent;
+}
+.committed-files .file-name:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 .diff-row .diff-stats {
     display: inline-block;
@@ -324,7 +338,6 @@ body {
     vertical-align: middle;
     font-family: Consolas, Courier New, monospace;
     font-size: 0.9em;
-    color: lightgray;
     text-align: right;
     width: 4em;
 }
