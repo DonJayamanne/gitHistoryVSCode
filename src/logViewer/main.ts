@@ -73,16 +73,15 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                 <link rel="stylesheet" href="${this.getStyleSheetPath('animate.min.css')}" >
                 <link rel="stylesheet" href="${this.getStyleSheetPath('hint.min.css')}" >
                 <link rel="stylesheet" href="${this.getStyleSheetPath('main.css')}" >
+                <script src="${this.getNodeModulesPath(path.join('jquery','dist','jquery.min.js'))}"></script>
+                <script src="${this.getNodeModulesPath(path.join('clipboard','dist','clipboard.min.js'))}"></script>
+                <script src="${this.getScriptFilePath('proxy.js')}"></script>
+                <script src="${this.getScriptFilePath('svgGenerator.js')}"></script>
+                <script src="${this.getScriptFilePath('detailsView.js')}"></script>
             </head>
 
-            <body onload="var script = document.createElement('script');script.setAttribute('src', '${this.getScriptFilePath('proxy.js')}');script.setAttribute('type', 'text/javascript');document.body.appendChild(script);">
+            <body>
                 ${innerHtml}
-                <div class="hidden">
-                    <div class="script">${this.getNodeModulesPath(path.join('jquery','dist','jquery.min.js'))}</div>
-                    <div class="script">${this.getNodeModulesPath(path.join('clipboard','dist','clipboard.min.js'))}</div>
-                    <div class="script">${this.getScriptFilePath('svgGenerator.js')}</div>
-                    <div class="script">${this.getScriptFilePath('detailsView.js')}</div>
-                </div>
             </body>
         `;
     }

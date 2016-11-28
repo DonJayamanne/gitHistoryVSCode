@@ -65,7 +65,7 @@ import * as contracts from '../contracts';
         $('.commit-author .name', $detailsView)
           .attr('aria-label', entry.author.email)
           .html(entry.author.name);
-        
+
         $('.commit-author .timestamp', $detailsView)
           .html(' on ' + entry.author.localisedDate);
 
@@ -97,7 +97,7 @@ import * as contracts from '../contracts';
                 }
             });
             $('.file-name', $fileItem).html(stat.path);
-            let uri = encodeURI('command:git.viewFileCommitDetails?' + JSON.stringify([entry.sha1.full, stat.path, entry.committer.date.toISOString()]))
+            let uri = encodeURI('command:git.viewFileCommitDetails?' + JSON.stringify([entry.sha1.full, stat.path, entry.committer.date.toISOString()]));
             $('a.file-name', $fileItem).attr('href', uri);
             $files.append($fileItem);
         });
