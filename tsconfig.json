@@ -1,17 +1,23 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es5",
-		"outDir": "out",
-		"lib": ["dom","es6"],
-		"sourceMap": true,
-		"noImplicitAny": true,
-		"suppressImplicitAnyIndexErrors": true,
-		"noUnusedLocals": true,
-		"rootDir": "."
-	},
-	"exclude": [
-		"node_modules",
-		".vscode-test"
-	]
+    "compilerOptions": {
+        "lib": ["dom","es6"],
+        "module": "commonjs",
+        "outDir": "out",
+        "rootDir": ".",
+        "sourceMap": true,
+        "target": "es5",
+
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "strictNullChecks": false,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "exclude": [
+        "node_modules",
+        ".vscode-test"
+    ]
 }

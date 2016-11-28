@@ -31,12 +31,12 @@ import * as contracts from '../contracts';
         // delegate the events
         $logView
           .on('click', '.commit-subject', evt => {
-              let entryIndex = evt.target.getAttribute('data-entry-index');
-              displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
+                let entryIndex = evt.target.getAttribute('data-entry-index');
+                displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
           })
           .on('click', '.commit-hash', evt => {
-              let entryIndex = evt.target.getAttribute('data-entry-index');
-              displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
+                let entryIndex = evt.target.getAttribute('data-entry-index');
+                displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
           })
         ;
 
