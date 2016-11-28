@@ -324,7 +324,7 @@ body {
     left: 0;
     color: transparent;
 }
-.committed-files .file-name:hover {
+.committed-files .file-name-cnt:hover .file-name {
     text-decoration: underline;
     cursor: pointer;
 }
