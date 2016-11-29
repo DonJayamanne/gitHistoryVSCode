@@ -29,18 +29,17 @@ import * as contracts from '../contracts';
     let branchColor = 0;
 
     (window as any).GITHISTORY.generateSVG = function () {
-        svg = document.getElementById('log-view').children[0] as SVGAElement;
-        content = document.getElementById('log-view').children[1] as HTMLElement;
+        let logView = document.getElementById('log-view');
         let items = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML, dateReviver) as contracts.LogEntry[];
-        svg.setAttribute('height', $(content).outerHeight().toString());
-        svg.setAttribute('width', $(content).outerWidth().toString());
-        if (items.length === 0) {
-            return;
+        if (logView !== null && items.length !== 0) {
+            svg = logView.children[0] as SVGAElement;
+            content = logView.children[1] as HTMLElement;
+            svg.setAttribute('height', $(content).outerHeight().toString());
+            svg.setAttribute('width', $(content).outerWidth().toString());
+            const $logEntry = $('.log-entry').filter(':first');
+            const height = $logEntry.outerHeight() + parseFloat($logEntry.css('marginTop'));
+            drawGitGraph(0, height, items);
         }
-
-        const $logEntry = $('.log-entry').filter(':first');
-        const height = $logEntry.outerHeight() + parseFloat($logEntry.css('marginTop'));
-        drawGitGraph(0, height, items);
     };
 
     // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
@@ -175,7 +174,9 @@ import * as contracts from '../contracts';
                     svgPath.setAttribute('style', 'stroke:' + COLORS[branchColor]);
                     fictionalBranchesUsed = true;
                     let fictionalBranch = fictionalBranches.splice(0, 1)[0];
-                    xFromFictionalBranch = fictionalBranch.x;
+                    if (fictionalBranch.x !== undefined) {
+                        xFromFictionalBranch = fictionalBranch.x;
+                    }
                     (svgPath as any).cmds = fictionalBranch.path;
                     svg.appendChild(svgPath);
                     let obj = {

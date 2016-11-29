@@ -32,11 +32,15 @@ import * as contracts from '../contracts';
         $logView
           .on('click', '.commit-subject', evt => {
                 let entryIndex = evt.target.getAttribute('data-entry-index');
-                displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
+                if (entryIndex !== null) {
+                    displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
+                }
           })
           .on('click', '.commit-hash', evt => {
                 let entryIndex = evt.target.getAttribute('data-entry-index');
-                displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
+                if (entryIndex !== null) {
+                    displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
+                }
           })
         ;
 

@@ -13,16 +13,17 @@ export function activate(outputChannel: vscode.OutputChannel) {
 }
 
 vscode.workspace.onDidCloseTextDocument(textDocument => {
-    if (!textDocument || tmpFileCleanup.has(textDocument.fileName)) {
-        return;
+    if (textDocument && tmpFileCleanup.has(textDocument.fileName)) {
+        let cleanupFunction = tmpFileCleanup.get(textDocument.fileName);
+        if (cleanupFunction !== undefined) {
+            try {
+                cleanupFunction();
+            }
+            catch (ex) {
+            }
+            tmpFileCleanup.delete(textDocument.fileName);
+        }
     }
-
-    try {
-        tmpFileCleanup.get(textDocument.fileName)();
-    }
-    catch (ex) {
-    }
-    tmpFileCleanup.delete(textDocument.fileName);
 });
 
 vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
@@ -172,6 +173,12 @@ function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
                 return;
             }
             historyUtil.writeFile(rootDir, commitSha1, localFilePath, tmpFilePath).then(() => {
+                // Windows drive letter hack
+                // vscode returns lowercase drive letter for textDocument.fileName when calling onDidCloseTextDocument
+                // If we dont do this we wont get a filename match for cleanup
+                if (tmpFilePath.indexOf(':') === 1) {
+                    tmpFilePath = tmpFilePath.substr(0, 1).toLowerCase() + tmpFilePath.substr(1);
+                }
                 tmpFileCleanup.set(tmpFilePath, cleanupCallback);
                 resolve(tmpFilePath);
             }, reject);
@@ -190,7 +197,6 @@ function displayFile(commitSha1: string, localFilePath: string): Thenable<string
         }, reject);
     });
 }
-
 
 function compareFileWithLocalCopy(commitSha1: string, localFilePath: string, relativeFilePath: string): Thenable<string> {
     return getFile(commitSha1, relativeFilePath).then((tmpFilePath) => {

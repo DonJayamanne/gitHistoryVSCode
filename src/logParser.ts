@@ -115,7 +115,10 @@ let parse_git_log = function (data: any) {
             temp_file_change.push(val);
         }
         else {
-            current_commit.file_line_diffs.push(row.split('\t').concat(temp_file_change.shift()));
+            let nextChange = temp_file_change.shift();
+            if (nextChange !== undefined) {
+                current_commit.file_line_diffs.push(row.split('\t').concat(nextChange));
+            }
         }
     };
 
@@ -163,9 +166,9 @@ const prefixLengths = {
     notes: prefixes.notes.length
 };
 
-export function parseLogEntry(lines: string[]): LogEntry {
+export function parseLogEntry(lines: string[]): LogEntry | null {
     let logEntry: LogEntry = {} as LogEntry;
-    let multiLineProperty: string = null;
+    let multiLineProperty: string = '';
     let filesAltered: string[] = [];
     let processingNumStat = false;
     if (lines.filter(line => line.trim().length > 0).length === 0) {
@@ -310,8 +313,8 @@ function parseAlteredFiles(alteredFiles: string[]): FileStat[] {
         if (parts.length !== 3) {
             return;
         }
-        const add = parts[0] === '-' ? null : parseInt(parts[0]);
-        const del = parts[1] === '-' ? null : parseInt(parts[1]);
+        const add = parts[0] === '-' ? undefined : parseInt(parts[0]);
+        const del = parts[1] === '-' ? undefined : parseInt(parts[1]);
         stats.push({ additions: add, deletions: del, path: parts[2] });
     });
 

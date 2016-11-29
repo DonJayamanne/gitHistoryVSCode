@@ -26,7 +26,7 @@ export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: num
                 data.split(/\r?\n/g).forEach((line, index, lines) => {
                     if (line === LOG_ENTRY_SEPARATOR) {
                         let entry = parser.parseLogEntry(outputLines);
-                        if (entry) {
+                        if (entry !== null) {
                             entries.push(entry);
                         }
                         outputLines = [''];

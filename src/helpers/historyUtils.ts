@@ -18,7 +18,7 @@ export function getGitPath(): Promise<string> {
             // in Git for Windows, the recommendation is not to put git into the PATH.
             // Instead, there is an entry in the Registry.
 
-            let regQueryInstallPath: (location: string, view: string) => Promise<string> = (location, view) => {
+            let regQueryInstallPath: (location: string, view: string | null) => Promise<string> = (location, view) => {
                 return new Promise((resolve, reject) => {
                     let callback = function (error: any, stdout: any, stderr: any) {
                         if (error && error.code !== 0) {
@@ -47,7 +47,7 @@ export function getGitPath(): Promise<string> {
                 });
             };
 
-            let queryChained: (locations: { key: string, view: string }[]) => Promise<string> = (locations) => {
+            let queryChained: (locations: { key: string, view: string | null}[]) => Promise<string> = (locations) => {
                 return new Promise<string>((resolve, reject) => {
                     if (locations.length === 0) {
                         reject('None of the known git Registry keys were found');
@@ -66,16 +66,16 @@ export function getGitPath(): Promise<string> {
             };
 
             queryChained([
-                { 'key': 'HKCU\\SOFTWARE\\GitForWindows', 'view': null },   // user keys have precendence over
-                { 'key': 'HKLM\\SOFTWARE\\GitForWindows', 'view': null },   // machine keys
+                { 'key': 'HKCU\\SOFTWARE\\GitForWindows', 'view': null },     // user keys have precendence over
+                { 'key': 'HKLM\\SOFTWARE\\GitForWindows', 'view': null },     // machine keys
                 { 'key': 'HKCU\\SOFTWARE\\GitForWindows', 'view': '64' },   // default view (null) before 64bit view
                 { 'key': 'HKLM\\SOFTWARE\\GitForWindows', 'view': '64' },
                 { 'key': 'HKCU\\SOFTWARE\\GitForWindows', 'view': '32' },   // last is 32bit view, which will only be checked
                 { 'key': 'HKLM\\SOFTWARE\\GitForWindows', 'view': '32' }]). // for a 32bit git installation on 64bit Windows
                 then(
-                (path) => resolve(path),
+                (path: string) => resolve(path),
                 // fallback: PATH
-                (error) => resolve('git')
+                (error: any) => resolve('git')
                 );
         }
     });

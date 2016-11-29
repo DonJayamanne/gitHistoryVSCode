@@ -1,6 +1,6 @@
 (function () {
     (window as any).GITHISTORY = {};
-    let clipboard: Clipboard = null;
+    let clipboard: Clipboard;
     function initializeClipboard() {
         $('a.clipboard-link').addClass('hidden');
         clipboard = new Clipboard('.btn.clipboard');
