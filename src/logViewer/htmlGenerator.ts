@@ -37,13 +37,13 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
                 <div id="history-navbar">
                     <ul class="navbar">
                         <li class="navbar-item previous ${canGoPrevious || 'disabled'}">
-                            <a href="${prevHref}" class="navbar-link">
+                            <a href="${prevHref}" class="navbar-link" onClick="$('.previous').addClass('disabled');">
                                 <i class="octicon octicon-chevron-left"></i>
                                 <span>Previous</span>
                             </a>
                         </li>
                         <li class="navbar-item next ${canGoNext || 'disabled'}">
-                            <a href="${nextHref}" class="navbar-link">
+                            <a href="${nextHref}" class="navbar-link" onClick="$('.next').addClass('disabled');">
                                 <span>Next</span>
                                 <i class="octicon octicon-chevron-right"></i>
                             </a>

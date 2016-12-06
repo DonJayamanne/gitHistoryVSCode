@@ -53,17 +53,26 @@ export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: num
                 });
             });
 
+            ls.stdout.on('end', () => {
+                // Process last entry as no trailing seperator
+                if (outputLines.length !== 0) {
+                    let entry = parser.parseLogEntry(outputLines);
+                    if (entry !== null) {
+                        entries.push(entry);
+                    }
+                }
+            });
+
             ls.stderr.setEncoding('utf8');
             ls.stderr.on('data', function (data) {
                 error += data;
             });
 
-            ls.on('exit', function (code) {
+            ls.on('close', () => {
                 if (error.length > 0) {
                     reject(error);
                     return;
                 }
-
                 resolve(entries);
             });
         });
