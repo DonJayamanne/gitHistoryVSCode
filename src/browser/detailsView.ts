@@ -33,13 +33,13 @@ import * as contracts from '../contracts';
           .on('click', '.commit-subject', evt => {
                 let entryIndex = evt.target.getAttribute('data-entry-index');
                 if (entryIndex !== null) {
-                    displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
+                    displayDetails(logEntries[parseInt(entryIndex)], evt.target as Element);
                 }
           })
           .on('click', '.commit-hash', evt => {
                 let entryIndex = evt.target.getAttribute('data-entry-index');
                 if (entryIndex !== null) {
-                    displayDetails(logEntries[parseInt(entryIndex)], event.target as Element);
+                    displayDetails(logEntries[parseInt(entryIndex)], evt.target as Element);
                 }
           })
         ;
