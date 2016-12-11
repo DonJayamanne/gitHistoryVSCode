@@ -2,10 +2,10 @@ import { ActionedDetails, LogEntry, FileStat } from './contracts';
 import * as vscode from 'vscode';
 export const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA1';
 
-var author_regex = /([^<]+)<([^>]+)>/;
-var headers = {
+let author_regex = /([^<]+)<([^>]+)>/;
+let headers = {
     'Author': function (current_commit: any, author: string) {
-        var capture = author_regex.exec(author);
+        let capture = author_regex.exec(author);
         if (capture) {
             current_commit.author_name = capture[1].trim();
             current_commit.author_email = capture[2].trim();
@@ -14,7 +14,7 @@ var headers = {
         }
     },
     'Commit': function (current_commit: any, author: string) {
-        var capture = author_regex.exec(author);
+        let capture = author_regex.exec(author);
         if (capture) {
             current_commit.committer_name = capture[1].trim();
             current_commit.committer_email = capture[2].trim();
@@ -34,8 +34,8 @@ var headers = {
 
     'Reflog': function (current_commit: any, data: any) {
         current_commit.reflog_name = data.substring(0, data.indexOf(' '));
-        var author = data.substring(data.indexOf(' ') + 2, data.length - 1);
-        var capture = author_regex.exec(author);
+        let author = data.substring(data.indexOf(' ') + 2, data.length - 1);
+        let capture = author_regex.exec(author);
         if (capture) {
             current_commit.reflog_author_name = capture[1].trim();
             current_commit.reflog_author_email = capture[2].trim();
@@ -46,44 +46,45 @@ var headers = {
     },
 };
 
-var parse_git_log = function (data: any) {
-    var commits: any[] = [];
-    var current_commit: any;
-    var temp_file_change: string[] = [];
+let parse_git_log = function (data: any) {
+    let commits: any[] = [];
+    let current_commit: any;
+    let temp_file_change: string[] = [];
 
-    var parse_commit_line = function (row: string) {
+    let parse_commit_line = function (row: string) {
         if (!row.trim()) return;
         current_commit = { refs: [], file_line_diffs: [] };
-        var ss = row.split('(');
-        var sha1s = ss[0].split(' ').slice(1).filter(function (sha1: string) { return sha1 && sha1.length; });
+        let ss = row.split('(');
+        let sha1s = ss[0].split(' ').slice(1).filter(function (sha1: string) { return sha1 && sha1.length; });
         current_commit.sha1 = sha1s[0];
         current_commit.parents = sha1s.slice(1);
         if (ss[1]) {
-            var refs = ss[1].slice(0, ss[1].length - 1);
+            let refs = ss[1].slice(0, ss[1].length - 1);
             current_commit.refs = refs.split(', ');
         }
         commits.push(current_commit);
         parser = parse_header_line;
-    }
-    var parse_header_line = function (row: string) {
-        if (row.trim() == '') {
+    };
+
+    let parse_header_line = function (row: string) {
+        if (row.trim() === '') {
             parser = parse_commit_message;
         } else {
-            for (var key in headers) {
-                if (row.indexOf(key + ': ') == 0) {
+            for (let key in headers) {
+                if (row.indexOf(key + ': ') === 0) {
                     headers[key](current_commit, row.slice((key + ': ').length).trim());
                     return;
                 }
             }
         }
-    }
-    var parse_commit_message = function (row: string, index: number) {
+    };
+
+    let parse_commit_message = function (row: string, index: number) {
         if (/:[\d]+\s[\d]+\s[\d|\w]+.../g.test(rows[index + 1])) {
-            //if (/[\d-]+\t[\d-]+\t.+/g.test(rows[index + 1])) {
             parser = parse_file_changes;
             return;
         }
-        if (rows[index + 1] && rows[index + 1].indexOf('commit ') == 0) {
+        if (rows[index + 1] && rows[index + 1].indexOf('commit ') === 0) {
             parser = parse_commit_line;
             return;
         }
@@ -91,12 +92,13 @@ var parse_git_log = function (data: any) {
             current_commit.message += '\n';
         else current_commit.message = '';
         current_commit.message += row.trim();
-    }
-    var parse_file_changes = function (row: string, index: number) {
+    };
+
+    let parse_file_changes = function (row: string, index: number) {
         if (rows.length === index + 1 || rows[index + 1] && rows[index + 1].indexOf('commit ') === 0) {
-            var total: any = [0, 0, 'Total'];
-            for (var n = 0; n < current_commit.file_line_diffs.length; n++) {
-                var file_line_diff = current_commit.file_line_diffs[n];
+            let total: any = [0, 0, 'Total'];
+            for (let n = 0; n < current_commit.file_line_diffs.length; n++) {
+                let file_line_diff = current_commit.file_line_diffs[n];
                 if (!isNaN(parseInt(file_line_diff[0], 10))) {
                     total[0] += file_line_diff[0] = parseInt(file_line_diff[0], 10);
                 }
@@ -108,17 +110,20 @@ var parse_git_log = function (data: any) {
             parser = parse_commit_line;
             return;
         }
-        if (row[0] == ':') {
-            var val = row[row.lastIndexOf('... ') + 4];
+        if (row[0] === ':') {
+            let val = row[row.lastIndexOf('... ') + 4];
             temp_file_change.push(val);
         }
         else {
-            current_commit.file_line_diffs.push(row.split('\t').concat(temp_file_change.shift()));
+            let nextChange = temp_file_change.shift();
+            if (nextChange !== undefined) {
+                current_commit.file_line_diffs.push(row.split('\t').concat(nextChange));
+            }
         }
-    }
+    };
 
-    var parser: any = parse_commit_line;
-    var rows = data.split('\n');
+    let parser: any = parse_commit_line;
+    let rows = data.split('\n');
 
     rows.forEach(function (row: string, index: number) {
         parser(row, index);
@@ -128,31 +133,9 @@ var parse_git_log = function (data: any) {
     return commits;
 };
 
-//module.exports = parse_git_log;
-
 export function parseLogContents(contents: string) {
     return parse_git_log(contents);
 }
-
-/*
-    refs= (HEAD -> refs/heads/master, refs/remotes/origin/master, refs/remotes/origin/HEAD)
-    commit=666ed83a2d465257201cdac215a553ddee3cccbe
-    commitAbbrev=666ed83
-    tree=943fbb83770c3aabd4b4a9370130cb63f2af0965
-    treeAbbrev=943fbb8
-    parents=0baba80028fbc4852d327872b1dd020146200ca0
-    parentsAbbrev=0baba80
-    author=Andre Weinand <aweinand@microsoft.com> 1470819523
-    committer=Andre Weinand <aweinand@microsoft.com> 1470819523
-    subject=Revert "update node-debug for xhr caching"
-    body=This reverts commit ae91d66546e3976c0e61bfa9f07675cfbd90f7c0.
-
-
-    notes=
-
-
-    commit=0baba80028fbc4852d327872b1dd020146200ca0
-*/
 
 const prefixes = {
     refs: 'refs=',
@@ -181,10 +164,11 @@ const prefixLengths = {
     subject: prefixes.subject.length,
     body: prefixes.body.length,
     notes: prefixes.notes.length
-}
-export function parseLogEntry(lines: string[]): LogEntry {
+};
+
+export function parseLogEntry(lines: string[]): LogEntry | null {
     let logEntry: LogEntry = {} as LogEntry;
-    let multiLineProperty: string = null;
+    let multiLineProperty: string = '';
     let filesAltered: string[] = [];
     let processingNumStat = false;
     if (lines.filter(line => line.trim().length > 0).length === 0) {
@@ -329,8 +313,8 @@ function parseAlteredFiles(alteredFiles: string[]): FileStat[] {
         if (parts.length !== 3) {
             return;
         }
-        const add = parts[0] === '-' ? null : parseInt(parts[0]);
-        const del = parts[1] === '-' ? null : parseInt(parts[1]);
+        const add = parts[0] === '-' ? undefined : parseInt(parts[0]);
+        const del = parts[1] === '-' ? undefined : parseInt(parts[1]);
         stats.push({ additions: add, deletions: del, path: parts[2] });
     });
 
@@ -338,22 +322,22 @@ function parseAlteredFiles(alteredFiles: string[]): FileStat[] {
 }
 
 function parseAuthCommitter(details: string): ActionedDetails {
-    let pos = details.lastIndexOf(">");
+    let pos = details.lastIndexOf('>');
     let time = parseInt(details.substring(pos + 1));
     let date = new Date(time * 1000);
     let localisedDate = formatDate(date);
-    let startPos = details.lastIndexOf("<");
+    let startPos = details.lastIndexOf('<');
 
     return {
         date: date,
         localisedDate: localisedDate,
         name: details.substring(0, startPos - 1).trim(),
         email: details.substring(startPos + 1, pos)
-    }
+    };
 }
 
-function formatDate(date: Date){
-    var lang = vscode.env.language;
-        var dateOptions = {  weekday: 'short', day: 'numeric',  month: 'short' , year: 'numeric', hour : 'numeric', minute : 'numeric' };
-        return date.toLocaleString(lang, dateOptions);
+function formatDate(date: Date) {
+    let lang = vscode.env.language;
+    let dateOptions = {  weekday: 'short', day: 'numeric',  month: 'short' , year: 'numeric', hour : 'numeric', minute : 'numeric' };
+    return date.toLocaleString(lang, dateOptions);
 }
