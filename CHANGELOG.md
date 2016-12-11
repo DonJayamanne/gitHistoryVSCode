@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.1.3
+* Clean up [#70](https://github.com/DonJayamanne/gitHistoryVSCode/pull/70)
+
 ## Version 0.1.2
 * Underlining file history details link on hover [#48](https://github.com/DonJayamanne/gitHistoryVSCode/issues/48), [#54](https://github.com/DonJayamanne/gitHistoryVSCode/issues/54)
 

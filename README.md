@@ -49,11 +49,7 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ## Change Log 
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
-* Fixed styling of file history details [#48](https://github.com/DonJayamanne/gitHistoryVSCode/issues/48), [#54](https://github.com/DonJayamanne/gitHistoryVSCode/issues/54)
-* Updated to TypeScript 2.0 [#68](https://github.com/DonJayamanne/gitHistoryVSCode/pull/68)
-* Date format was always displayed in en-US [#69](https://github.com/DonJayamanne/gitHistoryVSCode/issues/69)
-* Comparing large files would display incorrect information [#56](https://github.com/DonJayamanne/gitHistoryVSCode/issues/56)
-* Compilation issue [#60](https://github.com/DonJayamanne/gitHistoryVSCode/issues/60)
+* Clean up [#70](https://github.com/DonJayamanne/gitHistoryVSCode/pull/70)
  
 ## Source
 
