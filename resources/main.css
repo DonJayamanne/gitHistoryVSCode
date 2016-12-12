@@ -20,7 +20,7 @@ body {
     display: none !important;
 }
 .disabled {
-    cursor: not-allowed;
+    pointer-events:none;
 }
 .btn {
     cursor: pointer;
