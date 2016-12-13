@@ -28,21 +28,23 @@ vscode.workspace.onDidCloseTextDocument(textDocument => {
 
 vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
     const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
-    const gitRepositoryPath = vscode.workspace.rootPath;
-    historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, sha1, isoStrictDateTime).then((data: any[]) => {
-        const historyItem: any = data.find(data => data.sha1 === sha1);
-        const previousItems = data.filter(data => data.sha1 !== sha1);
-        historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
-        const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
-            label: '',
-            description: '',
-            data: historyItem,
-            isLast: historyItem.previousSha1.length === 0
-        };
-        onItemSelected(item, fileName, relativeFilePath);
-    }, ex => {
-        vscode.window.showErrorMessage(`There was an error in retrieving the file history. (${ex.message ? ex.message : ex + ''})`);
-    });
+    historyUtil.getGitRepositoryPath(vscode.workspace.rootPath).then(
+        (gitRepositoryPath) => {
+            historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, sha1, isoStrictDateTime).then((data: any[]) => {
+                const historyItem: any = data.find(data => data.sha1 === sha1);
+                const previousItems = data.filter(data => data.sha1 !== sha1);
+                historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
+                const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
+                    label: '',
+                    description: '',
+                    data: historyItem,
+                    isLast: historyItem.previousSha1.length === 0
+                };
+                onItemSelected(item, fileName, relativeFilePath);
+            }, ex => {
+                vscode.window.showErrorMessage(`There was an error in retrieving the file history. (${ex.message ? ex.message : ex + ''})`);
+            });
+   }).then(() => { }, error => genericErrorHandler(error));
 });
 
 export function run(fileName: string): any {
