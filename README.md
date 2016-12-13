@@ -40,16 +40,11 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 - View refs (branch, tags)   
 - Search git history
 
-## Thanks 
-- [Mike Surcouf](https://github.com/mikes-gh)
-    + Updated to TypeScript 2.0 [#68](https://github.com/DonJayamanne/gitHistoryVSCode/pull/68)
-    + Date format was always displayed in en-US [#69](https://github.com/DonJayamanne/gitHistoryVSCode/issues/69)
-    + Comparing large files would display incorrect information [#56](https://github.com/DonJayamanne/gitHistoryVSCode/issues/56)
-    + Compilation issue [#60](https://github.com/DonJayamanne/gitHistoryVSCode/issues/60)
+## Big thanks to [Mike Surcouf](https://github.com/mikes-gh)
 
 ## Change Log 
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
-* Clean up [#70](https://github.com/DonJayamanne/gitHistoryVSCode/pull/70)
+* Fix git log paging [#74](https://github.com/DonJayamanne/gitHistoryVSCode/pull/74)
  
 ## Source
 
