@@ -28,7 +28,8 @@ vscode.workspace.onDidCloseTextDocument(textDocument => {
 
 vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
     const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
-    const gitRepositoryPath = vscode.workspace.rootPath;
+    historyUtil.getGitRepositoryPath(vscode.workspace.rootPath).then(
+        (gitRepositoryPath) => {
     historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, sha1, isoStrictDateTime).then((data: any[]) => {
         const historyItem: any = data.find(data => data.sha1 === sha1);
         const previousItems = data.filter(data => data.sha1 !== sha1);
@@ -43,6 +44,7 @@ vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, rela
     }, ex => {
         vscode.window.showErrorMessage(`There was an error in retrieving the file history. (${ex.message ? ex.message : ex + ''})`);
     });
+   }).then(() => { }, error => genericErrorHandler(error));
 });
 
 export function run(fileName: string): any {
