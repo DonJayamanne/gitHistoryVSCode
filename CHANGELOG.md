@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.1.4
+* Fix git log paging [#74](https://github.com/DonJayamanne/gitHistoryVSCode/pull/74)
+
 ## Version 0.1.3
 * Clean up [#70](https://github.com/DonJayamanne/gitHistoryVSCode/pull/70)
 

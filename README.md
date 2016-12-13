@@ -49,7 +49,7 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ## Change Log 
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
-* Clean up [#70](https://github.com/DonJayamanne/gitHistoryVSCode/pull/70)
+* Fix git log paging [#74](https://github.com/DonJayamanne/gitHistoryVSCode/pull/74)
  
 ## Source
 
