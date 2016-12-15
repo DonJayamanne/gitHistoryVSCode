@@ -85,7 +85,8 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 
     return getGitPath().then((gitExecutable) =>
         new Promise<string>((resolve, reject) => {
-            let options = { cwd: path.dirname(fileName) };
+            let directory = fs.statSync(fileName).isDirectory() ? fileName : path.dirname(fileName);
+            let options = { cwd: directory };
 
             // git rev-parse --git-dir
             let ls = spawn(gitExecutable, ['rev-parse', '--show-toplevel'], options);
