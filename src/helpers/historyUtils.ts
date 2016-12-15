@@ -115,10 +115,10 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 }
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', relativeFilePath]);
+    return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', '--', relativeFilePath]);
 }
 export function getFileHistoryBefore(rootDir: string, relativeFilePath: string, sha1: string, isoStrictDateTime: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, [`--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, relativeFilePath]);
+    return getLog(rootDir, relativeFilePath, [`--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, '--', relativeFilePath]);
 }
 
 export function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number): Thenable<any[]> {
@@ -131,7 +131,8 @@ function getLog(rootDir: string, relativeFilePath: string, args: string[]): Then
     return getGitPath().then((gitExecutable) =>
         new Promise<any[]>((resolve, reject) => {
             let options = { cwd: rootDir };
-            let ls = spawn(gitExecutable, ['log', ...args], options);
+            args.unshift('log');
+            let ls = spawn(gitExecutable, args, options);
 
             let log = '';
             let error = '';

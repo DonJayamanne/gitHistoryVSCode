@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
 import * as tmp from 'tmp';
+import { decode as htmlDecode }  from 'he';
 
 // TODO:Clean up this mess
 
@@ -27,6 +28,7 @@ vscode.workspace.onDidCloseTextDocument(textDocument => {
 });
 
 vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
+    relativeFilePath = htmlDecode(relativeFilePath);
     const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
     const gitRepositoryPath = vscode.workspace.rootPath;
     historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, sha1, isoStrictDateTime).then((data: any[]) => {
