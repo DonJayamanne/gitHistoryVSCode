@@ -116,18 +116,18 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 }
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', '--', relativeFilePath]);
+    return getLog(rootDir, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', '--', relativeFilePath]);
 }
-export function getFileHistoryBefore(rootDir: string, relativeFilePath: string, sha1: string, isoStrictDateTime: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, [`--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, '--', relativeFilePath]);
+export function getFileHistoryBefore(rootDir: string, relativeFilePath: string, isoStrictDateTime: string): Thenable<any[]> {
+    return getLog(rootDir, [`--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, '--', relativeFilePath]);
 }
 
 export function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number): Thenable<any[]> {
     let lineArgs = '-L' + lineNumber + ',' + lineNumber + ':' + relativeFilePath.replace(/\\/g, '/');
-    return getLog(rootDir, relativeFilePath, [lineArgs, '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--numstat', '--topo-order', '--raw']);
+    return getLog(rootDir, [lineArgs, '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--numstat', '--topo-order', '--raw']);
 }
 
-function getLog(rootDir: string, relativeFilePath: string, args: string[]): Thenable<any[]> {
+function getLog(rootDir: string, args: string[]): Thenable<any[]> {
 
     return getGitPath().then((gitExecutable) =>
         new Promise<any[]>((resolve, reject) => {

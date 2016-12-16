@@ -31,7 +31,7 @@ vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, rela
     relativeFilePath = htmlDecode(relativeFilePath);
     const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
     historyUtil.getGitRepositoryPath(vscode.workspace.rootPath).then((gitRepositoryPath) => {
-        historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, sha1, isoStrictDateTime).then((data: any[]) => {
+        historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, isoStrictDateTime).then((data: any[]) => {
             const historyItem: any = data.find(data => data.sha1 === sha1);
             const previousItems = data.filter(data => data.sha1 !== sha1);
             historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
