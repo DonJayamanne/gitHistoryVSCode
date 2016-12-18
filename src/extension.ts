@@ -8,7 +8,7 @@ import * as viewer from './logViewer/main';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-    const outChannel = vscode.window.createOutputChannel('Git');
+    const outChannel = vscode.window.createOutputChannel('Git History');
     history.activate(outChannel);
     let disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
         outChannel.clear();
