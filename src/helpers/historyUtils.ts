@@ -106,6 +106,12 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
                 error += data;
             });
 
+            ls.on('error', function(error) {
+                console.error(error);
+                reject(error);
+                return;
+            });
+
             ls.on('close', function() {
                  if (error.length > 0) {
                     reject(error);
@@ -150,6 +156,12 @@ function getLog(rootDir: string, args: string[]): Thenable<any[]> {
                 error += data;
             });
 
+            ls.on('error', function(error) {
+                console.error(error);
+                reject(error);
+                return;
+            });
+
             ls.on('close', function() {
                 if (error.length > 0) {
                     reject(error);
@@ -175,6 +187,12 @@ export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: s
 
             ls.stderr.on('data', function (data) {
                 error += data;
+            });
+
+            ls.on('error', function(error) {
+                console.error(error);
+                reject(error);
+                return;
             });
 
             ls.on('close', function() {

@@ -68,6 +68,12 @@ export function getHistory(rootDir: string, pageIndex: number = 0, pageSize: num
                 error += data;
             });
 
+            ls.on('error', function(error) {
+                console.error(error);
+                reject(error);
+                return;
+            });
+
             ls.on('close', () => {
                 if (error.length > 0) {
                     reject(error);
