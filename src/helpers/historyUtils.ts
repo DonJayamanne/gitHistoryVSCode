@@ -8,13 +8,18 @@ export function getGitPath(): Promise<string> {
     return new Promise((resolve, reject) => {
         let gitPath = <string>vscode.workspace.getConfiguration('git').get('path');
         if (typeof gitPath === 'string' && gitPath.length > 0) {
-            resolve(gitPath);
+            if (fs.existsSync(gitPath)) {
+                resolve(gitPath);
+                return;
+            }
         }
 
         if (process.platform !== 'win32') {
             // Default: search in PATH environment variable
             resolve('git');
-        } else {
+            return;
+        }
+        else {
             // in Git for Windows, the recommendation is not to put git into the PATH.
             // Instead, there is an entry in the Registry.
 
