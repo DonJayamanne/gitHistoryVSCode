@@ -60,13 +60,18 @@ export async function run(fileName: string) {
             let dateTime = new Date(Date.parse(item.author_date)).toLocaleString();
             let label = <string>vscode.workspace.getConfiguration('gitHistory').get('displayLabel');
             let description = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDescription');
+            let detail = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDetail');
+
+            const firstLineofMessage = item.message.split('\n')[0]
 
             label = label.replace('${date}', dateTime).replace('${name}', item.author_name)
-                .replace('${email}', item.author_email).replace('${message}', item.message);
+                .replace('${email}', item.author_email).replace('${message}', firstLineofMessage);
             description = description.replace('${date}', dateTime).replace('${name}', item.author_name)
-                .replace('${email}', item.author_email).replace('${message}', item.message);
+                .replace('${email}', item.author_email).replace('${message}', firstLineofMessage);
+            detail = detail.replace('${date}', dateTime).replace('${name}', item.author_name)
+                .replace('${email}', item.author_email).replace('${message}', firstLineofMessage);
 
-            return { label: label, description: description, data: item };
+            return { label: label, description: description, detail: detail, data: item };
         });
 
         itemPickList.forEach((item, index) => {

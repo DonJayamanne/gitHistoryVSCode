@@ -63,13 +63,18 @@
             "properties": {
                 "gitHistory.displayLabel": {
                     "type": "string",
-                    "default": "${name} <${email}> on ${date}",
+                    "default": "${message}",
                     "description": "Informations to display in history as label"
                 },
                 "gitHistory.displayDescription": {
                     "type": "string",
-                    "default": "${message}",
+                    "default": "",
                     "description": "Informations to display in history as description"
+                },
+                "gitHistory.displayDetail": {
+                    "type": "string",
+                    "default": "${name} <${email}> on ${date}",
+                    "description": "Informations to display in history as detail"
                 },
                 "gitHistory.logLevel": {
                     "type": "string",
