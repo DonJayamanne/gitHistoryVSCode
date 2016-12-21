@@ -5,7 +5,7 @@ import { LogEntry } from '../contracts';
 import * as path from 'path';
 
 const gitHistorySchema = 'git-history-viewer';
-const PAGE_SIZE = 500;
+const PAGE_SIZE = 50;
 let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
 let historyRetrieved: boolean;
 let pageIndex = 0;
