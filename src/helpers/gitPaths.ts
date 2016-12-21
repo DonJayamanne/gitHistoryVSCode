@@ -19,6 +19,9 @@ export async function getGitPath(): Promise<string> {
                 resolve(gitPathConfig);
                 return;
             }
+            else {
+                logger.logError(`git path: ${gitPathConfig} - from vscode settings in invalid`);
+            }
         }
 
         if (process.platform !== 'win32') {

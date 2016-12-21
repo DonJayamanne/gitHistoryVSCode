@@ -26,7 +26,7 @@ export function logError(error: any) {
 
 export function logInfo(message: string) {
     if (logLevel === 'Info' || logLevel === 'Debug') {
-        getLogChannel().appendLine(`[Info - ${new Date().toLocaleTimeString().toString()}] ${message}`);
+        getLogChannel().appendLine(`[Info  - ${new Date().toLocaleTimeString().toString()}] ${message}`);
     }
 }
 
