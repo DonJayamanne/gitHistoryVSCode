@@ -79,6 +79,7 @@ export async function getLogEntries(rootDir: string, pageIndex: number = 0, page
 
         ls.on('close', () => {
             if (error.length > 0) {
+                logger.logError(error);
                 reject(error);
                 return;
             }

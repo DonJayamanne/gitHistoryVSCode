@@ -307,7 +307,7 @@ function parseAuthCommitter(details: string): ActionedDetails {
     };
 }
 
-function formatDate(date: Date) {
+export function formatDate(date: Date) {
     let lang = vscode.env.language;
     let dateOptions = {  weekday: 'short', day: 'numeric',  month: 'short' , year: 'numeric', hour : 'numeric', minute : 'numeric' };
     return date.toLocaleString(lang, dateOptions);

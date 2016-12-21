@@ -129,7 +129,8 @@ export async function getGitRepositoryPath(fileName: string): Promise<string> {
         });
 
         ls.on('close', function() {
-                if (error.length > 0) {
+            if (error.length > 0) {
+                logger.logError(error);
                 reject(error);
                 return;
             }

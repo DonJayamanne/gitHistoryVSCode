@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as tmp from 'tmp';
 import { decode as htmlDecode }  from 'he';
 import * as logger from '../logger';
+import { formatDate } from '../helpers/logParser';
 
 export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
@@ -57,7 +58,7 @@ export async function run(fileName: string) {
         }
 
         let itemPickList: vscode.QuickPickItem[] = fileHistory.map(item => {
-            let dateTime = new Date(Date.parse(item.author_date)).toLocaleString();
+            let dateTime = formatDate(new Date(Date.parse(item.author_date)));
             let label = <string>vscode.workspace.getConfiguration('gitHistory').get('displayLabel');
             let description = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDescription');
             let detail = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDetail');
@@ -167,7 +168,7 @@ async function launchFileCompareWithLocal(details: any, fileName: string, relati
 
 async function launchFileCompareWithPrevious(details: any, relativeFilePath: string) {
     try {
-        const files = await Promise.all<string>([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]);
+        const files = await Promise.all([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]);
         vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(files[0]), vscode.Uri.file(files[1]));
     }
     catch (error) {
@@ -184,9 +185,14 @@ async function getFile(commitSha1: string, localFilePath: string): Promise<strin
                 reject(err);
                 return;
             }
-            historyUtil.writeFile(rootDir, commitSha1, localFilePath, tmpFilePath).then(() => {
-                resolve(tmpFilePath);
-            }, reject);
+            try {
+                const targetFile = await historyUtil.writeFile(rootDir, commitSha1, localFilePath, tmpFilePath);
+                resolve(targetFile);
+            }
+            catch (ex) {
+                logger.logError(ex);
+                reject(ex);
+            }
         });
     });
 }

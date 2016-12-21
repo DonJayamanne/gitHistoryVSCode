@@ -43,6 +43,7 @@ async function getLog(rootDir: string, args: string[]): Promise<any[]> {
 
         ls.on('close', function() {
             if (error.length > 0) {
+                logger.logError(error);
                 reject(error);
                 return;
             }
@@ -79,6 +80,7 @@ export async function writeFile(rootDir: string, commitSha1: string, sourceFileP
 
         ls.on('close', function() {
             if (error.length > 0) {
+                logger.logError(error);
                 reject(error);
                 return;
             }
