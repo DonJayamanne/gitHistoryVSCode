@@ -137,7 +137,7 @@ export async function getGitRepositoryPath(fileName: string): Promise<string> {
             if (!path.isAbsolute(repositoryPath)) {
                 repositoryPath = path.join(path.dirname(fileName), repositoryPath);
             }
-            logger.logInfo(repositoryPath);
+            logger.logInfo('git repo path: ' + repositoryPath);
             resolve(repositoryPath);
         });
     });
