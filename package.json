@@ -73,7 +73,7 @@
                 },
                 "gitHistory.displayDetail": {
                     "type": "string",
-                    "default": "${name} <${email}> on ${date}",
+                    "default": "${name} on ${date}",
                     "description": "Informations to display in history as detail"
                 },
                 "gitHistory.logLevel": {
