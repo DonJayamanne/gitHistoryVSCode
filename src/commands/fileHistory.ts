@@ -1,86 +1,98 @@
 import * as vscode from 'vscode';
+import { getGitRepositoryPath } from '../helpers/gitPaths';
 import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
 import * as tmp from 'tmp';
 import { decode as htmlDecode }  from 'he';
+import * as logger from '../logger';
 
-// TODO:Clean up this mess
-
-let outChannel: vscode.OutputChannel;
-
-export function activate(outputChannel: vscode.OutputChannel) {
-    outChannel = outputChannel;
+export function activate(context: vscode.ExtensionContext) {
+    let disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
+        let fileName = '';
+        if (fileUri && fileUri.fsPath) {
+            fileName = fileUri.fsPath;
+        }
+        else {
+            if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
+                return;
+            }
+            fileName = vscode.window.activeTextEditor.document.fileName;
+        }
+        run(fileName);
+    });
+    context.subscriptions.push(disposable);
 }
 
-vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
-    relativeFilePath = htmlDecode(relativeFilePath);
-    const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
-    historyUtil.getGitRepositoryPath(vscode.workspace.rootPath).then((gitRepositoryPath) => {
-        historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, isoStrictDateTime).then((data: any[]) => {
-            const historyItem: any = data.find(data => data.sha1 === sha1);
-            const previousItems = data.filter(data => data.sha1 !== sha1);
-            historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
-            const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
-                label: '',
-                description: '',
-                data: historyItem,
-                isLast: historyItem.previousSha1.length === 0
-            };
-            onItemSelected(item, fileName, relativeFilePath);
-        }, ex => {
-            vscode.window.showErrorMessage(`There was an error in retrieving the file history. (${ex.message ? ex.message : ex + ''})`);
-        });
-    }).then(() => { }, error => genericErrorHandler(error));
+vscode.commands.registerCommand('git.viewFileCommitDetails', async (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
+    try {
+        relativeFilePath = htmlDecode(relativeFilePath);
+        const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
+        const gitRepositoryPath = await getGitRepositoryPath(vscode.workspace.rootPath);
+        const data = await historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, isoStrictDateTime);
+        const historyItem: any = data.find(data => data.sha1 === sha1);
+        const previousItems = data.filter(data => data.sha1 !== sha1);
+        historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
+        const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
+            label: '',
+            description: '',
+            data: historyItem,
+            isLast: historyItem.previousSha1.length === 0
+        };
+        onItemSelected(item, fileName, relativeFilePath);
+    }
+    catch (error) {
+        logger.logError(error);
+    }
 });
 
-export function run(fileName: string): any {
-    historyUtil.getGitRepositoryPath(fileName).then(
-        (gitRepositoryPath) => {
-            let relativeFilePath = path.relative(gitRepositoryPath, fileName);
+export async function run(fileName: string) {
+    try {
+        const gitRepositoryPath = await getGitRepositoryPath(fileName);
+        const relativeFilePath = path.relative(gitRepositoryPath, fileName);
+        const fileHistory = await historyUtil.getFileHistory(gitRepositoryPath, relativeFilePath);
 
-            historyUtil.getFileHistory(gitRepositoryPath, relativeFilePath).then(displayHistory, genericErrorHandler);
+        if (fileHistory.length === 0) {
+            vscode.window.showInformationMessage(`There are no history items for this item '${relativeFilePath}'.`);
+            return;
+        }
 
-            function displayHistory(log: any[]) {
-                if (log.length === 0) {
-                    vscode.window.showInformationMessage(`There are no history items for this item '${relativeFilePath}'.`);
-                    return;
-                }
+        let itemPickList: vscode.QuickPickItem[] = fileHistory.map(item => {
+            let dateTime = new Date(Date.parse(item.author_date)).toLocaleString();
+            let label = <string>vscode.workspace.getConfiguration('gitHistory').get('displayLabel');
+            let description = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDescription');
 
-                let itemPickList: vscode.QuickPickItem[] = log.map(item => {
-                    let dateTime = new Date(Date.parse(item.author_date)).toLocaleString();
+            label = label.replace('${date}', dateTime).replace('${name}', item.author_name)
+                .replace('${email}', item.author_email).replace('${message}', item.message);
+            description = description.replace('${date}', dateTime).replace('${name}', item.author_name)
+                .replace('${email}', item.author_email).replace('${message}', item.message);
 
-                    let label = <string>vscode.workspace.getConfiguration('gitHistory').get('displayLabel'),
-                        description = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDescription');
+            return { label: label, description: description, data: item };
+        });
 
-                    label = label.replace('${date}', dateTime).replace('${name}', item.author_name)
-                        .replace('${email}', item.author_email).replace('${message}', item.message);
-                    description = description.replace('${date}', dateTime).replace('${name}', item.author_name)
-                        .replace('${email}', item.author_email).replace('${message}', item.message);
-
-                    return { label: label, description: description, data: item };
-                });
-
-                itemPickList.forEach((item, index) => {
-                    if (index === (itemPickList.length - 1)) {
-                        (<any>item).isLast = true;
-                    }
-                    else {
-                        (<any>item).data.previousSha1 = log[index + 1].sha1;
-                    }
-                });
-
-                vscode.window.showQuickPick(itemPickList, { placeHolder: '', matchOnDescription: true }).then(item => {
-                    if (!item) {
-                        return;
-                    }
-                    onItemSelected(item, fileName, relativeFilePath);
-                });
+        itemPickList.forEach((item, index) => {
+            if (index === (itemPickList.length - 1)) {
+                (<any>item).isLast = true;
             }
-        }).then(() => { }, error => genericErrorHandler(error));
+            else {
+                (<any>item).data.previousSha1 = fileHistory[index + 1].sha1;
+            }
+        });
+
+        vscode.window.showQuickPick(itemPickList, { placeHolder: '', matchOnDescription: true }).then(item => {
+            if (!item) {
+                return;
+            }
+            onItemSelected(item, fileName, relativeFilePath);
+        });
+    }
+    catch (error) {
+        logger.logError(error);
+    }
 }
 
+
 function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFilePath: string) {
-    let itemPickList: vscode.QuickPickItem[] = [];
+    const itemPickList: vscode.QuickPickItem[] = [];
     itemPickList.push({ label: 'View Change Log', description: 'Author, committer and message' });
     itemPickList.push({ label: 'View File Contents', description: '' });
     itemPickList.push({ label: 'Compare against workspace file', description: '' });
@@ -92,7 +104,7 @@ function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFi
         if (!cmd) {
             return;
         }
-        let data = (<any>item).data;
+        const data = (<any>item).data;
         if (cmd.label === itemPickList[0].label) {
             viewLog(data);
             return;
@@ -113,8 +125,16 @@ function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFi
     });
 }
 
-function viewFile(details: any, relativeFilePath: string) {
-    displayFile(details.sha1, relativeFilePath).then(() => { }, genericErrorHandler);
+async function viewFile(details: any, relativeFilePath: string) {
+    try {
+        const tmpFilePath = await getFile(details.sha1, relativeFilePath);
+        vscode.workspace.openTextDocument(tmpFilePath).then(document => {
+            vscode.window.showTextDocument(document);
+        });
+    }
+    catch (error) {
+        logger.logError(error);
+    }
 }
 
 function viewLog(details: any) {
@@ -127,35 +147,34 @@ function viewLog(details: any) {
         `Commit Date : ${committerDate}\n` +
         `Message : ${details.message}`;
 
-    outChannel.append(log);
-    outChannel.show();
+    logger.showInfo(log);
 }
 
-function launchFileCompareWithLocal(details: any, fileName: string, relativeFilePath: string) {
-    compareFileWithLocalCopy(details.sha1, fileName, relativeFilePath).then(() => { }, genericErrorHandler);
-}
-
-function launchFileCompareWithPrevious(details: any, relativeFilePath: string) {
-    Promise.all<string>([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]).then(files => {
-        return vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(files[0]), vscode.Uri.file(files[1]));
-    }).catch(genericErrorHandler);
-}
-
-function genericErrorHandler(error: any) {
-    if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
-        vscode.window.showErrorMessage('Cannot find the git installation');
-    } else {
-        outChannel.appendLine(error);
-        outChannel.show();
-        vscode.window.showErrorMessage('There was an error, please view details in output log');
+async function launchFileCompareWithLocal(details: any, fileName: string, relativeFilePath: string) {
+    try {
+        const tmpFilePath = await getFile(details.sha1, relativeFilePath);
+        vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(tmpFilePath), vscode.Uri.file(fileName));
+    }
+    catch (error) {
+        logger.logError(error);
     }
 }
 
-function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
-    let rootDir = vscode.workspace.rootPath;
-    return new Promise((resolve, reject) => {
+async function launchFileCompareWithPrevious(details: any, relativeFilePath: string) {
+    try {
+        const files = await Promise.all<string>([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]);
+        vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(files[0]), vscode.Uri.file(files[1]));
+    }
+    catch (error) {
+        logger.logError(error);
+    }
+}
+
+async function getFile(commitSha1: string, localFilePath: string): Promise<string> {
+    const rootDir = vscode.workspace.rootPath;
+    return new Promise<string>((resolve, reject) => {
         let ext = path.extname(localFilePath);
-        tmp.file({ postfix: ext }, function _tempFileCreated(err: any, tmpFilePath: string, fd: number, cleanupCallback: () => void) {
+        tmp.file({ postfix: ext }, async function _tempFileCreated(err: any, tmpFilePath: string, fd: number, cleanupCallback: () => void) {
             if (err) {
                 reject(err);
                 return;
@@ -164,23 +183,5 @@ function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
                 resolve(tmpFilePath);
             }, reject);
         });
-    });
-}
-
-function displayFile(commitSha1: string, localFilePath: string): Thenable<string> {
-    return new Promise((resolve, reject) => {
-        getFile(commitSha1, localFilePath).then((tmpFilePath) => {
-            vscode.workspace.openTextDocument(tmpFilePath).then(d => {
-                vscode.window.showTextDocument(d);
-                resolve(tmpFilePath);
-            });
-
-        }, reject);
-    });
-}
-
-function compareFileWithLocalCopy(commitSha1: string, localFilePath: string, relativeFilePath: string): Thenable<string> {
-    return getFile(commitSha1, relativeFilePath).then((tmpFilePath) => {
-        return vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(tmpFilePath), vscode.Uri.file(localFilePath));
     });
 }

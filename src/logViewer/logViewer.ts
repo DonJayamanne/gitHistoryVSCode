@@ -1,8 +1,6 @@
-'use strict';
-
 import * as vscode from 'vscode';
 import * as htmlGenerator from './htmlGenerator';
-import * as gitHist from '../helpers/gitHistory';
+import * as gitHistory from '../helpers/gitHistory';
 import { LogEntry } from '../contracts';
 import * as path from 'path';
 
@@ -19,17 +17,18 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private entries: LogEntry[];
 
-    public provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Thenable<string> {
-        return gitHist.getHistory(vscode.workspace.rootPath, pageIndex, pageSize)
-          .then(entries => {
-              canGoPrevious = pageIndex > 0;
-              canGoNext = entries.length === pageSize;
-              this.entries = entries;
-              let html = this.generateHistoryView();
-              return html;
-          }).catch(error => {
-              return this.generateErrorView(error);
-          });
+    public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
+        try {
+            const entries = await gitHistory.getLogEntries(vscode.workspace.rootPath, pageIndex, pageSize);
+            canGoPrevious = pageIndex > 0;
+            canGoNext = entries.length === pageSize;
+            this.entries = entries;
+            let html = this.generateHistoryView();
+            return html;
+        }
+        catch (error) {
+            return this.generateErrorView(error);
+        }
     }
 
     get onDidChange(): vscode.Event<vscode.Uri> {
@@ -87,7 +86,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 }
 
-export function activate(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
+export function activate(context: vscode.ExtensionContext) {
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
@@ -109,6 +108,7 @@ export function activate(context: vscode.ExtensionContext, outputChannel: vscode
     disposable = vscode.commands.registerCommand('git.copyText', (sha: string) => {
         vscode.window.showInformationMessage(sha);
     });
+    context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('git.logNavigate', (direction: string) => {
         pageIndex = pageIndex + (direction === 'next' ? 1 : -1);
