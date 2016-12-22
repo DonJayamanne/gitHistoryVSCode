@@ -6,6 +6,7 @@ import * as tmp from 'tmp';
 import { decode as htmlDecode }  from 'he';
 import * as logger from '../logger';
 import { formatDate } from '../helpers/logParser';
+import * as fs from 'fs';
 
 export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
@@ -97,12 +98,23 @@ export async function run(fileName: string) {
 }
 
 
-function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFilePath: string) {
+async function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFilePath: string) {
+    const commit = (<any>item).data;
+    const getThisFile = getFile(commit.sha1, relativeFilePath);
+    const getPreviousFile = getFile(commit.previousSha1, relativeFilePath);
+
+    const thisFile = await getThisFile;
+    const previousFile = await getPreviousFile;
+
     const itemPickList: vscode.QuickPickItem[] = [];
     itemPickList.push({ label: 'View Change Log', description: 'Author, committer and message' });
-    itemPickList.push({ label: 'View File Contents', description: '' });
-    itemPickList.push({ label: 'Compare against workspace file', description: '' });
-    if (!(<any>item).isLast) {
+    if (thisFile !== 'fileUnavailable') {
+        itemPickList.push({ label: 'View File Contents', description: '' });
+    }
+    if (thisFile !== 'fileUnavailable' && fs.existsSync(fileName)) {
+        itemPickList.push({ label: 'Compare against workspace file', description: '' });
+    }
+    if (previousFile !== 'fileUnavailable' &&  thisFile !== 'fileUnavailable') {
         itemPickList.push({ label: 'Compare against previous version', description: '' });
     }
 
@@ -111,30 +123,28 @@ function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFi
             return;
         }
         const data = (<any>item).data;
-        if (cmd.label === itemPickList[0].label) {
+        if (cmd.label === 'View Change Log') {
             viewLog(data);
             return;
         }
-
-        if (cmd.label === itemPickList[1].label) {
-            viewFile(data, relativeFilePath);
+        if (cmd.label === 'View File Contents') {
+            viewFile(thisFile);
             return;
         }
-        if (cmd.label === itemPickList[2].label) {
-            launchFileCompareWithLocal(data, fileName, relativeFilePath);
+        if (cmd.label === 'Compare against workspace file') {
+            diffFiles(thisFile, fileName);
             return;
         }
-        if (itemPickList.length > 3 && cmd.label === itemPickList[3].label) {
-            launchFileCompareWithPrevious(data, relativeFilePath);
+        if (cmd.label === 'Compare against previous version') {
+            diffFiles(previousFile, thisFile);
             return;
         }
     });
 }
 
-async function viewFile(details: any, relativeFilePath: string) {
+async function viewFile(fileName: string) {
     try {
-        const tmpFilePath = await getFile(details.sha1, relativeFilePath);
-        vscode.workspace.openTextDocument(tmpFilePath).then(document => {
+        vscode.workspace.openTextDocument(fileName).then(document => {
             vscode.window.showTextDocument(document);
         });
     }
@@ -156,20 +166,9 @@ function viewLog(details: any) {
     logger.showInfo(log);
 }
 
-async function launchFileCompareWithLocal(details: any, fileName: string, relativeFilePath: string) {
+function diffFiles(sourceFile: string, destinationFile: string) {
     try {
-        const tmpFilePath = await getFile(details.sha1, relativeFilePath);
-        vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(tmpFilePath), vscode.Uri.file(fileName));
-    }
-    catch (error) {
-        logger.logError(error);
-    }
-}
-
-async function launchFileCompareWithPrevious(details: any, relativeFilePath: string) {
-    try {
-        const files = await Promise.all([getFile(details.previousSha1, relativeFilePath), getFile(details.sha1, relativeFilePath)]);
-        vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(files[0]), vscode.Uri.file(files[1]));
+        vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(sourceFile), vscode.Uri.file(destinationFile));
     }
     catch (error) {
         logger.logError(error);
@@ -179,6 +178,10 @@ async function launchFileCompareWithPrevious(details: any, relativeFilePath: str
 async function getFile(commitSha1: string, localFilePath: string): Promise<string> {
     const rootDir = vscode.workspace.rootPath;
     return new Promise<string>((resolve, reject) => {
+        if (commitSha1 === undefined) {
+            resolve('fileUnavailable');
+            return;
+        }
         let ext = path.extname(localFilePath);
         tmp.file({ postfix: ext }, async function _tempFileCreated(err: any, tmpFilePath: string, fd: number, cleanupCallback: () => void) {
             if (err) {

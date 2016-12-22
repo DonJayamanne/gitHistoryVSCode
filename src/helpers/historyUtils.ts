@@ -80,8 +80,14 @@ export async function writeFile(rootDir: string, commitSha1: string, sourceFileP
 
         ls.on('close', function() {
             if (error.length > 0) {
-                logger.logError(error);
-                reject(error);
+                if (error.includes('does not exist')) {
+                    resolve('fileUnavailable');
+                    return;
+                }
+                else {
+                    logger.logError(error);
+                    reject(error);
+                }
                 return;
             }
             resolve(targetFile);

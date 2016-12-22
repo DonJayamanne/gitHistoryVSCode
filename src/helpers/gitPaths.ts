@@ -13,7 +13,7 @@ export async function getGitPath(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const gitPathConfig = <string>vscode.workspace.getConfiguration('git').get('path');
         if (typeof gitPathConfig === 'string' && gitPathConfig.length > 0) {
-            if (fs.exists(gitPathConfig)) {
+            if (fs.existsSync(gitPathConfig)) {
                 logger.logInfo(`git path: ${gitPathConfig} - from vscode settings`);
                 gitPath = gitPathConfig;
                 resolve(gitPathConfig);
