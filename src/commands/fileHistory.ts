@@ -7,25 +7,10 @@ import { decode as htmlDecode }  from 'he';
 // TODO:Clean up this mess
 
 let outChannel: vscode.OutputChannel;
-const tmpFileCleanup = new Map<string, Function>();
 
 export function activate(outputChannel: vscode.OutputChannel) {
     outChannel = outputChannel;
 }
-
-vscode.workspace.onDidCloseTextDocument(textDocument => {
-    if (textDocument && tmpFileCleanup.has(textDocument.fileName)) {
-        let cleanupFunction = tmpFileCleanup.get(textDocument.fileName);
-        if (cleanupFunction !== undefined) {
-            try {
-                cleanupFunction();
-            }
-            catch (ex) {
-            }
-            tmpFileCleanup.delete(textDocument.fileName);
-        }
-    }
-});
 
 vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
     relativeFilePath = htmlDecode(relativeFilePath);
@@ -176,13 +161,6 @@ function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
                 return;
             }
             historyUtil.writeFile(rootDir, commitSha1, localFilePath, tmpFilePath).then(() => {
-                // Windows drive letter hack
-                // vscode returns lowercase drive letter for textDocument.fileName when calling onDidCloseTextDocument
-                // If we dont do this we wont get a filename match for cleanup
-                if (tmpFilePath.indexOf(':') === 1) {
-                    tmpFilePath = tmpFilePath.substr(0, 1).toLowerCase() + tmpFilePath.substr(1);
-                }
-                tmpFileCleanup.set(tmpFilePath, cleanupCallback);
                 resolve(tmpFilePath);
             }, reject);
         });
