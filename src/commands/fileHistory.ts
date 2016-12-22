@@ -132,11 +132,11 @@ async function onItemSelected(item: vscode.QuickPickItem, fileName: string, rela
             return;
         }
         if (cmd.label === 'Compare against workspace file') {
-            diffFiles(thisFile, fileName);
+            diffFiles(fileName, thisFile, commit.sha1, fileName, '');
             return;
         }
         if (cmd.label === 'Compare against previous version') {
-            diffFiles(previousFile, thisFile);
+            diffFiles(fileName, previousFile, commit.previousSha1, thisFile, commit.sha1);
             return;
         }
     });
@@ -144,7 +144,7 @@ async function onItemSelected(item: vscode.QuickPickItem, fileName: string, rela
 
 async function viewFile(fileName: string) {
     try {
-        vscode.workspace.openTextDocument(fileName).then(document => {
+        vscode.workspace.openTextDocument(`[${path.basename(fileName)}](${fileName}`).then(document => {
             vscode.window.showTextDocument(document);
         });
     }
@@ -166,9 +166,12 @@ function viewLog(details: any) {
     logger.showInfo(log);
 }
 
-function diffFiles(sourceFile: string, destinationFile: string) {
+function diffFiles(fileName:string, sourceFile: string, sourceSha1: string, destinationFile: string, destinationSha1: string) {
     try {
-        vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(sourceFile), vscode.Uri.file(destinationFile));
+        const sourceFormattedSha1 = `(${sourceSha1.substring(0,7)})`;
+        const destinationFormattedSha1 = destinationSha1 !== '' ? `(${destinationSha1.substring(0,7)})` : '';
+        vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(sourceFile), vscode.Uri.file(destinationFile),
+        `${path.basename(fileName)} ${sourceFormattedSha1} ↔ ${path.basename(fileName)} ${destinationFormattedSha1}`);
     }
     catch (error) {
         logger.logError(error);
