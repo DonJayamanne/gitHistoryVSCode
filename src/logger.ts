@@ -37,13 +37,11 @@ export function logDebug(message: string) {
 }
 
 function getTimeAndms(): string {
-    const date = new Date();
-    return `${date.toLocaleTimeString().toString()}.${padms(date.getMilliseconds())}`;
-}
-
-function padms(ms: number): string {
-    const pad = new Array(1 + 3).join('0');
-    return (pad + ms).slice(-pad.length);
+    const time = new Date();
+    return ('0' + time.getHours()).slice(-2)   + ':' +
+    ('0' + time.getMinutes()).slice(-2) + ':' +
+    ('0' + time.getSeconds()).slice(-2) + '.' +
+    ('00' + time.getMilliseconds()).slice(-3);
 }
 
 export function showInfo(message: string) {
