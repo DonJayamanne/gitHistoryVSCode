@@ -1,4 +1,5 @@
 import * as contracts from '../contracts';
+import { gitmojify } from '../helpers/gitmojify';
 
 (function () {
     let logEntries: contracts.LogEntry[];
@@ -65,7 +66,7 @@ import * as contracts from '../contracts';
             $detailsView.removeClass('hidden');
         }
 
-        $('.commit-subject', $detailsView).html(entry.subject);
+        $('.commit-subject', $detailsView).html(gitmojify(entry.subject));
         $('.commit-author .name', $detailsView)
           .attr('aria-label', entry.author.email)
           .html(entry.author.name);
@@ -74,8 +75,9 @@ import * as contracts from '../contracts';
           .html(' on ' + entry.author.localisedDate);
 
         $('.commit-body', $detailsView)
-          .html(entry.body);
-        $('.commit-notes', $detailsView).html(entry.notes);
+          .html(gitmojify(entry.body));
+        $('.commit-notes', $detailsView)
+          .html(gitmojify(entry.notes));
         let $files = $('.committed-files', $detailsView);
         $files.html('');
         entry.fileStats.forEach(stat => {
