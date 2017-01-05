@@ -5,7 +5,7 @@
         "outDir": "out",
         "rootDir": ".",
         "sourceMap": true,
-        "target": "es5",
+        "target": "es6",
 
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,

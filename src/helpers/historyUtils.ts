@@ -8,13 +8,18 @@ export function getGitPath(): Promise<string> {
     return new Promise((resolve, reject) => {
         let gitPath = <string>vscode.workspace.getConfiguration('git').get('path');
         if (typeof gitPath === 'string' && gitPath.length > 0) {
-            resolve(gitPath);
+            if (fs.existsSync(gitPath)) {
+                resolve(gitPath);
+                return;
+            }
         }
 
         if (process.platform !== 'win32') {
             // Default: search in PATH environment variable
             resolve('git');
-        } else {
+            return;
+        }
+        else {
             // in Git for Windows, the recommendation is not to put git into the PATH.
             // Instead, there is an entry in the Registry.
 
@@ -85,7 +90,8 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 
     return getGitPath().then((gitExecutable) =>
         new Promise<string>((resolve, reject) => {
-            let options = { cwd: path.dirname(fileName) };
+            let directory = fs.statSync(fileName).isDirectory() ? fileName : path.dirname(fileName);
+            let options = { cwd: directory };
 
             // git rev-parse --git-dir
             let ls = spawn(gitExecutable, ['rev-parse', '--show-toplevel'], options);
@@ -98,6 +104,12 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 
             ls.stderr.on('data', function (data) {
                 error += data;
+            });
+
+            ls.on('error', function(error) {
+                console.error(error);
+                reject(error);
+                return;
             });
 
             ls.on('close', function() {
@@ -115,23 +127,24 @@ export function getGitRepositoryPath(fileName: string): Thenable<string> {
 }
 
 export function getFileHistory(rootDir: string, relativeFilePath: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', relativeFilePath]);
+    return getLog(rootDir, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', '--', relativeFilePath]);
 }
-export function getFileHistoryBefore(rootDir: string, relativeFilePath: string, sha1: string, isoStrictDateTime: string): Thenable<any[]> {
-    return getLog(rootDir, relativeFilePath, [`--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, relativeFilePath]);
+export function getFileHistoryBefore(rootDir: string, relativeFilePath: string, isoStrictDateTime: string): Thenable<any[]> {
+    return getLog(rootDir, [`--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, '--', relativeFilePath]);
 }
 
 export function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number): Thenable<any[]> {
     let lineArgs = '-L' + lineNumber + ',' + lineNumber + ':' + relativeFilePath.replace(/\\/g, '/');
-    return getLog(rootDir, relativeFilePath, [lineArgs, '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--numstat', '--topo-order', '--raw']);
+    return getLog(rootDir, [lineArgs, '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--numstat', '--topo-order', '--raw']);
 }
 
-function getLog(rootDir: string, relativeFilePath: string, args: string[]): Thenable<any[]> {
+function getLog(rootDir: string, args: string[]): Thenable<any[]> {
 
     return getGitPath().then((gitExecutable) =>
         new Promise<any[]>((resolve, reject) => {
             let options = { cwd: rootDir };
-            let ls = spawn(gitExecutable, ['log', ...args], options);
+            args.unshift('log');
+            let ls = spawn(gitExecutable, args, options);
 
             let log = '';
             let error = '';
@@ -141,6 +154,12 @@ function getLog(rootDir: string, relativeFilePath: string, args: string[]): Then
 
             ls.stderr.on('data', function (data) {
                 error += data;
+            });
+
+            ls.on('error', function(error) {
+                console.error(error);
+                reject(error);
+                return;
             });
 
             ls.on('close', function() {
@@ -168,6 +187,12 @@ export function writeFile(rootDir: string, commitSha1: string, sourceFilePath: s
 
             ls.stderr.on('data', function (data) {
                 error += data;
+            });
+
+            ls.on('error', function(error) {
+                console.error(error);
+                reject(error);
+                return;
             });
 
             ls.on('close', function() {

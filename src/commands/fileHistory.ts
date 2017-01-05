@@ -2,47 +2,35 @@ import * as vscode from 'vscode';
 import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
 import * as tmp from 'tmp';
+import { decode as htmlDecode }  from 'he';
 
 // TODO:Clean up this mess
 
 let outChannel: vscode.OutputChannel;
-const tmpFileCleanup = new Map<string, Function>();
 
 export function activate(outputChannel: vscode.OutputChannel) {
     outChannel = outputChannel;
 }
 
-vscode.workspace.onDidCloseTextDocument(textDocument => {
-    if (textDocument && tmpFileCleanup.has(textDocument.fileName)) {
-        let cleanupFunction = tmpFileCleanup.get(textDocument.fileName);
-        if (cleanupFunction !== undefined) {
-            try {
-                cleanupFunction();
-            }
-            catch (ex) {
-            }
-            tmpFileCleanup.delete(textDocument.fileName);
-        }
-    }
-});
-
 vscode.commands.registerCommand('git.viewFileCommitDetails', (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
+    relativeFilePath = htmlDecode(relativeFilePath);
     const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
-    const gitRepositoryPath = vscode.workspace.rootPath;
-    historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, sha1, isoStrictDateTime).then((data: any[]) => {
-        const historyItem: any = data.find(data => data.sha1 === sha1);
-        const previousItems = data.filter(data => data.sha1 !== sha1);
-        historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
-        const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
-            label: '',
-            description: '',
-            data: historyItem,
-            isLast: historyItem.previousSha1.length === 0
-        };
-        onItemSelected(item, fileName, relativeFilePath);
-    }, ex => {
-        vscode.window.showErrorMessage(`There was an error in retrieving the file history. (${ex.message ? ex.message : ex + ''})`);
-    });
+    historyUtil.getGitRepositoryPath(vscode.workspace.rootPath).then((gitRepositoryPath) => {
+        historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, isoStrictDateTime).then((data: any[]) => {
+            const historyItem: any = data.find(data => data.sha1 === sha1);
+            const previousItems = data.filter(data => data.sha1 !== sha1);
+            historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
+            const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
+                label: '',
+                description: '',
+                data: historyItem,
+                isLast: historyItem.previousSha1.length === 0
+            };
+            onItemSelected(item, fileName, relativeFilePath);
+        }, ex => {
+            vscode.window.showErrorMessage(`There was an error in retrieving the file history. (${ex.message ? ex.message : ex + ''})`);
+        });
+    }).then(() => { }, error => genericErrorHandler(error));
 });
 
 export function run(fileName: string): any {
@@ -173,13 +161,6 @@ function getFile(commitSha1: string, localFilePath: string): Thenable<string> {
                 return;
             }
             historyUtil.writeFile(rootDir, commitSha1, localFilePath, tmpFilePath).then(() => {
-                // Windows drive letter hack
-                // vscode returns lowercase drive letter for textDocument.fileName when calling onDidCloseTextDocument
-                // If we dont do this we wont get a filename match for cleanup
-                if (tmpFilePath.indexOf(':') === 1) {
-                    tmpFilePath = tmpFilePath.substr(0, 1).toLowerCase() + tmpFilePath.substr(1);
-                }
-                tmpFileCleanup.set(tmpFilePath, cleanupCallback);
                 resolve(tmpFilePath);
             }, reject);
         });
