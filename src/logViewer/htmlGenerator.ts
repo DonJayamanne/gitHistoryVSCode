@@ -1,6 +1,5 @@
 import { LogEntry } from '../contracts';
 import { encode as htmlEncode } from 'he';
-import { gitmojify } from '../helpers/gitmojify';
 
 export function generateErrorView(error: any): string {
     return `
@@ -93,7 +92,6 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
 
 export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: boolean, canGoNext: boolean): string {
     const entriesHtml = entries.map((entry, entryIndex) => {
-        const subject = gitmojify(entry.subject);
         return `
             <div class="log-entry">
                 <div class="media right">
@@ -102,7 +100,8 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                             <div class="copy-button">
                                 <span class="btn clipboard hint--bottom hint--rounded hint--bounce"
                                     data-clipboard-text="${entry.sha1.full}"
-                                    aria-label="Copy the full SHA">
+                                    aria-label="Copy the full SHA"
+                                >
                                     <i class="octicon octicon-clippy"></i>
                                     <a class="clipboard-link" href="${encodeURI('command:git.copyText?' + JSON.stringify([entry.sha1.full]))}"></a>
                                 </span>
@@ -113,8 +112,8 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                         </div>
                     </div>
                     <div class="media-content">
-                        <a class="commit-subject-link">${htmlEncode(subject)}</a>
-                        <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(subject)}</div>
+                        <a class="commit-subject-link">${htmlEncode(entry.subject)}</a>
+                        <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry.subject)}</div>
                         <div class="commit-author">
                             <span class="name hint--right hint--rounded hint--bounce" aria-label="${entry.author.email}">${htmlEncode(entry.author.name)}</span>
                             <span class="timestamp">on ${entry.author.localisedDate}</span>
