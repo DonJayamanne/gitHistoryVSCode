@@ -1,7 +1,6 @@
 # Change Log
 
-## Version 0.1.4
-* Fix git log paging [#74](https://github.com/DonJayamanne/gitHistoryVSCode/pull/74)
+## Version 0.1.5
 * Fix HTML chars in filenames [#53](https://github.com/DonJayamanne/gitHistoryVSCode/pull/53)
 * Fix git log above repo root (Credit to [malytskyy](https://github.com/malytskyy)) [#77](https://github.com/DonJayamanne/gitHistoryVSCode/pull/77) 
 * Rename outChannel to 'Git History' [#83](https://github.com/DonJayamanne/gitHistoryVSCode/pull/83) 
@@ -9,6 +8,9 @@
 * Add error handling for spawned processes (Credit to [SE2Dev](https://github.com/SE2Dev)) [#46](https://github.com/DonJayamanne/gitHistoryVSCode/pull/46) 
 * tmp file cleanup.  There is a lot of effort to manually cleanup when tmp does it all anyway. [#88](https://github.com/DonJayamanne/gitHistoryVSCode/pull/88) 
 * Update typescript to 2.1 and update to ES6 target (allowing async await in place of .then) [#81](https://github.com/DonJayamanne/gitHistoryVSCode/pull/81) 
+
+## Version 0.1.4
+* Fix git log paging [#74](https://github.com/DonJayamanne/gitHistoryVSCode/pull/74)
 
 ## Version 0.1.3
 * Clean up [#70](https://github.com/DonJayamanne/gitHistoryVSCode/pull/70)
