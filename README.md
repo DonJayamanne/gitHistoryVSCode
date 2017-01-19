@@ -23,7 +23,7 @@ Press F1 and select/type "Git: View History (git log)", "Git: View File History"
 * View Line History (git.viewLineHistory)
 
 ## Keyboard Shortcuts
-You can add keyboard short cuts for the above commands by following the directions in the on the website [customization documentation](https://code.visualstudio.com/docs/customization/keybindings).
+You can add keyboard short cuts for the above commands by following the directions on the website [customization documentation](https://code.visualstudio.com/docs/customization/keybindings).
 
 NOTE: The file for which the history is to be viewed, must already be opened.
  
