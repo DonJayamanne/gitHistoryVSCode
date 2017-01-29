@@ -166,7 +166,7 @@ function viewLog(details: any) {
     logger.showInfo(log);
 }
 
-function diffFiles(fileName:string, sourceFile: string, sourceSha1: string, destinationFile: string, destinationSha1: string) {
+function diffFiles(fileName: string, sourceFile: string, sourceSha1: string, destinationFile: string, destinationSha1: string) {
     try {
         const sourceFormattedSha1 = `(${sourceSha1.substring(0,7)})`;
         const destinationFormattedSha1 = destinationSha1 !== '' ? `(${destinationSha1.substring(0,7)})` : '';
