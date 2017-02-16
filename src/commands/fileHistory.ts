@@ -144,7 +144,7 @@ async function onItemSelected(item: vscode.QuickPickItem, fileName: string, rela
 
 async function viewFile(fileName: string) {
     try {
-        vscode.workspace.openTextDocument(`[${path.basename(fileName)}](${fileName}`).then(document => {
+        vscode.workspace.openTextDocument(fileName).then(document => {
             vscode.window.showTextDocument(document);
         });
     }
