@@ -1,25 +1,30 @@
 import * as vscode from 'vscode';
 import * as historyUtil from '../helpers/historyUtils';
+import * as gitPaths from '../helpers/gitPaths';
 import * as path from 'path';
+import * as logger from '../logger';
 
-export function run(outChannel: vscode.OutputChannel): any {
-    if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
-        return;
-    }
-    if (!vscode.window.activeTextEditor.selection) {
-        return;
-    }
 
-    historyUtil.getGitRepositoryPath(vscode.window.activeTextEditor.document.fileName).then(
-        (gitRepositoryPath) => {
+export function activate(context: vscode.ExtensionContext) {
+    let disposable = vscode.commands.registerTextEditorCommand('git.viewLineHistory', () => {
+        run();
+    });
+    context.subscriptions.push(disposable);
+}
 
-        let relativeFilePath = path.relative(gitRepositoryPath, vscode.window.activeTextEditor.document.fileName);
+export async function run(): Promise<any> {
+    try {
+        if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
+            return;
+        }
+        if (!vscode.window.activeTextEditor.selection) {
+            return;
+        }
 
-    let currentLineNumber = vscode.window.activeTextEditor.selection.start.line + 1;
-
-        historyUtil.getLineHistory(gitRepositoryPath, relativeFilePath, currentLineNumber).then(displayHistory, genericErrorHandler);
-
-    function displayHistory(log: any[]) {
+        const gitRepositoryPath = await gitPaths.getGitRepositoryPath(vscode.window.activeTextEditor.document.fileName);
+        const relativeFilePath = path.relative(gitRepositoryPath, vscode.window.activeTextEditor.document.fileName);
+        const currentLineNumber = vscode.window.activeTextEditor.selection.start.line + 1;
+        const log: any[] = await historyUtil.getLineHistory(gitRepositoryPath, relativeFilePath, currentLineNumber);
         if (log.length === 0) {
             vscode.window.showInformationMessage('There are no history items for this item "`${relativeFilePath}`".');
             return;
@@ -39,34 +44,24 @@ export function run(outChannel: vscode.OutputChannel): any {
             onItemSelected(item);
         });
     }
-
-    function onItemSelected(item: vscode.QuickPickItem) {
-        viewLog((<any>item).data);
+    catch (error) {
+        logger.logError(error);
     }
-
-    function viewLog(details: any) {
-        let authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
-        let committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
-        let log = `sha1 : ${details.sha1}\n` +
-            `Author : ${details.author_name} <${details.author_email}>\n` +
-            `Author Date : ${authorDate}\n` +
-            `Committer Name : ${details.committer_name} <${details.committer_email}>\n` +
-            `Commit Date : ${committerDate}\n` +
-            `Message : ${details.message}`;
-
-        outChannel.appendLine(log);
-        outChannel.show();
-    }
-
-    function genericErrorHandler(error: any) {
-        if (error.code && error.syscall && error.code === 'ENOENT' && error.syscall === 'spawn git') {
-            vscode.window.showErrorMessage('Cannot find the git installation');
-        } else {
-            outChannel.appendLine(error);
-            outChannel.show();
-            vscode.window.showErrorMessage('There was an error, please view details in output log');
-        }
-    }
-    });
 }
 
+function onItemSelected(item: vscode.QuickPickItem) {
+    viewLog((<any>item).data);
+}
+
+function viewLog(details: any) {
+    let authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
+    let committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
+    let log = `sha1 : ${details.sha1}\n` +
+        `Author : ${details.author_name} <${details.author_email}>\n` +
+        `Author Date : ${authorDate}\n` +
+        `Committer Name : ${details.committer_name} <${details.committer_email}>\n` +
+        `Commit Date : ${committerDate}\n` +
+        `Message : ${details.message}`;
+
+    logger.showInfo(log);
+}

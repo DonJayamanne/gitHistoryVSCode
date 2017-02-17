@@ -1,4 +1,4 @@
-import { ActionedDetails, LogEntry, FileStat } from './contracts';
+import { ActionedDetails, LogEntry, FileStat } from '../contracts';
 import * as vscode from 'vscode';
 export const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA1';
 
@@ -275,35 +275,6 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
     }
     logEntry.fileStats = parseAlteredFiles(filesAltered);
     return logEntry;
-    // if (typeof commit.files === "string") {
-    //     let changes = commit.files.split(/\r?\n/g) as string[];
-    //     commit.changes = changes.filter(change => change.trim().length > 0).map(change => {
-    //         // Using regexp in here just causes js to go nuts
-    //         // No idea, something nice to raise on stack overflow
-    //         change = change.trim();
-    //         let pos = change.indexOf(' ');
-    //         let added = change.substring(0, pos);
-    //         change = change.substring(pos).trim();
-
-    //         pos = change.indexOf(' ');
-    //         let deleted = change.substring(0, pos);
-    //         let file = change.substring(pos).trim();
-
-    //         return {
-    //             added: parseInt(added), deleted: parseInt(deleted), file: file
-    //         };
-    //     });
-    // }
-    // else {
-    //     commit.changes = [];
-    // }
-
-    // if (commit.files) {
-    //     delete commit.files;
-
-    // }
-
-    // return commit as LogEntry;
 }
 
 function parseAlteredFiles(alteredFiles: string[]): FileStat[] {
@@ -336,7 +307,7 @@ function parseAuthCommitter(details: string): ActionedDetails {
     };
 }
 
-function formatDate(date: Date) {
+export function formatDate(date: Date) {
     let lang = vscode.env.language;
     let dateOptions = {  weekday: 'short', day: 'numeric',  month: 'short' , year: 'numeric', hour : 'numeric', minute : 'numeric' };
     return date.toLocaleString(lang, dateOptions);
