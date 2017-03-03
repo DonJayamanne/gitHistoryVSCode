@@ -1,6 +1,37 @@
-import * as contracts from '../contracts';
-
 (function () {
+    interface ActionedDetails {
+        name: string;
+        email: string;
+        date: Date;
+        localisedDate: string;
+    }
+    interface LogEntry {
+        author: ActionedDetails;
+        committer: ActionedDetails;
+        parents: Sha1[];
+        sha1: Sha1;
+        tree: Sha1;
+        refs: string[];
+        subject: string;
+        body: string;
+        notes: string;
+        fileStats: FileStat[];
+        changes: [number, number, string][];
+        tags: string[];
+        branch: string;
+        isHead: boolean;
+    }
+    interface Sha1 {
+        full: string;
+        short: string;
+    }
+
+    interface FileStat {
+        path: string;
+        additions?: number;
+        deletions?: number;
+    }
+
     const COLORS = ['#ffab1d', '#fd8c25', '#f36e4a', '#fc6148', '#d75ab6', '#b25ade', '#6575ff', '#7b77e9', '#4ea8ec', '#00d0f5', '#4eb94e', '#51af23', '#8b9f1c', '#d0b02f', '#d0853a', '#a4a4a4',
         '#ffc51f', '#fe982c', '#fd7854', '#ff705f', '#e467c3', '#bd65e9', '#7183ff', '#8985f7', '#55b6ff', '#10dcff', '#51cd51', '#5cba2e', '#9eb22f', '#debe3d', '#e19344', '#b8b8b8',
         '#ffd03b', '#ffae38', '#ff8a6a', '#ff7e7e', '#ef72ce', '#c56df1', '#8091ff', '#918dff', '#69caff', '#3ee1ff', '#72da72', '#71cf43', '#abbf3c', '#e6c645', '#eda04e', '#c5c5c5',
@@ -30,7 +61,7 @@ import * as contracts from '../contracts';
 
     (window as any).GITHISTORY.generateSVG = function () {
         let logView = document.getElementById('log-view');
-        let items = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML, dateReviver) as contracts.LogEntry[];
+        let items = JSON.parse(document.querySelectorAll('div.json.entries')[0].innerHTML, dateReviver) as LogEntry[];
         if (logView !== null && items.length !== 0) {
             svg = logView.children[0] as SVGAElement;
             content = logView.children[1] as HTMLElement;
@@ -53,7 +84,7 @@ import * as contracts from '../contracts';
         return value;
     };
 
-    function drawGitGraph(startAt: number, logEntryHeight: number = 60.8, entries: contracts.LogEntry[]) {
+    function drawGitGraph(startAt: number, logEntryHeight: number = 60.8, entries: LogEntry[]) {
         // Draw the graph
         let currentY = (0 + 0.5) * logEntryHeight;
         let topMostY = (0 + 0.5) * logEntryHeight;
@@ -91,7 +122,7 @@ import * as contracts from '../contracts';
             let removedBranches = 0;
             let branchFound = i === startAt ? true : false;
             let padParentCount = 0;
-            for (let j = 0; j < branches.length; ) {
+            for (let j = 0; j < branches.length;) {
                 let branch = branches[j];
                 if (branch.sha1 === entry.sha1.full) {
                     branchFound = true;

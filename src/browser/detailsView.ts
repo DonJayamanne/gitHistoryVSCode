@@ -1,7 +1,38 @@
-import * as contracts from '../contracts';
-
 (function () {
-    let logEntries: contracts.LogEntry[];
+    interface ActionedDetails {
+        name: string;
+        email: string;
+        date: Date;
+        localisedDate: string;
+    }
+    interface LogEntry {
+        author: ActionedDetails;
+        committer: ActionedDetails;
+        parents: Sha1[];
+        sha1: Sha1;
+        tree: Sha1;
+        refs: string[];
+        subject: string;
+        body: string;
+        notes: string;
+        fileStats: FileStat[];
+        changes: [number, number, string][];
+        tags: string[];
+        branch: string;
+        isHead: boolean;
+    }
+    interface Sha1 {
+        full: string;
+        short: string;
+    }
+
+    interface FileStat {
+        path: string;
+        additions?: number;
+        deletions?: number;
+    }
+
+    let logEntries: LogEntry[];
     let $logView: JQuery;
     let $detailsView: JQuery;
     let $fileListTemplate: JQuery;
@@ -30,27 +61,27 @@ import * as contracts from '../contracts';
 
         // delegate the events
         $logView
-          .on('click', '.commit-subject', evt => {
+            .on('click', '.commit-subject', evt => {
                 let entryIndex = evt.target.getAttribute('data-entry-index');
                 if (entryIndex !== null) {
                     displayDetails(logEntries[parseInt(entryIndex)], evt.target as Element);
                 }
-          })
-          .on('click', '.commit-hash', evt => {
+            })
+            .on('click', '.commit-hash', evt => {
                 let entryIndex = evt.target.getAttribute('data-entry-index');
                 if (entryIndex !== null) {
                     displayDetails(logEntries[parseInt(entryIndex)], evt.target as Element);
                 }
-          })
-        ;
+            })
+            ;
 
         $detailsView
-          .on('click', '.close-btn', hideDetails)
-        ;
+            .on('click', '.close-btn', hideDetails)
+            ;
     }
 
     let detailsViewShown = false;
-    function displayDetails(entry: contracts.LogEntry, eventTarget: Element) {
+    function displayDetails(entry: LogEntry, eventTarget: Element) {
         let $logEntry = $(eventTarget).closest('.log-entry');
 
         // mark this log entry as selected
@@ -60,32 +91,34 @@ import * as contracts from '../contracts';
         if (!detailsViewShown) {
             $logView.addClass('with-details');
             $logView.animate({
-              scrollTop: $logEntry.offset().top - $logView.offset().top + $logView.scrollTop()
+                scrollTop: $logEntry.offset().top - $logView.offset().top + $logView.scrollTop()
             });
             $detailsView.removeClass('hidden');
         }
 
         $('.commit-subject', $detailsView).html(entry.subject);
         $('.commit-author .name', $detailsView)
-          .attr('aria-label', entry.author.email)
-          .html(entry.author.name);
+            .attr('aria-label', entry.author.email)
+            .html(entry.author.name);
 
         $('.commit-author .timestamp', $detailsView)
-          .html(' on ' + entry.author.localisedDate);
+            .html(' on ' + entry.author.localisedDate);
 
         $('.commit-body', $detailsView)
-          .html(entry.body);
+            .html(entry.body);
         $('.commit-notes', $detailsView).html(entry.notes);
         let $files = $('.committed-files', $detailsView);
         $files.html('');
         entry.fileStats.forEach(stat => {
             let $fileItem = $fileListTemplate.clone(false);
             let { additions, deletions } = stat;
+            additions = typeof additions === 'number' ? additions : 0;
+            deletions = typeof deletions === 'number' ? deletions : 0;
             let totalDiffs = additions + deletions;
 
             if (totalDiffs > 5) {
-              additions = Math.ceil(5 * additions / totalDiffs);
-              deletions = 5 - additions;
+                additions = Math.ceil(5 * additions / totalDiffs);
+                deletions = 5 - additions;
             }
 
             /* show the original number of changes in the title and count */
@@ -94,6 +127,7 @@ import * as contracts from '../contracts';
             /* colour the blocks in addition:deletion ratio */
             $('.diff-block', $fileItem).each((index: number, el: Element) => {
                 let $el = $(el);
+                additions = typeof additions === 'number' ? additions : 0;
                 if (index < additions) {
                     $el.addClass('added');
                 } else if (index < totalDiffs) {
@@ -108,8 +142,8 @@ import * as contracts from '../contracts';
     }
 
     function hideDetails() {
-      detailsViewShown = false;
-      $detailsView.addClass('hidden');
-      $logView.removeClass('with-details');
+        detailsViewShown = false;
+        $detailsView.addClass('hidden');
+        $logView.removeClass('with-details');
     }
 })();
