@@ -1,5 +1,16 @@
 # Change Log
 
+## Version 0.2.0
+- Move to Async programing pattern (internal)
+- Add logging and better error surfacing  - output windows 'Git History Log' 
+- Add a seperate output window for non logging display 'Git History Info'
+- Fix #43 #63 - error when file in not present in a commit
+- File actions pick list - only show applicable actions
+e.g. don't show compare with previous if file not present in previous commit.
+- Improve readability of picklist for commits of a file (2 line display)
+- Improve gitPath logic and performance.
+- Make git log default page size 50 for performance.
+
 ## Version 0.1.5
 * Fix HTML chars in filenames [#53](https://github.com/DonJayamanne/gitHistoryVSCode/pull/53)
 * Fix git log above repo root (Credit to [malytskyy](https://github.com/malytskyy)) [#77](https://github.com/DonJayamanne/gitHistoryVSCode/pull/77) 
