@@ -181,7 +181,7 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
                 // remove the leading (
                 if (index === 0) {
                     item = item.trim().substring(1);
-                    // remove the trailing (                    
+                    // remove the trailing (
                     if (items.length === 1) {
                         item = item.substring(0, item.length - 2);
                     }
@@ -309,6 +309,6 @@ function parseAuthCommitter(details: string): ActionedDetails {
 
 export function formatDate(date: Date) {
     let lang = vscode.env.language;
-    let dateOptions = {  weekday: 'short', day: 'numeric',  month: 'short' , year: 'numeric', hour : 'numeric', minute : 'numeric' };
+    let dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
     return date.toLocaleString(lang, dateOptions);
 }

@@ -3,7 +3,7 @@ import { getGitRepositoryPath } from '../helpers/gitPaths';
 import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { decode as htmlDecode }  from 'he';
+import { decode as htmlDecode } from 'he';
 import * as logger from '../logger';
 import { formatDate } from '../helpers/logParser';
 import * as fs from 'fs';
@@ -114,7 +114,7 @@ async function onItemSelected(item: vscode.QuickPickItem, fileName: string, rela
     if (thisFile !== 'fileUnavailable' && fs.existsSync(fileName)) {
         itemPickList.push({ label: 'Compare against workspace file', description: '' });
     }
-    if (previousFile !== 'fileUnavailable' &&  thisFile !== 'fileUnavailable') {
+    if (previousFile !== 'fileUnavailable' && thisFile !== 'fileUnavailable') {
         itemPickList.push({ label: 'Compare against previous version', description: '' });
     }
 
@@ -168,10 +168,10 @@ function viewLog(details: any) {
 
 function diffFiles(fileName: string, sourceFile: string, sourceSha1: string, destinationFile: string, destinationSha1: string) {
     try {
-        const sourceFormattedSha1 = `(${sourceSha1.substring(0,7)})`;
-        const destinationFormattedSha1 = destinationSha1 !== '' ? `(${destinationSha1.substring(0,7)})` : '';
+        const sourceFormattedSha1 = `(${sourceSha1.substring(0, 7)})`;
+        const destinationFormattedSha1 = destinationSha1 !== '' ? `(${destinationSha1.substring(0, 7)})` : '';
         vscode.commands.executeCommand('vscode.diff', vscode.Uri.file(sourceFile), vscode.Uri.file(destinationFile),
-        `${path.basename(fileName)} ${sourceFormattedSha1} ↔ ${path.basename(fileName)} ${destinationFormattedSha1}`);
+            `${path.basename(fileName)} ${sourceFormattedSha1} ↔ ${path.basename(fileName)} ${destinationFormattedSha1}`);
     }
     catch (error) {
         logger.logError(error);

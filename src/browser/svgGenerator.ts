@@ -122,7 +122,7 @@
             let removedBranches = 0;
             let branchFound = i === startAt ? true : false;
             let padParentCount = 0;
-            for (let j = 0; j < branches.length;) {
+            for (let j = 0; j < branches.length; ) {
                 let branch = branches[j];
                 if (branch.sha1 === entry.sha1.full) {
                     branchFound = true;
