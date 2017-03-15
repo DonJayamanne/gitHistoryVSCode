@@ -46,7 +46,7 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 [View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
 - Move to Async programing pattern (internal)
 - Add logging and better error surfacing  - output windows 'Git History Log' 
-- Add a seperate output window for non logging display 'Git History Info'
+- Add a separate output window for non logging display 'Git History Info'
 - Fix #43 #63 - error when file in not present in a commit
 - File actions pick list - only show applicable actions
 e.g. don't show compare with previous if file not present in previous commit.
