@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Result from '../Result'
+import Result from '../Result';
 interface ResultProps {
   results: NotebookResultsState;
 }
@@ -10,7 +10,7 @@ interface ResultState {
 
 class ResultList extends React.Component<ResultProps, ResultState> {
   private renderResult(result: NotebookOutput) {
-    return
+    return;
   }
   render() {
     let results = this.props.results.map(result =>
@@ -18,6 +18,7 @@ class ResultList extends React.Component<ResultProps, ResultState> {
     );
     return (
       <div>
+        Blah blah blah
         {results}
       </div>
     );

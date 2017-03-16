@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../../reducers';
 import * as ResultActions from '../../actions/results';
 import Header from '../../components/Header';
-import ResultList from '../../components/ResultList'
+import ResultList from '../../components/ResultList';
 import * as style from './style.css';
 
 import * as io from 'socket.io-client';
