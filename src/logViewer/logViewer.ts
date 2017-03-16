@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 // import * as gitHistory from '../helpers/gitHistory';
 // import { LogEntry } from '../contracts';
 // import * as path from 'path';
+import { Server } from './server';
 
 const gitHistorySchema = 'git-history-viewer';
 // const PAGE_SIZE = 50;
@@ -14,9 +15,10 @@ let canGoPrevious = false;
 let canGoNext = true;
 
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
-    private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
-    // private entries: LogEntry[];
-
+    private serverPort: number;
+    public set ServerPort(value: number) {
+        this.serverPort = value;
+    }
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         // try {
         //     const entries = await gitHistory.getLogEntries(vscode.workspace.rootPath, pageIndex, pageSize);
@@ -29,15 +31,44 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
         // catch (error) {
         //     return this.generateErrorView(error);
         // }
-        return `<html><body>Testing</body>`;
+        return this.generateResultsView();
     }
 
-    get onDidChange(): vscode.Event<vscode.Uri> {
-        return this._onDidChange.event;
-    }
+    private generateResultsView(): Promise<string> {
 
-    public update(uri: vscode.Uri) {
-        this._onDidChange.fire(uri);
+        // Fix for issue #669 "Results Panel not Refreshing Automatically" - always include a unique time
+        // so that the content returned is different. Otherwise VSCode will not refresh the document since it
+        // thinks that there is nothing to be updated.
+        let timeNow = new Date().getTime();
+        const htmlContent = `
+                    <!DOCTYPE html>
+                    <head><style type="text/css"> html, body{ height:100%; width:100%; } </style>
+                    <script type="text/javascript">
+                        function start(){
+                            console.log('reloaded results window at time ${timeNow}ms');
+                            var color = '';
+                            var fontFamily = '';
+                            var fontSize = '';
+                            var theme = '';
+                            var fontWeight = '';
+                            try {
+                                computedStyle = window.getComputedStyle(document.body);
+                                color = computedStyle.color + '';
+                                backgroundColor = computedStyle.backgroundColor + '';
+                                fontFamily = computedStyle.fontFamily;
+                                fontSize = computedStyle.fontSize;
+                                fontWeight = computedStyle.fontWeight;
+                                theme = document.body.className;
+                            }
+                            catch(ex){
+                            }
+                            document.getElementById('myframe').src = 'http://localhost:${this.serverPort}/?theme=' + theme + '&color=' + encodeURIComponent(color) + "&backgroundColor=" + encodeURIComponent(backgroundColor) + "&fontFamily=" + encodeURIComponent(fontFamily) + "&fontWeight=" + encodeURIComponent(fontWeight) + "&fontSize=" + encodeURIComponent(fontSize);
+                        }
+                    </script>
+                    </head>
+                    <body onload="start()">
+                    <iframe id="myframe" frameborder="0" style="border: 0px solid transparent;height:100%;width:100%;" src="" seamless></iframe></body></html>`;
+        return Promise.resolve(htmlContent);
     }
 
     // private getStyleSheetPath(resourceName: string): string {
@@ -87,6 +118,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     // }
 }
 
+let server: Server;
 export function activate(context: vscode.ExtensionContext) {
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
@@ -94,14 +126,18 @@ export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('git.viewHistory', () => {
         // Unique name everytime, so that we always refresh the history log
         // Untill we add a refresh button to the view
-        historyRetrieved = false;
-        pageIndex = 0;
-        canGoPrevious = false;
-        canGoNext = true;
-        previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?x=' + new Date().getTime().toString());
-        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History (git log)').then((success:any) => {
-        }, (reason:string) => {
-            vscode.window.showErrorMessage(reason);
+        server = server || new Server();
+        return server.start().then(port => {
+            provider.ServerPort = port;
+            historyRetrieved = false;
+            pageIndex = 0;
+            canGoPrevious = false;
+            canGoNext = true;
+            previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
+            return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History (git log)').then((success: any) => {
+            }, (reason: string) => {
+                vscode.window.showErrorMessage(reason);
+            });
         });
     });
     context.subscriptions.push(disposable, registration);
@@ -111,10 +147,11 @@ export function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(disposable);
 
-    disposable = vscode.commands.registerCommand('git.logNavigate', (direction: string) => {
-        pageIndex = pageIndex + (direction === 'next' ? 1 : -1);
-        provider.update(previewUri);
-    });
+    // TODO: Use socket.io to send/receive data
+    // disposable = vscode.commands.registerCommand('git.logNavigate', (direction: string) => {
+    //     pageIndex = pageIndex + (direction === 'next' ? 1 : -1);
+    //     provider.update(previewUri);
+    // });
 
     context.subscriptions.push(disposable);
 }
