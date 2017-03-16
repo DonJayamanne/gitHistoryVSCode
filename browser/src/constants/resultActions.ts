@@ -1,0 +1,4 @@
+export const CLEAR_RESULTS = 'CLEAR_RESULTS';
+export const SET_APPEND_RESULTS = 'SET_APPEND_RESULTS';
+export const ADD_RESULT = 'ADD_RESULT';
+export const ADD_RESULTS = 'ADD_RESULTS';

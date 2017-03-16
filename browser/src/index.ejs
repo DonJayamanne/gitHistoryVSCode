@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Jupyter Notebook</title>
+    <style>
+    :root {
+        --background-color: <%=backgroundColor%>;
+        --color: <%=color%>;
+        --font-family: <%=fontFamily%>;
+        --font-weight: <%=fontWeight%>;
+        --font-size: <%=fontSize%>;
+    }
+    body {
+        background-color: <%=backgroundColor%>;
+        color: <%=color%>;
+        font-family: <%=fontFamily%>;
+        font-weight: <%=fontWeight%>;
+        font-size: <%=fontSize%>;
+    }
+    </style>
+    <%if (theme === 'vscode-light') { %>
+    <link rel="stylesheet" type="text/css" href="/color-theme-light.css"/>
+    <%} else { %>
+    <link rel="stylesheet" type="text/css" href="/color-theme-dark.css"/>
+    <% } %>
+  </head>
+    <body>
+        <script src=/socket.io/socket.io.js></script>
+        <div id=root></div>
+        <script type="text/javascript" src="/vendor.bundle.js"></script>
+        <script type="text/javascript" src="/bundle.js"></script>
+    </body>
+</html>
