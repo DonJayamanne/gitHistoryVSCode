@@ -1,9 +1,9 @@
 import { handleActions } from 'redux-actions';
 import * as Actions from '../constants/actions';
 
-const initialState: NotebookResultsState = [];
+const initialState: any = [];
 
-export default handleActions<NotebookResultsState, any>({
+export default handleActions<any, ILogEntry[]>({
   [Actions.ADD_RESULT]: (state, action) => {
     return [action.payload, ...state];
   },

@@ -4,9 +4,8 @@ import results from './results';
 import settings from './settings';
 
 export interface RootState {
-  //routing: RouteActions;
-  results: NotebookResultsState;
-  settings: NotebookResultSettings;
+  results: ILogEntry[];
+  settings: any;
 }
 
 export default combineReducers<RootState>({

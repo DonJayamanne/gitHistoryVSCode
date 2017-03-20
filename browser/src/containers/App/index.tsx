@@ -4,41 +4,44 @@ import { connect } from 'react-redux';
 import { RootState } from '../../reducers';
 import * as ResultActions from '../../actions/results';
 import Header from '../../components/Header';
-import ResultList from '../../components/ResultList';
+import LogEntryList from '../../components/LogEntryList';
 import * as style from './style.css';
 
 import * as io from 'socket.io-client';
 
 interface AppProps {
-  settings: NotebookResultSettings;
+  settings: any;
   resultActions: typeof ResultActions;
-  results: NotebookResultsState;
+  results: any;
 };
 
 interface AppState {
   /* empty */
 }
 
-class App extends React.Component<AppProps, AppState>{
+class App extends React.Component<AppProps, AppState> {
   private socket: SocketIOClient.Socket;
   constructor(props?: AppProps, context?: any) {
-    super(props, context)
+    super(props, context);
     // Use io (object) available in the script
     this.socket = (window as any).io();
     this.socket.on('connect', () => {
       // Do nothing
     });
     this.socket.on('settings.appendResults', (value: any) => {
+      console.log('append results');
       this.props.resultActions.setAppendResults(value);
     });
     this.socket.on('clientExists', (data: any) => {
       this.socket.emit('clientExists', { id: data.id });
     });
-    this.socket.on('results', (value: NotebookOutput[]) => {
+    this.socket.on('results', (value: any[]) => {
       if (!this.props.settings.appendResults) {
-        this.props.resultActions.clearResults();
+        console.log('clear results');
+        // this.props.resultActions.clearResults();
       }
       this.socket.emit('results.ack');
+      console.log('add results');
       this.props.resultActions.addResults(value);
     });
   }
@@ -50,6 +53,11 @@ class App extends React.Component<AppProps, AppState>{
     this.socket.emit('clearResults');
     this.props.resultActions.clearResults();
   }
+
+  onSelect(logEntry: ILogEntry) {
+    console.log(logEntry);
+    console.log('Selectged');
+  }
   render() {
     const { children, resultActions, settings } = this.props;
     return (
@@ -59,7 +67,7 @@ class App extends React.Component<AppProps, AppState>{
           clearResults={() => this.clearResults()}
           toggleAppendResults={() => this.toggleAppendResults()}>
         </Header>
-        <ResultList results={this.props.results}></ResultList>
+        <LogEntryList results={this.props.results} onSelect={this.onSelect.bind(this)}></LogEntryList>
         {children}
       </div>
     );

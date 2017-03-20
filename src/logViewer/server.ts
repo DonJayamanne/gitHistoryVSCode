@@ -44,7 +44,12 @@ export class Server extends EventEmitter {
         this.server = io(this.httpServer);
 
         let rootDirectory = path.join(__dirname, '..', '..', 'browser');
+        let node_modulesDirectory = path.join(__dirname, '..', '..', '..', 'node_modules');
         this.app.use(express.static(rootDirectory));
+        this.app.use(express.static(path.join(node_modulesDirectory, 'octicons', 'build')));
+        this.app.use(express.static(path.join(node_modulesDirectory, 'hint.css')));
+        this.app.use(express.static(path.join(node_modulesDirectory, 'animate.css')));
+        this.app.use(express.static(path.join(node_modulesDirectory, 'normalize.css')));
         this.app.use(cors());
         this.app.get('/', (req, res, next) => {
             this.rootRequestHandler(req, res);

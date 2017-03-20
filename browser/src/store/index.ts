@@ -1,7 +1,6 @@
 import { createStore, applyMiddleware, Store } from 'redux';
 import { logger } from '../middleware';
 import rootReducer, { RootState } from '../reducers';
-
 export default function configureStore(initialState?: RootState): Store<RootState> {
   const create = window.devToolsExtension
     ? window.devToolsExtension()(createStore)
