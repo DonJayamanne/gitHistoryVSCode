@@ -3,6 +3,11 @@ import * as htmlGenerator from './htmlGenerator';
 import * as gitHistory from '../helpers/gitHistory';
 import { LogEntry } from '../contracts';
 import * as path from 'path';
+import * as gitPaths from '../helpers/gitPaths';
+import { decode as htmlDecode } from 'he';
+import * as historyUtil from '../helpers/historyUtils';
+import * as logger from '../logger';
+import * as fileHistory from '../commands/fileHistory';
 
 const gitHistorySchema = 'git-history-viewer';
 const PAGE_SIZE = 50;
@@ -12,6 +17,7 @@ let pageIndex = 0;
 let pageSize = PAGE_SIZE;
 let canGoPrevious = false;
 let canGoNext = true;
+let gitRepoPath = vscode.workspace.rootPath;
 
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
@@ -19,7 +25,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         try {
-            const entries = await gitHistory.getLogEntries(vscode.workspace.rootPath, pageIndex, pageSize);
+            const entries = await gitHistory.getLogEntries(gitRepoPath, pageIndex, pageSize);
             canGoPrevious = pageIndex > 0;
             canGoNext = entries.length === pageSize;
             this.entries = entries;
@@ -90,10 +96,26 @@ export function activate(context: vscode.ExtensionContext) {
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
-    let disposable = vscode.commands.registerCommand('git.viewHistory', () => {
+    let disposable = vscode.commands.registerCommand('git.viewHistory', async (fileUri?: vscode.Uri) => {
         // Unique name everytime, so that we always refresh the history log
         // Untill we add a refresh button to the view
         historyRetrieved = false;
+        let fileName = '';
+        if (fileUri && fileUri.fsPath) {
+            fileName = fileUri.fsPath;
+        }
+        else {
+            if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document) {
+                fileName = vscode.window.activeTextEditor.document.fileName;
+            }
+        }
+        if (fileName !== '') {
+            gitRepoPath = await gitPaths.getGitRepositoryPath(fileName);
+        }
+        else {
+            gitRepoPath = vscode.workspace.rootPath;
+        }
+
         pageIndex = 0;
         canGoPrevious = false;
         canGoNext = true;
@@ -113,6 +135,29 @@ export function activate(context: vscode.ExtensionContext) {
     disposable = vscode.commands.registerCommand('git.logNavigate', (direction: string) => {
         pageIndex = pageIndex + (direction === 'next' ? 1 : -1);
         provider.update(previewUri);
+    });
+
+    context.subscriptions.push(disposable);
+
+    disposable = vscode.commands.registerCommand('git.viewFileCommitDetails', async (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
+        try {
+            relativeFilePath = htmlDecode(relativeFilePath);
+            const fileName = path.join(gitRepoPath, relativeFilePath);
+            const data = await historyUtil.getFileHistoryBefore(gitRepoPath, relativeFilePath, isoStrictDateTime);
+            const historyItem: any = data.find(data => data.sha1 === sha1);
+            const previousItems = data.filter(data => data.sha1 !== sha1);
+            historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
+            const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
+                label: '',
+                description: '',
+                data: historyItem,
+                isLast: historyItem.previousSha1.length === 0
+            };
+            fileHistory.onItemSelected(item, fileName, relativeFilePath);
+        }
+        catch (error) {
+            logger.logError(error);
+        }
     });
 
     context.subscriptions.push(disposable);
