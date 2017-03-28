@@ -1,8 +1,7 @@
 import { IClassRequirementDescriptor } from 'tslint/lib/rules/completedDocsRule';
 import * as React from 'react';
 import Author from '../Author';
-import CommitFile from '../CommitFile';
-import Author from '../Author';
+import CommitFile from './CommitFile';
 const GoX = require('react-icons/lib/go/x');
 
 interface CommitProps {
