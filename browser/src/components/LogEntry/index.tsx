@@ -1,5 +1,6 @@
 import { IClassRequirementDescriptor } from 'tslint/lib/rules/completedDocsRule';
 import * as React from 'react';
+import Author from '../Author';
 import CopyToClipboard from 'react-copy-to-clipboard';
 const GoClippy = require('react-icons/lib/go/clippy');
 
@@ -35,10 +36,7 @@ class ResultList extends React.Component<ResultListProps, ResultListState> {
         <div className='media-content' onClick={() => this.props.onSelect(this.props.result)}>
           <a className='commit-subject-link'>{this.props.result.subject}</a>
           <div className='commit-subject' data-entry-index='1'>{this.props.result.subject}</div>
-          <div className='commit-author'>
-            <span className='name hint--right hint--rounded hint--bounce' aria-label={this.props.result.author.email}>{this.props.result.author.name}</span>
-            <span className='timestamp'>on {this.props.result.author.localisedDate}</span>
-          </div>
+          <Author result={this.props.result.author}></Author>
         </div>
       </div>
     </div>;
