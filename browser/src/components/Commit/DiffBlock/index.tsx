@@ -1,6 +1,5 @@
-import { IClassRequirementDescriptor } from 'tslint/lib/rules/completedDocsRule';
 import * as React from 'react';
-import Author from '../Author';
+import Author from '../../Author';
 const GoX = require('react-icons/lib/go/x');
 
 interface DiffBlockProps {
@@ -16,7 +15,7 @@ interface DiffBlockState {
 const TotalDiffBlocks = 5;
 class DiffBlock extends React.Component<DiffBlockProps, DiffBlockState> {
   render() {
-    let { additions, deletions } = stat;
+    let { additions, deletions } = this.props.fileStat;
     additions = typeof additions === 'number' ? additions : 0;
     deletions = typeof deletions === 'number' ? deletions : 0;
     let totalDiffs = additions + deletions;
@@ -34,7 +33,7 @@ class DiffBlock extends React.Component<DiffBlockProps, DiffBlockState> {
       return <span className={className}></span>;
     });
 
-    let summary = `added ${stat.additions} & deleted ${stat.deletions}`;
+    let summary = `added ${additions} & deleted ${deletions}`;
     return <span className='diff-stats hint--right hint--rounded hint--bounce' aria-label={summary}>
       <span className='diff-count'>{totalDiffs}</span>
       {blocks}

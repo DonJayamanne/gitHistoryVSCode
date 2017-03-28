@@ -1,4 +1,3 @@
-import { IClassRequirementDescriptor } from 'tslint/lib/rules/completedDocsRule';
 import * as React from 'react';
 const GoX = require('react-icons/lib/go/x');
 

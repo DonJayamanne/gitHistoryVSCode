@@ -1,4 +1,3 @@
-import { IClassRequirementDescriptor } from 'tslint/lib/rules/completedDocsRule';
 import * as React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 const GoChevronLeft = require('react-icons/lib/go/chevron-left');
