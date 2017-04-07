@@ -8,6 +8,9 @@
     }
 
     function onCopied(e: ClipboardEvent) {
+        let prevLabel = $(e.trigger).attr('aria-label');
+        $(e.trigger).attr('aria-label', 'Copied');
+        setTimeout(function () { $(e.trigger).attr('aria-label', prevLabel); }, 1000);
         e.clearSelection();
     }
 

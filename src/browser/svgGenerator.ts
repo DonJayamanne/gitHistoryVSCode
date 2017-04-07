@@ -82,7 +82,7 @@
         }
 
         return value;
-    };
+    }
 
     function drawGitGraph(startAt: number, logEntryHeight: number = 60.8, entries: LogEntry[]) {
         // Draw the graph

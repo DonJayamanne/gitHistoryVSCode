@@ -171,34 +171,25 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
     let multiLineProperty: string = '';
     let filesAltered: string[] = [];
     let processingNumStat = false;
+    let regMatch = null;
+
     if (lines.filter(line => line.trim().length > 0).length === 0) {
         return null;
     }
 
     lines.forEach((line, index, lines) => {
         if (line.indexOf(prefixes.refs) === 0) {
-            logEntry.refs = line.substring(prefixLengths.refs).split(',').map((item, index, items) => {
-                // remove the leading (
-                if (index === 0) {
-                    item = item.trim().substring(1);
-                    // remove the trailing (
-                    if (items.length === 1) {
-                        item = item.substring(0, item.length - 2);
-                    }
+            regMatch = line.match(/HEAD -> refs\/heads\/([\w_\-]+)/);
 
-                    item = item.trim();
-                }
-                else {
-                    // remove the trailing (
-                    if (index === items.length - 1) {
-                        item = item.trim();
-                        item = item.substring(0, item.length - 1).trim();
-                    }
-                }
+            if (regMatch !== null) {
+                logEntry.headRef = regMatch[1];
+            }
 
-                return item;
-            });
-
+            let re = /refs\/remotes\/([\w+_\-\/]+)/g;
+            logEntry.remoteRefs = [];
+            while (regMatch = re.exec(line)) {
+                logEntry.remoteRefs.push(regMatch[1]);
+            }
             // Check if we have branch or tags
             return;
         }

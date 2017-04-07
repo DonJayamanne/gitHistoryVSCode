@@ -105,11 +105,6 @@ export function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(disposable, registration);
 
-    disposable = vscode.commands.registerCommand('git.copyText', (sha: string) => {
-        vscode.window.showInformationMessage(sha);
-    });
-    context.subscriptions.push(disposable);
-
     disposable = vscode.commands.registerCommand('git.logNavigate', (direction: string) => {
         pageIndex = pageIndex + (direction === 'next' ? 1 : -1);
         provider.update(previewUri);

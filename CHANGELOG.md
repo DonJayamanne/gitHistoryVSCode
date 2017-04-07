@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.2.1
+- display ref tags in history when using "git log"
+- fixed visual feedback when SHA is copied in "git log"
+
 ## Version 0.2.0
 - Move to Async programing pattern (internal)
 - Add logging and better error surfacing  - output windows 'Git History Log' 

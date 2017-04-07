@@ -11,6 +11,8 @@ export interface LogEntry {
     sha1: Sha1;
     tree: Sha1;
     refs: string[];
+    remoteRefs: string[];
+    headRef: string;
     subject: string;
     body: string;
     notes: string;
