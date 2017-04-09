@@ -53,6 +53,9 @@ body {
 #log-view.with-details {
     height: calc(100% - 20rem);
 }
+#log-view.with-details.with-details-resized {
+    height: 20rem;
+}
 
 #log-view svg {
     position: absolute;
@@ -267,19 +270,31 @@ body {
     border-bottom: none;
 }
 
-#details-view .close-btn {
+#details-view.resized {
+    height: calc(100% - 20rem);
+}
+
+#details-view .action-btn {
     font-size: 1.2rem;
-    position: absolute;
+    float: right;
     padding: 1rem; /* increases the hit-area */
-    top: 0;
-    right: 0;
     cursor: pointer;
     opacity: 0.8;
     z-index: 5;
 }
-#details-view .close-btn:hover {
+#details-view .action-btn:hover {
     opacity: 1;
     transition: opacity 0.3s ease-out;
+}
+
+#details-view.resized .action-btn.resize-btn{
+    display: none;
+}
+#details-view .action-btn.resume-btn{
+    display: none;
+}
+#details-view.resized .action-btn.resume-btn{
+    display: block;
 }
 
 #details-view .commit-subject {

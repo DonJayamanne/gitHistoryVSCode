@@ -78,6 +78,12 @@
         $detailsView
             .on('click', '.close-btn', hideDetails)
             ;
+        $detailsView
+            .on('click', '.resize-btn', resizeDetails)
+            ;
+        $detailsView
+            .on('click', '.resume-btn', resumeDetails)
+            ;
     }
 
     let detailsViewShown = false;
@@ -145,5 +151,13 @@
         detailsViewShown = false;
         $detailsView.addClass('hidden');
         $logView.removeClass('with-details');
+    }
+    function resizeDetails() {
+        $detailsView.addClass('resized');
+        $logView.addClass('with-details-resized');
+    }
+    function resumeDetails() {
+        $detailsView.removeClass('resized');
+        $logView.removeClass('with-details-resized');
     }
 })();
