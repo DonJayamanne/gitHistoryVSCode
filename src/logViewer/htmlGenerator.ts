@@ -58,7 +58,7 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
             <a class="close-btn"><i class="octicon octicon-x"></i></a>
             <h1 class="commit-subject">Merged Pull request from some bug fix area</h1>
             <div class="commit-author">
-                <span class="name hint--right hint--rounded hint--bounce" aria-label="don.jayamanne@yahoo.com" title="don.jayamanne@yahoo.com">Don Jayamanne</span>
+                <span class="name hint--right hint--rounded hint--bounce" aria-label="don.jayamanne@yahoo.com">Don Jayamanne</span>
                 <span class="timestamp">on Feb 22th 2016, 12:21:43 am</span>
             </div>
             <div class="commit-body">This is the body and we can have a lot of content in here</div>
