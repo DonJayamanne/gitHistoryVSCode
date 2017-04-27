@@ -85,7 +85,7 @@ export async function run(fileName: string) {
             }
         });
 
-        vscode.window.showQuickPick(itemPickList, { placeHolder: '', matchOnDescription: true }).then(item => {
+        vscode.window.showQuickPick(itemPickList, { placeHolder: '', matchOnDescription: true , matchOnDetail: true }).then(item => {
             if (!item) {
                 return;
             }
