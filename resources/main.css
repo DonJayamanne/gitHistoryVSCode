@@ -86,7 +86,7 @@ body {
     overflow: hidden;
 }
 .log-entry .media-image {
-    flex-basis: 6em;
+    min-width: 6em;
 }
 
 .log-entry .commit-subject-link {
@@ -126,6 +126,22 @@ body {
 .commit-hash-container {
     background-color: hsla(204,80%,40%,1);
     white-space: nowrap;
+}
+
+.commit-head-container {
+    background-color:#438a43;
+    white-space: nowrap;
+}
+
+.commit-remote-container {
+    background-color:#7d3d40;
+}
+
+.commit-remote-container .refs, .commit-head-container .refs {
+    display: inline-block;
+    color: white;
+    font-size: 75%;
+    padding: 0.3em;
 }
 
 .commit-hash-container .commit-hash,

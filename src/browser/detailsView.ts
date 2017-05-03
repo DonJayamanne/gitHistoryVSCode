@@ -54,7 +54,7 @@
         }
 
         return value;
-    };
+    }
 
     function addEventHandlers() {
         $('.commit-subject-link', $logView).addClass('hidden');
