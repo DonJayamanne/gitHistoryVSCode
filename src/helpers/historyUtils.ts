@@ -5,10 +5,10 @@ import * as gitPaths from './gitPaths';
 import * as logger from '../logger';
 
 export async function getFileHistory(rootDir: string, relativeFilePath: string): Promise<any[]> {
-    return await getLog(rootDir, ['--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', '--', relativeFilePath]);
+    return await getLog(rootDir, ['--no-abbrev-commit', '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', '--', relativeFilePath]);
 }
 export async function getFileHistoryBefore(rootDir: string, relativeFilePath: string, isoStrictDateTime: string): Promise<any[]> {
-    return await getLog(rootDir, [`--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, '--', relativeFilePath]);
+    return await getLog(rootDir, ['--no-abbrev-commit', `--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, '--', relativeFilePath]);
 }
 
 export async function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number): Promise<any[]> {
