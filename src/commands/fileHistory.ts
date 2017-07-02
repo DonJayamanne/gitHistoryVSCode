@@ -3,7 +3,6 @@ import { getGitRepositoryPath } from '../helpers/gitPaths';
 import * as historyUtil from '../helpers/historyUtils';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { decode as htmlDecode } from 'he';
 import * as logger from '../logger';
 import { formatDate } from '../helpers/logParser';
 import * as fs from 'fs';
@@ -25,27 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 }
 
-vscode.commands.registerCommand('git.viewFileCommitDetails', async (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
-    try {
-        relativeFilePath = htmlDecode(relativeFilePath);
-        const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
-        const gitRepositoryPath = await getGitRepositoryPath(vscode.workspace.rootPath);
-        const data = await historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, isoStrictDateTime);
-        const historyItem: any = data.find(data => data.sha1 === sha1);
-        const previousItems = data.filter(data => data.sha1 !== sha1);
-        historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
-        const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
-            label: '',
-            description: '',
-            data: historyItem,
-            isLast: historyItem.previousSha1.length === 0
-        };
-        onItemSelected(item, fileName, relativeFilePath);
-    }
-    catch (error) {
-        logger.logError(error);
-    }
-});
+
 
 export async function run(fileName: string) {
     try {
@@ -98,10 +77,11 @@ export async function run(fileName: string) {
 }
 
 
-async function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFilePath: string) {
+export async function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFilePath: string) {
     const commit = (<any>item).data;
-    const getThisFile = getFile(commit.sha1, relativeFilePath);
-    const getPreviousFile = getFile(commit.previousSha1, relativeFilePath);
+    const gitRepositoryPath = await getGitRepositoryPath(fileName);
+    const getThisFile = getFile(commit.sha1, gitRepositoryPath, relativeFilePath);
+    const getPreviousFile = getFile(commit.previousSha1, gitRepositoryPath, relativeFilePath);
 
     const thisFile = await getThisFile;
     const previousFile = await getPreviousFile;
@@ -178,8 +158,7 @@ function diffFiles(fileName: string, sourceFile: string, sourceSha1: string, des
     }
 }
 
-async function getFile(commitSha1: string, localFilePath: string): Promise<string> {
-    const rootDir = vscode.workspace.rootPath;
+async function getFile(commitSha1: string, gitRepositoryPath: string, localFilePath: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         if (commitSha1 === undefined) {
             resolve('fileUnavailable');
@@ -192,7 +171,7 @@ async function getFile(commitSha1: string, localFilePath: string): Promise<strin
                 return;
             }
             try {
-                const targetFile = await historyUtil.writeFile(rootDir, commitSha1, localFilePath, tmpFilePath);
+                const targetFile = await historyUtil.writeFile(gitRepositoryPath, commitSha1, localFilePath, tmpFilePath);
                 resolve(targetFile);
             }
             catch (ex) {

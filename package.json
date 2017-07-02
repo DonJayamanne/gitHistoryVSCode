@@ -54,6 +54,10 @@
                 {
                     "command": "git.viewFileHistory",
                     "group": "git"
+                },
+                {
+                    "command": "git.viewHistory",
+                    "group": "git"
                 }
             ]
         },
