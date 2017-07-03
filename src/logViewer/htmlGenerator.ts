@@ -55,7 +55,9 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
         </div>
 
         <div id="details-view" class="hidden">
-            <a class="close-btn"><i class="octicon octicon-x"></i></a>
+            <a class="action-btn close-btn"><i class="octicon octicon-x"></i></a>
+            <a class="action-btn resize-btn"><i class="octicon octicon-chevron-up"></i></a>
+            <a class="action-btn resume-btn"><i class="octicon octicon-chevron-down"></i></a>
             <h1 class="commit-subject">Merged Pull request from some bug fix area</h1>
             <div class="commit-author">
                 <span class="name hint--right hint--rounded hint--bounce" aria-label="don.jayamanne@yahoo.com">Don Jayamanne</span>
