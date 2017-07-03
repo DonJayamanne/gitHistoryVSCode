@@ -42,17 +42,12 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ## Big thanks to [Mike Surcouf](https://github.com/mikes-gh)
 
-## Change Log 
-[View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
-- Move to Async programing pattern (internal)
-- Add logging and better error surfacing  - output windows 'Git History Log' 
-- Add a separate output window for non logging display 'Git History Info'
-- Fix #43 #63 - error when file in not present in a commit
-- File actions pick list - only show applicable actions
-e.g. don't show compare with previous if file not present in previous commit.
-- Improve readability of picklist for commits of a file (2 line display)
-- Improve gitPath logic and performance.
-- Make git log default page size 50 for performance.
+## Version 0.2.1
+- display ref tags in history when using "git log"
+- fixed visual feedback when SHA is copied in "git log"
+- Allow scenario where git repo root is not the vscode workspace root [#112](https://github.com/DonJayamanne/gitHistoryVSCode/pull/112)  
+- fix error when git config log.abbrevcommit=true [#132](https://github.com/DonJayamanne/gitHistoryVSCode/pull/132)  
+- added a maximize/restore button to the details-view [#118](added a maximize/restore button to the details-view)  
  
 ## Source
 

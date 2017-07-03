@@ -3,6 +3,9 @@
 ## Version 0.2.1
 - display ref tags in history when using "git log"
 - fixed visual feedback when SHA is copied in "git log"
+- Allow scenario where git repo root is not the vscode workspace root [#112](https://github.com/DonJayamanne/gitHistoryVSCode/pull/112)  
+- fix error when git config log.abbrevcommit=true [#132](https://github.com/DonJayamanne/gitHistoryVSCode/pull/132)  
+- added a maximize/restore button to the details-view [#118](added a maximize/restore button to the details-view)  
 
 ## Version 0.2.0
 - Move to Async programing pattern (internal)

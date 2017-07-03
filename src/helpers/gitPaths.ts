@@ -105,7 +105,7 @@ export async function getGitPath(): Promise<string> {
 export async function getGitRepositoryPath(fileName: string): Promise<string> {
     const gitPath = await getGitPath();
     return new Promise<string>((resolve, reject) => {
-        const directory = fs.statSync(fileName).isDirectory() ? fileName : path.dirname(fileName);
+        const directory = fs.existsSync(fileName) && fs.statSync(fileName).isDirectory() ? fileName : path.dirname(fileName);
         const options = { cwd: directory };
         const args = ['rev-parse', '--show-toplevel'];
 
