@@ -179,13 +179,13 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
 
     lines.forEach((line, index, lines) => {
         if (line.indexOf(prefixes.refs) === 0) {
-            regMatch = line.match(/HEAD -> refs\/heads\/([\w_\-]+)/);
+            regMatch = line.match(/HEAD -> refs\/heads\/([\w_\-.]+)/);
 
             if (regMatch !== null) {
                 logEntry.headRef = regMatch[1];
             }
 
-            let re = /refs\/remotes\/([\w+_\-\/]+)/g;
+            let re = /refs\/remotes\/([\w+_\-\/.]+)/g;
             logEntry.remoteRefs = [];
             while (regMatch = re.exec(line)) {
                 logEntry.remoteRefs.push(regMatch[1]);
