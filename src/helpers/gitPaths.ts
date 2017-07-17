@@ -144,7 +144,7 @@ export async function getGitRepositoryPath(fileName: string): Promise<string> {
     });
 }
 
-export async function getGitBranch(repoPath: string) : Promise<string> {
+export async function getGitBranch(repoPath: string): Promise<string> {
     const gitPath = await getGitPath();
     return new Promise<string>((resolve, reject) => {
         const options = { cwd: repoPath };
@@ -153,7 +153,7 @@ export async function getGitBranch(repoPath: string) : Promise<string> {
         let error = '';
         let ls = spawn(gitPath, args, options);
         ls.stdout.on('data', function (data) {
-            branch += data.slice(0,-1);
+            branch += data.slice(0, -1);
         });
 
         ls.stderr.on('data', function (data) {
