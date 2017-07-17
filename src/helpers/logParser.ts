@@ -179,7 +179,7 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
 
     lines.forEach((line, index, lines) => {
         if (line.indexOf(prefixes.refs) === 0) {
-            regMatch = line.match(/HEAD -> refs\/heads\/([\w_\-.]+)/);
+            regMatch = line.match(/HEAD -> refs\/heads\/([\w_\-\/.]+)/);
 
             if (regMatch !== null) {
                 logEntry.headRef = regMatch[1];
