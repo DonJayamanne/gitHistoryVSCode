@@ -36,11 +36,14 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 ![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
 
 ## Roadmap   
-- View git log for all branches   
-- View refs (branch, tags)   
 - Search git history
 
-## Big thanks to [Mike Surcouf](https://github.com/mikes-gh)
+## Big thanks to [Mike Surcouf](https://github.com/mikes-gh) & [ole](https://github.com/ole1986)
+
+## Version 0.2.2
+- Viewing the history by branch [#140](https://github.com/DonJayamanne/gitHistoryVSCode/pull/140)  
+- Cherry picking commits [#141](https://github.com/DonJayamanne/gitHistoryVSCode/pull/141)  
+- Handle branch names containing periods [#133](https://github.com/DonJayamanne/gitHistoryVSCode/pull/136) 
 
 ## Version 0.2.1
 - display ref tags in history when using "git log"

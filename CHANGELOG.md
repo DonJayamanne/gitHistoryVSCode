@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 0.2.2
+- Viewing the history by branch [#140](https://github.com/DonJayamanne/gitHistoryVSCode/pull/140)  
+- Cherry picking commits [#141](https://github.com/DonJayamanne/gitHistoryVSCode/pull/141)  
+- Handle branch names containing periods [#133](https://github.com/DonJayamanne/gitHistoryVSCode/pull/136) 
+
 ## Version 0.2.1
 - display ref tags in history when using "git log"
 - fixed visual feedback when SHA is copied in "git log"
