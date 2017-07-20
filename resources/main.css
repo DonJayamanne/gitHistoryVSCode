@@ -153,6 +153,17 @@ body {
     color: white;
     padding: 0.4em;
 }
+
+.commit-hash-container .cherry-pick-button {
+    display: inline-block;
+    color: white;
+    padding: 0.4em;
+}
+
+.cherry-pick-button a, .cherry-pick-button a:hover {
+    color: white;
+}
+
 .commit-hash-container .commit-hash:hover {
     background-color: hsla(0,0%,100%,0.12);
 }

@@ -23,6 +23,11 @@ export interface LogEntry {
     isHead: boolean;
 }
 
+export interface CherryPickEntry {
+    branch: string;
+    sha: string;
+}
+
 export interface Sha1 {
     full: string;
     short: string;
