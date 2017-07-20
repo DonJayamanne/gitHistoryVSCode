@@ -135,6 +135,13 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                                     <i class="octicon octicon-clippy"></i>
                                 </span>
                             </div>
+                            <div class="cherry-pick-button">
+                                <span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                    <a href="${encodeURI('command:git.cherry-pick-into?' + JSON.stringify([entry.headRef, entry.sha1.full]))}">
+                                        <i class="octicon octicon-git-pull-request"></i>
+                                    </a>
+                                </span>
+                            </div>
                             <div class="commit-hash">
                                 <span class="sha-code short" data-entry-index="${entryIndex}" aria-label="${entry.sha1.short}">${entry.sha1.short}</span>
                             </div>

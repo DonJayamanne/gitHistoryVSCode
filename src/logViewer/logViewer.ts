@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as htmlGenerator from './htmlGenerator';
 import * as gitHistory from '../helpers/gitHistory';
+import * as gitCherryPick from '../helpers/gitCherryPick';
 import { LogEntry } from '../contracts';
 import * as path from 'path';
 import * as gitPaths from '../helpers/gitPaths';
@@ -145,6 +146,15 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
     context.subscriptions.push(disposable, registration);
+
+    disposable = vscode.commands.registerCommand('git.cherry-pick-into', (branch: string, sha: string) => {
+        gitCherryPick.CherryPick(vscode.workspace.rootPath, branch, sha).then((value) => {
+            vscode.window.showInformationMessage('Cherry picked into ' + value.branch + ' (' + value.sha + ')');
+        }, (reason) => {
+            vscode.window.showErrorMessage(reason);
+        });
+    });
+    context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('git.logNavigate', (direction: string) => {
         pageIndex = pageIndex + (direction === 'next' ? 1 : -1);
