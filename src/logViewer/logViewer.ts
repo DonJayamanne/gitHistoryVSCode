@@ -12,7 +12,6 @@ import * as fileHistory from '../commands/fileHistory';
 const gitHistorySchema = 'git-history-viewer';
 const PAGE_SIZE = 50;
 let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
-let historyRetrieved: boolean;
 let pageIndex = 0;
 let pageSize = PAGE_SIZE;
 let canGoPrevious = false;
@@ -22,15 +21,20 @@ let gitRepoPath = vscode.workspace.rootPath;
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private entries: LogEntry[];
+    private html: Object = {};
 
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         try {
+            let branchName = this.getBranchFromURI(uri);
+            if ( this.html.hasOwnProperty(branchName) ) {
+                return this.html[branchName];
+            }
             const entries = await gitHistory.getLogEntries(gitRepoPath, pageIndex, pageSize);
             canGoPrevious = pageIndex > 0;
             canGoNext = entries.length === pageSize;
             this.entries = entries;
-            let html = this.generateHistoryView();
-            return html;
+            this.html[branchName] = this.generateHistoryView();
+            return this.html[branchName];
         }
         catch (error) {
             return this.generateErrorView(error);
@@ -42,7 +46,20 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 
     public update(uri: vscode.Uri) {
+        let branchName = this.getBranchFromURI(uri);
+        this.clearCache(branchName);
         this._onDidChange.fire(uri);
+    }
+
+    private clearCache(name: string) {
+        if ( this.html.hasOwnProperty(name) ) {
+            delete this.html[name];
+        }
+    }
+
+    private getBranchFromURI(uri: vscode.Uri): string {
+        let re = uri.query.match(/branch=([a-z0-9_\-.]+)/i);
+        return (re) ? re[1] : 'master';
     }
 
     private getStyleSheetPath(resourceName: string): string {
@@ -97,10 +114,9 @@ export function activate(context: vscode.ExtensionContext) {
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
     let disposable = vscode.commands.registerCommand('git.viewHistory', async (fileUri?: vscode.Uri) => {
-        // Unique name everytime, so that we always refresh the history log
-        // Untill we add a refresh button to the view
-        historyRetrieved = false;
         let fileName = '';
+        let branchName = 'master';
+
         if (fileUri && fileUri.fsPath) {
             fileName = fileUri.fsPath;
         }
@@ -116,11 +132,14 @@ export function activate(context: vscode.ExtensionContext) {
             gitRepoPath = vscode.workspace.rootPath;
         }
 
+        branchName = await gitPaths.getGitBranch(gitRepoPath);
+
         pageIndex = 0;
         canGoPrevious = false;
         canGoNext = true;
-        previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?x=' + new Date().getTime().toString());
-        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History (git log)').then((success) => {
+        previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?branch=' + encodeURI(branchName) );
+        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History (' + branchName + ')').then((success) => {
+            provider.update(previewUri);
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });
