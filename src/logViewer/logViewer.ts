@@ -120,8 +120,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     let disposable = vscode.commands.registerCommand('git.viewHistory', async (fileUri?: vscode.Uri) => {
         const itemPickList: vscode.QuickPickItem[] = [];
-        itemPickList.push({ label: 'Current branch', description: 'Show history of only the current branch' });
-        itemPickList.push({ label: 'All branches', description: 'Show history of all the branches' });
+        itemPickList.push({ label: 'Current branch', description: '' });
+        itemPickList.push({ label: 'All branches', description: '' });
         let modeChoice = await vscode.window.showQuickPick(itemPickList, { placeHolder: 'Show history for...', matchOnDescription: true });
 
         let title: string;
