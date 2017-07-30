@@ -128,34 +128,36 @@ export function activate(context: vscode.ExtensionContext) {
         if (modeChoice === undefined) {
             return;
         }
-        else if (modeChoice.label === 'All branches') {
+
+        let fileName = '';
+        let branchName = 'master';
+
+        if (fileUri && fileUri.fsPath) {
+            fileName = fileUri.fsPath;
+        }
+        else {
+            if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document) {
+                fileName = vscode.window.activeTextEditor.document.fileName;
+            }
+        }
+        if (fileName !== '') {
+            gitRepoPath = await gitPaths.getGitRepositoryPath(fileName);
+        }
+        else {
+            gitRepoPath = vscode.workspace.rootPath;
+        }
+
+        branchName = await gitPaths.getGitBranch(gitRepoPath);
+
+        pageIndex = 0;
+        canGoPrevious = false;
+        canGoNext = true;
+
+        if (modeChoice.label === 'All branches') {
             previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
             title = 'Git History (all branches)';
         }
         else {
-            let fileName = '';
-            let branchName = 'master';
-
-            if (fileUri && fileUri.fsPath) {
-                fileName = fileUri.fsPath;
-            }
-            else {
-                if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document) {
-                    fileName = vscode.window.activeTextEditor.document.fileName;
-                }
-            }
-            if (fileName !== '') {
-                gitRepoPath = await gitPaths.getGitRepositoryPath(fileName);
-            }
-            else {
-                gitRepoPath = vscode.workspace.rootPath;
-            }
-
-            branchName = await gitPaths.getGitBranch(gitRepoPath);
-
-            pageIndex = 0;
-            canGoPrevious = false;
-            canGoNext = true;
             previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?branch=' + encodeURI(branchName));
             title = 'Git History (' + branchName + ')';
         }
