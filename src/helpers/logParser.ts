@@ -229,10 +229,6 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
             logEntry.committer = parseAuthCommitter(line.substring(prefixLengths.committer));
             return;
         }
-        if (line.indexOf(prefixes.committer) === 0) {
-            logEntry.committer = parseAuthCommitter(line.substring(prefixLengths.committer));
-            return;
-        }
         if (line.indexOf(prefixes.subject) === 0) {
             logEntry.subject = line.substring(prefixLengths.subject).trim();
             return;
