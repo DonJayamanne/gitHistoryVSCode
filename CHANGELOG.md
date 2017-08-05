@@ -1,4 +1,7 @@
-# Change Log
+## Version 0.2.3
+- Ability to view commit information in explorer view  
+- Ability to compare commits  
+- Ability to view log of all branches [#144](https://github.com/DonJayamanne/gitHistoryVSCode/pull/144), [#93](https://github.com/DonJayamanne/gitHistoryVSCode/issues/93), [#129](https://github.com/DonJayamanne/gitHistoryVSCode/issues/129)  
 
 ## Version 0.2.2
 - Viewing the history by branch [#140](https://github.com/DonJayamanne/gitHistoryVSCode/pull/140)  
