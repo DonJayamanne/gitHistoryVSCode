@@ -26,6 +26,10 @@ export const FileIcon = {
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'darkTheme', 'document.svg'),
     light: path.join(__dirname, '..', '..', '..', 'resources', 'lightTheme', 'document.svg')
 };
+export const RenameIcon = {
+    light: path.join(__dirname, '..', '..', '..', 'resources', 'icons', 'light', 'status-renamed.svg'),
+    dark: path.join(__dirname, '..', '..', '..', 'resources', 'icons', 'dark', 'status-renamed.svg')
+};
 
 export abstract class CommitEntryNode extends TreeItem {
     constructor(label: string, collapsibleState?: TreeItemCollapsibleState) {
@@ -84,6 +88,11 @@ export class FileStatNode extends CommitEntryNode {
             case Modification.Deleted: {
                 this.contextValue = 'fileStatD';
                 this.iconPath = RemovedIcon;
+                break;
+            }
+            case Modification.Renamed: {
+                this.contextValue = 'fileStatR';
+                this.iconPath = RenameIcon;
                 break;
             }
             default: {
