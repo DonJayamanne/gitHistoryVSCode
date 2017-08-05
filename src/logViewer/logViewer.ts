@@ -23,9 +23,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private entries: LogEntry[];
     private html: Object = {};
-    constructor(private showLogEntries: (entries: LogEntry[]) => void) {
-
-    }
+    constructor() {}
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         try {
             let branchName = this.getBranchFromURI(uri);
@@ -124,7 +122,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 }
 
 export function activate(context: vscode.ExtensionContext, showLogEntries: (entries: LogEntry[]) => void) {
-    let provider = new TextDocumentContentProvider(showLogEntries);
+    let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
     let disposable = vscode.commands.registerCommand('git.viewHistory', async (fileUri?: vscode.Uri, search?: string) => {
