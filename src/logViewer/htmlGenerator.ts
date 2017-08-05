@@ -169,7 +169,7 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
         `;
     }).join('');
 
-    if(skipGraph) {
+    if (skipGraph) {
         entries = [];
     }
     return generateHistoryListContainer(entries, entriesHtml, canGoPrevious, canGoNext);

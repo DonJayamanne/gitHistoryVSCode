@@ -159,7 +159,7 @@ export function activate(context: vscode.ExtensionContext, showLogEntries: (entr
         canGoPrevious = false;
         canGoNext = true;
 
-        let branchName : string = '';
+        let branchName = '';
         let previewUriText = gitHistorySchema + '://authority/git-history';
 
         if (modeChoice.label === 'Current branch') {
@@ -168,10 +168,15 @@ export function activate(context: vscode.ExtensionContext, showLogEntries: (entr
             title = 'Git History (' + branchName + ')';
         }
 
-        if(search !== undefined) {
-            title = 'Git Search in ' + branchName + ' (' + search + ')';
-            previewUriText += (branchName === '') ? '?' : '&';
-            previewUriText += "search=" +  encodeURI(search);
+        if (search !== undefined) {
+            if (branchName === '') {
+                title = 'Git Search (' + search + ')';
+                previewUriText += '?';
+            } else {
+                title = 'Git Search in ' + branchName + ' (' + search + ')';
+                previewUriText += '&';
+            }
+            previewUriText += 'search=' +  encodeURI(search);
         }
 
         previewUri = vscode.Uri.parse(previewUriText);

@@ -50,7 +50,7 @@ export class DirectoryNode extends CommitEntryNode {
         super(path.basename(fullPath), TreeItemCollapsibleState.Collapsed);
 
         const upperDirPath = fullPath.toUpperCase();
-        this.fileStats = logEntry.fileStats.filter(fileStat => path.dirname(fileStat.path).toUpperCase() == upperDirPath);
+        this.fileStats = logEntry.fileStats.filter(fileStat => path.dirname(fileStat.path).toUpperCase() === upperDirPath);
         this.iconPath = FolderIcon;
     }
 

@@ -66,7 +66,7 @@ function showCommitInTreeView(branch: string, sha: string): Promise<any> | undef
 }
 function getCommitDetails(provider: CommitProvider, branch: string, sha: string): Promise<any> {
     const gitRepoPath = getGitRepoPath();
-    return gitHistory.getLogEntries(gitRepoPath, branch, '',0, 1, sha)
+    return gitHistory.getLogEntries(gitRepoPath, branch, '', 0, 1, sha)
         .then(entries => {
             entries.forEach(entry => provider.addLogEntry(entry));
             provider.refresh();
