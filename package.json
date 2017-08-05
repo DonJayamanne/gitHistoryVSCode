@@ -31,7 +31,8 @@
 	"activationEvents": [
 		"onCommand:git.viewFileHistory",
 		"onCommand:git.viewLineHistory",
-		"onCommand:git.viewHistory"
+		"onCommand:git.viewHistory",
+        "onCommand:git.searchHistory"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
@@ -58,6 +59,10 @@
 				"command": "git.viewHistory",
 				"title": "Git: View History (git log)"
 			},
+            {
+                "command": "git.searchHistory",
+                "title": "Git: Search History"
+            },
 			{
 				"command": "git.commit.LogEntry.ViewChangeLog",
 				"title": "View Change log"
@@ -83,6 +88,13 @@
 				"title": "Compare against previously selected Commit"
 			}
 		],
+		"keybindings":[
+            {
+                "command": "git.searchHistory",
+                "key": "ctrl+f3",
+                "mac": "cmd+f3"
+            }
+        ],
 		"menus": {
 			"explorer/context": [{
 					"command": "git.viewFileHistory",
@@ -91,7 +103,11 @@
 				{
 					"command": "git.viewHistory",
 					"group": "git"
-				}
+				},
+                {
+                    "command": "git.searchHistory",
+                    "group": "git"
+                }
 			],
 			"view/item/context": [{
 					"command": "git.commit.LogEntry.ViewChangeLog",

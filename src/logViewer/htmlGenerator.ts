@@ -121,7 +121,7 @@ export function generateRemoteRefHtmlView(entry: LogEntry): string {
     return ``;
 }
 
-export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: boolean, canGoNext: boolean): string {
+export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: boolean, canGoNext: boolean, skipGraph: boolean = false): string {
     const entriesHtml = entries.map((entry, entryIndex) => {
         return `
             <div class="log-entry">
@@ -169,5 +169,8 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
         `;
     }).join('');
 
+    if(skipGraph) {
+        entries = [];
+    }
     return generateHistoryListContainer(entries, entriesHtml, canGoPrevious, canGoNext);
 }

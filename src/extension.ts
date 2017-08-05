@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import * as fileHistory from './commands/fileHistory';
 import * as lineHistory from './commands/lineHistory';
+import * as searchHistory from './commands/searchHistory';
 import * as logViewer from './logViewer/logViewer';
 import * as commitViewer from './commitViewer/main';
 import * as commitComparer from './commitCompare/main';
@@ -12,6 +13,7 @@ import * as commitComparer from './commitCompare/main';
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
     fileHistory.activate(context);
     lineHistory.activate(context);
+    searchHistory.activate(context);
     commitViewer.activate(context, logViewer.getGitRepoPath);
     logViewer.activate(context, commitViewer.showLogEntries);
     commitComparer.activate(context, logViewer.getGitRepoPath);
