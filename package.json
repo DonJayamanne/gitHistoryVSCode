@@ -1,116 +1,180 @@
 {
-    "name": "githistory",
-    "displayName": "Git History (git log)",
-    "description": "View git log, file or line History",
-    "version": "0.2.2",
-    "publisher": "donjayamanne",
-    "author": {
-        "name": "Don Jayamanne",
-        "email": "don.jayamanne@yahoo.com"
-    },
-    "license": "MIT",
-    "homepage": "https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/README.md",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/DonJayamanne/gitHistoryVSCode"
-    },
-    "icon": "images/icon.png",
-    "bugs": {
-        "url": "https://github.com/DonJayamanne/gitHistoryVSCode/issues"
-    },
-    "galleryBanner": {
-        "color": "#0000FF",
-        "theme": "dark"
-    },
-    "engines": {
-        "vscode": "^0.10.8"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onCommand:git.viewFileHistory",
-        "onCommand:git.viewLineHistory",
-        "onCommand:git.viewHistory"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "git.viewFileHistory",
-                "title": "Git: View File History"
-            },
-            {
-                "command": "git.viewLineHistory",
-                "title": "Git: View Line History"
-            },
-            {
-                "command": "git.viewHistory",
-                "title": "Git: View History (git log)"
-            }
-        ],
-        "menus": {
-            "explorer/context": [
-                {
-                    "command": "git.viewFileHistory",
-                    "group": "git"
-                },
-                {
-                    "command": "git.viewHistory",
-                    "group": "git"
-                }
-            ]
-        },
-        "configuration": {
-            "type": "object",
-            "title": "Git History configuration",
-            "properties": {
-                "gitHistory.displayLabel": {
-                    "type": "string",
-                    "default": "${message}",
-                    "description": "Informations to display in history as label"
-                },
-                "gitHistory.displayDescription": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Informations to display in history as description"
-                },
-                "gitHistory.displayDetail": {
-                    "type": "string",
-                    "default": "${name} on ${date}",
-                    "description": "Informations to display in history as detail"
-                },
-                "gitHistory.logLevel": {
-                    "type": "string",
-                    "default": "Debug",
-                    "description": "Log Level [Debug|Info|Error]"
-                }
-            }
-        }
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run lint && tsc -p ./",
-        "compile": "tsc --watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "lint": "tslint ./src/**/*.ts || tslint ./test/**/*.ts"
-    },
-    "devDependencies": {
-        "typescript": "^2.1.5",
-        "tslint": "^4.1.1",
-        "vscode": "^1.0.3",
-        "mocha": "^2.3.3",
-        "@types/node": "^6.0.49",
-        "@types/mocha": "^2.2.32",
-        "@types/jquery": "^2.0.34",
-        "@types/clipboard": "1.5.29",
-        "@types/he": "^0.5.29",
-        "@types/tmp": "0.0.31"
-    },
-    "dependencies": {
-        "jquery": "^3.1.1",
-        "clipboard": "^1.5.15",
-        "he": "^1.1.0",
-        "tmp": "^0.0.31",
-        "normalize.css": "^5.0.0"
-    }
+	"name": "githistory",
+	"displayName": "Git History (git log)",
+	"description": "View git log, file or line History",
+	"version": "0.2.2",
+	"publisher": "donjayamanne",
+	"author": {
+		"name": "Don Jayamanne",
+		"email": "don.jayamanne@yahoo.com"
+	},
+	"license": "MIT",
+	"homepage": "https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/DonJayamanne/gitHistoryVSCode"
+	},
+	"icon": "images/icon.png",
+	"bugs": {
+		"url": "https://github.com/DonJayamanne/gitHistoryVSCode/issues"
+	},
+	"galleryBanner": {
+		"color": "#0000FF",
+		"theme": "dark"
+	},
+	"engines": {
+		"vscode": "^1.13.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:git.viewFileHistory",
+		"onCommand:git.viewLineHistory",
+		"onCommand:git.viewHistory"
+	],
+	"main": "./out/src/extension",
+	"contributes": {
+		"views": {
+			"explorer": [{
+				"id": "commitViewProvider",
+				"name": "Commits"
+			}]
+		},
+		"commands": [{
+				"command": "git.viewFileHistory",
+				"title": "Git: View File History"
+			},
+			{
+				"command": "git.viewLineHistory",
+				"title": "Git: View Line History"
+			},
+			{
+				"command": "git.viewHistory",
+				"title": "Git: View History (git log)"
+			},
+			{
+				"command": "git.commit.LogEntry.ViewChangeLog",
+				"title": "View Change log"
+			},
+			{
+				"command": "git.commit.FileEntry.ViewFileContents",
+				"title": "View File Contents"
+			},
+			{
+				"command": "git.commit.FileEntry.CompareAgainstWorkspace",
+				"title": "Compare against workspace version"
+			},
+			{
+				"command": "git.commit.FileEntry.CompareAgainsPrevious",
+				"title": "Compare against previous version"
+			}
+		],
+		"menus": {
+			"explorer/context": [{
+					"command": "git.viewFileHistory",
+					"group": "git"
+				},
+				{
+					"command": "git.viewHistory",
+					"group": "git"
+				}
+			],
+			"view/item/context": [{
+					"command": "git.commit.LogEntry.ViewChangeLog",
+					"when": "view == commitViewProvider && viewItem == logEntry"
+				},
+				{
+					"command": "git.commit.FileEntry.ViewFileContents",
+					"when": "view == commitViewProvider && viewItem == fileStat"
+				},
+				{
+					"command": "git.commit.FileEntry.ViewFileContents",
+					"when": "view == commitViewProvider && viewItem == fileStatA"
+				},
+				{
+					"command": "git.commit.FileEntry.ViewFileContents",
+					"when": "view == commitViewProvider && viewItem == fileStatM"
+				},
+				{
+					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
+					"when": "view == commitViewProvider && viewItem == fileStat"
+				},
+				{
+					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
+					"when": "view == commitViewProvider && viewItem == fileStatA"
+				},
+				{
+					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
+					"when": "view == commitViewProvider && viewItem == fileStatM"
+				},
+				{
+					"command": "git.commit.FileEntry.CompareAgainsPrevious",
+					"when": "view == commitViewProvider && viewItem == fileStat"
+				},
+				{
+					"command": "git.commit.FileEntry.CompareAgainsPrevious",
+					"when": "view == commitViewProvider && viewItem == fileStatM"
+				}
+			]
+		},
+		"configuration": {
+			"type": "object",
+			"title": "Git History configuration",
+			"properties": {
+				"gitHistory.displayLabel": {
+					"type": "string",
+					"default": "${message}",
+					"description": "Informations to display in history as label"
+				},
+				"gitHistory.displayDescription": {
+					"type": "string",
+					"default": "",
+					"description": "Informations to display in history as description"
+				},
+				"gitHistory.displayDetail": {
+					"type": "string",
+					"default": "${name} on ${date}",
+					"description": "Informations to display in history as detail"
+				},
+				"gitHistory.logLevel": {
+					"type": "string",
+					"default": "Debug",
+					"description": "Log Level [Debug|Info|Error]"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run lint && tsc -p ./",
+		"compile": "tsc --watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"lint": "tslint ./src/**/*.ts || tslint ./test/**/*.ts"
+	},
+	"devDependencies": {
+		"typescript": "^2.1.5",
+		"tslint": "^4.1.1",
+		"vscode": "^1.0.3",
+		"mocha": "^2.3.3",
+		"@types/node": "^6.0.49",
+		"@types/mocha": "^2.2.32",
+		"@types/jquery": "^2.0.34",
+		"@types/clipboard": "1.5.29",
+		"@types/he": "^0.5.29",
+		"@types/tmp": "0.0.31"
+	},
+	"dependencies": {
+		"@types/cors": "^2.8.1",
+		"@types/express": "^4.0.36",
+		"@types/socket.io": "^1.4.29",
+		"@types/socket.io-client": "^1.4.29",
+		"clipboard": "^1.5.15",
+		"cors": "^2.8.4",
+		"express": "^4.15.3",
+		"he": "^1.1.0",
+		"jquery": "^3.1.1",
+		"normalize.css": "^5.0.0",
+		"socket.io": "^2.0.3",
+		"tmp": "^0.0.31"
+	}
 }

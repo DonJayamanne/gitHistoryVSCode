@@ -1,10 +1,10 @@
-import { ActionedDetails, LogEntry, FileStat } from '../contracts';
+import { ActionedDetails, FileStat, LogEntry, Modification } from '../contracts';
 import * as vscode from 'vscode';
 export const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA1';
 
 let author_regex = /([^<]+)<([^>]+)>/;
 let headers = {
-    'Author': function (current_commit: any, author: string) {
+    'Author': function (current_commit: CommitInfo, author: string) {
         let capture = author_regex.exec(author);
         if (capture) {
             current_commit.author_name = capture[1].trim();
@@ -13,7 +13,7 @@ let headers = {
             current_commit.author_name = author;
         }
     },
-    'Commit': function (current_commit: any, author: string) {
+    'Commit': function (current_commit: CommitInfo, author: string) {
         let capture = author_regex.exec(author);
         if (capture) {
             current_commit.committer_name = capture[1].trim();
@@ -24,15 +24,15 @@ let headers = {
         }
     },
 
-    'AuthorDate': function (current_commit: any, date: Date) {
+    'AuthorDate': function (current_commit: CommitInfo, date: Date) {
         current_commit.author_date = date;
     },
 
-    'CommitDate': function (current_commit: any, date: Date) {
+    'CommitDate': function (current_commit: CommitInfo, date: Date) {
         current_commit.commit_date = date;
     },
 
-    'Reflog': function (current_commit: any, data: any) {
+    'Reflog': function (current_commit: CommitInfo, data: any) {
         current_commit.reflog_name = data.substring(0, data.indexOf(' '));
         let author = data.substring(data.indexOf(' ') + 2, data.length - 1);
         let capture = author_regex.exec(author);
@@ -46,14 +46,35 @@ let headers = {
     },
 };
 
-let parse_git_log = function (data: any) {
-    let commits: any[] = [];
-    let current_commit: any;
+export type CommitInfo = {
+    refs: string[];
+    file_line_diffs: any[];
+    sha1: string;
+    parents: string[];
+    message: string;
+    author_email: string;
+    author_date: any;
+    author_name: string;
+    commit_date: any;
+    committer_name: string;
+    committer_email: string;
+    reflog_name: string;
+    reflog_author_name: string;
+    reflog_author_email: string;
+};
+let parse_git_log = function (data: any): CommitInfo[] {
+    let commits: CommitInfo[] = [];
+    let current_commit: CommitInfo;
     let temp_file_change: string[] = [];
 
     let parse_commit_line = function (row: string) {
         if (!row.trim()) return;
-        current_commit = { refs: [], file_line_diffs: [] };
+        current_commit = {
+            refs: [], file_line_diffs: [], sha1: '', parents: [], message: '',
+            author_email: '', author_date: null, author_name: '', commit_date: null,
+            committer_email: '', committer_name: '',
+            reflog_author_email: '', reflog_author_name: '', reflog_name: ''
+        };
         let ss = row.split('(');
         let sha1s = ss[0].split(' ').slice(1).filter(function (sha1: string) { return sha1 && sha1.length; });
         current_commit.sha1 = sha1s[0];
@@ -171,8 +192,9 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
     let multiLineProperty: string = '';
     let filesAltered: string[] = [];
     let processingNumStat = false;
+    let processingFileSummary = false;
     let regMatch = null;
-
+    let fileSummary: string[] = [];
     if (lines.filter(line => line.trim().length > 0).length === 0) {
         return null;
     }
@@ -247,9 +269,21 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
             processingNumStat = true;
             return;
         }
+        let trimmedLine: string;
+        if (processingNumStat && (trimmedLine = line.trim()).length > 0 && !Number.isInteger(parseInt(trimmedLine[0]))) {
+            if (trimmedLine.startsWith('create mode') ||
+                trimmedLine.startsWith('delete mode') ||
+                trimmedLine.startsWith('rename ')) {
+                processingNumStat = false;
+                processingFileSummary = true;
+            }
+        }
         if (processingNumStat) {
             filesAltered.push(line.trim());
             return;
+        }
+        if (processingFileSummary) {
+            fileSummary.push(line.trim());
         }
         if (logEntry && line && multiLineProperty) {
             logEntry[multiLineProperty] += line;
@@ -260,11 +294,11 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
     if (Object.keys(logEntry).length === 0) {
         return null;
     }
-    logEntry.fileStats = parseAlteredFiles(filesAltered);
+    logEntry.fileStats = parseAlteredFiles(filesAltered, fileSummary);
     return logEntry;
 }
 
-function parseAlteredFiles(alteredFiles: string[]): FileStat[] {
+function parseAlteredFiles(alteredFiles: string[], fileSummary: string[]): FileStat[] {
     let stats: FileStat[] = [];
     alteredFiles.filter(line => line.trim().length > 0).map(line => {
         const parts = line.split('\t').filter(part => part.trim().length > 0);
@@ -273,9 +307,54 @@ function parseAlteredFiles(alteredFiles: string[]): FileStat[] {
         }
         const add = parts[0] === '-' ? undefined : parseInt(parts[0]);
         const del = parts[1] === '-' ? undefined : parseInt(parts[1]);
-        stats.push({ additions: add, deletions: del, path: parts[2] });
+        stats.push({ additions: add, deletions: del, path: parts[2], mode: Modification.Modified });
     });
 
+    fileSummary
+        .filter(line => line.trim().length > 0)
+        .forEach(line => {
+            const lineParts = line.trim().split(' ');
+            if (lineParts.length === 0) {
+                return;
+            }
+            // Remove first item
+            const firstWord = lineParts.shift();
+            if (firstWord !== 'create' && firstWord !== 'delete' && firstWord !== 'rename') {
+                return;
+            }
+
+            if (firstWord === 'create' || firstWord === 'delete') {
+                // Then the second word is 'mode'
+                lineParts.shift();
+                // Then the next is some number
+                lineParts.shift();
+            }
+            else {
+                // This is a rename, last word is some percentage
+                lineParts.pop();
+            }
+
+            const file = lineParts.join(' ');
+
+            // Look for this file list
+            const fileSat = stats.find(fileStat => fileStat.path === file);
+            if (fileSat) {
+                switch (firstWord) {
+                    case 'create': {
+                        fileSat.mode = Modification.Created;
+                        break;
+                    }
+                    case 'delete': {
+                        fileSat.mode = Modification.Deleted;
+                        break;
+                    }
+                    case 'rename': {
+                        fileSat.mode = Modification.Renamed;
+                        break;
+                    }
+                }
+            }
+        });
     return stats;
 }
 

@@ -1,24 +1,25 @@
+import { CommitInfo } from './logParser';
 import * as parser from './logParser';
 import * as fs from 'fs';
 import { spawn } from 'child_process';
 import * as gitPaths from './gitPaths';
 import * as logger from '../logger';
 
-export async function getFileHistory(rootDir: string, relativeFilePath: string): Promise<any[]> {
+export async function getFileHistory(rootDir: string, relativeFilePath: string) {
     return await getLog(rootDir, ['--no-abbrev-commit', '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--parents', '--numstat', '--topo-order', '--raw', '--follow', '--', relativeFilePath]);
 }
-export async function getFileHistoryBefore(rootDir: string, relativeFilePath: string, isoStrictDateTime: string): Promise<any[]> {
+export async function getFileHistoryBefore(rootDir: string, relativeFilePath: string, isoStrictDateTime: string) {
     return await getLog(rootDir, ['--no-abbrev-commit', `--max-count=10`, '--decorate=full', '--date=default', '--pretty=fuller', '--all', '--parents', '--numstat', '--topo-order', '--raw', '--follow', `--before='${isoStrictDateTime}'`, '--', relativeFilePath]);
 }
 
-export async function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number): Promise<any[]> {
+export async function getLineHistory(rootDir: string, relativeFilePath: string, lineNumber: number) {
     let lineArgs = '-L' + lineNumber + ',' + lineNumber + ':' + relativeFilePath.replace(/\\/g, '/');
     return await getLog(rootDir, [lineArgs, '--max-count=50', '--decorate=full', '--date=default', '--pretty=fuller', '--numstat', '--topo-order', '--raw']);
 }
 
-async function getLog(rootDir: string, args: string[]): Promise<any[]> {
+async function getLog(rootDir: string, args: string[]) {
     const gitPath = await gitPaths.getGitPath();
-    return new Promise<any[]>((resolve, reject) => {
+    return new Promise<CommitInfo[]>((resolve, reject) => {
         let options = { cwd: rootDir };
         args.unshift('log');
 
@@ -35,13 +36,13 @@ async function getLog(rootDir: string, args: string[]): Promise<any[]> {
             error += data;
         });
 
-        ls.on('error', function(error) {
+        ls.on('error', function (error) {
             logger.logError(error);
             reject(error);
             return;
         });
 
-        ls.on('close', function() {
+        ls.on('close', function () {
             if (error.length > 0) {
                 logger.logError(error);
                 reject(error);
@@ -72,13 +73,13 @@ export async function writeFile(rootDir: string, commitSha1: string, sourceFileP
             error += data;
         });
 
-        ls.on('error', function(error) {
+        ls.on('error', function (error) {
             logger.logError(error);
             reject(error);
             return;
         });
 
-        ls.on('close', function() {
+        ls.on('close', function () {
             if (error.length > 0) {
                 if (error.includes('does not exist')) {
                     resolve('fileUnavailable');

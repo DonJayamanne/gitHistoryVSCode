@@ -33,8 +33,15 @@ export interface Sha1 {
     short: string;
 }
 
+export enum Modification {
+    Modified,
+    Created,
+    Deleted,
+    Renamed
+}
 export interface FileStat {
     path: string;
     additions?: number;
     deletions?: number;
+    mode: Modification;
 }
