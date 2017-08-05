@@ -38,6 +38,8 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
 
+![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/compare.gif)
+
 ## Roadmap   
 - Search git history
 
