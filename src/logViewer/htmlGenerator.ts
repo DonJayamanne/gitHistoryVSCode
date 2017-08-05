@@ -142,9 +142,9 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                                     </a>
                                 </span>
                             </div>
-                            <div class="cherry-pick-button" style="display:none;">
-                                <span class="btn hint--bottom hint--rounded hint--bounce" aria-label="View commit in Commit Tree View"><span aria-label="View commit in Commit Tree View">
-                                    <a href="${encodeURI('command:git.viewTreeView?' + JSON.stringify([entry.headRef, entry.sha1.full]))}">
+                            <div class="cherry-pick-button">
+                                <span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                    <a href="${encodeURI('command:git.commit.compare?' + JSON.stringify([entry.headRef, entry.sha1.full]))}">
                                         <i class="octicon octicon-git-commit"></i>
                                     </a>
                                 </span>
