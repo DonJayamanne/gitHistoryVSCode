@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { CommitProvider } from './CommitProvider';
+import { CommitProvider } from './commitProvider';
 import { LogEntry } from '../contracts';
 import * as gitHistory from '../helpers/gitHistory';
-import { FileStatNode } from './LogEntryNode';
+import { FileStatNode, LogEntryNode } from './LogEntryNode';
 import * as historyUtil from '../helpers/historyUtils';
 import { getFile, viewFile, diffFiles, viewLog } from '../commands/fileHistory';
 import * as path from 'path';
@@ -14,9 +14,9 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
     vscode.commands.registerCommand('git.viewTreeView', (branch: string, sha: string) => showCommitInTreeView(branch, sha));
     getGitRepoPath = getGitRepoPath;
 
-    vscode.commands.registerCommand('git.commit.LogEntry.ViewChangeLog', async (node: FileStatNode) => {
+    vscode.commands.registerCommand('git.commit.LogEntry.ViewChangeLog', async (node: LogEntryNode | FileStatNode) => {
         const gitRepoPath = await getGitRepoPath();
-        const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.fileStat.path, node.logEntry.committer.date.toISOString());
+        const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.logEntry.fileStats[0].path, node.logEntry.committer.date.toISOString());
         const historyItem = data.find(data => data.sha1 === node.logEntry.sha1.full);
         if (historyItem) {
             viewLog(historyItem);
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
         const filePath = await getFile(node.logEntry.sha1.full, gitRepoPath, node.fileStat.path);
         await diffFiles(workspaceFile, filePath, node.logEntry.sha1.full, workspaceFile, '');
     });
-    vscode.commands.registerCommand('git.commit.FileEntry.CompareAgainsPrevious', async (node: FileStatNode) => {
+    vscode.commands.registerCommand('git.commit.FileEntry.CompareAgainstPrevious', async (node: FileStatNode) => {
         const gitRepoPath = await getGitRepoPath();
         const workspaceFile = path.join(gitRepoPath, node.fileStat.path);
         const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.fileStat.path, node.logEntry.committer.date.toISOString());

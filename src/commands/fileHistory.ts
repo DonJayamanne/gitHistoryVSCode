@@ -90,12 +90,6 @@ export async function getFileCommitHistory(sha1: string, relativeFilePath: strin
         previousSha1
     };
 }
-
-// export async function getFile(sha1: string, fileName: string, relativeFilePath: string): Promise<string> {
-//     const gitRepositoryPath = await getGitRepositoryPath(fileName);
-//     return await getFile(sha1, gitRepositoryPath, relativeFilePath);
-// }
-
 export async function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFilePath: string) {
     const commit = (<any>item).data;
     const gitRepositoryPath = await getGitRepositoryPath(fileName);

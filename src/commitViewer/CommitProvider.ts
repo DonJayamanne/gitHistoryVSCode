@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { LogEntry } from '../contracts';
-import { LogEntryNode, CommitEntryNode, TextNode, FileStatNode } from './LogEntryNode';
+import { LogEntryNode, CommitEntryNode, TextNode, FileStatNode } from './logEntryNode';
 // import * as path from 'path';
 export class CommitProvider implements vscode.TreeDataProvider<CommitEntryNode> {
 

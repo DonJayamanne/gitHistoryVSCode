@@ -187,12 +187,11 @@ const prefixLengths = {
     notes: prefixes.notes.length
 };
 
-export function parseLogEntry(lines: string[]): LogEntry | null {
+export function parseLogEntry(lines: string[], startWithNumstat: boolean = false): LogEntry | null {
     let logEntry: LogEntry = {} as LogEntry;
     let multiLineProperty: string = '';
     let filesAltered: string[] = [];
-    let processingNumStat = false;
-    let processingFileSummary = false;
+    let processingNumStat = startWithNumstat;
     let regMatch = null;
     let fileSummary: string[] = [];
     if (lines.filter(line => line.trim().length > 0).length === 0) {
@@ -269,21 +268,15 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
             processingNumStat = true;
             return;
         }
-        let trimmedLine: string;
-        if (processingNumStat && (trimmedLine = line.trim()).length > 0 && !Number.isInteger(parseInt(trimmedLine[0]))) {
-            if (trimmedLine.startsWith('create mode') ||
-                trimmedLine.startsWith('delete mode') ||
-                trimmedLine.startsWith('rename ')) {
-                processingNumStat = false;
-                processingFileSummary = true;
-            }
-        }
         if (processingNumStat) {
-            filesAltered.push(line.trim());
+            let trimmedLine = line.trim();
+            if (trimmedLine.length > 0 && !Number.isInteger(parseInt(trimmedLine[0]))) {
+                fileSummary.push(line.trim());
+            }
+            else {
+                filesAltered.push(line.trim());
+            }
             return;
-        }
-        if (processingFileSummary) {
-            fileSummary.push(line.trim());
         }
         if (logEntry && line && multiLineProperty) {
             logEntry[multiLineProperty] += line;
@@ -291,7 +284,7 @@ export function parseLogEntry(lines: string[]): LogEntry | null {
         }
     });
 
-    if (Object.keys(logEntry).length === 0) {
+    if (Object.keys(logEntry).length === 0 && !startWithNumstat) {
         return null;
     }
     logEntry.fileStats = parseAlteredFiles(filesAltered, fileSummary);

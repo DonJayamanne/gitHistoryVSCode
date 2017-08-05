@@ -2,27 +2,27 @@ import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { LogEntry, FileStat, Modification } from '../contracts';
 import * as path from 'path';
 
-const GitCommitIcon = {
+export const GitCommitIcon = {
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'darkTheme', 'git-commit.png'),
     light: path.join(__dirname, '..', '..', '..', 'resources', 'octicons', 'svg', 'git-commit.svg')
 };
-const FolderIcon = {
+export const FolderIcon = {
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'darkTheme', 'folder.svg'),
     light: path.join(__dirname, '..', '..', '..', 'resources', 'lightTheme', 'folder.svg')
 };
-const AddedIcon = {
+export const AddedIcon = {
     light: path.join(__dirname, '..', '..', '..', 'resources', 'icons', 'light', 'status-added.svg'),
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'icons', 'dark', 'status-added.svg')
 };
-const RemovedIcon = {
+export const RemovedIcon = {
     light: path.join(__dirname, '..', '..', '..', 'resources', 'icons', 'light', 'status-deleted.svg'),
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'icons', 'dark', 'status-deleted.svg')
 };
-const ModifiedIcon = {
+export const ModifiedIcon = {
     light: path.join(__dirname, '..', '..', '..', 'resources', 'icons', 'light', 'status-modified.svg'),
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'icons', 'dark', 'status-modified.svg')
 };
-const FileIcon = {
+export const FileIcon = {
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'darkTheme', 'document.svg'),
     light: path.join(__dirname, '..', '..', '..', 'resources', 'lightTheme', 'document.svg')
 };
@@ -76,7 +76,7 @@ export class FileStatNode extends CommitEntryNode {
                 this.iconPath = ModifiedIcon;
                 this.command = {
                     title: 'Compare against previous version',
-                    command: 'git.commit.FileEntry.CompareAgainsPrevious',
+                    command: 'git.commit.FileEntry.CompareAgainstPrevious',
                     arguments: [this]
                 };
                 break;
