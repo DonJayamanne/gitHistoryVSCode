@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
     let leftSelectedNode: LogEntry;
     vscode.commands.registerCommand('git.commit.compare', async (branch: string, sha: string) => {
         const gitRepoPath = await getGitRepoPath();
-        const entries = await getLogEntries(gitRepoPath, branch, undefined, undefined, sha);
+        const entries = await getLogEntries(gitRepoPath, branch, '', undefined, undefined, sha);
         if (!entries || entries.length === 0) {
             return;
         }

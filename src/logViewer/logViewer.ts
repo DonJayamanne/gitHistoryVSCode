@@ -23,22 +23,20 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private entries: LogEntry[];
     private html: Object = {};
-    constructor(private showLogEntries: (entries: LogEntry[]) => void) {
-
-    }
+    constructor() {}
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         try {
             let branchName = this.getBranchFromURI(uri);
-            if (this.html.hasOwnProperty(branchName)) {
+            let searchText = this.getSearchFromURI(uri);
+            let isSearch = (searchText !== '') ? true : false;
+            if ( !isSearch && this.html.hasOwnProperty(branchName) ) {
                 return this.html[branchName];
             }
-            const entries = await gitHistory.getLogEntries(gitRepoPath!, branchName, pageIndex, pageSize);
+            const entries = await gitHistory.getLogEntries(gitRepoPath!, branchName, searchText, pageIndex, pageSize);
             canGoPrevious = pageIndex > 0;
             canGoNext = entries.length === pageSize;
             this.entries = entries;
-            this.html[branchName] = this.generateHistoryView();
-            // Display ui first
-            setTimeout(() => this.showLogEntries(entries), 100);
+            this.html[branchName] = this.generateHistoryView( isSearch );
             return this.html[branchName];
         }
         catch (error) {
@@ -71,6 +69,11 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
         }
     }
 
+    private getSearchFromURI(uri: vscode.Uri): string {
+        let re = uri.query.match(/search=([a-z0-9\s_\-.]+)/i);
+        return (re) ? re[1] : '';
+    }
+
     private getStyleSheetPath(resourceName: string): string {
         return vscode.Uri.file(path.join(__dirname, '..', '..', '..', 'resources', resourceName)).toString();
     }
@@ -95,8 +98,8 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
         `;
     }
 
-    private generateHistoryView(): string {
-        const innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, canGoPrevious, canGoNext);
+    private generateHistoryView(skipGraph: boolean = false): string {
+        const innerHtml = htmlGenerator.generateHistoryHtmlView(this.entries, canGoPrevious, canGoNext, skipGraph);
         return `
             <head>
                 <link rel="stylesheet" href="${this.getNodeModulesPath(path.join('normalize.css', 'normalize.css'))}" >
@@ -119,22 +122,21 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 }
 
 export function activate(context: vscode.ExtensionContext, showLogEntries: (entries: LogEntry[]) => void) {
-    let provider = new TextDocumentContentProvider(showLogEntries);
+    let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
-    let disposable = vscode.commands.registerCommand('git.viewHistory', async (fileUri?: vscode.Uri) => {
+    let disposable = vscode.commands.registerCommand('git.viewHistory', async (fileUri?: vscode.Uri, search?: string) => {
         const itemPickList: vscode.QuickPickItem[] = [];
         itemPickList.push({ label: 'Current branch', description: '' });
         itemPickList.push({ label: 'All branches', description: '' });
         let modeChoice = await vscode.window.showQuickPick(itemPickList, { placeHolder: 'Show history for...', matchOnDescription: true });
 
-        let title: string;
+        let title = 'Git History (All Branches)';
         if (modeChoice === undefined) {
             return;
         }
 
         let fileName = '';
-        let branchName = 'master';
 
         if (fileUri && fileUri.fsPath) {
             fileName = fileUri.fsPath;
@@ -151,20 +153,32 @@ export function activate(context: vscode.ExtensionContext, showLogEntries: (entr
             gitRepoPath = vscode.workspace.rootPath;
         }
 
-        branchName = await gitPaths.getGitBranch(gitRepoPath!);
-
         pageIndex = 0;
         canGoPrevious = false;
         canGoNext = true;
 
-        if (modeChoice.label === 'All branches') {
-            previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
-            title = 'Git History (all branches)';
-        }
-        else {
-            previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?branch=' + encodeURI(branchName));
+        let branchName = '';
+        let previewUriText = gitHistorySchema + '://authority/git-history';
+
+        if (modeChoice.label === 'Current branch') {
+            branchName = await gitPaths.getGitBranch(gitRepoPath!);
+            previewUriText += '?branch=' + encodeURI(branchName);
             title = 'Git History (' + branchName + ')';
         }
+
+        if (search !== undefined) {
+            if (branchName === '') {
+                title = 'Git Search (' + search + ')';
+                previewUriText += '?';
+            } else {
+                title = 'Git Search in ' + branchName + ' (' + search + ')';
+                previewUriText += '&';
+            }
+            previewUriText += 'search=' +  encodeURI(search);
+        }
+
+        previewUri = vscode.Uri.parse(previewUriText);
+
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, title).then((success) => {
             provider.update(previewUri);
         }, (reason) => {
