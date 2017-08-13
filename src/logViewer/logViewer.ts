@@ -1,14 +1,15 @@
 import * as vscode from 'vscode';
-import * as htmlGenerator from './htmlGenerator';
-import * as gitHistory from '../helpers/gitHistory';
+// import * as htmlGenerator from './htmlGenerator';
+// import * as gitHistory from '../helpers/gitHistory';
 import * as gitCherryPick from '../helpers/gitCherryPick';
-import { LogEntry } from '../contracts';
+// import { LogEntry } from '../contracts';
 import * as path from 'path';
 import * as gitPaths from '../helpers/gitPaths';
 import { decode as htmlDecode } from 'he';
 import * as historyUtil from '../helpers/historyUtils';
 import * as logger from '../logger';
 import * as fileHistory from '../commands/fileHistory';
+import { Server } from './server';
 
 const gitHistorySchema = 'git-history-viewer';
 // const PAGE_SIZE = 50;
@@ -18,14 +19,15 @@ let pageIndex = 0;
 let canGoPrevious = false;
 let canGoNext = true;
 let gitRepoPath = vscode.workspace.rootPath;
+let historyRetrieved: boolean;
 
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
-    private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
-    private entries: LogEntry[];
-    private html: Object = {};
-    constructor(private showLogEntries: (entries: LogEntry[]) => void) {
+    // private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
+    // private entries: LogEntry[];
+    // private html: Object = {}; 
+    // constructor(private showLogEntries: (entries: LogEntry[]) => void) {
 
-    }
+    // }
 
     private serverPort: number;
     public set ServerPort(value: number) {
@@ -137,11 +139,11 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 }
 
 let server: Server;
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
-    let disposable = vscode.commands.registerCommand('git.viewHistory', () => {
+    let disposable = vscode.commands.registerCommand('git.viewHistory', async () => {
         const itemPickList: vscode.QuickPickItem[] = [];
         itemPickList.push({ label: 'Current branch', description: '' });
         itemPickList.push({ label: 'All branches', description: '' });
@@ -155,14 +157,14 @@ export function activate(context: vscode.ExtensionContext) {
         let fileName = '';
         let branchName = 'master';
 
-        if (fileUri && fileUri.fsPath) {
-            fileName = fileUri.fsPath;
+        // if (fileUri && fileUri.fsPath) {
+        //     fileName = fileUri.fsPath;
+        // }
+        // else {
+        if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document) {
+            fileName = vscode.window.activeTextEditor.document.fileName;
         }
-        else {
-            if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document) {
-                fileName = vscode.window.activeTextEditor.document.fileName;
-            }
-        }
+        // }
         if (fileName !== '') {
             gitRepoPath = await gitPaths.getGitRepositoryPath(fileName);
         }

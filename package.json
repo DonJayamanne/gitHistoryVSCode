@@ -172,7 +172,7 @@
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"lint": "tslint ./src/**/*.ts || tslint ./test/**/*.ts",
 		"buildReact": "webpack -p --progress --colors",
-		"compileReact": "webpack -p --progress --colors --watch"
+		"watchReact": "webpack -p --progress --colors --watch"
 	},
 	"devDependencies": {
 		"typescript": "^2.1.5",

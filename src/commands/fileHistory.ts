@@ -6,6 +6,7 @@ import * as tmp from 'tmp';
 import * as logger from '../logger';
 import { CommitInfo, formatDate } from '../helpers/logParser';
 import * as fs from 'fs';
+import { decode as htmlDecode } from 'he';
 
 export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
@@ -20,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
             fileName = vscode.window.activeTextEditor.document.fileName;
         }
         run(fileName);
-    });
+    }); 
     context.subscriptions.push(disposable);
 }
 
