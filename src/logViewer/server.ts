@@ -73,7 +73,7 @@ export class Server extends EventEmitter {
         let backgroundColor: string = req.query.backgroundcolor;
         let color: string = req.query.color;
         let editorConfig = vscode.workspace.getConfiguration('editor');
-        let fontFamily = editorConfig.get<string>('fontFamily').split('\'').join('').split('"').join('');
+        let fontFamily = editorConfig.get<string>('fontFamily')!.split('\'').join('').split('"').join('');
         let fontSize = editorConfig.get<number>('fontSize') + 'px';
         let fontWeight = editorConfig.get<string>('fontWeight');
         res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'),

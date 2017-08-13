@@ -28,8 +28,8 @@ export function activate(context: vscode.ExtensionContext) {
 vscode.commands.registerCommand('git.viewFileCommitDetails', async (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
     try {
         relativeFilePath = htmlDecode(relativeFilePath);
-        const fileName = path.join(vscode.workspace.rootPath, relativeFilePath);
-        const gitRepositoryPath = await getGitRepositoryPath(vscode.workspace.rootPath);
+        const fileName = path.join(vscode.workspace.rootPath!, relativeFilePath);
+        const gitRepositoryPath = await getGitRepositoryPath(vscode.workspace.rootPath!);
         const data = await historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, isoStrictDateTime);
         const historyItem: any = data.find(data => data.sha1 === sha1);
         const previousItems = data.filter(data => data.sha1 !== sha1);
@@ -192,7 +192,7 @@ async function getFile(commitSha1: string, localFilePath: string): Promise<strin
                 return;
             }
             try {
-                const targetFile = await historyUtil.writeFile(rootDir, commitSha1, localFilePath, tmpFilePath);
+                const targetFile = await historyUtil.writeFile(rootDir!, commitSha1, localFilePath, tmpFilePath);
                 resolve(targetFile);
             }
             catch (ex) {
