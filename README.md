@@ -5,14 +5,17 @@ View the history of a file (Git log) or the history of a line in a file (Git Bla
 View a previous copy of the file.
 Compare a previous version with the version in the workspace or another.
 View commit log details for a selected commit.
+Compare commits.  
 
 ## Features
 * **View Git History with graph and details (latest feature)**
-* View the details of a commit, such as author name, email, date, committer name, email, date and comments.
-* View a previous copy of the file or compare it against the local workspace version or a previous version.
-* View the changes to the active line in the editor (Git Blame).
-* Configure the information displayed in the list
-* Use keyboard shortcuts to view history of a file or line
+* View the details of a commit, such as author name, email, date, committer name, email, date and comments.  
+* View a previous copy of the file or compare it against the local workspace version or a previous version.  
+* View the changes to the active line in the editor (Git Blame).  
+* Configure the information displayed in the list  
+* Use keyboard shortcuts to view history of a file or line  
+* Compare commits/branches  
+* View commit information in a treeview (snapshot of all changes)  
 
 Open the file to view the history, and then 
 Press F1 and select/type "Git: View History (git log)", "Git: View File History" or "Git: View Line History".
@@ -35,24 +38,17 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
 
+![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/compare.gif)
+
 ## Roadmap   
-- View git log for all branches   
-- View refs (branch, tags)   
 - Search git history
 
-## Big thanks to [Mike Surcouf](https://github.com/mikes-gh)
+## Big thanks to [Mike Surcouf](https://github.com/mikes-gh) & [ole](https://github.com/ole1986)
 
-## Change Log 
-[View](https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/CHANGELOG.md)
-- Move to Async programing pattern (internal)
-- Add logging and better error surfacing  - output windows 'Git History Log' 
-- Add a separate output window for non logging display 'Git History Info'
-- Fix #43 #63 - error when file in not present in a commit
-- File actions pick list - only show applicable actions
-e.g. don't show compare with previous if file not present in previous commit.
-- Improve readability of picklist for commits of a file (2 line display)
-- Improve gitPath logic and performance.
-- Make git log default page size 50 for performance.
+## Version 0.2.3
+- Ability to view commit information in explorer view  
+- Ability to compare commits  
+- Ability to view log of all branches [#144](https://github.com/DonJayamanne/gitHistoryVSCode/pull/144), [#93](https://github.com/DonJayamanne/gitHistoryVSCode/issues/93), [#129](https://github.com/DonJayamanne/gitHistoryVSCode/issues/129)  
  
 ## Source
 

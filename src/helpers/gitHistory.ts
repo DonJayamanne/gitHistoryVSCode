@@ -9,10 +9,21 @@ const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
 const STATS_SEPARATOR = parser.STATS_SEPARATOR;
 const LOG_FORMAT = `--format="%n${LOG_ENTRY_SEPARATOR}%nrefs=%d%ncommit=%H%ncommitAbbrev=%h%ntree=%T%ntreeAbbrev=%t%nparents=%P%nparentsAbbrev=%p%nauthor=%an <%ae> %at%ncommitter=%cn <%ce> %ct%nsubject=%s%nbody=%b%n%nnotes=%N%n${STATS_SEPARATOR}%n"`;
 
-export async function getLogEntries(rootDir: string, pageIndex: number = 0, pageSize: number = 100): Promise<LogEntry[]> {
-    const args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--numstat', '--'];
-    // This is how you can view the log across all branches
-    // args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--']
+export async function getLogEntries(rootDir: string, branchName: string, pageIndex: number = 0, pageSize: number = 100, commitHash?: string): Promise<LogEntry[]> {
+    // Time to clean up this mess
+    let args: string[];
+    if (commitHash && commitHash.length > 0) {
+        args = ['show', LOG_FORMAT, '--decorate=full', '--numstat', '--summary', commitHash];
+    }
+    else {
+        if (branchName && branchName.length > 0) {
+            args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--numstat', '--summary', '--'];
+        }
+        else {
+            args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--numstat', '--summary', '--'];
+        }
+    }
+
     const gitPath = await getGitPath();
     return new Promise<LogEntry[]>((resolve, reject) => {
         const options = { cwd: rootDir };
@@ -71,7 +82,7 @@ export async function getLogEntries(rootDir: string, pageIndex: number = 0, page
             error += data;
         });
 
-        ls.on('error', function(error) {
+        ls.on('error', function (error) {
             logger.logError(error);
             reject(error);
             return;

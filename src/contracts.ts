@@ -11,6 +11,8 @@ export interface LogEntry {
     sha1: Sha1;
     tree: Sha1;
     refs: string[];
+    remoteRefs: string[];
+    headRef: string;
     subject: string;
     body: string;
     notes: string;
@@ -21,13 +23,25 @@ export interface LogEntry {
     isHead: boolean;
 }
 
+export interface CherryPickEntry {
+    branch: string;
+    sha: string;
+}
+
 export interface Sha1 {
     full: string;
     short: string;
 }
 
+export enum Modification {
+    Modified,
+    Created,
+    Deleted,
+    Renamed
+}
 export interface FileStat {
     path: string;
     additions?: number;
     deletions?: number;
+    mode: Modification;
 }

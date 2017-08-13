@@ -65,6 +65,9 @@ body {
 #log-view.with-details {
     height: calc(100% - 20rem);
 }
+#log-view.with-details.with-details-resized {
+    height: 20rem;
+}
 
 #log-view svg {
     position: absolute;
@@ -100,7 +103,7 @@ body {
 }
 
 .log-entry .media-image {
-    flex-basis: 6em;
+    min-width: 6em;
 }
 
 .log-entry .commit-subject-link {
@@ -143,12 +146,38 @@ body {
     white-space: nowrap;
 }
 
+.commit-head-container {
+    background-color:#438a43;
+    white-space: nowrap;
+}
+
+.commit-remote-container {
+    background-color:#7d3d40;
+}
+
+.commit-remote-container .refs, .commit-head-container .refs {
+    display: inline-block;
+    color: white;
+    font-size: 75%;
+    padding: 0.3em;
+}
+
 .commit-hash-container .commit-hash,
 .commit-hash-container .copy-button {
     display: inline-block;
     color: white;
     padding: 0.4em;
     cursor: pointer;
+}
+
+.commit-hash-container .cherry-pick-button {
+    display: inline-block;
+    color: white;
+    padding: 0.4em;
+}
+
+.cherry-pick-button a, .cherry-pick-button a:hover {
+    color: white;
 }
 
 .commit-hash-container .commit-hash:hover {
@@ -300,21 +329,31 @@ body {
     border-bottom: none;
 }
 
-#details-view .close-btn {
+#details-view.resized {
+    height: calc(100% - 20rem);
+}
+
+#details-view .action-btn {
     font-size: 1.2rem;
-    position: absolute;
-    padding: 1rem;
-    /* increases the hit-area */
-    top: 0;
-    right: 0;
+    float: right;
+    padding: 1rem; /* increases the hit-area */
     cursor: pointer;
     opacity: 0.8;
     z-index: 5;
 }
-
-#details-view .close-btn:hover {
+#details-view .action-btn:hover {
     opacity: 1;
     transition: opacity 0.3s ease-out;
+}
+
+#details-view.resized .action-btn.resize-btn{
+    display: none;
+}
+#details-view .action-btn.resume-btn{
+    display: none;
+}
+#details-view.resized .action-btn.resume-btn{
+    display: block;
 }
 
 #details-view .commit-subject {

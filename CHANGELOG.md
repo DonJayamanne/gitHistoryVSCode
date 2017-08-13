@@ -1,4 +1,19 @@
-# Change Log
+## Version 0.2.3
+- Ability to view commit information in explorer view  
+- Ability to compare commits  
+- Ability to view log of all branches [#144](https://github.com/DonJayamanne/gitHistoryVSCode/pull/144), [#93](https://github.com/DonJayamanne/gitHistoryVSCode/issues/93), [#129](https://github.com/DonJayamanne/gitHistoryVSCode/issues/129)  
+
+## Version 0.2.2
+- Viewing the history by branch [#140](https://github.com/DonJayamanne/gitHistoryVSCode/pull/140)  
+- Cherry picking commits [#141](https://github.com/DonJayamanne/gitHistoryVSCode/pull/141)  
+- Handle branch names containing periods [#133](https://github.com/DonJayamanne/gitHistoryVSCode/pull/136) 
+
+## Version 0.2.1
+- display ref tags in history when using "git log"
+- fixed visual feedback when SHA is copied in "git log"
+- Allow scenario where git repo root is not the vscode workspace root [#112](https://github.com/DonJayamanne/gitHistoryVSCode/pull/112)  
+- fix error when git config log.abbrevcommit=true [#132](https://github.com/DonJayamanne/gitHistoryVSCode/pull/132)  
+- added a maximize/restore button to the details-view [#118](added a maximize/restore button to the details-view)  
 
 ## Version 0.2.0
 - Move to Async programing pattern (internal)

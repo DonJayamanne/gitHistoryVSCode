@@ -105,7 +105,7 @@ export async function getGitPath(): Promise<string> {
 export async function getGitRepositoryPath(fileName: string): Promise<string> {
     const gitPath = await getGitPath();
     return new Promise<string>((resolve, reject) => {
-        const directory = fs.statSync(fileName).isDirectory() ? fileName : path.dirname(fileName);
+        const directory = fs.existsSync(fileName) && fs.statSync(fileName).isDirectory() ? fileName : path.dirname(fileName);
         const options = { cwd: directory };
         const args = ['rev-parse', '--show-toplevel'];
 
@@ -140,6 +140,34 @@ export async function getGitRepositoryPath(fileName: string): Promise<string> {
             }
             logger.logInfo('git repo path: ' + repositoryPath);
             resolve(repositoryPath);
+        });
+    });
+}
+
+export async function getGitBranch(repoPath: string): Promise<string> {
+    const gitPath = await getGitPath();
+    return new Promise<string>((resolve, reject) => {
+        const options = { cwd: repoPath };
+        const args = ['rev-parse', '--abbrev-ref', 'HEAD'];
+        let branch = '';
+        let error = '';
+        let ls = spawn(gitPath, args, options);
+        ls.stdout.on('data', function (data) {
+            branch += data.slice(0, -1);
+        });
+
+        ls.stderr.on('data', function (data) {
+            error += data;
+        });
+
+        ls.on('error', function (error) {
+            logger.logError(error);
+            reject(error);
+            return;
+        });
+
+        ls.on('close', function () {
+            resolve(branch);
         });
     });
 }

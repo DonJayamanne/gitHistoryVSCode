@@ -55,10 +55,12 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
         </div>
 
         <div id="details-view" class="hidden">
-            <a class="close-btn"><i class="octicon octicon-x"></i></a>
+            <a class="action-btn close-btn"><i class="octicon octicon-x"></i></a>
+            <a class="action-btn resize-btn"><i class="octicon octicon-chevron-up"></i></a>
+            <a class="action-btn resume-btn"><i class="octicon octicon-chevron-down"></i></a>
             <h1 class="commit-subject">Merged Pull request from some bug fix area</h1>
             <div class="commit-author">
-                <span class="name hint--right hint--rounded hint--bounce" aria-label="don.jayamanne@yahoo.com" title="don.jayamanne@yahoo.com">Don Jayamanne</span>
+                <span class="name hint--right hint--rounded hint--bounce" aria-label="don.jayamanne@yahoo.com">Don Jayamanne</span>
                 <span class="timestamp">on Feb 22th 2016, 12:21:43 am</span>
             </div>
             <div class="commit-body">This is the body and we can have a lot of content in here</div>
@@ -90,6 +92,35 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
     `;
 }
 
+export function generateHeadRefHtmlView(entry: LogEntry): string {
+    if (entry.headRef)
+        return `
+            <div class="media-image">
+                <div class="commit-head-container">
+                    <div class="refs">
+                        <span>${htmlEncode(entry.headRef)}</span>
+                    </div>
+                </div>
+            </div>`;
+    return ``;
+}
+
+export function generateRemoteRefHtmlView(entry: LogEntry): string {
+    if (entry.remoteRefs && entry.remoteRefs.length > 0) {
+        return entry.remoteRefs.map((ref, index) => {
+            return `
+                <div class="media-image">
+                    <div class="commit-remote-container">
+                        <div class="refs">
+                            <span>${htmlEncode(ref)}</span>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+    return ``;
+}
+
 export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: boolean, canGoNext: boolean): string {
     const entriesHtml = entries.map((entry, entryIndex) => {
         return `
@@ -100,10 +131,22 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                             <div class="copy-button">
                                 <span class="btn clipboard hint--bottom hint--rounded hint--bounce"
                                     data-clipboard-text="${entry.sha1.full}"
-                                    aria-label="Copy the full SHA"
-                                >
+                                    aria-label="Copy the full SHA">
                                     <i class="octicon octicon-clippy"></i>
-                                    <a class="clipboard-link" href="${encodeURI('command:git.copyText?' + JSON.stringify([entry.sha1.full]))}"></a>
+                                </span>
+                            </div>
+                            <div class="cherry-pick-button">
+                                <span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                    <a href="${encodeURI('command:git.cherry-pick-into?' + JSON.stringify([entry.headRef, entry.sha1.full]))}">
+                                        <i class="octicon octicon-git-pull-request"></i>
+                                    </a>
+                                </span>
+                            </div>
+                            <div class="cherry-pick-button">
+                                <span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                    <a href="${encodeURI('command:git.commit.compare?' + JSON.stringify([entry.headRef, entry.sha1.full]))}">
+                                        <i class="octicon octicon-git-commit"></i>
+                                    </a>
                                 </span>
                             </div>
                             <div class="commit-hash">
@@ -111,6 +154,8 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                             </div>
                         </div>
                     </div>
+                    ${generateRemoteRefHtmlView(entry)}
+                    ${generateHeadRefHtmlView(entry)}
                     <div class="media-content">
                         <a class="commit-subject-link">${htmlEncode(entry.subject)}</a>
                         <div class="commit-subject" data-entry-index="${entryIndex}">${htmlEncode(entry.subject)}</div>
