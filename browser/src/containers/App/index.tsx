@@ -9,11 +9,10 @@ import * as style from './style.css';
 
 import * as io from 'socket.io-client';
 
-interface AppProps {
+type AppProps = {
   settings: any;
-  resultActions: typeof ResultActions;
   results: any;
-};
+} & typeof ResultActions;
 
 interface AppState {
   /* empty */
@@ -30,7 +29,7 @@ class App extends React.Component<AppProps, AppState> {
     });
     this.socket.on('settings.appendResults', (value: any) => {
       console.log('append results');
-      this.props.resultActions.setAppendResults(value);
+      this.props.setAppendResults(value);
     });
     this.socket.on('clientExists', (data: any) => {
       this.socket.emit('clientExists', { id: data.id });
@@ -38,11 +37,11 @@ class App extends React.Component<AppProps, AppState> {
     this.socket.on('results', (value: any[]) => {
       if (!this.props.settings.appendResults) {
         console.log('clear results');
-        // this.props.resultActions.clearResults();
+        // this.props.clearResults();
       }
       this.socket.emit('results.ack');
       console.log('add results');
-      this.props.resultActions.addResults(value);
+      this.props.addResults(value);
     });
   }
 
@@ -51,7 +50,7 @@ class App extends React.Component<AppProps, AppState> {
   }
   private clearResults() {
     this.socket.emit('clearResults');
-    this.props.resultActions.clearResults();
+    this.props.clearResults();
   }
 
   onSelect(logEntry: ILogEntry) {
@@ -59,7 +58,7 @@ class App extends React.Component<AppProps, AppState> {
     console.log('Selectged');
   }
   render() {
-    const { children, resultActions, settings } = this.props;
+    const { children, settings } = this.props;
     return (
       <div>
         <Header
@@ -82,9 +81,7 @@ function mapStateToProps(state: RootState) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    resultActions: bindActionCreators(ResultActions as any, dispatch)
-  };
+  return bindActionCreators({ ...ResultActions }, dispatch);
 }
 
 export default connect(
