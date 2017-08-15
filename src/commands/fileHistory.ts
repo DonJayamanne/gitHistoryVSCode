@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
             fileName = vscode.window.activeTextEditor.document.fileName;
         }
         run(fileName);
-    }); 
+    });
     context.subscriptions.push(disposable);
 }
 

@@ -149,7 +149,7 @@ export async function activate(context: vscode.ExtensionContext) {
         itemPickList.push({ label: 'All branches', description: '' });
         let modeChoice = await vscode.window.showQuickPick(itemPickList, { placeHolder: 'Show history for...', matchOnDescription: true });
 
-        let title: string;
+        let title = 'Git History (All Branches)';
         if (modeChoice === undefined) {
             return;
         }
@@ -219,6 +219,29 @@ export async function activate(context: vscode.ExtensionContext) {
     //     pageIndex = pageIndex + (direction === 'next' ? 1 : -1);
     //     provider.update(previewUri);
     // });
+
+    context.subscriptions.push(disposable);
+
+    disposable = vscode.commands.registerCommand('git.viewFileCommitDetails', async (sha1: string, relativeFilePath: string, isoStrictDateTime: string) => {
+        try {
+            relativeFilePath = htmlDecode(relativeFilePath);
+            const fileName = path.join(gitRepoPath!, relativeFilePath);
+            const data = await historyUtil.getFileHistoryBefore(gitRepoPath!, relativeFilePath, isoStrictDateTime);
+            const historyItem: any = data.find(data => data.sha1 === sha1);
+            const previousItems = data.filter(data => data.sha1 !== sha1);
+            historyItem.previousSha1 = previousItems.length === 0 ? '' : previousItems[0].sha1 as string;
+            const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
+                label: '',
+                description: '',
+                data: historyItem,
+                isLast: historyItem.previousSha1.length === 0
+            };
+            fileHistory.onItemSelected(item, fileName, relativeFilePath);
+        }
+        catch (error) {
+            logger.logError(error);
+        }
+    });
 
     context.subscriptions.push(disposable);
 

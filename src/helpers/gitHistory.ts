@@ -9,7 +9,7 @@ const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
 const STATS_SEPARATOR = parser.STATS_SEPARATOR;
 const LOG_FORMAT = `--format="%n${LOG_ENTRY_SEPARATOR}%nrefs=%d%ncommit=%H%ncommitAbbrev=%h%ntree=%T%ntreeAbbrev=%t%nparents=%P%nparentsAbbrev=%p%nauthor=%an <%ae> %at%ncommitter=%cn <%ce> %ct%nsubject=%s%nbody=%b%n%nnotes=%N%n${STATS_SEPARATOR}%n"`;
 
-export async function getLogEntries(rootDir: string, branchName: string, pageIndex: number = 0, pageSize: number = 100, commitHash?: string): Promise<LogEntry[]> {
+export async function getLogEntries(rootDir: string, branchName: string, searchText: string, pageIndex: number = 0, pageSize: number = 100, commitHash?: string): Promise<LogEntry[]> {
     // Time to clean up this mess
     let args: string[];
     if (commitHash && commitHash.length > 0) {
@@ -17,10 +17,10 @@ export async function getLogEntries(rootDir: string, branchName: string, pageInd
     }
     else {
         if (branchName && branchName.length > 0) {
-            args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--numstat', '--summary', '--'];
+            args = ['log', LOG_FORMAT, `--grep=${searchText}`, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--numstat', '--summary', '--'];
         }
         else {
-            args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--numstat', '--summary', '--'];
+            args = ['log', LOG_FORMAT, `--grep=${searchText}`, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--numstat', '--summary', '--'];
         }
     }
 
