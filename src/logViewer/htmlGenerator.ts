@@ -129,28 +129,28 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                     <div class="media-image">
                         <div class="commit-hash-container">
                             <div class="copy-button">
-                                <span class="btn clipboard hint--bottom hint--rounded hint--bounce"
-                                    data-clipboard-text="${entry.sha1.full}"
-                                    aria-label="Copy the full SHA">
+                                <span class="btnx clipboard hint--bottom hint--rounded hint--bounce"
+                                    data-clipboard-text="${entry.hash.full}"
+                                    aria-label="Copy the full Hash">
                                     <i class="octicon octicon-clippy"></i>
                                 </span>
                             </div>
                             <div class="cherry-pick-button">
-                                <span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
-                                    <a href="${encodeURI('command:git.cherry-pick-into?' + JSON.stringify([entry.headRef, entry.sha1.full]))}">
+                                <span class="btnx hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                    <a href="${encodeURI('command:git.cherry-pick-into?' + JSON.stringify([entry.headRef, entry.hash.full]))}">
                                         <i class="octicon octicon-git-pull-request"></i>
                                     </a>
                                 </span>
                             </div>
                             <div class="cherry-pick-button">
-                                <span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
-                                    <a href="${encodeURI('command:git.commit.compare?' + JSON.stringify([entry.headRef, entry.sha1.full]))}">
+                                <span class="btnx hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                    <a href="${encodeURI('command:git.commit.compare?' + JSON.stringify([entry.headRef, entry.hash.full]))}">
                                         <i class="octicon octicon-git-commit"></i>
                                     </a>
                                 </span>
                             </div>
                             <div class="commit-hash">
-                                <span class="sha-code short" data-entry-index="${entryIndex}" aria-label="${entry.sha1.short}">${entry.sha1.short}</span>
+                                <span class="sha-code short" data-entry-index="${entryIndex}" aria-label="${entry.hash.short}">${entry.hash.short}</span>
                             </div>
                         </div>
                     </div>

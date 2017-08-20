@@ -4,13 +4,13 @@ import { getGitPath, getGitBranch } from './gitPaths';
 import { CherryPickEntry } from '../contracts';
 import * as logger from '../logger';
 
-export async function CherryPick(rootDir: string, branch: string, sha: string): Promise<CherryPickEntry> {
-    const args = ['cherry-pick', sha];
+export async function CherryPick(rootDir: string, branch: string, hash: string): Promise<CherryPickEntry> {
+    const args = ['cherry-pick', hash];
     // This is how you can view the log across all branches
     const gitPath = await getGitPath();
     let newBranch = await getGitBranch(rootDir);
 
-    const yesNo = await window.showQuickPick(['Yes', 'No'], { placeHolder: 'Cherry pick ' + sha.substr(0, 7) + ' into ' + newBranch + '?' });
+    const yesNo = await window.showQuickPick(['Yes', 'No'], { placeHolder: 'Cherry pick ' + hash.substr(0, 7) + ' into ' + newBranch + '?' });
     return new Promise<CherryPickEntry>((resolve, reject) => {
         const options = { cwd: rootDir };
         if (yesNo === undefined || yesNo === 'No') {
@@ -31,7 +31,7 @@ export async function CherryPick(rootDir: string, branch: string, sha: string): 
             let m = data.match(/\[(\w+) ([0-9a-z]{7})\]/);
             if (m) {
                 entry.branch = m[1];
-                entry.sha = m[2];
+                entry.hash = m[2];
             }
         });
 

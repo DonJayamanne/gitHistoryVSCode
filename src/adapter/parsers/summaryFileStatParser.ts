@@ -58,6 +58,6 @@ export default function parseCommitedFiles(gitRootPath: string, summaryStats: st
             uri: Uri.file(path.join(gitRootPath, relativePath))
         } as CommittedFile;
     })
-        .filter(commitFile => commitFile !== undefined)
+        .filter(commitFile => commitFile !== undefined && commitFile !== null)
         .map(commitFile => commitFile!);
 }

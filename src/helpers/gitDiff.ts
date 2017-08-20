@@ -4,8 +4,8 @@ import { LogEntry } from '../contracts';
 import { getGitPath } from './gitPaths';
 import * as logger from '../logger';
 
-export async function getDiff(rootDir: string, leftSha: string, rightSha: string): Promise<LogEntry[]> {
-    const args = ['diff', '--numstat', '--summary', leftSha, rightSha];
+export async function getDiff(rootDir: string, leftHash: string, rightHash: string): Promise<LogEntry[]> {
+    const args = ['diff', '--numstat', '--summary', leftHash, rightHash];
     const gitPath = await getGitPath();
     return new Promise<LogEntry[]>((resolve, reject) => {
         const options = { cwd: rootDir };

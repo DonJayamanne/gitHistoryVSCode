@@ -1,0 +1,2632 @@
+<html>
+
+<head>
+	<style id="_defaultStyles">
+		:root {
+			--background-color: #1e1e1e;
+			--color: #d4d4d4;
+			--font-family: -apple-system, system-ui, "Segoe WPC", "Segoe UI", HelveticaNeue-Light, Ubuntu, "Droid Sans", sans-serif;
+			--font-weight: normal;
+			--font-size: 13px;
+		}
+
+		body {
+			background-color: var(--background-color);
+			color: var(--color);
+			font-family: var(--font-family);
+			font-weight: var(--font-weight);
+			font-size: var(--font-size);
+			margin: 0;
+			padding: 0 20px;
+		}
+
+		img {
+			max-width: 100%;
+			max-height: 100%;
+		}
+
+		a:focus,
+		input:focus,
+		select:focus,
+		textarea:focus {
+			outline: 1px solid -webkit-focus-ring-color;
+			outline-offset: -1px;
+		}
+
+		 ::-webkit-scrollbar {
+			width: 10px;
+			height: 10px;
+		}
+
+		 ::-webkit-scrollbar-thumb {
+			background-color: rgba(121, 121, 121, 0.4);
+		}
+
+		 ::-webkit-scrollbar-thumb:hover {
+			background-color: rgba(100, 100, 100, 0.7);
+		}
+
+		 ::-webkit-scrollbar-thumb:active {
+			background-color: rgba(85, 85, 85, 0.8);
+		}
+
+	</style>
+	<link rel="stylesheet" href="file:///Users/donjayamanne/.vscode/extensions/donjayamanne.githistory-0.2.3/node_modules/normalize.css/normalize.css">
+	<link rel="stylesheet" href="file:///Users/donjayamanne/.vscode/extensions/donjayamanne.githistory-0.2.3/resources/octicons/font/octicons.css">
+	<link rel="stylesheet" href="file:///Users/donjayamanne/.vscode/extensions/donjayamanne.githistory-0.2.3/resources/animate.min.css">
+	<link rel="stylesheet" href="file:///Users/donjayamanne/.vscode/extensions/donjayamanne.githistory-0.2.3/resources/hint.min.css">
+	<link rel="stylesheet" href="file:///Users/donjayamanne/.vscode/extensions/donjayamanne.githistory-0.2.3/resources/main.css">
+	<base href="git-history-viewer://authority/git-history">
+</head>
+
+<body class="vscode-dark">
+
+	<div id="log-view" class="list-group">
+		<div id="commit-history">
+
+			<div class="log-entry" style="padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="baa6fbece9035e3d20cbcb776d73ebc6c4ddde26"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22baa6fbece9035e3d20cbcb776d73ebc6c4ddde26%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22baa6fbece9035e3d20cbcb776d73ebc6c4ddde26%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="0" aria-label="baa6fbece9">baa6fbece9</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-image">
+						<div class="commit-remote-container">
+							<div class="refs">
+								<span>origin/master</span>
+							</div>
+						</div>
+					</div>
+					<div class="media-image">
+						<div class="commit-remote-container">
+							<div class="refs">
+								<span>origin/HEAD</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix #31640. Clicking on original color rolls back the color.</a>
+						<div class="commit-subject" data-entry-index="0">Fix #31640. Clicking on original color rolls back the color.</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="penn.lv@gmail.com">rebornix</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 11:18 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="22aa2c81a92813de6e26a83fa01c6f446453931e"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%2222aa2c81a92813de6e26a83fa01c6f446453931e%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%2222aa2c81a92813de6e26a83fa01c6f446453931e%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="1" aria-label="22aa2c81a9">22aa2c81a9</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Update cases to force tokenization for indentation</a>
+						<div class="commit-subject" data-entry-index="1">Update cases to force tokenization for indentation</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="penn.lv@gmail.com">rebornix</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 9:33 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="71d01b1efa478c768f45caab94bfc59fffec60c6"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%2271d01b1efa478c768f45caab94bfc59fffec60c6%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%2271d01b1efa478c768f45caab94bfc59fffec60c6%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="2" aria-label="71d01b1efa">71d01b1efa</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix #21564. Enter should not force tokenization till current position.</a>
+						<div class="commit-subject" data-entry-index="2">Fix #21564. Enter should not force tokenization till current position.</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="penn.lv@gmail.com">rebornix</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 8:51 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="e97e8ec64bfbf52cd589827a4ac681d0090db060"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22e97e8ec64bfbf52cd589827a4ac681d0090db060%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22e97e8ec64bfbf52cd589827a4ac681d0090db060%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="3" aria-label="e97e8ec64b">e97e8ec64b</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix #30181. If the tokenization has not be executed for lines above pasted area, we do not force tokenization info as we do not wait for the tokenization to complete.</a>
+						<div class="commit-subject" data-entry-index="3">Fix #30181. If the tokenization has not be executed for lines above pasted area, we do not force tokenization info
+							as we do not wait for the tokenization to complete.</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="penn.lv@gmail.com">rebornix</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 7:36 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="9ec087df269cd984544145057f3309c38b327360"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%229ec087df269cd984544145057f3309c38b327360%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%229ec087df269cd984544145057f3309c38b327360%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="4" aria-label="9ec087df26">9ec087df26</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Upstream fix for #32263</a>
+						<div class="commit-subject" data-entry-index="4">Upstream fix for #32263</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 7:18 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="6822a81494a1a6c6db4a3cf092faee577cc23a00"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%226822a81494a1a6c6db4a3cf092faee577cc23a00%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%226822a81494a1a6c6db4a3cf092faee577cc23a00%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="5" aria-label="6822a81494">6822a81494</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Escape $ when not a tabstop or  #32420</a>
+						<div class="commit-subject" data-entry-index="5">Escape $ when not a tabstop or #32420</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 6:42 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:84px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="ee8e15f76feb2c75d892d509d3352d2770738543"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22ee8e15f76feb2c75d892d509d3352d2770738543%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22ee8e15f76feb2c75d892d509d3352d2770738543%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="6" aria-label="ee8e15f76f">ee8e15f76f</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-image">
+						<div class="commit-remote-container">
+							<div class="refs">
+								<span>origin/amqi/tree-tabs</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix tabbing in trees</a>
+						<div class="commit-subject" data-entry-index="6">Fix tabbing in trees</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="umberos@gmail.com">t-amqi</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 4:56 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="1531c8d2f4610afb6f8575bc78d1083a5cb478dd"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%221531c8d2f4610afb6f8575bc78d1083a5cb478dd%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%221531c8d2f4610afb6f8575bc78d1083a5cb478dd%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="7" aria-label="1531c8d2f4">1531c8d2f4</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">lookahead not needed when running emmet expand #32478</a>
+						<div class="commit-subject" data-entry-index="7">lookahead not needed when running emmet expand #32478</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 2:58 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="9ca92ce9bb4a35a64b19e76d1c2503c19b08de12"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%229ca92ce9bb4a35a64b19e76d1c2503c19b08de12%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%229ca92ce9bb4a35a64b19e76d1c2503c19b08de12%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="8" aria-label="9ca92ce9bb">9ca92ce9bb</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Merge pull request #32483 from keegancsmith/folder-match-remove</a>
+						<div class="commit-subject" data-entry-index="8">Merge pull request #32483 from keegancsmith/folder-match-remove</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="roblourens@gmail.com">Rob Lourens</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 2:38 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="0871300cf70d3812f684edaf2e38a641c994f787"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%220871300cf70d3812f684edaf2e38a641c994f787%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%220871300cf70d3812f684edaf2e38a641c994f787%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="9" aria-label="0871300cf7">0871300cf7</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Extract LazyPromise to its own file</a>
+						<div class="commit-subject" data-entry-index="9">Extract LazyPromise to its own file</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="alexdima@microsoft.com">Alex Dima</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 2:35 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="4d853d3f74c9f9dd5346959d955ff95e7628b1a3"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%224d853d3f74c9f9dd5346959d955ff95e7628b1a3%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%224d853d3f74c9f9dd5346959d955ff95e7628b1a3%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="10" aria-label="4d853d3f74">4d853d3f74</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Move more workbench code up to /workbench/</a>
+						<div class="commit-subject" data-entry-index="10">Move more workbench code up to /workbench/</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="alexdima@microsoft.com">Alex Dima</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 2:32 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="879fd0d0cd401f79c61cb5c497efe72251508a1c"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22879fd0d0cd401f79c61cb5c497efe72251508a1c%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22879fd0d0cd401f79c61cb5c497efe72251508a1c%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="11" aria-label="879fd0d0cd">879fd0d0cd</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Add remove action for FolderMatch</a>
+						<div class="commit-subject" data-entry-index="11">Add remove action for FolderMatch</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="keegan.csmith@gmail.com">Keegan Carruthers-Smith</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 1:03 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="71a5b84442626f3d09acac3fbe4ed74010c492e8"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%2271a5b84442626f3d09acac3fbe4ed74010c492e8%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%2271a5b84442626f3d09acac3fbe4ed74010c492e8%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="12" aria-label="71a5b84442">71a5b84442</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Move code managing the extension host process closer to the extension service</a>
+						<div class="commit-subject" data-entry-index="12">Move code managing the extension host process closer to the extension service</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="alexdima@microsoft.com">Alex Dima</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 12:56 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry active" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="aabeedddea91fbef7615d619a83236e71d4585f8"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22aabeedddea91fbef7615d619a83236e71d4585f8%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22aabeedddea91fbef7615d619a83236e71d4585f8%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="13" aria-label="aabeedddea">aabeedddea</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Move extension service code to vs/workbench/services/extensions</a>
+						<div class="commit-subject" data-entry-index="13">Move extension service code to vs/workbench/services/extensions</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="alexdima@microsoft.com">Alex Dima</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 12:28 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="b420c54f0ffdd45312e14b892e5e4eee6f4c567a"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22b420c54f0ffdd45312e14b892e5e4eee6f4c567a%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22b420c54f0ffdd45312e14b892e5e4eee6f4c567a%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="14" aria-label="b420c54f0f">b420c54f0f</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Remove cyclic dependency between IExtensionService and IThreadService</a>
+						<div class="commit-subject" data-entry-index="14">Remove cyclic dependency between IExtensionService and IThreadService</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="alexdima@microsoft.com">Alex Dima</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 11:34 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="2e5311ca6e42759f2ea56a0604d11f4c0b83b936"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%222e5311ca6e42759f2ea56a0604d11f4c0b83b936%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%222e5311ca6e42759f2ea56a0604d11f4c0b83b936%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="15" aria-label="2e5311ca6e">2e5311ca6e</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">towards ext-host-restart: properly implement dispose-methods in variouds MainThreadXYZ-types</a>
+						<div class="commit-subject" data-entry-index="15">towards ext-host-restart: properly implement dispose-methods in variouds MainThreadXYZ-types</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="johannes.rieken@gmail.com">Johannes Rieken</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 12:56 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="9098d9ff7c6fc1ed19683e559ea1dc191d43f6d7"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%229098d9ff7c6fc1ed19683e559ea1dc191d43f6d7%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%229098d9ff7c6fc1ed19683e559ea1dc191d43f6d7%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="16" aria-label="9098d9ff7c">9098d9ff7c</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">[themes] let extensions contribute colors. Fixes #14309</a>
+						<div class="commit-subject" data-entry-index="16">[themes] let extensions contribute colors. Fixes #14309</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="martinae@microsoft.com">Martin Aeschlimann</span>
+							<span class="timestamp">on Tue, Aug 15, 2017, 12:07 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="698382ac85fe0beba4b78d2f50a9199d31a2711c"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22698382ac85fe0beba4b78d2f50a9199d31a2711c%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22698382ac85fe0beba4b78d2f50a9199d31a2711c%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="17" aria-label="698382ac85">698382ac85</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Cannot set property 'theme' of null. Fixes #32385</a>
+						<div class="commit-subject" data-entry-index="17">Cannot set property 'theme' of null. Fixes #32385</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="martinae@microsoft.com">Martin Aeschlimann</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 6:48 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="a7fcaffcf4ee0ffbc3ee8dd27f7ea1fa4c78cc60"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22a7fcaffcf4ee0ffbc3ee8dd27f7ea1fa4c78cc60%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22a7fcaffcf4ee0ffbc3ee8dd27f7ea1fa4c78cc60%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="18" aria-label="a7fcaffcf4">a7fcaffcf4</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Do not install the watchdog if the extension host is debuggable (#26445)</a>
+						<div class="commit-subject" data-entry-index="18">Do not install the watchdog if the extension host is debuggable (#26445)</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="alexdima@microsoft.com">Alex Dima</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 10:26 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:60px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="e5943cbcb036da3680c631b9c9d43726e2f20ada"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22e5943cbcb036da3680c631b9c9d43726e2f20ada%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22e5943cbcb036da3680c631b9c9d43726e2f20ada%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="19" aria-label="e5943cbcb0">e5943cbcb0</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">fix #30652</a>
+						<div class="commit-subject" data-entry-index="19">fix #30652</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="johannes.rieken@gmail.com">Johannes Rieken</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 8:58 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:60px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="0a4b9f324a5d8ff2d1adc328abc471c2aa9ff604"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%220a4b9f324a5d8ff2d1adc328abc471c2aa9ff604%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%220a4b9f324a5d8ff2d1adc328abc471c2aa9ff604%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="20" aria-label="0a4b9f324a">0a4b9f324a</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Add a watchdog mechanism to detect when the extension host JavaScript event loop is unresponsive (#26445)</a>
+						<div class="commit-subject" data-entry-index="20">Add a watchdog mechanism to detect when the extension host JavaScript event loop is unresponsive (#26445)</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="alexdima@microsoft.com">Alex Dima</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 8:15 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:60px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="3007332134f65ae757b395052a98c79f1ad95a84"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%223007332134f65ae757b395052a98c79f1ad95a84%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%223007332134f65ae757b395052a98c79f1ad95a84%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="21" aria-label="3007332134">3007332134</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">fixes #32379</a>
+						<div class="commit-subject" data-entry-index="21">fixes #32379</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="jomo@microsoft.com">Joao Moreno</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 7:52 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:72px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="062a918396fbfca0425c4622846dff8073904b09"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22062a918396fbfca0425c4622846dff8073904b09%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22062a918396fbfca0425c4622846dff8073904b09%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="22" aria-label="062a918396">062a918396</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Merge pull request #32390 from dlech/run-dev-problem-matcher</a>
+						<div class="commit-subject" data-entry-index="22">Merge pull request #32390 from dlech/run-dev-problem-matcher</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="dirkb@microsoft.com">Dirk Bäumer</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 7:07 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:84px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="5e54eb7bc987173f3e260c3ed34b32af4e9e7c7a"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%225e54eb7bc987173f3e260c3ed34b32af4e9e7c7a%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%225e54eb7bc987173f3e260c3ed34b32af4e9e7c7a%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="23" aria-label="5e54eb7bc9">5e54eb7bc9</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Merge pull request #32393 from dlech/patch-5</a>
+						<div class="commit-subject" data-entry-index="23">Merge pull request #32393 from dlech/patch-5</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="dirkb@microsoft.com">Dirk Bäumer</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 7:06 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:96px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="eca4981b9a3b304055c1c766b8c6723fa88f74b4"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22eca4981b9a3b304055c1c766b8c6723fa88f74b4%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22eca4981b9a3b304055c1c766b8c6723fa88f74b4%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="24" aria-label="eca4981b9a">eca4981b9a</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Merge pull request #32394 from dlech/patch-6</a>
+						<div class="commit-subject" data-entry-index="24">Merge pull request #32394 from dlech/patch-6</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="dirkb@microsoft.com">Dirk Bäumer</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 7:06 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="81d41b836f3f13ed62377e07dd37b696b6372883"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%2281d41b836f3f13ed62377e07dd37b696b6372883%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%2281d41b836f3f13ed62377e07dd37b696b6372883%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="25" aria-label="81d41b836f">81d41b836f</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Merge pull request #32341 from stevedesmond-ca/uninstall-first-messaging</a>
+						<div class="commit-subject" data-entry-index="25">Merge pull request #32341 from stevedesmond-ca/uninstall-first-messaging</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="mail@joaomoreno.com">João Moreno</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 6:42 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:120px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="224df1277a6d2fb56bbacbc4f68efa66ae67c466"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22224df1277a6d2fb56bbacbc4f68efa66ae67c466%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22224df1277a6d2fb56bbacbc4f68efa66ae67c466%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="26" aria-label="224df1277a">224df1277a</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-image">
+						<div class="commit-remote-container">
+							<div class="refs">
+								<span>origin/release/1.15</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Emmet for recovery build 1.15 (#32446)</a>
+						<div class="commit-subject" data-entry-index="26">Emmet for recovery build 1.15 (#32446)</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramya.rao.a@outlook.com">Ramya Rao</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 4:05 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:120px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="380ff29bc74e13d1a9f3534d2bcfaffa3d543888"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22380ff29bc74e13d1a9f3534d2bcfaffa3d543888%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22380ff29bc74e13d1a9f3534d2bcfaffa3d543888%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="27" aria-label="380ff29bc7">380ff29bc7</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-image">
+						<div class="commit-remote-container">
+							<div class="refs">
+								<span>origin/emmet-recovery</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Use latest emmet helper</a>
+						<div class="commit-subject" data-entry-index="27">Use latest emmet helper</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 3:49 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="d192e81adf38f20762e3a9ca5c1c6006190c2b2e"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22d192e81adf38f20762e3a9ca5c1c6006190c2b2e%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22d192e81adf38f20762e3a9ca5c1c6006190c2b2e%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="28" aria-label="d192e81adf">d192e81adf</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Remove fallback to html as this will enable emmet everywhere</a>
+						<div class="commit-subject" data-entry-index="28">Remove fallback to html as this will enable emmet everywhere</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Sat, Aug 12, 2017, 4:45 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="c83881a511432c7df10ed61b4fafad0d20c05b74"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22c83881a511432c7df10ed61b4fafad0d20c05b74%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22c83881a511432c7df10ed61b4fafad0d20c05b74%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="29" aria-label="c83881a511">c83881a511</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">When file cannot be parsed, dont try validations #32354</a>
+						<div class="commit-subject" data-entry-index="29">When file cannot be parsed, dont try validations #32354</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Sat, Aug 12, 2017, 7:59 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="a4291702817f41b9311f7ab0879e286733386322"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22a4291702817f41b9311f7ab0879e286733386322%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22a4291702817f41b9311f7ab0879e286733386322%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="30" aria-label="a429170281">a429170281</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fallback to tab for non empty selections</a>
+						<div class="commit-subject" data-entry-index="30">Fallback to tab for non empty selections</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Sat, Aug 12, 2017, 4:25 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="eb198628ec83273006a1afd45c229a85dfea9cc6"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22eb198628ec83273006a1afd45c229a85dfea9cc6%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22eb198628ec83273006a1afd45c229a85dfea9cc6%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="31" aria-label="eb198628ec">eb198628ec</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Avoid error when tabbing on selection that is not abbreviation</a>
+						<div class="commit-subject" data-entry-index="31">Avoid error when tabbing on selection that is not abbreviation</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Sat, Aug 12, 2017, 4:10 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="9748367a967ff2cf2217a292276bf5b6283810b3"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%229748367a967ff2cf2217a292276bf5b6283810b3%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%229748367a967ff2cf2217a292276bf5b6283810b3%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="32" aria-label="9748367a96">9748367a96</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Option to trigger emmet expansion on tab (#32334)</a>
+						<div class="commit-subject" data-entry-index="32">Option to trigger emmet expansion on tab (#32334)</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramya.rao.a@outlook.com">Ramya Rao</span>
+							<span class="timestamp">on Sat, Aug 12, 2017, 1:21 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="1be09af737621f60a585a3a347732c5c3a96965f"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%221be09af737621f60a585a3a347732c5c3a96965f%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%221be09af737621f60a585a3a347732c5c3a96965f%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="33" aria-label="1be09af737">1be09af737</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Remove validation based on location for sass file #32281</a>
+						<div class="commit-subject" data-entry-index="33">Remove validation based on location for sass file #32281</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Fri, Aug 11, 2017, 3:18 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="6fd4bd59d0ee9509b0830af869399753b596089b"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%226fd4bd59d0ee9509b0830af869399753b596089b%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%226fd4bd59d0ee9509b0830af869399753b596089b%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="34" aria-label="6fd4bd59d0">6fd4bd59d0</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Return promise from emmet expand method</a>
+						<div class="commit-subject" data-entry-index="34">Return promise from emmet expand method</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Fri, Aug 11, 2017, 11:27 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="b73b7df1290d0fe66ca8b8060743711a327af622"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22b73b7df1290d0fe66ca8b8060743711a327af622%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22b73b7df1290d0fe66ca8b8060743711a327af622%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="35" aria-label="b73b7df129">b73b7df129</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">:tada: Change vscode launch configs to 'protocol: inspector' :fireworks:</a>
+						<div class="commit-subject" data-entry-index="35">:tada: Change vscode launch configs to 'protocol: inspector' :fireworks:</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="roblourens@gmail.com">Rob Lourens</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 1:23 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="9c86eb33f9e914f808f235f3ebd8b051d874174c"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%229c86eb33f9e914f808f235f3ebd8b051d874174c%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%229c86eb33f9e914f808f235f3ebd8b051d874174c%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="36" aria-label="9c86eb33f9">9c86eb33f9</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fixes to getCurrentWord in emmet helper Fixes  #32254</a>
+						<div class="commit-subject" data-entry-index="36">Fixes to getCurrentWord in emmet helper Fixes #32254</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Mon, Aug 14, 2017, 5:41 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="fa413ff0085e717db36615266dc13aea2d77d5fa"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22fa413ff0085e717db36615266dc13aea2d77d5fa%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22fa413ff0085e717db36615266dc13aea2d77d5fa%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="37" aria-label="fa413ff008">fa413ff008</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Move the checks on abbreviations to helper module</a>
+						<div class="commit-subject" data-entry-index="37">Move the checks on abbreviations to helper module</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="ramyar@microsoft.com">Ramya Achutha Rao</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 1:25 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="f076bcaf6f9e6dd36d885b3ba2eef6387db51404"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22f076bcaf6f9e6dd36d885b3ba2eef6387db51404%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22f076bcaf6f9e6dd36d885b3ba2eef6387db51404%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="38" aria-label="f076bcaf6f">f076bcaf6f</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix #32325, avoid **/** pattern in search glob</a>
+						<div class="commit-subject" data-entry-index="38">Fix #32325, avoid **/** pattern in search glob</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="roblourens@gmail.com">Rob Lourens</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 10:12 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="747310ab90bac085d722445076038d70e534641c"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22747310ab90bac085d722445076038d70e534641c%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22747310ab90bac085d722445076038d70e534641c%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="39" aria-label="747310ab90">747310ab90</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Merge pull request #31488 from Microsoft/roblou/inspectEH</a>
+						<div class="commit-subject" data-entry-index="39">Merge pull request #31488 from Microsoft/roblou/inspectEH</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="roblourens@gmail.com">Rob Lourens</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 10:44 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="77e2e9a4e847e0284253c80c68dd2bce6efd91fc"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%2277e2e9a4e847e0284253c80c68dd2bce6efd91fc%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%2277e2e9a4e847e0284253c80c68dd2bce6efd91fc%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="40" aria-label="77e2e9a4e8">77e2e9a4e8</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Update PHP grammar</a>
+						<div class="commit-subject" data-entry-index="40">Update PHP grammar</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="roblourens@gmail.com">Rob Lourens</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 10:34 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="5f05e3a6d839c6125e85047327de2c703fa87d1c"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%225f05e3a6d839c6125e85047327de2c703fa87d1c%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%225f05e3a6d839c6125e85047327de2c703fa87d1c%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="41" aria-label="5f05e3a6d8">5f05e3a6d8</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix #32325, avoid **/** pattern in search glob</a>
+						<div class="commit-subject" data-entry-index="41">Fix #32325, avoid **/** pattern in search glob</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="roblourens@gmail.com">Rob Lourens</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 10:12 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:120px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="03ac444d130fca60682d8a2cf9ccbd0920c78769"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%2203ac444d130fca60682d8a2cf9ccbd0920c78769%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%2203ac444d130fca60682d8a2cf9ccbd0920c78769%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="42" aria-label="03ac444d13">03ac444d13</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-image">
+						<div class="commit-remote-container">
+							<div class="refs">
+								<span>origin/roblou/fix32325</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix #32325, avoid **/** pattern in search glob</a>
+						<div class="commit-subject" data-entry-index="42">Fix #32325, avoid **/** pattern in search glob</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="roblourens@gmail.com">Rob Lourens</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 10:12 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="8a511a7690ad5b0308b0e6cb384ada88c67fd99f"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%228a511a7690ad5b0308b0e6cb384ada88c67fd99f%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%228a511a7690ad5b0308b0e6cb384ada88c67fd99f%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="43" aria-label="8a511a7690">8a511a7690</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-image">
+						<div class="commit-remote-container">
+							<div class="refs">
+								<span>origin/roblou/inspectEH</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Transfer extensionHost from node-debug to node-debug2</a>
+						<div class="commit-subject" data-entry-index="43">Transfer extensionHost from node-debug to node-debug2</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="roblourens@gmail.com">Rob Lourens</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 9:51 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="1d837968143705978b6cae5a7229f3d638aeae2a"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%221d837968143705978b6cae5a7229f3d638aeae2a%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%221d837968143705978b6cae5a7229f3d638aeae2a%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="44" aria-label="1d83796814">1d83796814</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix spelling of "taskDefinitions"</a>
+						<div class="commit-subject" data-entry-index="44">Fix spelling of "taskDefinitions"</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="david@lechnology.com">David Lechner</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 6:33 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="3f02d6c106cdfc4839fb0b8dc01cc610b1aa80a9"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%223f02d6c106cdfc4839fb0b8dc01cc610b1aa80a9%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%223f02d6c106cdfc4839fb0b8dc01cc610b1aa80a9%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="45" aria-label="3f02d6c106">3f02d6c106</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Fix spelling of "registered"</a>
+						<div class="commit-subject" data-entry-index="45">Fix spelling of "registered"</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="david@lechnology.com">David Lechner</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 6:30 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="0db81eeff40a10b097bad6e424116850009aa9ec"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%220db81eeff40a10b097bad6e424116850009aa9ec%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%220db81eeff40a10b097bad6e424116850009aa9ec%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="46" aria-label="0db81eeff4">0db81eeff4</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Add empty problem matcher to "Run Dev" task</a>
+						<div class="commit-subject" data-entry-index="46">Add empty problem matcher to "Run Dev" task</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="david@lechnology.com">David Lechner</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 5:21 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:108px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="c185e7d44eeacf5bf909131b0f661daaeff1ac59"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22c185e7d44eeacf5bf909131b0f661daaeff1ac59%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22c185e7d44eeacf5bf909131b0f661daaeff1ac59%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="47" aria-label="c185e7d44e">c185e7d44e</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">[json] hover over color box doesn't show color picker. Fixes #32298</a>
+						<div class="commit-subject" data-entry-index="47">[json] hover over color box doesn't show color picker. Fixes #32298</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="martinae@microsoft.com">Martin Aeschlimann</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 12:40 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:60px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="5fce6df8a2de0121490bdb65e0238bce9830ed59"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%225fce6df8a2de0121490bdb65e0238bce9830ed59%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%225fce6df8a2de0121490bdb65e0238bce9830ed59%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="48" aria-label="5fce6df8a2">5fce6df8a2</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">[json] Protect from incompete colors (for exception in #32298)</a>
+						<div class="commit-subject" data-entry-index="48">[json] Protect from incompete colors (for exception in #32298)</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="martinae@microsoft.com">Martin Aeschlimann</span>
+							<span class="timestamp">on Sun, Aug 13, 2017, 12:20 AM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="log-entry" style="null;padding-left:60px">
+				<div class="media right">
+					<div class="media-image">
+						<div class="commit-hash-container">
+							<div class="copy-button">
+								<span class="btn clipboard hint--bottom hint--rounded hint--bounce" data-clipboard-text="d3a80dc181da8d7d4939a9f35401a385640020f8"
+								aria-label="Copy the full SHA">
+                                            <i class="octicon octicon-clippy"></i>
+                                        </span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
+                                            <a href="command:git.cherry-pick-into?%5Bnull,%22d3a80dc181da8d7d4939a9f35401a385640020f8%22%5D">
+                                                <i class="octicon octicon-git-pull-request"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="cherry-pick-button">
+								<span class="btn hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
+                                            <a href="command:git.commit.compare?%5Bnull,%22d3a80dc181da8d7d4939a9f35401a385640020f8%22%5D">
+                                                <i class="octicon octicon-git-commit"></i>
+                                            </a>
+                                        </span>
+								</span>
+							</div>
+							<div class="commit-hash">
+								<span class="sha-code short" data-entry-index="49" aria-label="d3a80dc181">d3a80dc181</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="media-content">
+						<a class="commit-subject-link hidden">Using Color.fromHex with invalid input should return null</a>
+						<div class="commit-subject" data-entry-index="49">Using Color.fromHex with invalid input should return null</div>
+						<div class="commit-author">
+							<span class="name hint--right hint--rounded hint--bounce" aria-label="martinae@microsoft.com">Martin Aeschlimann</span>
+							<span class="timestamp">on Sat, Aug 12, 2017, 9:31 PM</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="history-navbar">
+				<ul class="navbar">
+					<li class="navbar-item previous disabled">
+						<a href="#" class="navbar-link" onclick="$('.previous').addClass('disabled');">
+                                        <i class="octicon octicon-chevron-left"></i>
+                                        <span>Previous</span>
+                                    </a>
+					</li>
+					<li class="navbar-item next true">
+						<a href="command:git.logNavigate?%5B%22next%22%5D" class="navbar-link" onclick="$('.next').addClass('disabled');">
+                                        <span>Next</span>
+                                        <i class="octicon octicon-chevron-right"></i>
+                                    </a>
+					</li>
+				</ul>
+			</div>
+			<div class="json entries hidden">[{"remoteRefs":["origin/master","origin/HEAD"],"sha1":{"full":"baa6fbece9035e3d20cbcb776d73ebc6c4ddde26","short":"baa6fbece9"},"tree":{"full":"8c5749e826a7c44820ec58759d1b0a52e5a2dff3","short":"8c5749e826"},"parents":[{"full":"22aa2c81a92813de6e26a83fa01c6f446453931e","short":"22aa2c81a9"}],"author":{"date":"2017-08-15T01:18:11.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 11:18 AM","name":"rebornix","email":"penn.lv@gmail.com"},"committer":{"date":"2017-08-15T01:18:11.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 11:18 AM","name":"rebornix","email":"penn.lv@gmail.com"},"subject":"Fix #31640. Clicking on original color
+				rolls back the color.","body":"","notes":"","fileStats":[{"additions":1,"deletions":0,"path":"src/vs/editor/contrib/colorPicker/browser/colorPickerWidget.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"22aa2c81a92813de6e26a83fa01c6f446453931e","short":"22aa2c81a9"},"tree":{"full":"95badb2a9826058677a7df46893b5ff9f57710fb","short":"95badb2a98"},"parents":[{"full":"71d01b1efa478c768f45caab94bfc59fffec60c6","short":"71d01b1efa"}],"author":{"date":"2017-08-14T23:33:20.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 9:33 AM","name":"rebornix","email":"penn.lv@gmail.com"},"committer":{"date":"2017-08-14T23:33:20.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 9:33 AM","name":"rebornix","email":"penn.lv@gmail.com"},"subject":"Update cases to force tokenization for
+				indentation","body":"","notes":"","fileStats":[{"additions":13,"deletions":5,"path":"src/vs/editor/test/common/controller/cursor.test.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"71d01b1efa478c768f45caab94bfc59fffec60c6","short":"71d01b1efa"},"tree":{"full":"f740b8993dbd692b2df231e408f8aa8002e492e5","short":"f740b8993d"},"parents":[{"full":"e97e8ec64bfbf52cd589827a4ac681d0090db060","short":"e97e8ec64b"}],"author":{"date":"2017-08-14T22:51:29.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 8:51 AM","name":"rebornix","email":"penn.lv@gmail.com"},"committer":{"date":"2017-08-14T22:51:42.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 8:51 AM","name":"rebornix","email":"penn.lv@gmail.com"},"subject":"Fix #21564. Enter should not force tokenization
+				till current position.","body":"","notes":"","fileStats":[{"additions":35,"deletions":6,"path":"src/vs/editor/common/controller/cursorTypeOperations.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"e97e8ec64bfbf52cd589827a4ac681d0090db060","short":"e97e8ec64b"},"tree":{"full":"44c42fa7538e833aa6dc3aefd1f5ae9563af31c1","short":"44c42fa753"},"parents":[{"full":"9ec087df269cd984544145057f3309c38b327360","short":"9ec087df26"}],"author":{"date":"2017-08-14T21:36:30.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 7:36 AM","name":"rebornix","email":"penn.lv@gmail.com"},"committer":{"date":"2017-08-14T22:51:42.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 8:51 AM","name":"rebornix","email":"penn.lv@gmail.com"},"subject":"Fix #30181. If the tokenization has
+				not be executed for lines above pasted area, we do not force tokenization info as we do not wait for the tokenization
+				to complete.","body":"","notes":"","fileStats":[{"additions":5,"deletions":0,"path":"src/vs/editor/common/editorCommon.ts","mode":0},{"additions":4,"deletions":0,"path":"src/vs/editor/common/model/textModelWithTokens.ts","mode":0},{"additions":3,"deletions":0,"path":"src/vs/editor/contrib/indentation/common/indentation.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"9ec087df269cd984544145057f3309c38b327360","short":"9ec087df26"},"tree":{"full":"f7cd8f3f31e75952d3e2e1db337010286f635119","short":"f7cd8f3f31"},"parents":[{"full":"6822a81494a1a6c6db4a3cf092faee577cc23a00","short":"6822a81494"}],"author":{"date":"2017-08-14T21:18:53.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 7:18 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T21:18:53.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 7:18 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Upstream fix for #32263","body":"","notes":"","fileStats":[{"additions":2,"deletions":2,"path":"extensions/emmet/npm-shrinkwrap.json","mode":0}]},{"remoteRefs":[],"sha1":{"full":"6822a81494a1a6c6db4a3cf092faee577cc23a00","short":"6822a81494"},"tree":{"full":"da420494d401bf33512aab69308862c7ae4d5f1d","short":"da420494d4"},"parents":[{"full":"1531c8d2f4610afb6f8575bc78d1083a5cb478dd","short":"1531c8d2f4"}],"author":{"date":"2017-08-14T20:42:08.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 6:42 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T20:42:08.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 6:42 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Escape $ when not a tabstop
+				or #32420","body":"","notes":"","fileStats":[{"additions":3,"deletions":3,"path":"extensions/emmet/npm-shrinkwrap.json","mode":0},{"additions":1,"deletions":1,"path":"extensions/emmet/package.json","mode":0},{"additions":11,"deletions":4,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0}]},{"remoteRefs":["origin/amqi/tree-tabs"],"sha1":{"full":"ee8e15f76feb2c75d892d509d3352d2770738543","short":"ee8e15f76f"},"tree":{"full":"3cb6c1b9e0471840410fe5ea6c44646d2613fa44","short":"3cb6c1b9e0"},"parents":[{"full":"1531c8d2f4610afb6f8575bc78d1083a5cb478dd","short":"1531c8d2f4"}],"author":{"date":"2017-08-14T18:56:45.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 4:56 AM","name":"t-amqi","email":"umberos@gmail.com"},"committer":{"date":"2017-08-14T18:56:45.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 4:56 AM","name":"t-amqi","email":"umberos@gmail.com"},"subject":"Fix tabbing in trees","body":"","notes":"","fileStats":[{"additions":11,"deletions":2,"path":"src/vs/base/parts/quickopen/browser/quickOpenWidget.ts","mode":0},{"additions":1,"deletions":0,"path":"src/vs/base/parts/tree/browser/tree.ts","mode":0},{"additions":1,"deletions":1,"path":"src/vs/base/parts/tree/browser/treeView.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"1531c8d2f4610afb6f8575bc78d1083a5cb478dd","short":"1531c8d2f4"},"tree":{"full":"22d3c45803b705b6fe003697679481c5fa5ba817","short":"22d3c45803"},"parents":[{"full":"9ca92ce9bb4a35a64b19e76d1c2503c19b08de12","short":"9ca92ce9bb"}],"author":{"date":"2017-08-14T16:58:07.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 2:58 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T16:58:07.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 2:58 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"lookahead not needed when
+				running emmet expand #32478","body":"","notes":"","fileStats":[{"additions":3,"deletions":3,"path":"extensions/emmet/npm-shrinkwrap.json","mode":0},{"additions":1,"deletions":1,"path":"extensions/emmet/package.json","mode":0},{"additions":1,"deletions":2,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"9ca92ce9bb4a35a64b19e76d1c2503c19b08de12","short":"9ca92ce9bb"},"tree":{"full":"24eccc1c575ff9f2b6f3f95e6bc1ec28248af318","short":"24eccc1c57"},"parents":[{"full":"0871300cf70d3812f684edaf2e38a641c994f787","short":"0871300cf7"},{"full":"879fd0d0cd401f79c61cb5c497efe72251508a1c","short":"879fd0d0cd"}],"author":{"date":"2017-08-14T16:38:04.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 2:38 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"committer":{"date":"2017-08-14T16:38:04.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 2:38 AM","name":"GitHub","email":"noreply@github.com"},"subject":"Merge pull request #32483 from keegancsmith/folder-match-remove","body":"Add
+				remove action for FolderMatch","notes":"","fileStats":[]},{"remoteRefs":[],"sha1":{"full":"0871300cf70d3812f684edaf2e38a641c994f787","short":"0871300cf7"},"tree":{"full":"acca465036f171c124f4903194dec7ed8a66ece8","short":"acca465036"},"parents":[{"full":"4d853d3f74c9f9dd5346959d955ff95e7628b1a3","short":"4d853d3f74"}],"author":{"date":"2017-08-14T16:35:43.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 2:35 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"committer":{"date":"2017-08-14T16:35:43.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 2:35 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"subject":"Extract LazyPromise to its own
+				file","body":"","notes":"","fileStats":[{"additions":1,"deletions":103,"path":"src/vs/workbench/services/extensions/node/ipcRemoteCom.ts","mode":0},{"additions":110,"deletions":0,"path":"src/vs/workbench/services/extensions/node/lazyPromise.ts","mode":1}]},{"remoteRefs":[],"sha1":{"full":"4d853d3f74c9f9dd5346959d955ff95e7628b1a3","short":"4d853d3f74"},"tree":{"full":"9a71ffbef4b9b9c86ba21ed7ac627ebca718e320","short":"9a71ffbef4"},"parents":[{"full":"71a5b84442626f3d09acac3fbe4ed74010c492e8","short":"71a5b84442"}],"author":{"date":"2017-08-14T16:32:48.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 2:32 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"committer":{"date":"2017-08-14T16:32:48.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 2:32 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"subject":"Move more workbench code up to
+				/workbench/","body":"","notes":"","fileStats":[{"additions":2,"deletions":2,"path":"src/vs/workbench/node/extensionHostMain.ts","mode":0},{"additions":1,"deletions":1,"path":"src/vs/workbench/node/extensionHostProcess.ts","mode":0},{"additions":0,"deletions":0,"path":"src/vs/{platform/extensions/common
+				=&gt; workbench/services/extensions/node}/ipcRemoteCom.ts","mode":3},{"additions":2,"deletions":2,"path":"src/vs/workbench/services/thread/electron-browser/threadService.ts","mode":0},{"additions":1,"deletions":1,"path":"src/vs/workbench/services/thread/{common
+				=&gt; node}/abstractThreadService.ts","mode":3},{"additions":2,"deletions":2,"path":"src/vs/workbench/services/thread/{common
+				=&gt; node}/extHostThreadService.ts","mode":3},{"additions":1,"deletions":1,"path":"src/vs/workbench/test/electron-browser/api/testThreadService.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"879fd0d0cd401f79c61cb5c497efe72251508a1c","short":"879fd0d0cd"},"tree":{"full":"a497e9c86848a36da9fc603bbb71cda11ce96936","short":"a497e9c868"},"parents":[{"full":"a7fcaffcf4ee0ffbc3ee8dd27f7ea1fa4c78cc60","short":"a7fcaffcf4"}],"author":{"date":"2017-08-14T15:03:05.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 1:03 AM","name":"Keegan Carruthers-Smith","email":"keegan.csmith@gmail.com"},"committer":{"date":"2017-08-14T15:03:05.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 1:03 AM","name":"Keegan Carruthers-Smith","email":"keegan.csmith@gmail.com"},"subject":"Add remove action
+				for FolderMatch","body":"","notes":"","fileStats":[{"additions":22,"deletions":14,"path":"src/vs/workbench/parts/search/browser/searchActions.ts","mode":0},{"additions":6,"deletions":1,"path":"src/vs/workbench/parts/search/browser/searchResultsView.ts","mode":0},{"additions":8,"deletions":2,"path":"src/vs/workbench/parts/search/common/searchModel.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"71a5b84442626f3d09acac3fbe4ed74010c492e8","short":"71a5b84442"},"tree":{"full":"3af56348fcb0041f50a321162745bb61a1ebc43d","short":"3af56348fc"},"parents":[{"full":"aabeedddea91fbef7615d619a83236e71d4585f8","short":"aabeedddea"}],"author":{"date":"2017-08-14T14:56:40.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:56 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"committer":{"date":"2017-08-14T14:57:53.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:57 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"subject":"Move code managing the extension
+				host process closer to the extension service","body":"","notes":"","fileStats":[{"additions":0,"deletions":0,"path":"src/vs/workbench/{
+				=&gt; services/extensions}/electron-browser/extensionHost.ts","mode":3},{"additions":1,"deletions":1,"path":"src/vs/workbench/services/extensions/electron-browser/extensionService.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"aabeedddea91fbef7615d619a83236e71d4585f8","short":"aabeedddea"},"tree":{"full":"39d4694da4d87d0b96224ee5729da64d4ac72465","short":"39d4694da4"},"parents":[{"full":"b420c54f0ffdd45312e14b892e5e4eee6f4c567a","short":"b420c54f0f"}],"author":{"date":"2017-08-14T14:28:05.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:28 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"committer":{"date":"2017-08-14T14:57:53.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:57 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"subject":"Move extension service code to
+				vs/workbench/services/extensions","body":"","notes":"","fileStats":[{"additions":4,"deletions":0,"path":"build/lib/i18n.resources.json","mode":0},{"additions":3,"deletions":246,"path":"src/vs/workbench/api/electron-browser/mainThreadExtensionService.ts","mode":0},{"additions":1,"deletions":1,"path":"src/vs/workbench/electron-browser/extensionHost.ts","mode":0},{"additions":1,"deletions":1,"path":"src/vs/workbench/electron-browser/shell.ts","mode":0},{"additions":2,"deletions":28,"path":"src/vs/workbench/{api/electron-browser/mainThreadExtensionService.ts
+				=&gt; services/extensions/electron-browser/extensionService.ts}","mode":0},{"additions":1,"deletions":1,"path":"tslint.json","mode":0}]},{"remoteRefs":[],"sha1":{"full":"b420c54f0ffdd45312e14b892e5e4eee6f4c567a","short":"b420c54f0f"},"tree":{"full":"0ff135f579e786cbfcc8605395d01f0d35ac8d12","short":"0ff135f579"},"parents":[{"full":"2e5311ca6e42759f2ea56a0604d11f4c0b83b936","short":"2e5311ca6e"}],"author":{"date":"2017-08-14T13:34:46.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 11:34 PM","name":"Alex Dima","email":"alexdima@microsoft.com"},"committer":{"date":"2017-08-14T14:57:53.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:57 AM","name":"Alex Dima","email":"alexdima@microsoft.com"},"subject":"Remove cyclic dependency between
+				IExtensionService and IThreadService","body":"","notes":"","fileStats":[{"additions":4,"deletions":6,"path":"src/vs/workbench/api/electron-browser/extensionHost.contribution.ts","mode":0},{"additions":58,"deletions":12,"path":"src/vs/workbench/api/electron-browser/mainThreadExtensionService.ts","mode":0},{"additions":3,"deletions":10,"path":"src/vs/workbench/electron-browser/shell.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"2e5311ca6e42759f2ea56a0604d11f4c0b83b936","short":"2e5311ca6e"},"tree":{"full":"97f81f1821753efbecedbbd9e8318e61219035dd","short":"97f81f1821"},"parents":[{"full":"9098d9ff7c6fc1ed19683e559ea1dc191d43f6d7","short":"9098d9ff7c"}],"author":{"date":"2017-08-14T14:56:03.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:56 AM","name":"Johannes Rieken","email":"johannes.rieken@gmail.com"},"committer":{"date":"2017-08-14T14:56:13.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:56 AM","name":"Johannes Rieken","email":"johannes.rieken@gmail.com"},"subject":"towards ext-host-restart:
+				properly implement dispose-methods in variouds MainThreadXYZ-types","body":"","notes":"","fileStats":[{"additions":13,"deletions":11,"path":"src/vs/workbench/api/electron-browser/mainThreadCommands.ts","mode":0},{"additions":5,"deletions":5,"path":"src/vs/workbench/api/electron-browser/mainThreadConfiguration.ts","mode":0},{"additions":8,"deletions":1,"path":"src/vs/workbench/api/electron-browser/mainThreadDiagnostics.ts","mode":0},{"additions":8,"deletions":1,"path":"src/vs/workbench/api/electron-browser/mainThreadFileSystemEventService.ts","mode":0},{"additions":6,"deletions":0,"path":"src/vs/workbench/api/electron-browser/mainThreadLanguageFeatures.ts","mode":0},{"additions":5,"deletions":4,"path":"src/vs/workbench/api/electron-browser/mainThreadOutputService.ts","mode":0},{"additions":10,"deletions":5,"path":"src/vs/workbench/api/electron-browser/mainThreadProgress.ts","mode":0},{"additions":5,"deletions":0,"path":"src/vs/workbench/api/electron-browser/mainThreadSaveParticipant.ts","mode":0},{"additions":14,"deletions":7,"path":"src/vs/workbench/api/electron-browser/mainThreadStatusBar.ts","mode":0},{"additions":5,"deletions":1,"path":"src/vs/workbench/api/electron-browser/mainThreadWorkspace.ts","mode":0},{"additions":17,"deletions":0,"path":"src/vs/workbench/test/electron-browser/api/mainThreadCommands.test.ts","mode":0},{"additions":41,"deletions":0,"path":"src/vs/workbench/test/electron-browser/api/mainThreadDiagnostics.test.ts","mode":1}]},{"remoteRefs":[],"sha1":{"full":"9098d9ff7c6fc1ed19683e559ea1dc191d43f6d7","short":"9098d9ff7c"},"tree":{"full":"384f488c3c986fa13e467f2baa83731021332b4b","short":"384f488c3c"},"parents":[{"full":"698382ac85fe0beba4b78d2f50a9199d31a2711c","short":"698382ac85"}],"author":{"date":"2017-08-14T14:07:50.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:07 AM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"committer":{"date":"2017-08-14T14:07:56.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:07 AM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"subject":"[themes] let extensions
+				contribute colors. Fixes #14309","body":"","notes":"","fileStats":[{"additions":124,"deletions":0,"path":"src/vs/platform/theme/common/colorExtensionPoint.ts","mode":1},{"additions":17,"deletions":1,"path":"src/vs/platform/theme/common/colorRegistry.ts","mode":0},{"additions":2,"deletions":0,"path":"src/vs/workbench/api/electron-browser/extensionHost.contribution.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"698382ac85fe0beba4b78d2f50a9199d31a2711c","short":"698382ac85"},"tree":{"full":"dc37ed81c650e506b3a01ed9e63f0f2dbf00a98f","short":"dc37ed81c6"},"parents":[{"full":"a7fcaffcf4ee0ffbc3ee8dd27f7ea1fa4c78cc60","short":"a7fcaffcf4"}],"author":{"date":"2017-08-14T08:48:56.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 6:48 PM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"committer":{"date":"2017-08-14T14:07:56.000Z","localisedDate":"Tue,
+				Aug 15, 2017, 12:07 AM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"subject":"Cannot set property
+				'theme' of null. Fixes #32385","body":"","notes":"","fileStats":[{"additions":1,"deletions":1,"path":"src/vs/workbench/parts/update/electron-browser/releaseNotesEditor.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"a7fcaffcf4ee0ffbc3ee8dd27f7ea1fa4c78cc60","short":"a7fcaffcf4"},"tree":{"full":"ed68d467dcf898d0963af7ceac7709235edc0f16","short":"ed68d467dc"},"parents":[{"full":"e5943cbcb036da3680c631b9c9d43726e2f20ada","short":"e5943cbcb0"}],"author":{"date":"2017-08-14T12:26:31.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 10:26 PM","name":"Alex Dima","email":"alexdima@microsoft.com"},"committer":{"date":"2017-08-14T12:27:20.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 10:27 PM","name":"Alex Dima","email":"alexdima@microsoft.com"},"subject":"Do not install the watchdog if
+				the extension host is debuggable (#26445)","body":"","notes":"","fileStats":[{"additions":1,"deletions":0,"path":"src/vs/workbench/api/node/extHost.protocol.ts","mode":0},{"additions":3,"deletions":1,"path":"src/vs/workbench/electron-browser/extensionHost.ts","mode":0},{"additions":3,"deletions":1,"path":"src/vs/workbench/node/extensionHostMain.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"e5943cbcb036da3680c631b9c9d43726e2f20ada","short":"e5943cbcb0"},"tree":{"full":"116186d306e3ca1d99b63ab30301d0f6978607ba","short":"116186d306"},"parents":[{"full":"0a4b9f324a5d8ff2d1adc328abc471c2aa9ff604","short":"0a4b9f324a"}],"author":{"date":"2017-08-14T10:58:28.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 8:58 PM","name":"Johannes Rieken","email":"johannes.rieken@gmail.com"},"committer":{"date":"2017-08-14T10:58:28.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 8:58 PM","name":"Johannes Rieken","email":"johannes.rieken@gmail.com"},"subject":"fix #30652","body":"","notes":"","fileStats":[{"additions":4,"deletions":0,"path":"src/vs/editor/common/services/bulkEdit.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"0a4b9f324a5d8ff2d1adc328abc471c2aa9ff604","short":"0a4b9f324a"},"tree":{"full":"71a299f9baac31abb8ec7f321ef6c6fc53c6f905","short":"71a299f9ba"},"parents":[{"full":"3007332134f65ae757b395052a98c79f1ad95a84","short":"3007332134"}],"author":{"date":"2017-08-14T10:15:16.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 8:15 PM","name":"Alex Dima","email":"alexdima@microsoft.com"},"committer":{"date":"2017-08-14T10:15:16.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 8:15 PM","name":"Alex Dima","email":"alexdima@microsoft.com"},"subject":"Add a watchdog mechanism to detect
+				when the extension host JavaScript event loop is unresponsive (#26445)","body":"","notes":"","fileStats":[{"additions":1,"deletions":0,"path":"build/gulpfile.vscode.js","mode":0},{"additions":5,"deletions":0,"path":"npm-shrinkwrap.json","mode":0},{"additions":1,"deletions":0,"path":"package.json","mode":0},{"additions":10,"deletions":0,"path":"src/typings/native-watchdog.d.ts","mode":1},{"additions":4,"deletions":0,"path":"src/vs/workbench/node/extensionHostMain.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"3007332134f65ae757b395052a98c79f1ad95a84","short":"3007332134"},"tree":{"full":"88d617de400da8005f5fb301e20e373955ccd16a","short":"88d617de40"},"parents":[{"full":"062a918396fbfca0425c4622846dff8073904b09","short":"062a918396"}],"author":{"date":"2017-08-14T09:52:28.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 7:52 PM","name":"Joao Moreno","email":"jomo@microsoft.com"},"committer":{"date":"2017-08-14T09:52:36.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 7:52 PM","name":"Joao Moreno","email":"jomo@microsoft.com"},"subject":"fixes #32379","body":"","notes":"","fileStats":[{"additions":12,"deletions":19,"path":"src/vs/workbench/api/electron-browser/mainThreadLanguageFeatures.ts","mode":0},{"additions":4,"deletions":5,"path":"src/vs/workbench/api/node/extHost.protocol.ts","mode":0},{"additions":41,"deletions":44,"path":"src/vs/workbench/api/node/extHostLanguageFeatures.ts","mode":0},{"additions":0,"deletions":14,"path":"src/vs/workbench/api/node/extHostTypeConverters.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"062a918396fbfca0425c4622846dff8073904b09","short":"062a918396"},"tree":{"full":"5b02099c44245b840214bc77146eb341d5509064","short":"5b02099c44"},"parents":[{"full":"5e54eb7bc987173f3e260c3ed34b32af4e9e7c7a","short":"5e54eb7bc9"},{"full":"0db81eeff40a10b097bad6e424116850009aa9ec","short":"0db81eeff4"}],"author":{"date":"2017-08-14T09:07:22.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 7:07 PM","name":"Dirk Bäumer","email":"dirkb@microsoft.com"},"committer":{"date":"2017-08-14T09:07:22.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 7:07 PM","name":"GitHub","email":"noreply@github.com"},"subject":"Merge pull request #32390 from dlech/run-dev-problem-matcher","body":"Add
+				empty problem matcher to \"Run Dev\" task","notes":"","fileStats":[]},{"remoteRefs":[],"sha1":{"full":"5e54eb7bc987173f3e260c3ed34b32af4e9e7c7a","short":"5e54eb7bc9"},"tree":{"full":"040ef3f01687d1b2ae6273bf40533123a391ef22","short":"040ef3f016"},"parents":[{"full":"eca4981b9a3b304055c1c766b8c6723fa88f74b4","short":"eca4981b9a"},{"full":"3f02d6c106cdfc4839fb0b8dc01cc610b1aa80a9","short":"3f02d6c106"}],"author":{"date":"2017-08-14T09:06:21.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 7:06 PM","name":"Dirk Bäumer","email":"dirkb@microsoft.com"},"committer":{"date":"2017-08-14T09:06:21.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 7:06 PM","name":"GitHub","email":"noreply@github.com"},"subject":"Merge pull request #32393 from dlech/patch-5","body":"Fix
+				spelling of \"registered\"","notes":"","fileStats":[]},{"remoteRefs":[],"sha1":{"full":"eca4981b9a3b304055c1c766b8c6723fa88f74b4","short":"eca4981b9a"},"tree":{"full":"3cea2a17000b496e78ffdb8a04c2a12a124f5c73","short":"3cea2a1700"},"parents":[{"full":"81d41b836f3f13ed62377e07dd37b696b6372883","short":"81d41b836f"},{"full":"1d837968143705978b6cae5a7229f3d638aeae2a","short":"1d83796814"}],"author":{"date":"2017-08-14T09:06:02.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 7:06 PM","name":"Dirk Bäumer","email":"dirkb@microsoft.com"},"committer":{"date":"2017-08-14T09:06:02.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 7:06 PM","name":"GitHub","email":"noreply@github.com"},"subject":"Merge pull request #32394 from dlech/patch-6","body":"Fix
+				spelling of \"taskDefinitions\"","notes":"","fileStats":[]},{"remoteRefs":[],"sha1":{"full":"81d41b836f3f13ed62377e07dd37b696b6372883","short":"81d41b836f"},"tree":{"full":"9964d2b97e5d0e68bc0e368f37a43b34c1e8f1ca","short":"9964d2b97e"},"parents":[{"full":"b73b7df1290d0fe66ca8b8060743711a327af622","short":"b73b7df129"},{"full":"d3a60eb4e7f9c51eb1ef2dc90b72ce5b51318cd6","short":"d3a60eb4e7"}],"author":{"date":"2017-08-14T08:42:20.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 6:42 PM","name":"João Moreno","email":"mail@joaomoreno.com"},"committer":{"date":"2017-08-14T08:42:20.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 6:42 PM","name":"GitHub","email":"noreply@github.com"},"subject":"Merge pull request #32341 from stevedesmond-ca/uninstall-first-messaging","body":"Improve
+				\"uninstall first\" messaging/grammar","notes":"","fileStats":[]},{"remoteRefs":["origin/release/1.15"],"sha1":{"full":"224df1277a6d2fb56bbacbc4f68efa66ae67c466","short":"224df1277a"},"tree":{"full":"35ef321acc4e7cac0ffa514267c523bb7f9fdc9e","short":"35ef321acc"},"parents":[{"full":"f076bcaf6f9e6dd36d885b3ba2eef6387db51404","short":"f076bcaf6f"}],"author":{"date":"2017-08-14T06:05:10.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 4:05 PM","name":"Ramya Rao","email":"ramya.rao.a@outlook.com"},"committer":{"date":"2017-08-14T06:05:10.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 4:05 PM","name":"GitHub","email":"noreply@github.com"},"subject":"Emmet for recovery build 1.15 (#32446)","body":"*
+				Option to trigger emmet expansion on tab (#32334)* Avoid error when tabbing on selection that is not abbreviation* Fallback
+				to tab for non empty selections* When file cannot be parsed, dont try validations #32354* Remove fallback to html as
+				this will enable emmet everywhere* Use latest emmet helper","notes":"","fileStats":[{"additions":3,"deletions":3,"path":"extensions/emmet/npm-shrinkwrap.json","mode":0},{"additions":6,"deletions":1,"path":"extensions/emmet/package.json","mode":0},{"additions":2,"deletions":1,"path":"extensions/emmet/package.nls.json","mode":0},{"additions":46,"deletions":15,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0},{"additions":11,"deletions":1,"path":"src/vs/workbench/parts/emmet/electron-browser/actions/expandAbbreviation.ts","mode":0}]},{"remoteRefs":["origin/emmet-recovery"],"sha1":{"full":"380ff29bc74e13d1a9f3534d2bcfaffa3d543888","short":"380ff29bc7"},"tree":{"full":"35ef321acc4e7cac0ffa514267c523bb7f9fdc9e","short":"35ef321acc"},"parents":[{"full":"d192e81adf38f20762e3a9ca5c1c6006190c2b2e","short":"d192e81adf"}],"author":{"date":"2017-08-14T05:49:33.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:49 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T05:49:33.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:49 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Use latest emmet helper","body":"","notes":"","fileStats":[{"additions":3,"deletions":3,"path":"extensions/emmet/npm-shrinkwrap.json","mode":0},{"additions":1,"deletions":1,"path":"extensions/emmet/package.json","mode":0}]},{"remoteRefs":[],"sha1":{"full":"d192e81adf38f20762e3a9ca5c1c6006190c2b2e","short":"d192e81adf"},"tree":{"full":"9fdad7158035f124c70010356bdbab7c44bed865","short":"9fdad71580"},"parents":[{"full":"c83881a511432c7df10ed61b4fafad0d20c05b74","short":"c83881a511"}],"author":{"date":"2017-08-12T06:45:08.000Z","localisedDate":"Sat,
+				Aug 12, 2017, 4:45 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T05:47:41.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:47 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Remove fallback to html
+				as this will enable emmet everywhere","body":"","notes":"","fileStats":[{"additions":0,"deletions":4,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"c83881a511432c7df10ed61b4fafad0d20c05b74","short":"c83881a511"},"tree":{"full":"52bb0f31da16c0703616e5b21523f2c603287467","short":"52bb0f31da"},"parents":[{"full":"a4291702817f41b9311f7ab0879e286733386322","short":"a429170281"}],"author":{"date":"2017-08-11T21:59:57.000Z","localisedDate":"Sat,
+				Aug 12, 2017, 7:59 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T05:47:09.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:47 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"When file cannot be parsed,
+				dont try validations #32354","body":"","notes":"","fileStats":[{"additions":2,"deletions":1,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"a4291702817f41b9311f7ab0879e286733386322","short":"a429170281"},"tree":{"full":"b41ab25d8306eddb411f153a7549ced9ddc4160e","short":"b41ab25d83"},"parents":[{"full":"eb198628ec83273006a1afd45c229a85dfea9cc6","short":"eb198628ec"}],"author":{"date":"2017-08-11T18:25:54.000Z","localisedDate":"Sat,
+				Aug 12, 2017, 4:25 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T05:46:46.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:46 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Fallback to tab for non
+				empty selections","body":"","notes":"","fileStats":[{"additions":5,"deletions":0,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"eb198628ec83273006a1afd45c229a85dfea9cc6","short":"eb198628ec"},"tree":{"full":"a47440c7bbb3f2d089eff6d63e1178cfcdcf7d13","short":"a47440c7bb"},"parents":[{"full":"9748367a967ff2cf2217a292276bf5b6283810b3","short":"9748367a96"}],"author":{"date":"2017-08-11T18:10:30.000Z","localisedDate":"Sat,
+				Aug 12, 2017, 4:10 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T05:46:26.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:46 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Avoid error when tabbing
+				on selection that is not abbreviation","body":"","notes":"","fileStats":[{"additions":11,"deletions":3,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"9748367a967ff2cf2217a292276bf5b6283810b3","short":"9748367a96"},"tree":{"full":"4dc5e01db2e840126e4b9c0796015493b43200c7","short":"4dc5e01db2"},"parents":[{"full":"1be09af737621f60a585a3a347732c5c3a96965f","short":"1be09af737"}],"author":{"date":"2017-08-11T15:21:37.000Z","localisedDate":"Sat,
+				Aug 12, 2017, 1:21 AM","name":"Ramya Rao","email":"ramya.rao.a@outlook.com"},"committer":{"date":"2017-08-14T05:45:22.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:45 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Option to trigger emmet
+				expansion on tab (#32334)","body":"","notes":"","fileStats":[{"additions":5,"deletions":0,"path":"extensions/emmet/package.json","mode":0},{"additions":2,"deletions":1,"path":"extensions/emmet/package.nls.json","mode":0},{"additions":17,"deletions":5,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0},{"additions":11,"deletions":1,"path":"src/vs/workbench/parts/emmet/electron-browser/actions/expandAbbreviation.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"1be09af737621f60a585a3a347732c5c3a96965f","short":"1be09af737"},"tree":{"full":"ea93a63428629693ced4a81a95125d866d971423","short":"ea93a63428"},"parents":[{"full":"6fd4bd59d0ee9509b0830af869399753b596089b","short":"6fd4bd59d0"}],"author":{"date":"2017-08-11T05:18:38.000Z","localisedDate":"Fri,
+				Aug 11, 2017, 3:18 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T05:45:08.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:45 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Remove validation based
+				on location for sass file #32281","body":"","notes":"","fileStats":[{"additions":1,"deletions":1,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"6fd4bd59d0ee9509b0830af869399753b596089b","short":"6fd4bd59d0"},"tree":{"full":"edaef74f19cfd4038eba6ab635020f5c924bf145","short":"edaef74f19"},"parents":[{"full":"f076bcaf6f9e6dd36d885b3ba2eef6387db51404","short":"f076bcaf6f"}],"author":{"date":"2017-08-11T01:27:38.000Z","localisedDate":"Fri,
+				Aug 11, 2017, 11:27 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-14T05:44:56.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 3:44 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Return promise from emmet
+				expand method","body":"","notes":"","fileStats":[{"additions":13,"deletions":4,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"b73b7df1290d0fe66ca8b8060743711a327af622","short":"b73b7df129"},"tree":{"full":"212b0583944a3f9ab7866bb965967d3783f4db4e","short":"212b058394"},"parents":[{"full":"9c86eb33f9e914f808f235f3ebd8b051d874174c","short":"9c86eb33f9"}],"author":{"date":"2017-08-14T03:23:11.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 1:23 PM","name":"Rob Lourens","email":"roblourens@gmail.com"},"committer":{"date":"2017-08-14T03:23:11.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 1:23 PM","name":"Rob Lourens","email":"roblourens@gmail.com"},"subject":":tada: Change vscode launch configs
+				to 'protocol: inspector' :fireworks:","body":"","notes":"","fileStats":[{"additions":7,"deletions":7,"path":".vscode/launch.json","mode":0}]},{"remoteRefs":[],"sha1":{"full":"9c86eb33f9e914f808f235f3ebd8b051d874174c","short":"9c86eb33f9"},"tree":{"full":"72ac087d33e21ff4b5f99e896b4e5f18a65ae9f5","short":"72ac087d33"},"parents":[{"full":"fa413ff0085e717db36615266dc13aea2d77d5fa","short":"fa413ff008"}],"author":{"date":"2017-08-13T19:41:55.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 5:41 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-13T19:41:55.000Z","localisedDate":"Mon,
+				Aug 14, 2017, 5:41 AM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Fixes to getCurrentWord
+				in emmet helper Fixes #32254","body":"","notes":"","fileStats":[{"additions":3,"deletions":3,"path":"extensions/emmet/npm-shrinkwrap.json","mode":0},{"additions":1,"deletions":1,"path":"extensions/emmet/package.json","mode":0}]},{"remoteRefs":[],"sha1":{"full":"fa413ff0085e717db36615266dc13aea2d77d5fa","short":"fa413ff008"},"tree":{"full":"460aea0c36cb8beee27d005c90201dfae6745578","short":"460aea0c36"},"parents":[{"full":"747310ab90bac085d722445076038d70e534641c","short":"747310ab90"}],"author":{"date":"2017-08-13T03:25:06.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 1:25 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"committer":{"date":"2017-08-13T03:25:17.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 1:25 PM","name":"Ramya Achutha Rao","email":"ramyar@microsoft.com"},"subject":"Move the checks on abbreviations
+				to helper module","body":"","notes":"","fileStats":[{"additions":3,"deletions":3,"path":"extensions/emmet/npm-shrinkwrap.json","mode":0},{"additions":1,"deletions":1,"path":"extensions/emmet/package.json","mode":0},{"additions":0,"deletions":11,"path":"extensions/emmet/src/abbreviationActions.ts","mode":0},{"additions":1,"deletions":1,"path":"extensions/emmet/src/defaultCompletionProvider.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"f076bcaf6f9e6dd36d885b3ba2eef6387db51404","short":"f076bcaf6f"},"tree":{"full":"cf054d0c08f84b5c58bfb72ebd30e940bd614344","short":"cf054d0c08"},"parents":[{"full":"a2488cbf9ef284157111f3cfa1fd3819fb39f8f9","short":"a2488cbf9e"}],"author":{"date":"2017-08-13T00:12:45.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:12 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"committer":{"date":"2017-08-13T01:16:48.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 11:16 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"subject":"Fix #32325, avoid **/** pattern
+				in search glob","body":"","notes":"","fileStats":[{"additions":9,"deletions":1,"path":"src/vs/workbench/parts/search/common/queryBuilder.ts","mode":0},{"additions":24,"deletions":5,"path":"src/vs/workbench/parts/search/test/common/queryBuilder.test.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"747310ab90bac085d722445076038d70e534641c","short":"747310ab90"},"tree":{"full":"7d50c5d65de3df8dd1aea37ee0f6831e5a35b8c9","short":"7d50c5d65d"},"parents":[{"full":"77e2e9a4e847e0284253c80c68dd2bce6efd91fc","short":"77e2e9a4e8"},{"full":"8a511a7690ad5b0308b0e6cb384ada88c67fd99f","short":"8a511a7690"}],"author":{"date":"2017-08-13T00:44:26.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:44 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"committer":{"date":"2017-08-13T00:44:26.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:44 AM","name":"GitHub","email":"noreply@github.com"},"subject":"Merge pull request #31488 from Microsoft/roblou/inspectEH","body":"Enable
+				extensionHost debugging with --inspect","notes":"","fileStats":[]},{"remoteRefs":[],"sha1":{"full":"77e2e9a4e847e0284253c80c68dd2bce6efd91fc","short":"77e2e9a4e8"},"tree":{"full":"59d65d8ca2205a8bdc6ba9218a781b879c327f75","short":"59d65d8ca2"},"parents":[{"full":"5f05e3a6d839c6125e85047327de2c703fa87d1c","short":"5f05e3a6d8"}],"author":{"date":"2017-08-13T00:34:43.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:34 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"committer":{"date":"2017-08-13T00:34:43.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:34 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"subject":"Update PHP grammar","body":"","notes":"","fileStats":[{"additions":114,"deletions":37,"path":"extensions/php/syntaxes/php.tmLanguage.json","mode":0}]},{"remoteRefs":[],"sha1":{"full":"5f05e3a6d839c6125e85047327de2c703fa87d1c","short":"5f05e3a6d8"},"tree":{"full":"40946b2a15e73036223bdf38c4ac53e8a2a81b55","short":"40946b2a15"},"parents":[{"full":"c185e7d44eeacf5bf909131b0f661daaeff1ac59","short":"c185e7d44e"}],"author":{"date":"2017-08-13T00:12:45.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:12 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"committer":{"date":"2017-08-13T00:21:10.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:21 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"subject":"Fix #32325, avoid **/** pattern
+				in search glob","body":"","notes":"","fileStats":[{"additions":9,"deletions":1,"path":"src/vs/workbench/parts/search/common/queryBuilder.ts","mode":0},{"additions":24,"deletions":5,"path":"src/vs/workbench/parts/search/test/common/queryBuilder.test.ts","mode":0}]},{"remoteRefs":["origin/roblou/fix32325"],"sha1":{"full":"03ac444d130fca60682d8a2cf9ccbd0920c78769","short":"03ac444d13"},"tree":{"full":"42665384b94613c7bd92f59eec4e7552ff969269","short":"42665384b9"},"parents":[{"full":"c185e7d44eeacf5bf909131b0f661daaeff1ac59","short":"c185e7d44e"}],"author":{"date":"2017-08-13T00:12:45.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:12 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"committer":{"date":"2017-08-13T00:12:45.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 10:12 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"subject":"Fix #32325, avoid **/** pattern
+				in search glob","body":"","notes":"","fileStats":[{"additions":9,"deletions":1,"path":"src/vs/workbench/parts/search/common/queryBuilder.ts","mode":0},{"additions":18,"deletions":0,"path":"src/vs/workbench/parts/search/test/common/queryBuilder.test.ts","mode":0}]},{"remoteRefs":["origin/roblou/inspectEH"],"sha1":{"full":"8a511a7690ad5b0308b0e6cb384ada88c67fd99f","short":"8a511a7690"},"tree":{"full":"b5321c906c952c27bbc607b1305fd92df1ce8f5b","short":"b5321c906c"},"parents":[{"full":"2076b2e4d4d10372a751ca3975362a8d091e6656","short":"2076b2e4d4"}],"author":{"date":"2017-08-12T23:51:38.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 9:51 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"committer":{"date":"2017-08-12T23:51:38.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 9:51 AM","name":"Rob Lourens","email":"roblourens@gmail.com"},"subject":"Transfer extensionHost from node-debug
+				to node-debug2","body":"","notes":"","fileStats":[{"additions":2,"deletions":2,"path":"build/gulpfile.vscode.js","mode":0}]},{"remoteRefs":[],"sha1":{"full":"1d837968143705978b6cae5a7229f3d638aeae2a","short":"1d83796814"},"tree":{"full":"cfe7c762965dc9be8e448d3e30ba2a7a3911721c","short":"cfe7c76296"},"parents":[{"full":"c185e7d44eeacf5bf909131b0f661daaeff1ac59","short":"c185e7d44e"}],"author":{"date":"2017-08-12T20:33:09.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 6:33 AM","name":"David Lechner","email":"david@lechnology.com"},"committer":{"date":"2017-08-12T20:33:09.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 6:33 AM","name":"GitHub","email":"noreply@github.com"},"subject":"Fix spelling of \"taskDefinitions\"","body":"","notes":"","fileStats":[{"additions":1,"deletions":1,"path":"src/vs/vscode.d.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"3f02d6c106cdfc4839fb0b8dc01cc610b1aa80a9","short":"3f02d6c106"},"tree":{"full":"4753ba0632170429dc02ece78391515d0ddf00a8","short":"4753ba0632"},"parents":[{"full":"c185e7d44eeacf5bf909131b0f661daaeff1ac59","short":"c185e7d44e"}],"author":{"date":"2017-08-12T20:30:22.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 6:30 AM","name":"David Lechner","email":"david@lechnology.com"},"committer":{"date":"2017-08-12T20:30:22.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 6:30 AM","name":"GitHub","email":"noreply@github.com"},"subject":"Fix spelling of \"registered\"","body":"","notes":"","fileStats":[{"additions":1,"deletions":1,"path":"src/vs/vscode.d.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"0db81eeff40a10b097bad6e424116850009aa9ec","short":"0db81eeff4"},"tree":{"full":"97ffb4a026b8a69ddf9c85484f2dad98a91252b0","short":"97ffb4a026"},"parents":[{"full":"c185e7d44eeacf5bf909131b0f661daaeff1ac59","short":"c185e7d44e"}],"author":{"date":"2017-08-12T19:21:09.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 5:21 AM","name":"David Lechner","email":"david@lechnology.com"},"committer":{"date":"2017-08-12T19:24:23.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 5:24 AM","name":"David Lechner","email":"david@lechnology.com"},"subject":"Add empty problem matcher to
+				\"Run Dev\" task","body":"Without this, vscode always asks you what to do. When you select an option, it edits this file,
+				so we might as well put a configuration here so it doesn't keep asking.","notes":"","fileStats":[{"additions":2,"deletions":1,"path":".vscode/tasks.json","mode":0}]},{"remoteRefs":[],"sha1":{"full":"c185e7d44eeacf5bf909131b0f661daaeff1ac59","short":"c185e7d44e"},"tree":{"full":"b501c8a75877a5381237679eaa4082a1fc12397d","short":"b501c8a758"},"parents":[{"full":"5fce6df8a2de0121490bdb65e0238bce9830ed59","short":"5fce6df8a2"}],"author":{"date":"2017-08-12T14:40:09.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 12:40 AM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"committer":{"date":"2017-08-12T14:40:09.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 12:40 AM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"subject":"[json] hover over color
+				box doesn't show color picker. Fixes #32298","body":"","notes":"","fileStats":[{"additions":3,"deletions":3,"path":"extensions/json/client/src/colorDecorators.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"5fce6df8a2de0121490bdb65e0238bce9830ed59","short":"5fce6df8a2"},"tree":{"full":"a8702a84e8020f7c3a8be9e6ed51e5a96cf67022","short":"a8702a84e8"},"parents":[{"full":"d3a80dc181da8d7d4939a9f35401a385640020f8","short":"d3a80dc181"}],"author":{"date":"2017-08-12T14:20:38.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 12:20 AM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"committer":{"date":"2017-08-12T14:20:38.000Z","localisedDate":"Sun,
+				Aug 13, 2017, 12:20 AM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"subject":"[json] Protect from
+				incompete colors (for exception in #32298)","body":"","notes":"","fileStats":[{"additions":15,"deletions":6,"path":"extensions/json/client/src/colorDecorators.ts","mode":0}]},{"remoteRefs":[],"sha1":{"full":"d3a80dc181da8d7d4939a9f35401a385640020f8","short":"d3a80dc181"},"tree":{"full":"b326443ffd749b07e0159b7b94717242e2d794a1","short":"b326443ffd"},"parents":[{"full":"eae6de34882431190fe0f61ad54a3bd6bf28b322","short":"eae6de3488"}],"author":{"date":"2017-08-12T11:31:59.000Z","localisedDate":"Sat,
+				Aug 12, 2017, 9:31 PM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"committer":{"date":"2017-08-12T11:31:59.000Z","localisedDate":"Sat,
+				Aug 12, 2017, 9:31 PM","name":"Martin Aeschlimann","email":"martinae@microsoft.com"},"subject":"Using Color.fromHex with
+				invalid input should return null","body":"","notes":"","fileStats":[{"additions":6,"deletions":2,"path":"src/vs/vscode.proposed.d.ts","mode":0},{"additions":7,"deletions":3,"path":"src/vs/workbench/api/node/extHostTypes.ts","mode":0}]}]</div>
+		</div>
+	</div>
+
+	<div id="details-view" class="hidden">
+		<a class="action-btn close-btn"><i class="octicon octicon-x"></i></a>
+		<a class="action-btn resize-btn"><i class="octicon octicon-chevron-up"></i></a>
+		<a class="action-btn resume-btn"><i class="octicon octicon-chevron-down"></i></a>
+		<h1 class="commit-subject">Move extension service code to vs/workbench/services/extensions</h1>
+		<div class="commit-author">
+			<span class="name hint--right hint--rounded hint--bounce" aria-label="alexdima@microsoft.com">Alex Dima</span>
+			<span class="timestamp"> on Tue, Aug 15, 2017, 12:28 AM</span>
+		</div>
+		<div class="commit-body"></div>
+		<div class="commit-notes"></div>
+		<ul class="committed-files">
+			<div class="diff-row">
+				<span class="diff-stats hint--right hint--rounded hint--bounce" aria-label="added 4 &amp; deleted 0">
+                                <span class="diff-count">4</span>
+				<span class="diff-block added"></span>
+				<span class="diff-block added"></span>
+				<span class="diff-block added"></span>
+				<span class="diff-block added"></span>
+				<span class="diff-block"></span>
+				</span>
+				<div class="file-name-cnt">
+					<span class="file-name">build/lib/i18n.resources.json</span>
+					<a class="file-name" href="command:git.viewFileCommitDetails?%5B%22aabeedddea91fbef7615d619a83236e71d4585f8%22,%22build/lib/i18n.resources.json%22,%222017-08-14T14:57:53.000Z%22%5D">build/lib/i18n.resources.json</a>
+				</div>
+				<div class="dropdown hidden">
+					<span>&nbsp;[Test]</span>
+					<div class="dropdown-content">
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+					</div>
+				</div>
+			</div>
+			<div class="diff-row">
+				<span class="diff-stats hint--right hint--rounded hint--bounce" aria-label="added 3 &amp; deleted 246">
+                                <span class="diff-count">249</span>
+				<span class="diff-block added"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block deleted"></span>
+				</span>
+				<div class="file-name-cnt">
+					<span class="file-name">src/vs/workbench/api/electron-browser/mainThreadExtensionService.ts</span>
+					<a class="file-name" href="command:git.viewFileCommitDetails?%5B%22aabeedddea91fbef7615d619a83236e71d4585f8%22,%22src/vs/workbench/api/electron-browser/mainThreadExtensionService.ts%22,%222017-08-14T14:57:53.000Z%22%5D">src/vs/workbench/api/electron-browser/mainThreadExtensionService.ts</a>
+				</div>
+				<div class="dropdown hidden">
+					<span>&nbsp;[Test]</span>
+					<div class="dropdown-content">
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+					</div>
+				</div>
+			</div>
+			<div class="diff-row">
+				<span class="diff-stats hint--right hint--rounded hint--bounce" aria-label="added 1 &amp; deleted 1">
+                                <span class="diff-count">2</span>
+				<span class="diff-block added"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block"></span>
+				<span class="diff-block"></span>
+				<span class="diff-block"></span>
+				</span>
+				<div class="file-name-cnt">
+					<span class="file-name">src/vs/workbench/electron-browser/extensionHost.ts</span>
+					<a class="file-name" href="command:git.viewFileCommitDetails?%5B%22aabeedddea91fbef7615d619a83236e71d4585f8%22,%22src/vs/workbench/electron-browser/extensionHost.ts%22,%222017-08-14T14:57:53.000Z%22%5D">src/vs/workbench/electron-browser/extensionHost.ts</a>
+				</div>
+				<div class="dropdown hidden">
+					<span>&nbsp;[Test]</span>
+					<div class="dropdown-content">
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+					</div>
+				</div>
+			</div>
+			<div class="diff-row">
+				<span class="diff-stats hint--right hint--rounded hint--bounce" aria-label="added 1 &amp; deleted 1">
+                                <span class="diff-count">2</span>
+				<span class="diff-block added"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block"></span>
+				<span class="diff-block"></span>
+				<span class="diff-block"></span>
+				</span>
+				<div class="file-name-cnt">
+					<span class="file-name">src/vs/workbench/electron-browser/shell.ts</span>
+					<a class="file-name" href="command:git.viewFileCommitDetails?%5B%22aabeedddea91fbef7615d619a83236e71d4585f8%22,%22src/vs/workbench/electron-browser/shell.ts%22,%222017-08-14T14:57:53.000Z%22%5D">src/vs/workbench/electron-browser/shell.ts</a>
+				</div>
+				<div class="dropdown hidden">
+					<span>&nbsp;[Test]</span>
+					<div class="dropdown-content">
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+					</div>
+				</div>
+			</div>
+			<div class="diff-row">
+				<span class="diff-stats hint--right hint--rounded hint--bounce" aria-label="added 2 &amp; deleted 28">
+                                <span class="diff-count">30</span>
+				<span class="diff-block added"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block deleted"></span>
+				</span>
+				<div class="file-name-cnt">
+					<span class="file-name">src/vs/workbench/{api/electron-browser/mainThreadExtensionService.ts =&gt; services/extensions/electron-browser/extensionService.ts}</span>
+					<a class="file-name" href="command:git.viewFileCommitDetails?%5B%22aabeedddea91fbef7615d619a83236e71d4585f8%22,%22src/vs/workbench/%7Bapi/electron-browser/mainThreadExtensionService.ts%20=&amp;gt;%20services/extensions/electron-browser/extensionService.ts%7D%22,%222017-08-14T14:57:53.000Z%22%5D">src/vs/workbench/{api/electron-browser/mainThreadExtensionService.ts =&gt; services/extensions/electron-browser/extensionService.ts}</a>
+				</div>
+				<div class="dropdown hidden">
+					<span>&nbsp;[Test]</span>
+					<div class="dropdown-content">
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+					</div>
+				</div>
+			</div>
+			<div class="diff-row">
+				<span class="diff-stats hint--right hint--rounded hint--bounce" aria-label="added 1 &amp; deleted 1">
+                                <span class="diff-count">2</span>
+				<span class="diff-block added"></span>
+				<span class="diff-block deleted"></span>
+				<span class="diff-block"></span>
+				<span class="diff-block"></span>
+				<span class="diff-block"></span>
+				</span>
+				<div class="file-name-cnt">
+					<span class="file-name">tslint.json</span>
+					<a class="file-name" href="command:git.viewFileCommitDetails?%5B%22aabeedddea91fbef7615d619a83236e71d4585f8%22,%22tslint.json%22,%222017-08-14T14:57:53.000Z%22%5D">tslint.json</a>
+				</div>
+				<div class="dropdown hidden">
+					<span>&nbsp;[Test]</span>
+					<div class="dropdown-content">
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+						<a href="{encodeURI('command:python.runUnitTest?' + JSON.stringify([testType, testFileSuite.rawName]))}">Run this test</a>
+					</div>
+				</div>
+			</div>
+		</ul>
+	</div>
+
+
+</body>
+
+</html>

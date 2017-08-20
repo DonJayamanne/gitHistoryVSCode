@@ -54,11 +54,11 @@ async function getLog(rootDir: string, args: string[]) {
     });
 }
 
-export async function writeFile(rootDir: string, commitSha1: string, sourceFilePath: string, targetFile: string): Promise<string> {
+export async function writeFile(rootDir: string, commitHash: string, sourceFilePath: string, targetFile: string): Promise<string> {
     const gitPath = await gitPaths.getGitPath();
     return new Promise<string>((resolve, reject) => {
         const options = { cwd: rootDir };
-        const objectId = `${commitSha1}:` + sourceFilePath.replace(/\\/g, '/');
+        const objectId = `${commitHash}:` + sourceFilePath.replace(/\\/g, '/');
         const args = ['show', objectId];
 
         logger.logInfo('git ' + args.join(' '));

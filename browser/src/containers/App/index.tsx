@@ -1,17 +1,23 @@
+import { debug } from 'util';
 import * as React from 'react';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { RootState } from '../../reducers';
+import { LogEntriesState, RootState } from '../../reducers';
 import * as ResultActions from '../../actions/results';
 import Header from '../../components/Header';
-import LogEntryList from '../../components/LogEntryList';
+import LogEntryList from '../../components/LogView/LogEntryList';
 import * as style from './style.css';
-
-import * as io from 'socket.io-client';
+import axios from 'axios';
+import { Branch, BranchType, ISettings, LogEntries, LogEntry } from '../../definitions';
+import LogView from '../../components/LogView/LogView';
+import Footer from '../../components/Footer';
 
 type AppProps = {
-  settings: any;
-  results: any;
+  settings: ISettings;
+  logEntries: LogEntriesState;
+  getCommits: typeof ResultActions.getCommits;
+  getPreviousCommits: typeof ResultActions.getPreviousCommits;
+  getNextCommits: typeof ResultActions.getNextCommits;
 } & typeof ResultActions;
 
 interface AppState {
@@ -19,56 +25,33 @@ interface AppState {
 }
 
 class App extends React.Component<AppProps, AppState> {
-  private socket: SocketIOClient.Socket;
   constructor(props?: AppProps, context?: any) {
     super(props, context);
-    // Use io (object) available in the script
-    this.socket = (window as any).io();
-    this.socket.on('connect', () => {
-      // Do nothing
-    });
-    this.socket.on('settings.appendResults', (value: any) => {
-      console.log('append results');
-      this.props.setAppendResults(value);
-    });
-    this.socket.on('clientExists', (data: any) => {
-      this.socket.emit('clientExists', { id: data.id });
-    });
-    this.socket.on('results', (value: any[]) => {
-      if (!this.props.settings.appendResults) {
-        console.log('clear results');
-        // this.props.clearResults();
-      }
-      this.socket.emit('results.ack');
-      console.log('add results');
-      this.props.addResults(value);
-    });
+    this.state = { currentPageIndex: 0 };
+  }
+  componentWillMount() {
   }
 
-  private toggleAppendResults() {
-    this.socket.emit('settings.appendResults', !this.props.settings.appendResults);
+  private goBack() {
+    this.props.getPreviousCommits();
   }
-  private clearResults() {
-    this.socket.emit('clearResults');
-    this.props.clearResults();
-  }
-
-  onSelect(logEntry: ILogEntry) {
-    console.log(logEntry);
-    console.log('Selectged');
+  private goForward() {
+    // this.props.fetchData(this.props.logEntries.pageIndex + 1, this.props.logEntries.pageSize);
+    this.props.getNextCommits();
   }
   render() {
     const { children, settings } = this.props;
     return (
-      <div>
-        <Header
-          appendResults={settings.appendResults}
-          clearResults={() => this.clearResults()}
-          toggleAppendResults={() => this.toggleAppendResults()}>
-        </Header>
-        <LogEntryList results={this.props.results} onSelect={this.onSelect.bind(this)}></LogEntryList>
+      <div className='appRoot'>
+        <Header {...this.props }></Header >
+        <LogView logEntries={this.props.logEntries}></LogView>
+        <Footer
+          canGoBack={this.props.logEntries.pageIndex > 0}
+          canGoForward={(this.props.logEntries.pageIndex + 1) * 100 < this.props.logEntries.count}
+          goBack={() => this.goBack()}
+          goForward={() => this.goForward()}></Footer>
         {children}
-      </div>
+      </div >
     );
   }
 }
@@ -76,12 +59,17 @@ class App extends React.Component<AppProps, AppState> {
 function mapStateToProps(state: RootState) {
   return {
     settings: state.settings,
-    results: state.results
+    logEntries: state.logEntries
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ ...ResultActions }, dispatch);
+  return {
+    ...bindActionCreators({ ...ResultActions }, dispatch),
+    getCommits: () => dispatch(ResultActions.getCommits()),
+    getNextCommits: () => dispatch(ResultActions.getNextCommits()),
+    getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits())
+  };
 }
 
 export default connect(

@@ -37,25 +37,31 @@ export interface ActionedDetails {
     date: Date;
     localisedDate: string;
 }
+export interface LogEntries {
+    items: LogEntry[];
+    count: number;
+}
 export interface LogEntry {
     author?: ActionedDetails;
     committer?: ActionedDetails;
-    parents: Sha1[];
-    sha1: Sha1;
-    tree: Sha1;
+    parents: Hash[];
+    hash: Hash;
+    tree: Hash;
     refs: Ref[];
     subject: string;
     body: string;
     notes: string;
-    committedFiles: CommittedFile[]
+    committedFiles: CommittedFile[];
+    isLastCommit?: boolean;
+    isThisLastCommitMerged?: boolean;
 }
 
 export interface CherryPickEntry {
     branch: string;
-    sha: string;
+    hash: string;
 }
 
-export interface Sha1 {
+export interface Hash {
     full: string;
     short: string;
 }

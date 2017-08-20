@@ -19,9 +19,9 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
     getGitRepoPath = gitPath;
 
     let leftSelectedNode: LogEntry;
-    vscode.commands.registerCommand('git.commit.compare', async (branch: string, sha: string) => {
+    vscode.commands.registerCommand('git.commit.compare', async (branch: string, hash: string) => {
         const gitRepoPath = await getGitRepoPath();
-        const entries = await getLogEntries(gitRepoPath, branch, '', undefined, undefined, sha);
+        const entries = await getLogEntries(gitRepoPath, branch, '', undefined, undefined, hash);
         if (!entries || entries.length === 0) {
             return;
         }
@@ -64,9 +64,9 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
     vscode.commands.registerCommand('git.commit.FileEntry.CompareAgainstCommit', async (node: CompareFileStatNode) => {
         const gitRepoPath = await getGitRepoPath();
         const workspaceFile = path.join(gitRepoPath, node.fileStat.path);
-        const leftFilePath = await getFile(node.logEntry.sha1.full, gitRepoPath, node.fileStat.path);
-        const rightFilePath = await getFile(node.rightLogEntry.sha1.full, gitRepoPath, node.fileStat.path);
-        await diffFiles(workspaceFile, rightFilePath, node.rightLogEntry.sha1.full, leftFilePath, node.logEntry.sha1.full);
+        const leftFilePath = await getFile(node.logEntry.hash.full, gitRepoPath, node.fileStat.path);
+        const rightFilePath = await getFile(node.rightLogEntry.hash.full, gitRepoPath, node.fileStat.path);
+        await diffFiles(workspaceFile, rightFilePath, node.rightLogEntry.hash.full, leftFilePath, node.logEntry.hash.full);
     });
 
 }
@@ -80,7 +80,7 @@ function createCommitCompareProvider(): CommitCompareProvider {
 }
 async function showComparisonInformation(leftNode: LogEntry, rightNode: LogEntry) {
     const gitRepoPath = await getGitRepoPath();
-    const diff = await getDiff(gitRepoPath, leftNode.sha1.full, rightNode.sha1.full);
+    const diff = await getDiff(gitRepoPath, leftNode.hash.full, rightNode.hash.full);
     if (diff.length === 0) {
         return;
     }

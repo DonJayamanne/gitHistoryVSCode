@@ -1,3 +1,4 @@
+import { ApiController } from './apiController';
 import * as io from 'socket.io';
 import * as http from 'http';
 import { createDeferred, Deferred } from '../common/helpers';
@@ -50,6 +51,7 @@ export class Server extends EventEmitter {
         this.app.use(express.static(path.join(node_modulesDirectory, 'hint.css')));
         this.app.use(express.static(path.join(node_modulesDirectory, 'animate.css')));
         this.app.use(express.static(path.join(node_modulesDirectory, 'normalize.css')));
+        this.app.use(express.static(path.join(node_modulesDirectory, 'bootstrap', 'dist', 'css')));
         this.app.use(cors());
         this.app.get('/', (req, res, next) => {
             this.rootRequestHandler(req, res);
@@ -65,12 +67,14 @@ export class Server extends EventEmitter {
             }
         });
 
+        this.apiController = new ApiController(this.app);
         this.server.on('connection', this.onSocketConnection.bind(this));
         return def.promise;
     }
+    private apiController: ApiController;
     public rootRequestHandler(req: Request, res: Response) {
         let theme: string = req.query.theme;
-        let backgroundColor: string = req.query.backgroundcolor;
+        let backgroundColor: string = req.query.backgroundColor;
         let color: string = req.query.color;
         let editorConfig = vscode.workspace.getConfiguration('editor');
         let fontFamily = editorConfig.get<string>('fontFamily')!.split('\'').join('').split('"').join('');

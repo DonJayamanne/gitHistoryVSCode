@@ -49,7 +49,7 @@ let headers = {
 export type CommitInfo = {
     refs: string[];
     file_line_diffs: any[];
-    sha1: string;
+    hash: string;
     parents: string[];
     message: string;
     author_email: string;
@@ -70,15 +70,15 @@ let parse_git_log = function (data: any): CommitInfo[] {
     let parse_commit_line = function (row: string) {
         if (!row.trim()) return;
         current_commit = {
-            refs: [], file_line_diffs: [], sha1: '', parents: [], message: '',
+            refs: [], file_line_diffs: [], hash: '', parents: [], message: '',
             author_email: '', author_date: null, author_name: '', commit_date: null,
             committer_email: '', committer_name: '',
             reflog_author_email: '', reflog_author_name: '', reflog_name: ''
         };
         let ss = row.split('(');
-        let sha1s = ss[0].split(' ').slice(1).filter(function (sha1: string) { return sha1 && sha1.length; });
-        current_commit.sha1 = sha1s[0];
-        current_commit.parents = sha1s.slice(1);
+        let hashes = ss[0].split(' ').slice(1).filter(function (hash: string) { return hash && hash.length; });
+        current_commit.hash = hashes[0];
+        current_commit.parents = hashes.slice(1);
         if (ss[1]) {
             let refs = ss[1].slice(0, ss[1].length - 1);
             current_commit.refs = refs.split(', ');
@@ -215,11 +215,11 @@ export function parseLogEntry(lines: string[], startWithNumstat: boolean = false
             return;
         }
         if (line.indexOf(prefixes.commit) === 0) {
-            logEntry.sha1 = { full: line.substring(prefixLengths.commit).trim(), short: '' };
+            logEntry.hash = { full: line.substring(prefixLengths.commit).trim(), short: '' };
             return;
         }
         if (line.indexOf(prefixes.commitAbbrev) === 0) {
-            logEntry.sha1.short = line.substring(prefixLengths.commitAbbrev).trim();
+            logEntry.hash.short = line.substring(prefixLengths.commitAbbrev).trim();
             return;
         }
         if (line.indexOf(prefixes.tree) === 0) {
@@ -231,14 +231,14 @@ export function parseLogEntry(lines: string[], startWithNumstat: boolean = false
             return;
         }
         if (line.indexOf(prefixes.parents) === 0) {
-            logEntry.parents = line.substring(prefixLengths.parents).trim().split(' ').map(shaLong => {
-                return { full: shaLong, short: '' };
+            logEntry.parents = line.substring(prefixLengths.parents).trim().split(' ').map(hashLong => {
+                return { full: hashLong, short: '' };
             });
             return;
         }
         if (line.indexOf(prefixes.parentsAbbrev) === 0) {
-            line.substring(prefixLengths.parentsAbbrev).trim().split(' ').forEach((shaShort, index) => {
-                logEntry.parents[index].short = shaShort;
+            line.substring(prefixLengths.parentsAbbrev).trim().split(' ').forEach((hashShort, index) => {
+                logEntry.parents[index].short = hashShort;
             });
             return;
         }

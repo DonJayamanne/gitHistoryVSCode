@@ -1,15 +1,32 @@
+import { Branch, ISettings, LogEntries, LogEntry } from '../definitions';
 import { routerReducer as routing, RouteActions } from 'react-router-redux';
 import { combineReducers, Reducer } from 'redux';
-import results from './results';
+import logEntries from './logEntries';
+import searchCriteria from './searchCriteria';
 import settings from './settings';
+import { default as graph, IGraphState } from './graph';
 
-export interface RootState {
-  results: ILogEntry[];
-  settings: any;
+export interface LogEntriesState extends LogEntries {
+  pageIndex: number;
+  isLoading: boolean;
+  pageSize: number;
 }
-
+export interface RootState {
+  logEntries?: LogEntriesState;
+  settings?: ISettings;
+  searchCriteria: ISearchCriteria;
+  graph: IGraphState;
+}
+export interface ISearchCriteria {
+  selectedBranchType?: Branch;
+  selectedBranchName?: string;
+  pageIndex?: number;
+  searchText?: string;
+}
 export default combineReducers<RootState>({
   routing,
-  results,
-  settings
+  logEntries,
+  settings,
+  searchCriteria,
+  graph
 });

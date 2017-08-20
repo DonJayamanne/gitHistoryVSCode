@@ -8,9 +8,9 @@
     interface LogEntry {
         author: ActionedDetails;
         committer: ActionedDetails;
-        parents: Sha1[];
-        sha1: Sha1;
-        tree: Sha1;
+        parents: Hash[];
+        hash: Hash;
+        tree: Hash;
         refs: string[];
         subject: string;
         body: string;
@@ -21,7 +21,7 @@
         branch: string;
         isHead: boolean;
     }
-    interface Sha1 {
+    interface Hash {
         full: string;
         short: string;
     }
@@ -141,7 +141,7 @@
                 }
             });
             $('.file-name', $fileItem).html(stat.path);
-            let uri = encodeURI('command:git.viewFileCommitDetails?' + JSON.stringify([entry.sha1.full, stat.path, entry.committer.date.toISOString()]));
+            let uri = encodeURI('command:git.viewFileCommitDetails?' + JSON.stringify([entry.hash.full, stat.path, entry.committer.date.toISOString()]));
             $('a.file-name', $fileItem).attr('href', uri);
             $files.append($fileItem);
         });

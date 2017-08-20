@@ -56,7 +56,7 @@ function onItemSelected(item: vscode.QuickPickItem) {
 function viewLog(details: any) {
     let authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
     let committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
-    let log = `sha1 : ${details.sha1}\n` +
+    let log = `Hash : ${details.hash}\n` +
         `Author : ${details.author_name} <${details.author_email}>\n` +
         `Author Date : ${authorDate}\n` +
         `Committer Name : ${details.committer_name} <${details.committer_email}>\n` +

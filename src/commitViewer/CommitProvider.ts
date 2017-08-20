@@ -45,7 +45,7 @@ export class CommitProvider implements vscode.TreeDataProvider<CommitEntryNode> 
     }
     private buildChildNodesForLogEntry(logEntry: LogEntry): CommitEntryNode[] {
         return [
-            new TextNode(`${logEntry.sha1.short} - ${logEntry.subject}`),
+            new TextNode(`${logEntry.hash.short} - ${logEntry.subject}`),
             ...this.buildChildDirectoriesForLogEntry(logEntry)
         ];
     }
