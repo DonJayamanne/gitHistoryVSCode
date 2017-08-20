@@ -16,14 +16,11 @@ type LogViewProps = {
   logEntries: LogEntries;
   setSize: typeof ResultActions.logViewSizeCalculated;
   setHeight: typeof ResultActions.logEntryHeightCalculated;
-  updateGraph: typeof ResultActions.updateGraph;
+  commitsRendered: typeof ResultActions.commitsRendered;
+  selectCommit: typeof ResultActions.selectCommit;
 };
 
 interface LogViewState {
-  // height?: string;
-  // width?: string;
-  // itemHeight?: number;
-  // commitsUpdatedTime?: number;
 }
 
 
@@ -49,14 +46,14 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
       // this.setState({ height, width, itemHeight: logEntryHeight, commitsUpdatedTime: new Date().getTime() });
       this.props.setHeight(logEntryHeight);
       this.props.setSize({ height, width });
-      this.props.updateGraph();
+      this.props.commitsRendered();
       return;
     }
 
     if (!isNaN(logEntryHeight) && this.props.logEntries &&
       this.calculatedItemHeight > 0 &&
       Array.isArray(this.props.logEntries.items) && this.props.logEntries.items.length > 0) {
-      this.props.updateGraph();
+      this.props.commitsRendered();
     }
   }
 
@@ -64,6 +61,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
   onSelect(entry: LogEntry) {
     console.log(entry);
     console.log('Selected');
+    this.props.selectCommit(entry);
   }
   onClick(entry: LogEntry) {
     console.log(entry);
@@ -103,7 +101,8 @@ function mapDispatchToProps(dispatch) {
     // fetchData: (pageIndex: number) => dispatch(ResultActions.fetchLogEntries(pageIndex))
     setSize: (size: Size) => dispatch(ResultActions.logViewSizeCalculated(size)),
     setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
-    updateGraph: () => dispatch(ResultActions.updateGraph())
+    commitsRendered: () => dispatch(ResultActions.commitsRendered()),
+    selectCommit: (logEntry: LogEntry) => dispatch(ResultActions.selectCommit(logEntry))
   };
 }
 

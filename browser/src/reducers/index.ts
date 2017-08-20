@@ -10,6 +10,7 @@ export interface LogEntriesState extends LogEntries {
   pageIndex: number;
   isLoading: boolean;
   pageSize: number;
+  selected?: LogEntry;
 }
 export interface RootState {
   logEntries?: LogEntriesState;

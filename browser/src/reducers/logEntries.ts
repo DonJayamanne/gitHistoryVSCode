@@ -21,6 +21,10 @@ export default handleActions<LogEntriesState, { logEntries: LogEntries, pageInde
     return { ...state, items: [], count: 0, pageIndex: 0, isLoading: true } as LogEntriesState;
   },
 
+  [Actions.SELECT_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
+    return { ...state, selected: action.payload } as LogEntriesState;
+  },
+
   [Actions.IS_LOADING_COMMITS]: (state, action) => {
     return { ...state, isLoading: true } as LogEntriesState;
   }

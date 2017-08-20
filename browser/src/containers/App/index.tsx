@@ -1,3 +1,4 @@
+import Commit from '../../components/LogView/Commit';
 import { debug } from 'util';
 import * as React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
@@ -11,6 +12,7 @@ import axios from 'axios';
 import { Branch, BranchType, ISettings, LogEntries, LogEntry } from '../../definitions';
 import LogView from '../../components/LogView/LogView';
 import Footer from '../../components/Footer';
+import Rnd from 'react-rnd';
 
 type AppProps = {
   settings: ISettings;
@@ -45,6 +47,7 @@ class App extends React.Component<AppProps, AppState> {
       <div className='appRoot'>
         <Header {...this.props }></Header >
         <LogView logEntries={this.props.logEntries}></LogView>
+        <Commit />
         <Footer
           canGoBack={this.props.logEntries.pageIndex > 0}
           canGoForward={(this.props.logEntries.pageIndex + 1) * 100 < this.props.logEntries.count}

@@ -71,7 +71,7 @@ div.appRoot {
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
-	overflow-y: hidden;
+	overflow: hidden;
 }
 
 #log-view,
@@ -280,7 +280,7 @@ header {
 	text-align: right;
 	/* Approximation for scroll bar width of 15px*/
 	margin: 0.5em 1.3em 0.5em;
-	position: relative;
+	xposition: relative;
 }
 
 #history-navbar .navbar {
@@ -365,11 +365,13 @@ header {
 /* Details View */
 
 #details-view {
-	position: absolute;
+	/* position: absolute;
 	bottom: 0;
 	left: 0;
-	right: 0;
-	height: 20rem;
+	right: 0; */
+	/* height: 20rem; */
+	sheight: 100%;
+	max-height: 50vh;
 	overflow: auto;
 	padding: 1rem;
 	border: 1px solid hsla(0, 0%, 100%, 0.12);
@@ -382,9 +384,8 @@ header {
 }
 
 #details-view .action-btn {
-	font-size: 1.2rem;
 	float: right;
-	padding: 1rem;
+	/* padding: 1rem; */
 	/* increases the hit-area */
 	cursor: pointer;
 	opacity: 0.8;
@@ -396,17 +397,33 @@ header {
 	transition: opacity 0.3s ease-out;
 }
 
-#details-view.resized .action-btn.resize-btn {
-	display: none;
+div.commitCntDrag {
+	width: 100vw !important;
+	display: block !important;
+	height: 200px;
 }
 
-#details-view .action-btn.resume-btn {
+div.react-draggable.react-draggable-dragged,
+div.react-draggable {
+	width: 100% !important;
+	display: block;
+	bottom: 0;
+	position: inherit !important;
+}
+
+
+/* #details-view.resized .action-btn.resize-btn {
+	display: none;
+} */
+
+
+/* #details-view .action-btn.resume-btn {
 	display: none;
 }
 
 #details-view.resized .action-btn.resume-btn {
 	display: block;
-}
+} */
 
 #details-view .commit-subject {
 	font-size: 1.4em;

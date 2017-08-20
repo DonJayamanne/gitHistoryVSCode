@@ -94,5 +94,6 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: numb
 
 export const logViewSizeCalculated = createAction<{ height: string, width: string }>(Actions.LOGVIEW_SIZE_CALCULATED);
 export const logEntryHeightCalculated = createAction<number>(Actions.LOGENTRY_ITEM_HEIGHT_CALCULATED);
-export const updateGraph = createAction(Actions.UPDATE_GRAPH);
+export const commitsRendered = createAction(Actions.COMMITS_RENDERED);
+export const selectCommit = createAction<LogEntry>(Actions.SELECT_COMMIT);
 
