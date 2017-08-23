@@ -14,10 +14,9 @@ export interface Remote {
     url: string;
 }
 
-export interface Branch extends Ref {
-    upstream?: string;
-    ahead?: number;
-    behind?: number;
+export interface Branch {
+    name: string;
+    current: boolean;
 }
 
 export interface CommittedFile {
@@ -51,7 +50,7 @@ export interface LogEntry {
     subject: string;
     body: string;
     notes: string;
-    committedFiles: CommittedFile[];
+    committedFiles?: CommittedFile[];
     isLastCommit?: boolean;
     isThisLastCommitMerged?: boolean;
 }

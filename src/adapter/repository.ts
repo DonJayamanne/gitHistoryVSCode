@@ -1,4 +1,5 @@
-import { LogEntries, LogEntry } from './git';
+// import { FileStat } from '../contracts';
+import { LogEntries, LogEntry, Branch } from './git';
 import GitExec from './gitExec';
 import logEntryParser from './parsers/logParser';
 
@@ -26,7 +27,7 @@ export class Repository {
     //  If the output contains just one branch, then this means NO, its in the same source branch
     // NOTE:
     // When returning logEntry,
-    //  Check if anything has a ref of type HEAD, 
+    //  Check if anything has a ref of type HEAD,
     //  If it does, this means that's the head of a particular branch
     //  This means we don't need to draw the graph line all the way up into no where...
     // However, if this branch has been merged, then we need to draw it all the way up (or till its merge has been found)
@@ -54,30 +55,19 @@ export class Repository {
             .filter(lineParts => lineParts.length > 1)
             .map(hashAndRef => { return { ref: hashAndRef[1], hash: hashAndRef[0] }; });
     }
-    private async getCommitCount(allBranches: boolean = true, searchText?: string): Promise<number> {
-        let args = [];
-        const LOG_FORMAT = `--format=${LOG_ENTRY_SEPARATOR}%h`;
-        if (allBranches) {
-            args = ['log', LOG_FORMAT, '--all', '--'];
-        }
-        else {
-            args = ['log', LOG_FORMAT, '--'];
-        }
-        if (searchText && searchText.length > 0) {
-            args.splice(2, 0, `--grep=${searchText}`);
-        }
-
-        const isWin = /^win/.test(process.platform);
-        if (isWin) {
-            args.push('|', 'find', '/c', '/v', '""');
-        }
-        else {
-            args.push('|', 'wc', '-l');
-        }
-
-        // Since we're using find and wc (shell commands, we need to execute the command in a shell)
-        const output = await this.execInShell(args);
-        return parseInt(output.trim());
+    public async getBranches(): Promise<Branch[]> {
+        const output = await this.exec(['branch']);
+        return output.split(/\r?\n/g)
+            .filter(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => {
+                const isCurrent = line.startsWith('*');
+                const name = isCurrent ? line.substring(1).trim() : line;
+                return {
+                    name,
+                    current: isCurrent
+                } as Branch;
+            });
     }
     public async getCurrentBranch(): Promise<string> {
         const args = ['rev-parse', '--abbrev-ref', 'HEAD'];
@@ -101,32 +91,71 @@ export class Repository {
             // Remove the '->' from ref pointers (take first portion)
             .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
     }
-    public async getLogEntries(pageIndex: number = 0, pageSize: number = 100, allBranches: boolean = true, searchText?: string): Promise<LogEntries> {
-        let args = [];
+    private getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '') {
+        const allBranches = branch.trim().length === 0;
+        const currentBranch = branch.trim() === '*';
+        const specificBranch = !allBranches && !currentBranch;
+
+        const logArgs = ['log', LOG_FORMAT];
+        const fileStatArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}%n`];
+        const counterArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}%h`];
+
+        if (searchText && searchText.length > 0) {
+            searchText.split(' ')
+                .map(text => text.trim())
+                .filter(text => text.length > 0)
+                .forEach(text => {
+                    logArgs.push(`--grep=${text}`);
+                    fileStatArgs.push(`--grep=${text}`);
+                    counterArgs.push(`--grep=${text}`);
+                });
+        }
+
+        logArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
+        fileStatArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
+        counterArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
+
         if (allBranches) {
-            args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--all', '--numstat', '--summary', '--'];
+            logArgs.push('--all');
+            fileStatArgs.push('--all');
+            counterArgs.push('--all');
+        }
+        // logArgs.push('--numstat');
+        // fileStatArgs.push('--name-status');
+
+        // Count only the number of lines in the log
+        const isWin = /^win/.test(process.platform);
+        if (isWin) {
+            counterArgs.push('|', 'find', '/c', '/v', '""');
         }
         else {
-            args = ['log', LOG_FORMAT, '--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`, '--numstat', '--summary', '--'];
+            counterArgs.push('|', 'wc', '-l');
         }
-        if (searchText && searchText.length > 0) {
-            args.splice(2, 0, `--grep=${searchText}`);
+
+        if (specificBranch) {
+            logArgs.push(branch);
+            fileStatArgs.push(branch);
+            counterArgs.push(branch);
         }
+
+        return { logArgs, fileStatArgs, counterArgs };
+    }
+    public async getLogEntries(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = ''): Promise<LogEntries> {
+        const args = this.getLogArgs(pageIndex, pageSize, branch, searchText);
 
         const gitRootPath = await this.getGitRoot();
-        const output = await this.exec(args);
+        const output = await this.exec(args.logArgs);
 
         // Run another git history, but get file stats instead of the changes
-        const outputWithFileModeChanges = await this.exec(args.map(arg => arg === '--summary' ? '--name-status' : arg));
-        const entriesWithFileModeChanges = outputWithFileModeChanges.split(LOG_ENTRY_SEPARATOR);
-
+        // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);
+        // const entriesWithFileModeChanges = outputWithFileModeChanges.split(LOG_ENTRY_SEPARATOR);
         const items = output
             .split(LOG_ENTRY_SEPARATOR)
             .map((entry, index) => {
                 if (entry.length === 0) {
                     return;
                 }
-                return logEntryParser(entry, entriesWithFileModeChanges[index], gitRootPath, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS);
+                return logEntryParser(entry, gitRootPath, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS);
             })
             .filter(logEntry => logEntry !== undefined)
             .map(logEntry => logEntry!);
@@ -154,7 +183,9 @@ export class Repository {
             item.isThisLastCommitMerged = hashesOfRefs.length > 0;
         });
 
-        const count = await this.getCommitCount(allBranches, searchText);
+        // Since we're using find and wc (shell commands, we need to execute the command in a shell)
+        const countOutput = await this.execInShell(args.counterArgs);
+        const count = parseInt(countOutput.trim());
         return {
             items,
             count
@@ -176,17 +207,24 @@ export class Repository {
         return new Date(unixTime * 1000);
     }
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
-        let args = ['show', LOG_FORMAT, '--decorate=full', '--numstat', '--summary', '--', hash];
+        const numStartArgs = ['show', LOG_FORMAT, '--decorate=full', '--numstat', hash];
+        const nameStatusArgs = ['show', `--format=${LOG_ENTRY_SEPARATOR}%n`, '--decorate=full', '--name-status', hash];
+
         const gitRootPath = await this.getGitRoot();
-        const output = await this.exec(args);
+        const output = await this.exec(numStartArgs);
 
         // Run another git history, but get file stats instead of the changes
-        const outputWithFileModeChanges = await this.exec(args.map(arg => arg === '--summary' ? '--name-status' : arg));
+        const outputWithFileModeChanges = await this.exec(nameStatusArgs);
         const entriesWithFileModeChanges = outputWithFileModeChanges.split(LOG_ENTRY_SEPARATOR);
 
         const entries = output
             .split(LOG_ENTRY_SEPARATOR)
-            .map((entry, index) => logEntryParser(entry, entriesWithFileModeChanges[index], gitRootPath, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS));
+            .map((entry, index) => {
+                if (entry.trim().length === 0) return undefined;
+                return logEntryParser(entry, gitRootPath, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS, entriesWithFileModeChanges[index]);
+            })
+            .filter(entry => entry !== undefined)
+            .map(entry => entry!);
 
         return entries.length > 0 ? entries[0] : undefined;
     }

@@ -8,6 +8,7 @@ import { Express, Request, Response } from 'express';
 import * as path from 'path';
 import * as cors from 'cors';
 import * as vscode from 'vscode';
+import * as  bodyParser from 'body-parser';
 
 const uniqid = require('uniqid');
 export class Server extends EventEmitter {
@@ -46,6 +47,8 @@ export class Server extends EventEmitter {
 
         let rootDirectory = path.join(__dirname, '..', '..', 'browser');
         let node_modulesDirectory = path.join(__dirname, '..', '..', '..', 'node_modules');
+        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(bodyParser.json());
         this.app.use(express.static(rootDirectory));
         this.app.use(express.static(path.join(node_modulesDirectory, 'octicons', 'build')));
         this.app.use(express.static(path.join(node_modulesDirectory, 'hint.css')));

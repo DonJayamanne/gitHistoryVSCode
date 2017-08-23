@@ -10,6 +10,7 @@ import axios from 'axios';
 import { Branch, BranchType, ISettings, LogEntries, LogEntry } from '../../../definitions';
 import * as jQuery from 'jquery';
 import BranchGraph from '../BranchGraph';
+import Scroll from 'react-scroll';
 
 type Size = { height: string, width: string };
 type LogViewProps = {
@@ -17,7 +18,7 @@ type LogViewProps = {
   setSize: typeof ResultActions.logViewSizeCalculated;
   setHeight: typeof ResultActions.logEntryHeightCalculated;
   commitsRendered: typeof ResultActions.commitsRendered;
-  selectCommit: typeof ResultActions.selectCommit;
+  onViewCommit: typeof ResultActions.viewCommit;
 };
 
 interface LogViewState {
@@ -58,10 +59,10 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
   }
 
   private ref: HTMLDivElement;
-  onSelect(entry: LogEntry) {
-    console.log(entry);
+  onViewCommit(logEntry: LogEntry) {
+    console.log(logEntry);
     console.log('Selected');
-    this.props.selectCommit(entry);
+    this.props.onViewCommit(logEntry.hash.full);
   }
   onClick(entry: LogEntry) {
     console.log(entry);
@@ -74,7 +75,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
 
   render() {
     return (
-      <div className='log-view' ref={(ref) => this.ref = ref}>
+      <div className='log-view' id='scrollCnt' ref={(ref) => this.ref = ref}>
         <BranchGraph ></BranchGraph>
         {/* <BranchGraph logEntries={this.props.logEntries.items}
           height={this.state.height}
@@ -84,7 +85,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
         <LogEntryList logEntries={this.props.logEntries.items}
           onCherryPick={this.onCherryPickCommit.bind(this)}
           onClick={this.onClick.bind(this)}
-          onSelect={this.onSelect.bind(this)}></LogEntryList>
+          onViewCommit={this.onViewCommit.bind(this)}></LogEntryList>
       </div>
     );
   }
@@ -102,7 +103,7 @@ function mapDispatchToProps(dispatch) {
     setSize: (size: Size) => dispatch(ResultActions.logViewSizeCalculated(size)),
     setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
     commitsRendered: () => dispatch(ResultActions.commitsRendered()),
-    selectCommit: (logEntry: LogEntry) => dispatch(ResultActions.selectCommit(logEntry))
+    onViewCommit: (hash: string) => dispatch(ResultActions.viewCommit(hash))
   };
 }
 

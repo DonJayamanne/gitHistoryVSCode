@@ -9,6 +9,7 @@ import { default as graph, IGraphState } from './graph';
 export interface LogEntriesState extends LogEntries {
   pageIndex: number;
   isLoading: boolean;
+  isLoadingCommit: boolean;
   pageSize: number;
   selected?: LogEntry;
 }

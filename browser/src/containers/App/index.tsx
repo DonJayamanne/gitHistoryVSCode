@@ -47,6 +47,7 @@ class App extends React.Component<AppProps, AppState> {
       <div className='appRoot'>
         <Header {...this.props }></Header >
         <LogView logEntries={this.props.logEntries}></LogView>
+        <div id='placeHolderCommit' />
         <Commit />
         <Footer
           canGoBack={this.props.logEntries.pageIndex > 0}

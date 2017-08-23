@@ -1,50 +1,91 @@
 import { RootState } from '../../../reducers';
-import { LogEntry } from '../../../definitions';
+import { LogEntry, CommittedFile } from '../../../definitions';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import Author from './Author';
-import CommitFile from './CommitFile';
+import { FileEntry } from './FileEntry';
 const GoX = require('react-icons/lib/go/x');
 import Rnd from 'react-rnd';
+import { Direction } from 'react-rnd';
 import * as ResultActions from '../../../actions/results';
+import * as jQuery from 'jquery';
 
 interface CommitProps {
   selectedEntry?: LogEntry;
-  selectCommit: typeof ResultActions.selectCommit;
-
+  closeCommitView: typeof ResultActions.closeCommitView;
+  selectCommittedFile: typeof ResultActions.selectCommittedFile;
 }
 
-function Commit(props: CommitProps) {
-  if (!props.selectedEntry) {
-    return null;
+// const ContainerStyle = { width: '50%' };
+const ContainerStyle = {
+  width: '100vw',
+  height: '100vh'
+};
+
+class Commit extends React.Component<CommitProps> {
+  componentDidUpdate() {
+    if (this.props && this.props.selectedEntry) {
+      this.resize();
+    }
+    else {
+      jQuery('#placeHolderCommit').hide();
+    }
+  }
+  componentWillUnmount() {
+    jQuery('#placeHolderCommit').hide();
+  }
+  private resize() {
+    const $ref = jQuery('.react-draggable');
+    const height = $ref.height();
+    const newHeight = (height + 40) + 'px';
+    console.log(height);
+
+    jQuery('.testThis').height(newHeight);
+    jQuery('#placeHolderCommit').css('padding-top', height / 2).css('padding-bottom', (height / 2) + 10).show();
+  }
+  private ref: HTMLElement;
+  onSelectFile = (fileEntry: CommittedFile) => {
+    this.props.selectCommittedFile(this.props.selectedEntry, fileEntry);
+  }
+  onClose = () => {
+    this.props.closeCommitView();
+  }
+  private renderFileEntries() {
+    return this.props.selectedEntry.committedFiles
+      .map((fileEntry, index) => <FileEntry committedFile={fileEntry} key={index + fileEntry.relativePath} onSelect={this.onSelectFile} />);
   }
 
-  return (
-    <Rnd default={{ width: '100%' }}>
-      <div id='details-view'>
-        <a className='action-btn close-btn' onClick={() => props.selectCommit(null)}><GoX></GoX></a>
-        <h1 className='commit-subject'>{props.selectedEntry.subject}</h1>
-        <Author result={props.selectedEntry.author}></Author>
-        <div className='commit-body'>{props.selectedEntry.body}</div>
-        <div className='commit-notes'>{props.selectedEntry.notes}</div>
-        <ul className='committed-files'>
-          <div className='diff-row'>
-            <span className='diff-stats hint--right hint--rounded hint--bounce' aria-label='2 additions & 1 deletion'>
-              <span className='diff-count'>3</span>
-              <span className='diff-block'></span>
-              <span className='diff-block'></span>
-              <span className='diff-block'></span>
-              <span className='diff-block'></span>
-              <span className='diff-block'></span>
-            </span>
-            <div className='file-name-cnt'>
-              <span className='file-name'>resources/iframeContent.ts</span>
-              <a className='file-name'>resources/iframeContent.ts</a>
-            </div>
+  onResize = (_, direction: Direction, ref: HTMLElement, delta: number) => {
+    const $ref = jQuery(ref);
+    const height = $ref.height();
+    const newHeight = (height + 20) + 'px';
+    console.log(height);
+
+    jQuery('.testThis').height(newHeight);
+    jQuery('#placeHolderCommit').css('padding-top', height / 2).css('padding-bottom', (height / 2) + 10);
+  }
+  render() {
+    if (!this.props.selectedEntry) {
+      return null;
+    }
+
+    return (
+      <div className='testThis' style={{ position: 'absolute', bottom: 35, 'margin-top': '5px', width: '100vw' }}>
+        <Rnd ref={ref => this.ref = ref} default={ContainerStyle} minWidth={50} minHeight={50} bounds='parent' 
+          onResize={this.onResize} onResizeStart={this.onResize}>
+          <div id='details-view'>
+            <a className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
+            <h1 className='commit-subject'>{this.props.selectedEntry.subject}</h1>
+            <Author result={this.props.selectedEntry.author}></Author>
+            <div className='commit-body'>{this.props.selectedEntry.body}</div>
+            <div className='commit-notes'>{this.props.selectedEntry.notes}</div>
+            <ul className='committed-files'>
+              {this.renderFileEntries()}
+            </ul>
           </div>
-        </ul>
-      </div>
-    </Rnd>);
+        </Rnd>
+      </div>);
+  }
 }
 
 function mapStateToProps(state: RootState) {
@@ -60,7 +101,8 @@ function mapStateToProps(state: RootState) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    selectCommit: (logEntry: LogEntry) => dispatch(ResultActions.selectCommit(logEntry))
+    closeCommitView: () => dispatch(ResultActions.closeCommitView()),
+    selectCommittedFile: (logEntry: LogEntry, committedFile: CommittedFile) => dispatch(ResultActions.selectCommittedFile(logEntry, committedFile))
   };
 }
 

@@ -65,7 +65,7 @@ export interface LogEntry {
   subject: string;
   body: string;
   notes: string;
-  committedFiles: CommittedFile[];
+  committedFiles?: CommittedFile[];
   isLastCommit?: boolean;
   isThisLastCommitMerged?: boolean;
 }

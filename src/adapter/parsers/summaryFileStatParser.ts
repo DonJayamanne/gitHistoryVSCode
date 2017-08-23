@@ -9,10 +9,8 @@ statusMapping.set('D', Status.Deleted);
 statusMapping.set('C', Status.Copied);
 statusMapping.set('R', Status.Renamed);
 
-export default function parseCommitedFiles(gitRootPath: string, summaryStats: string, numStat: string) {
-    const fileListWithStats = summaryStats.split(/\r?\n/g).filter(line => line.trim().length > 0);
-    const fileListWithStatus = numStat.split(/\r?\n/g).filter(line => line.trim().length > 0);
-    return fileListWithStatus.map((line, index) => {
+export default function parseCommitedFiles(gitRootPath: string, filesWithNumStat: string[], filesWithStats: string[]) {
+    return filesWithStats.map((line, index) => {
         let info = line.split(/\t/g);
         if (info.length < 2) {
             return;
@@ -43,7 +41,7 @@ export default function parseCommitedFiles(gitRootPath: string, summaryStats: st
 
         let additions: number | undefined;
         let deletions: number | undefined;
-        const parts = fileListWithStats[index].split('\t').filter(part => part.trim().length > 0);
+        const parts = filesWithNumStat[index].split('\t').filter(part => part.trim().length > 0);
         if (parts.length === 3) {
             additions = parts[0] === '-' ? undefined : parseInt(parts[0]);
             deletions = parts[1] === '-' ? undefined : parseInt(parts[1]);
@@ -58,6 +56,6 @@ export default function parseCommitedFiles(gitRootPath: string, summaryStats: st
             uri: Uri.file(path.join(gitRootPath, relativePath))
         } as CommittedFile;
     })
-        .filter(commitFile => commitFile !== undefined && commitFile !== null)
+        .filter(commitFile => commitFile !== undefined)
         .map(commitFile => commitFile!);
 }

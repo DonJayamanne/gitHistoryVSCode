@@ -1,6 +1,6 @@
 import { RootState } from '../reducers';
 import { LogEntries } from '../../../src/adapter/git';
-import { LogEntry } from '../definitions';
+import { CommittedFile, LogEntry } from '../definitions';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
 import { Dispatch, Store } from 'redux';
@@ -8,11 +8,13 @@ import axios from 'axios';
 
 export const clearResults = createAction(Actions.CLEAR_RESULTS);
 export const addResult = createAction<any>(Actions.ADD_RESULT);
-export const addResults = createAction<Partial<{ logEntries: LogEntries, pageIndex: number, pageSize?: number }>>(Actions.ADD_RESULTS);
+export const addResults = createAction<Partial<{ logEntries: LogEntries, pageIndex: number, pageSize?: number }>>(Actions.FETCHED_COMMITS);
+export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
 export const setAppendResults = createAction<boolean>(Actions.SET_APPEND_RESULTS);
 export const goToPreviousPage = createAction<void>(Actions.GO_TO_PREVIOUS_PAGE);
 export const goToNextPage = createAction<void>(Actions.GO_TO_NEXT_PAGE);
 export const notifyIsLoading = createAction(Actions.IS_LOADING_COMMITS);
+export const notifyIsFetchingCommit = createAction(Actions.IS_FETCHING_COMMIT);
 
 // function buildQueryString(settings: ISettings): string {
 //     if (!settings) {
@@ -48,6 +50,24 @@ export const getPreviousCommits = () => {
         return fetchCommits(dispatch, state, pageIndex);
     };
 };
+export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => () => {
+    return notifyCommittedFileSelected(logEntry, committedFile);
+};
+
+function notifyCommittedFileSelected(logEntry: LogEntry, committedFile: CommittedFile) {
+    return axios.post(`/log/${logEntry.hash.full}/committedFile`, committedFile)
+        .catch(err => {
+            debugger;
+            console.error('Result failed');
+            console.error(err);
+        });
+}
+
+export const viewCommit = (hash: string) => {
+    return (dispatch: Dispatch<any>) => {
+        return fetchCommit(dispatch, hash);
+    };
+};
 export const getNextCommits = () => {
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
@@ -68,6 +88,18 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: numb
     return axios.get(`/log?pageSize=${pageSize}&pageIndex=${pageIndex}`)
         .then(result => {
             dispatch(addResults({ logEntries: result.data, pageIndex: pageIndex, pageSize }));
+        })
+        .catch(err => {
+            debugger;
+            console.error('Result failed');
+            console.error(err);
+        });
+}
+function fetchCommit(dispatch: Dispatch<any>, hash: string) {
+    dispatch(notifyIsFetchingCommit());
+    return axios.get(`/log/${hash}`)
+        .then(result => {
+            dispatch(updateCommit(result.data));
         })
         .catch(err => {
             debugger;
@@ -96,4 +128,6 @@ export const logViewSizeCalculated = createAction<{ height: string, width: strin
 export const logEntryHeightCalculated = createAction<number>(Actions.LOGENTRY_ITEM_HEIGHT_CALCULATED);
 export const commitsRendered = createAction(Actions.COMMITS_RENDERED);
 export const selectCommit = createAction<LogEntry>(Actions.SELECT_COMMIT);
+export const closeCommitView = createAction(Actions.CLOSE_COMMIT_VIEW);
+export const closeCommittedFile = createAction(Actions.CLOSE_COMMIT_VIEW);
 

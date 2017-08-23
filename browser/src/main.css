@@ -11,6 +11,7 @@ body {
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, Segoe WPC, Segoe UI, HelveticaNeue-Light, Ubuntu, Droid Sans, sans-serif;
 	padding: 0;
+	overflow: hidden;
 }
 
 html {
@@ -370,10 +371,9 @@ header {
 	left: 0;
 	right: 0; */
 	/* height: 20rem; */
-	sheight: 100%;
 	max-height: 50vh;
 	overflow: auto;
-	padding: 1rem;
+	padding: 1rem 1rem 0 1rem;
 	border: 1px solid hsla(0, 0%, 100%, 0.12);
 	border-top: 1px solid hsla(0, 0%, 100%, 0.50);
 	border-bottom: none;
@@ -406,9 +406,10 @@ div.commitCntDrag {
 div.react-draggable.react-draggable-dragged,
 div.react-draggable {
 	width: 100% !important;
-	display: block;
+	xdisplay: block;
 	bottom: 0;
-	position: inherit !important;
+	position: absolute;
+	xposition: inherit !important;
 }
 
 
@@ -434,7 +435,7 @@ div.react-draggable {
 
 #details-view .commit-body,
 #details-view .commit-notes {
-	margin: 2em 0;
+	margin: 1em 0;
 }
 
 #details-view .commit-body:empty,
@@ -444,7 +445,8 @@ div.react-draggable {
 
 #details-view .committed-files {
 	list-style: none;
-	margin: 1em 0 0;
+	margin: 0 0;
+	padding: 0;
 }
 
 .committed-files .diff-row {

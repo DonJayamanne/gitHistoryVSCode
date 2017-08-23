@@ -10,7 +10,7 @@ const GoGitPullRequest = require('react-icons/lib/go/git-pull-request');
 
 interface ResultListProps {
   logEntry: LogEntry;
-  onSelect: (entry: LogEntry) => void;
+  onViewCommit: (entry: LogEntry) => void;
   onClick: (entry: LogEntry) => void;
   onCherryPick: (entry: LogEntry) => void;
 }
@@ -54,14 +54,14 @@ function ResultList(props: ResultListProps) {
               </a>
             </span>
           </div>
-          <div className='commit-hash' onClick={() => props.onSelect(props.logEntry)}>
+          <div className='commit-hash' onClick={() => props.onViewCommit(props.logEntry)}>
             <span className='sha-code short' data-entry-index='1' aria-label={props.logEntry.hash.short}>{props.logEntry.hash.short}</span>
           </div>
         </div>
       </div>
       {renderRemoteRefs(props.logEntry.refs)}
       {renderHeadRef(props.logEntry.refs)}
-      <div className='media-content' onClick={() => props.onSelect(props.logEntry)}>
+      <div className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>
         <a className='commit-subject-link'>{props.logEntry.subject}</a>
         <div className='commit-subject' data-entry-index='1'>{props.logEntry.subject}</div>
         <Author result={props.logEntry.author}></Author>
