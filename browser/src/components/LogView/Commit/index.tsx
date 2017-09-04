@@ -58,33 +58,34 @@ class Commit extends React.Component<CommitProps> {
   onResize = (_, direction: Direction, ref: HTMLElement, delta: number) => {
     const $ref = jQuery(ref);
     const height = $ref.height();
-    const newHeight = (height + 20) + 'px';
+    const newHeight = (height + 5) + 'px';
     console.log(height);
 
-    jQuery('.testThis').height(newHeight);
-    jQuery('#placeHolderCommit').css('padding-top', height / 2).css('padding-bottom', (height / 2) + 10);
+    const padding = height / 2;
+    jQuery('#placeHolderCommit').show().css('padding-top', padding).css('padding-bottom', padding);
   }
   render() {
     if (!this.props.selectedEntry) {
+      jQuery('#placeHolderCommit').hide();
       return null;
     }
 
+    const resizing = { top: true, right: false, bottom: false, left: false, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false };
+
     return (
-      <div className='testThis' style={{ position: 'absolute', bottom: 35, 'margin-top': '5px', width: '100vw' }}>
-        <Rnd ref={ref => this.ref = ref} default={ContainerStyle} minWidth={50} minHeight={50} bounds='parent' 
-          onResize={this.onResize} onResizeStart={this.onResize}>
-          <div id='details-view'>
-            <a className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
-            <h1 className='commit-subject'>{this.props.selectedEntry.subject}</h1>
-            <Author result={this.props.selectedEntry.author}></Author>
-            <div className='commit-body'>{this.props.selectedEntry.body}</div>
-            <div className='commit-notes'>{this.props.selectedEntry.notes}</div>
-            <ul className='committed-files'>
-              {this.renderFileEntries()}
-            </ul>
-          </div>
-        </Rnd>
-      </div>);
+      <Rnd className='details-view-cnt' ref={ref => this.ref = ref} default={ContainerStyle} minWidth={50} minHeight={50} bounds='parent'
+        onResize={this.onResize} onResizeStart={this.onResize} enableResizing={resizing} disableDragging='true'>
+        <div id='details-view'>
+          <a className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
+          <h1 className='commit-subject'>{this.props.selectedEntry.subject}</h1>
+          <Author result={this.props.selectedEntry.author}></Author>
+          <div className='commit-body'>{this.props.selectedEntry.body}</div>
+          <div className='commit-notes'>{this.props.selectedEntry.notes}</div>
+          <ul className='committed-files'>
+            {this.renderFileEntries()}
+          </ul>
+        </div>
+      </Rnd >);
   }
 }
 

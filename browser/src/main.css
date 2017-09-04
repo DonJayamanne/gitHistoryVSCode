@@ -426,6 +426,12 @@ div.react-draggable {
 	display: block;
 } */
 
+div.details-view-cnt {
+	bottom: 30px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
 #details-view .commit-subject {
 	font-size: 1.4em;
 	font-weight: lighter;
