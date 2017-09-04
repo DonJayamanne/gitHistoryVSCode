@@ -13,7 +13,7 @@ export default function parseLogEntry(summaryEntry: string, gitRootPath: string,
 
     let committedFiles: CommittedFile[] = [];
     if (nameStatEntry && nameStatEntry.length > 0) {
-        const statsSeparatorIndex = logItems.indexOf(statsSeparator);
+        const statsSeparatorIndex = logItems.indexOf(statsSeparator) + 1;
         const filesWithNumStat = logItems.slice(statsSeparatorIndex).join(EOL).split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
         const filesWithModeChanges = nameStatEntry.split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
         committedFiles = parseFileStat(gitRootPath, filesWithNumStat, filesWithModeChanges);

@@ -2,6 +2,7 @@ import { Branch, ISettings, LogEntries, LogEntry } from '../definitions';
 import { routerReducer as routing, RouteActions } from 'react-router-redux';
 import { combineReducers, Reducer } from 'redux';
 import logEntries from './logEntries';
+import vscode, { IVSCodeSettings } from './vscode';
 import searchCriteria from './searchCriteria';
 import settings from './settings';
 import { default as graph, IGraphState } from './graph';
@@ -14,6 +15,7 @@ export interface LogEntriesState extends LogEntries {
   selected?: LogEntry;
 }
 export interface RootState {
+  vscode: IVSCodeSettings;
   logEntries?: LogEntriesState;
   settings?: ISettings;
   searchCriteria: ISearchCriteria;
@@ -30,5 +32,6 @@ export default combineReducers<RootState>({
   logEntries,
   settings,
   searchCriteria,
-  graph
+  graph,
+  vscode
 });

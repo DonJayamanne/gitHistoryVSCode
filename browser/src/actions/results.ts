@@ -50,6 +50,9 @@ export const getPreviousCommits = () => {
         return fetchCommits(dispatch, state, pageIndex);
     };
 };
+export const actionACommit = (logEntry: LogEntry) => () => {
+    return axios.post(`/log/${logEntry.hash.full}`, logEntry.hash.full);
+};
 export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => () => {
     return notifyCommittedFileSelected(logEntry, committedFile);
 };
@@ -61,6 +64,9 @@ function notifyCommittedFileSelected(logEntry: LogEntry, committedFile: Committe
             console.error('Result failed');
             console.error(err);
         });
+}
+export const cherryPickCommit = (logEntry: LogEntry) => () => {
+    return axios.post(`/log/${logEntry.hash.full}/cherryPick`, logEntry.hash.full);
 }
 
 export const viewCommit = (hash: string) => {

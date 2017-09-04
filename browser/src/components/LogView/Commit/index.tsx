@@ -12,6 +12,7 @@ import * as jQuery from 'jquery';
 
 interface CommitProps {
   selectedEntry?: LogEntry;
+  theme: string;
   closeCommitView: typeof ResultActions.closeCommitView;
   selectCommittedFile: typeof ResultActions.selectCommittedFile;
 }
@@ -50,14 +51,12 @@ class Commit extends React.Component<CommitProps> {
   }
   private renderFileEntries() {
     return this.props.selectedEntry.committedFiles
-      .map((fileEntry, index) => <FileEntry committedFile={fileEntry} key={index + fileEntry.relativePath} onSelect={this.onSelectFile} />);
+      .map((fileEntry, index) => <FileEntry theme={this.props.theme} committedFile={fileEntry} key={index + fileEntry.relativePath} onSelect={this.onSelectFile} />);
   }
 
   onResize = (_, direction: Direction, ref: HTMLElement, delta: number) => {
     const $ref = jQuery(ref);
     const height = $ref.height();
-    const newHeight = (height + 5) + 'px';
-
     const padding = height / 2;
     jQuery('#placeHolderCommit').show().css('padding-top', padding).css('padding-bottom', padding);
   }
@@ -71,7 +70,7 @@ class Commit extends React.Component<CommitProps> {
 
     return (
       <Rnd className='details-view-cnt' ref={ref => this.ref = ref} default={ContainerStyle} minWidth={50} minHeight={50} bounds='parent'
-        onResize={this.onResize} onResizeStart={this.onResize} enableResizing={resizing} disableDragging='true'>
+        onResize={this.onResize} onResizeStart={this.onResize} enableResizing={resizing} disableDragging={true}>
         <div id='details-view'>
           <a className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
           <h1 className='commit-subject'>{this.props.selectedEntry.subject}</h1>
@@ -89,11 +88,13 @@ class Commit extends React.Component<CommitProps> {
 function mapStateToProps(state: RootState) {
   if (state.logEntries) {
     return {
-      selectedEntry: state.logEntries.selected
+      selectedEntry: state.logEntries.selected,
+      theme: state.vscode.theme
     } as CommitProps;
   }
   return {
-    selectedEntry: undefined
+    selectedEntry: undefined,
+    theme: state.vscode.theme
   } as CommitProps;
 }
 

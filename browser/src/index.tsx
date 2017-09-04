@@ -22,7 +22,7 @@ try {
 }
 catch (ex) { }
 
-const store = configureStore({ settings: defaultSettings, searchCriteria: {}, graph: {} });
+const store = configureStore({ settings: defaultSettings, searchCriteria: {}, graph: {}, vscode: { theme: query.theme as any } });
 const history = syncHistoryWithStore(browserHistory, store);
 
 ReactDOM.render(

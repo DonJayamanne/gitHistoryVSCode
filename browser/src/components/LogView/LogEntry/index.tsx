@@ -55,7 +55,7 @@ function ResultList(props: ResultListProps) {
             </span>
           </div>
           <div className='commit-hash' onClick={() => props.onViewCommit(props.logEntry)}>
-            <span className='sha-code short' data-entry-index='1' aria-label={props.logEntry.hash.short}>{props.logEntry.hash.short}</span>
+            <span className='sha-code short' aria-label={props.logEntry.hash.short}>{props.logEntry.hash.short}</span>
           </div>
         </div>
       </div>
@@ -63,7 +63,7 @@ function ResultList(props: ResultListProps) {
       {renderHeadRef(props.logEntry.refs)}
       <div className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>
         <a className='commit-subject-link'>{props.logEntry.subject}</a>
-        <div className='commit-subject' data-entry-index='1'>{props.logEntry.subject}</div>
+        <div className='commit-subject' title={props.logEntry.subject}>{props.logEntry.subject}</div>
         <Author result={props.logEntry.author}></Author>
       </div>
     </div>

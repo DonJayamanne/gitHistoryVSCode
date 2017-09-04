@@ -2,6 +2,8 @@
 import { LogEntries, LogEntry, Branch } from './git';
 import GitExec from './gitExec';
 import logEntryParser from './parsers/logParser';
+import { Uri } from 'vscode';
+import * as path from 'path';
 
 const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
 const ITEM_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA6';
@@ -91,7 +93,12 @@ export class Repository {
             // Remove the '->' from ref pointers (take first portion)
             .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
     }
-    private getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '') {
+    private async getGitRelativePath(file: Uri) {
+        let gitRoot: string = await this.getGitRoot();
+        return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
+    }
+
+    private async getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', file?: Uri) {
         const allBranches = branch.trim().length === 0;
         const currentBranch = branch.trim() === '*';
         const specificBranch = !allBranches && !currentBranch;
@@ -113,12 +120,20 @@ export class Repository {
 
         logArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
         fileStatArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
-        counterArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
+        counterArgs.push('--date-order', '--decorate=full');
 
         if (allBranches) {
             logArgs.push('--all');
             fileStatArgs.push('--all');
             counterArgs.push('--all');
+        }
+
+        // Check if we need a specific file
+        if (file) {
+            const relativePath = await this.getGitRelativePath(file);
+            logArgs.push(relativePath);
+            fileStatArgs.push(relativePath);
+            counterArgs.push(relativePath);
         }
         // logArgs.push('--numstat');
         // fileStatArgs.push('--name-status');
@@ -140,11 +155,21 @@ export class Repository {
 
         return { logArgs, fileStatArgs, counterArgs };
     }
-    public async getLogEntries(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = ''): Promise<LogEntries> {
-        const args = this.getLogArgs(pageIndex, pageSize, branch, searchText);
+    public async getLogEntries(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
+        const args = await this.getLogArgs(pageIndex, pageSize, branch, searchText, file);
 
-        const gitRootPath = await this.getGitRoot();
-        const output = await this.exec(args.logArgs);
+        const gitRootPathPromise = this.getGitRoot();
+        const outputPromise = this.exec(args.logArgs);
+
+        // Since we're using find and wc (shell commands, we need to execute the command in a shell)
+        const countOutputPromise = this.execInShell(args.counterArgs);
+
+        const values = await Promise.all([gitRootPathPromise, outputPromise, countOutputPromise]);
+
+        const gitRootPath = values[0];
+        const output = values[1];
+        const countOutput = values[2];
+        const count = parseInt(countOutput.trim());
 
         // Run another git history, but get file stats instead of the changes
         // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);
@@ -183,9 +208,6 @@ export class Repository {
             item.isThisLastCommitMerged = hashesOfRefs.length > 0;
         });
 
-        // Since we're using find and wc (shell commands, we need to execute the command in a shell)
-        const countOutput = await this.execInShell(args.counterArgs);
-        const count = parseInt(countOutput.trim());
         return {
             items,
             count

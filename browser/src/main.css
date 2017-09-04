@@ -54,6 +54,9 @@ body {
 .media .media-image {
 	margin: 0 1em 0 0;
 }
+.xxsss{
+	background-image: url('../resources/icons/dark/status-added.svg')
+}
 
 .media .media-content {
 	flex: 1;

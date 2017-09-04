@@ -19,6 +19,8 @@ type LogViewProps = {
   setHeight: typeof ResultActions.logEntryHeightCalculated;
   commitsRendered: typeof ResultActions.commitsRendered;
   onViewCommit: typeof ResultActions.viewCommit;
+  onCherryPick: typeof ResultActions.cherryPickCommit;
+  actionACommit: typeof ResultActions.actionACommit;
 };
 
 interface LogViewState {
@@ -64,21 +66,18 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
   onClick(entry: LogEntry) {
     console.log(entry);
     console.log('Click');
+    this.props.actionACommit(entry);
   }
   onCherryPickCommit(entry: LogEntry) {
     console.log(entry);
-    console.log('Cherry Pick');
+    console.log('Cherry Pick in browser');
+    this.props.onCherryPick(entry);
   }
 
   render() {
     return (
       <div className='log-view' id='scrollCnt' ref={(ref) => this.ref = ref}>
         <BranchGraph ></BranchGraph>
-        {/* <BranchGraph logEntries={this.props.logEntries.items}
-          height={this.state.height}
-          width={this.state.width}
-          itemHeight={this.state.itemHeight}
-          commitsUpdatedTime={this.state.commitsUpdatedTime} ></BranchGraph> */}
         <LogEntryList logEntries={this.props.logEntries.items}
           onCherryPick={this.onCherryPickCommit.bind(this)}
           onClick={this.onClick.bind(this)}
@@ -92,6 +91,14 @@ function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) 
     logEntries: wrapper.logEntries
   };
 }
+// function mapStateToProps(state: RootState) {
+//   return {
+//     logEntries: {
+//       items: state.logEntries.items,
+//       count: state.logEntries.count
+//     }
+//   };
+// }
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -100,7 +107,9 @@ function mapDispatchToProps(dispatch) {
     setSize: (size: Size) => dispatch(ResultActions.logViewSizeCalculated(size)),
     setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
     commitsRendered: () => dispatch(ResultActions.commitsRendered()),
-    onViewCommit: (hash: string) => dispatch(ResultActions.viewCommit(hash))
+    onViewCommit: (hash: string) => dispatch(ResultActions.viewCommit(hash)),
+    onCherryPick: (logEntry: LogEntry) => dispatch(ResultActions.cherryPickCommit(logEntry)),
+    actionACommit: (logEntry: LogEntry) => dispatch(ResultActions.actionACommit(logEntry))
   };
 }
 

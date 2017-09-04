@@ -10,7 +10,9 @@ export class ApiController {
         this.app.get('/log', this.getLogEntries.bind(this));
         this.app.get('/branches', this.getBranches.bind(this));
         this.app.get('/log/:hash', this.getCommit.bind(this));
+        this.app.post('/log/:hash', this.selectCommit.bind(this));
         this.app.post('/log/:hash/committedFile', this.onCommittedFileSelected.bind(this));
+        this.app.post('/log/:hash/cherryPick', this.cherryPickCommit.bind(this));
     }
 
     private getLogEntries(request: Request, response: Response) {
@@ -32,6 +34,20 @@ export class ApiController {
         this.repository.getCommit(request.params.hash)
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
+    }
+    private cherryPickCommit(request: Request, response: Response) {
+        console.log(request.params.hash);
+        response.send('');
+        // this.repository.getCommit(request.params.hash)
+        //     .then(data => response.send(data))
+        //     .catch(err => response.status(500).send(err));
+    }
+    private selectCommit(request: Request, response: Response) {
+        console.log(request.params.hash);
+        response.send('');
+        // this.repository.getCommit(request.params.hash)
+        //     .then(data => response.send(data))
+        //     .catch(err => response.status(500).send(err));
     }
     private onCommittedFileSelected(request: Request, response: Response) {
         const committedFile = request.body as CommittedFile;

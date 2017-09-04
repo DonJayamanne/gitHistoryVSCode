@@ -50,6 +50,8 @@ export class Server extends EventEmitter {
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(bodyParser.json());
         this.app.use(express.static(rootDirectory));
+        this.app.use(express.static(path.join(__dirname, '..', '..', '..', 'resources'), { extensions: ['.svg', 'svg', 'json', '.json'] }));
+        // this.app.use(express.static(path.join(__dirname, '..', '..'), { extensions: ['.svg', 'svg', 'json', '.json'] }));
         this.app.use(express.static(path.join(node_modulesDirectory, 'octicons', 'build')));
         this.app.use(express.static(path.join(node_modulesDirectory, 'hint.css')));
         this.app.use(express.static(path.join(node_modulesDirectory, 'animate.css')));
