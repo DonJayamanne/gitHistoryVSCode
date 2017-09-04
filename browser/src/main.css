@@ -406,10 +406,8 @@ div.commitCntDrag {
 div.react-draggable.react-draggable-dragged,
 div.react-draggable {
 	width: 100% !important;
-	xdisplay: block;
 	bottom: 0;
 	position: absolute;
-	xposition: inherit !important;
 }
 
 

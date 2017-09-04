@@ -38,9 +38,7 @@ class Commit extends React.Component<CommitProps> {
     const $ref = jQuery('.react-draggable');
     const height = $ref.height();
     const newHeight = (height + 40) + 'px';
-    console.log(height);
 
-    jQuery('.testThis').height(newHeight);
     jQuery('#placeHolderCommit').css('padding-top', height / 2).css('padding-bottom', (height / 2) + 10).show();
   }
   private ref: HTMLElement;
@@ -59,7 +57,6 @@ class Commit extends React.Component<CommitProps> {
     const $ref = jQuery(ref);
     const height = $ref.height();
     const newHeight = (height + 5) + 'px';
-    console.log(height);
 
     const padding = height / 2;
     jQuery('#placeHolderCommit').show().css('padding-top', padding).css('padding-bottom', padding);

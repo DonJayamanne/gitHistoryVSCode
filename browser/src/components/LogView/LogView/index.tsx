@@ -43,7 +43,6 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
 
     if (!isNaN(logEntryHeight) && (!this.state || this.calculatedHeight !== height ||
       this.calculatedItemHeight !== logEntryHeight || this.calculatedWidth !== width)) {
-      console.log(`${height}, ${width}, ${logEntryHeight}`);
       // this.setState({ height, width, itemHeight: logEntryHeight, commitsUpdatedTime: new Date().getTime() });
       this.props.setHeight(logEntryHeight);
       this.props.setSize({ height, width });
@@ -60,8 +59,6 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
 
   private ref: HTMLDivElement;
   onViewCommit(logEntry: LogEntry) {
-    console.log(logEntry);
-    console.log('Selected');
     this.props.onViewCommit(logEntry.hash.full);
   }
   onClick(entry: LogEntry) {
