@@ -1,14 +1,14 @@
-import { ActionedDetails } from '../git';
 import { env } from 'vscode';
+import { ActionedDetails } from '../git';
 
 export default function parsedActionedDetails(name: string, email: string, unixTime: string): ActionedDetails | undefined {
     if (name.trim().length === 0 || unixTime.trim().length === 0) {
         return;
     }
 
-    let time = parseInt(unixTime);
-    let date = new Date(time * 1000);
-    let localisedDate = formatDate(date);
+    const time = parseInt(unixTime, 10);
+    const date = new Date(time * 1000);
+    const localisedDate = formatDate(date);
 
     return {
         date, localisedDate,
@@ -16,8 +16,8 @@ export default function parsedActionedDetails(name: string, email: string, unixT
     };
 }
 
-function formatDate(date: Date) {
-    let lang = env.language;
-    let dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+export function formatDate(date: Date) {
+    const lang = env.language;
+    const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
     return date.toLocaleString(lang, dateOptions);
 }

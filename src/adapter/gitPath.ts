@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
 import { exec } from 'child_process';
 import * as fs from 'fs';
+import * as vscode from 'vscode';
 import * as logger from '../logger';
 
 let gitPath: string;
@@ -10,6 +10,7 @@ export default async function getGitPath(): Promise<string> {
         return gitPath;
     }
 
+    // tslint:disable-next-line:no-backbone-get-set-outside-model
     gitPath = <string>vscode.workspace.getConfiguration('git').get('path');
     if (typeof gitPath === 'string' && gitPath.length > 0) {
         if (fs.existsSync(gitPath)) {
@@ -22,7 +23,7 @@ export default async function getGitPath(): Promise<string> {
     }
 
     if (process.platform !== 'win32') {
-        logger.logInfo(`git path: using PATH environment variable`);
+        logger.logInfo('git path: using PATH environment variable');
         gitPath = 'git';
         return gitPath;
     }
@@ -30,22 +31,25 @@ export default async function getGitPath(): Promise<string> {
     return gitPath = await getGitPathOnWindows();
 }
 
+type ErrorEx = Error & { code?: number, stdout?: string, stderr?: string };
+
 function regQueryInstallPath(location: string, view: string | null) {
     return new Promise<string>((resolve, reject) => {
-        function callback(error: Error, stdout: Buffer, stderr: Buffer) {
-            if (error && (error as any).code !== 0) {
-                (error as any).stdout = stdout.toString();
-                (error as any).stderr = stderr.toString();
-                return reject(error);
+        function callback(error: Error, stdout: string, stderr: string): void {
+            if (error && (<ErrorEx>error).code !== 0) {
+                (<ErrorEx>error).stdout = stdout.toString();
+                (<ErrorEx>error).stderr = stderr.toString();
+                reject(error);
             }
-
-            const match = stdout.toString().match(/InstallPath\s+REG_SZ\s+([^\r\n]+)\s*\r?\n/i);
-            if (match && match[1]) {
-                resolve(match[1] + '\\bin\\git');
-            } else {
-                reject();
+            else {
+                const match = stdout.toString().match(/InstallPath\s+REG_SZ\s+([^\r\n]+)\s*\r?\n/i);
+                if (match && match[1]) {
+                    resolve(`${match[1]}\\bin\\git`);
+                } else {
+                    reject();
+                }
             }
-        };
+        }
 
         let viewArg = '';
         switch (view) {
@@ -54,17 +58,17 @@ function regQueryInstallPath(location: string, view: string | null) {
             default: break;
         }
 
-        exec('reg query ' + location + ' ' + viewArg, callback);
+        exec(`reg query ${location} ${viewArg}`, callback);
     });
 }
 
 const GitLookupRegistryKeys = [
-    { 'key': 'HKCU\\SOFTWARE\\GitForWindows', 'view': null },   // user keys have precendence over
-    { 'key': 'HKLM\\SOFTWARE\\GitForWindows', 'view': null },   // machine keys
-    { 'key': 'HKCU\\SOFTWARE\\GitForWindows', 'view': '64' },   // default view (null) before 64bit view
-    { 'key': 'HKLM\\SOFTWARE\\GitForWindows', 'view': '64' },
-    { 'key': 'HKCU\\SOFTWARE\\GitForWindows', 'view': '32' },   // last is 32bit view, which will only be checked
-    { 'key': 'HKLM\\SOFTWARE\\GitForWindows', 'view': '32' }    // for a 32bit git installation on 64bit Windows
+    { key: 'HKCU\\SOFTWARE\\GitForWindows', view: null },   // user keys have precendence over
+    { key: 'HKLM\\SOFTWARE\\GitForWindows', view: null },   // machine keys
+    { key: 'HKCU\\SOFTWARE\\GitForWindows', view: '64' },   // default view (null) before 64bit view
+    { key: 'HKLM\\SOFTWARE\\GitForWindows', view: '64' },
+    { key: 'HKCU\\SOFTWARE\\GitForWindows', view: '32' },   // last is 32bit view, which will only be checked
+    { key: 'HKLM\\SOFTWARE\\GitForWindows', view: '32' }    // for a 32bit git installation on 64bit Windows
 ];
 
 function queryChained(locations: { key: string, view: string | null }[]): Promise<string> {
@@ -73,19 +77,19 @@ function queryChained(locations: { key: string, view: string | null }[]): Promis
             return reject('None of the known git Registry keys were found');
         }
 
-        let location = locations[0];
+        const location = locations[0];
         return regQueryInstallPath(location.key, location.view)
             .catch(error => queryChained(locations.slice(1)));
     });
 }
 function getGitPathOnWindows() {
     try {
-        const gitPath = queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
-        logger.logInfo(`git path: ${gitPath} - from registry`);
-        return gitPath;
+        const gitRegPath = queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
+        logger.logInfo(`git path: ${gitRegPath} - from registry`);
+        return gitRegPath;
     }
     catch (ex) {
-        logger.logInfo(`git path: falling back to PATH environment variable`);
+        logger.logInfo('git path: falling back to PATH environment variable');
         return 'git';
     }
 }
