@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import actionedDetailsParser, { formatDate } from '../../../src/adapter/parsers/actionedDetailsParser';
+import { ActionDetailsParser } from '../../../src/adapter/parsers/actionDetails/parser';
 
 suite('Adapter ActionedDetails Parser', () => {
 
@@ -8,8 +8,8 @@ suite('Adapter ActionedDetails Parser', () => {
         const email = `don.jayamanne@yahoo.com ${new Date().getTime()}`;
         const date = new Date();
         const unixTime = (date.getTime() / 1000).toString();
-        const localisedDate = formatDate(date);
-        const info = actionedDetailsParser(name, email, unixTime);
+        const localisedDate = ''; // formatDate(date);
+        const info = new ActionDetailsParser().parse(name, email, unixTime);
         if (info) {
             assert.equal(info.name, name, 'name is incorrect');
             assert.equal(info.email, email, 'email is incorrect');
@@ -17,7 +17,7 @@ suite('Adapter ActionedDetails Parser', () => {
             assert.equal(info.localisedDate, localisedDate, 'localised Date is incorrect');
         }
         else {
-            assert.fail(info, {}, 'Expected non empty info');
+            assert.fail(info, {}, 'Expected non empty info', '=');
         }
     });
 });

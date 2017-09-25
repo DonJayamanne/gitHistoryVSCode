@@ -1,11 +1,15 @@
 {
     "compilerOptions": {
-        "lib": ["dom","es6"],
+        "strict": false,
+        "lib": ["dom", "es6"],
         "module": "commonjs",
+        "moduleResolution": "node",
         "outDir": "out",
         "rootDir": ".",
         "sourceMap": true,
         "target": "es6",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
 
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,

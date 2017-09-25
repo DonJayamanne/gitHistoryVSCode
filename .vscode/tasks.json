@@ -22,7 +22,7 @@
             "group": "build",
             "isBackground": true,
             "problemMatcher": [
-                "$tsc",
+                "$tsc-watch",
                 {
                     "base": "$tslint5",
                     "fileLocation": "relative"

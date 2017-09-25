@@ -1,34 +1,36 @@
 import { exec } from 'child_process';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
-import * as logger from '../logger';
+import * as logger from '../../logger';
+import { IGitExecutableLocator } from './contracts';
 
-let gitPath: string;
+export class GitExecutableLocator implements IGitExecutableLocator {
+    private gitPath: string;
 
-export default async function getGitPath(): Promise<string> {
-    if (gitPath !== undefined) {
-        return gitPath;
-    }
-
-    // tslint:disable-next-line:no-backbone-get-set-outside-model
-    gitPath = <string>vscode.workspace.getConfiguration('git').get('path');
-    if (typeof gitPath === 'string' && gitPath.length > 0) {
-        if (fs.existsSync(gitPath)) {
-            logger.logInfo(`git path: ${gitPath} - from vscode settings`);
-            return gitPath;
+    public async getGitPath(): Promise<string> {
+        if (typeof this.gitPath === 'string') {
+            return this.gitPath;
         }
-        else {
-            logger.logError(`git path: ${gitPath} - from vscode settings in invalid`);
+
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
+        this.gitPath = <string>vscode.workspace.getConfiguration('git').get('path');
+        if (typeof this.gitPath === 'string' && this.gitPath.length > 0) {
+            if (fs.existsSync(this.gitPath)) {
+                logger.logInfo(`git path: ${this.gitPath} - from vscode settings`);
+                return this.gitPath;
+            }
+            else {
+                logger.logError(`git path: ${this.gitPath} - from vscode settings in invalid`);
+            }
         }
-    }
 
-    if (process.platform !== 'win32') {
-        logger.logInfo('git path: using PATH environment variable');
-        gitPath = 'git';
-        return gitPath;
-    }
+        if (process.platform !== 'win32') {
+            logger.logInfo('git path: using PATH environment variable');
+            return this.gitPath = 'git';
+        }
 
-    return gitPath = await getGitPathOnWindows();
+        return this.gitPath = await getGitPathOnWindows();
+    }
 }
 
 type ErrorEx = Error & { code?: number, stdout?: string, stderr?: string };

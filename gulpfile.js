@@ -185,47 +185,47 @@ const hygiene = exports.hygiene = (some, options) => {
 
 gulp.task('hygiene', () => hygiene());
 
-// this allows us to run hygiene as a git pre-commit hook
-if (require.main === module) {
-    const cp = require('child_process');
+// // this allows us to run hygiene as a git pre-commit hook
+// if (require.main === module) {
+//     const cp = require('child_process');
 
-    process.on('unhandledRejection', (reason, p) => {
-        console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-        process.exit(1);
-    });
+//     process.on('unhandledRejection', (reason, p) => {
+//         console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+//         process.exit(1);
+//     });
 
-    cp.exec('git config core.autocrlf', (err, out) => {
-        const skipEOL = out.trim() === 'true';
+//     cp.exec('git config core.autocrlf', (err, out) => {
+//         const skipEOL = out.trim() === 'true';
 
-        if (process.argv.length > 2) {
-            return hygiene(process.argv.slice(2), {
-                skipEOL: skipEOL
-            }).on('error', err => {
-                console.error();
-                console.error(err);
-                process.exit(1);
-            });
-        }
+//         if (process.argv.length > 2) {
+//             return hygiene(process.argv.slice(2), {
+//                 skipEOL: skipEOL
+//             }).on('error', err => {
+//                 console.error();
+//                 console.error(err);
+//                 process.exit(1);
+//             });
+//         }
 
-        cp.exec('git diff --cached --name-only', {
-            maxBuffer: 2000 * 1024
-        }, (err, out) => {
-            if (err) {
-                console.error();
-                console.error(err);
-                process.exit(1);
-            }
+//         cp.exec('git diff --cached --name-only', {
+//             maxBuffer: 2000 * 1024
+//         }, (err, out) => {
+//             if (err) {
+//                 console.error();
+//                 console.error(err);
+//                 process.exit(1);
+//             }
 
-            const some = out
-                .split(/\r?\n/)
-                .filter(l => !!l);
-            hygiene(some, {
-                skipEOL: skipEOL
-            }).on('error', err => {
-                console.error();
-                console.error(err);
-                process.exit(1);
-            });
-        });
-    });
-}
+//             const some = out
+//                 .split(/\r?\n/)
+//                 .filter(l => !!l);
+//             hygiene(some, {
+//                 skipEOL: skipEOL
+//             }).on('error', err => {
+//                 console.error();
+//                 console.error(err);
+//                 process.exit(1);
+//             });
+//         });
+//     });
+// }

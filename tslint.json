@@ -71,6 +71,13 @@
         "newline-before-return": false,
         "export-name": false,
         "align": false,
-        "no-default-export": false
+        "no-default-export": false,
+        "linebreak-style": false,
+        "import-name": false,
+        "no-non-null-assertion": false,
+
+        // remove this
+        "member-ordering": false,
+        "no-suspicious-comment": false
     }
 }

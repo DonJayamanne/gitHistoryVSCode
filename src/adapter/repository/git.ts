@@ -1,27 +1,29 @@
 // import { FileStat } from '../contracts';
-import { LogEntries, LogEntry, Branch } from './git';
-import GitExec from './gitExec';
-import logEntryParser from './parsers/logParser';
-import { Uri } from 'vscode';
+import { injectable } from 'inversify';
 import * as path from 'path';
+// tslint:disable-next-line:no-import-side-effect
+import 'reflect-metadata';
+import { Uri } from 'vscode';
+import { Branch, IGit, LogEntries, LogEntry } from '../contracts';
+import { IGitCommandExecutor } from '../exec';
+import { ILogParser } from '../parsers';
 
 const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
 const ITEM_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA6';
 const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA7';
-const LOG_FORMAT_ARGS = ['%d', '%H', '%h', '%T', '%t', '%P', '%p', '%an', '%ae', '%at', '%c', '%ce', '%ct', '%s', '%b', '%N'];
+const LOG_FORMAT_ARGS = ['%D', '%H', '%h', '%T', '%t', '%P', '%p', '%an', '%ae', '%at', '%c', '%ce', '%ct', '%s', '%b', '%N'];
 const LOG_FORMAT = `--format=${LOG_ENTRY_SEPARATOR}${[...LOG_FORMAT_ARGS, STATS_SEPARATOR, ITEM_ENTRY_SEPARATOR].join(ITEM_ENTRY_SEPARATOR)}`;
 
-export class Repository {
-    constructor(private workspaceRootPath: string) {
-    }
-
+@injectable()
+export class Git implements IGit {
+    private gitRootPath: string;
     private async exec(args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
-        return await GitExec(args, gitRootPath);
+        return await this.gitCmdExecutor.exec(args, gitRootPath);
     }
     private async execInShell(args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
-        return await GitExec(args, gitRootPath, true);
+        return await this.gitCmdExecutor.exec(args, { cwd: gitRootPath, shell: true });
     }
     // how to check if a commit has been merged into any other branch
     //  $ git branch --all --contains 019daf673583208aaaf8c3f18f8e12696033e3fc
@@ -38,63 +40,8 @@ export class Repository {
     //  Its possible the other branch that it has been merged into is out of the current page
     //  In this instance the grap line will have to go up (to no where)...
 
-    private gitRootPath: string;
-    public async  getGitRoot(): Promise<string> {
-        if (!this.gitRootPath) {
-            const gitRootPath = await GitExec(['rev-parse', '--show-toplevel'], this.workspaceRootPath);
-            this.gitRootPath = gitRootPath.trim();
-        }
-        return this.gitRootPath;
-    }
-
-    private async getHeadHashes(): Promise<{ ref: string, hash: string }[]> {
-        const fullHashArgs = ['show-ref'];
-        const fullHashRefsOutput = await this.exec(fullHashArgs);
-        return fullHashRefsOutput.split(/\r?\n/g)
-            .filter(line => line.length > 0)
-            .filter(line => line.indexOf('refs/heads/') > 0 || line.indexOf('refs/remotes/') > 0)
-            .map(line => line.trim().split(' '))
-            .filter(lineParts => lineParts.length > 1)
-            .map(hashAndRef => { return { ref: hashAndRef[1], hash: hashAndRef[0] }; });
-    }
-    public async getBranches(): Promise<Branch[]> {
-        const output = await this.exec(['branch']);
-        return output.split(/\r?\n/g)
-            .filter(line => line.trim())
-            .filter(line => line.length > 0)
-            .map(line => {
-                const isCurrent = line.startsWith('*');
-                const name = isCurrent ? line.substring(1).trim() : line;
-                return {
-                    name,
-                    current: isCurrent
-                } as Branch;
-            });
-    }
-    public async getCurrentBranch(): Promise<string> {
-        const args = ['rev-parse', '--abbrev-ref', 'HEAD'];
-        return await this.exec(args);
-    }
-    public async getObjectHash(object: string): Promise<string> {
-
-        // Get the hash of the given ref
-        // E.g. git show --format=%H --shortstat remotes/origin/tyriar/xterm-v3
-        const args = ['show', '--format=%H', '--shortstat', object];
-        const output = await this.exec(args);
-        return output.split(/\r?\n/g)[0].trim();
-    }
-    public async getRefsContainingCommit(hash: string): Promise<string[]> {
-        const args = ['git', 'branch', '--all', '--contains', hash];
-        const entries = await this.exec(args);
-        return entries.split(/\r?\n/g)
-            .map(line => line.trim())
-            // Remove the '*' prefix from current branch
-            .map(line => line.startsWith('*') ? line.substring(1) : line)
-            // Remove the '->' from ref pointers (take first portion)
-            .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
-    }
     private async getGitRelativePath(file: Uri) {
-        let gitRoot: string = await this.getGitRoot();
+        const gitRoot: string = await this.getGitRoot();
         return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
     }
 
@@ -139,8 +86,7 @@ export class Repository {
         // fileStatArgs.push('--name-status');
 
         // Count only the number of lines in the log
-        const isWin = /^win/.test(process.platform);
-        if (isWin) {
+        if (this.isWindows) {
             counterArgs.push('|', 'find', '/c', '/v', '""');
         }
         else {
@@ -155,6 +101,74 @@ export class Repository {
 
         return { logArgs, fileStatArgs, counterArgs };
     }
+
+    private getWorkspaceRootPath(): Promise<string> {
+        return Promise.resolve('');
+    }
+
+    // tslint:disable-next-line:member-ordering
+    constructor(private gitCmdExecutor: IGitCommandExecutor,
+        private logParser: ILogParser, private isWindows: boolean = /^win/.test(process.platform)) {
+    }
+
+    public async  getGitRoot(): Promise<string> {
+        if (!this.gitRootPath) {
+            const workspaceRoot = await this.getWorkspaceRootPath();
+            const gitRootPath = await this.gitCmdExecutor.exec(['rev-parse', '--show-toplevel'], workspaceRoot);
+            this.gitRootPath = gitRootPath.trim();
+        }
+        return this.gitRootPath;
+    }
+
+    // tslint:disable-next-line:member-ordering
+    public async getHeadHashes(): Promise<{ ref: string, hash: string }[]> {
+        const fullHashArgs = ['show-ref'];
+        const fullHashRefsOutput = await this.exec(fullHashArgs);
+        return fullHashRefsOutput.split(/\r?\n/g)
+            .filter(line => line.length > 0)
+            .filter(line => line.indexOf('refs/heads/') > 0 || line.indexOf('refs/remotes/') > 0)
+            .map(line => line.trim().split(' '))
+            .filter(lineParts => lineParts.length > 1)
+            .map(hashAndRef => { return { ref: hashAndRef[1], hash: hashAndRef[0] }; });
+    }
+    // tslint:disable-next-line:member-ordering
+    public async getBranches(): Promise<Branch[]> {
+        const output = await this.exec(['branch']);
+        return output.split(/\r?\n/g)
+            .filter(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => {
+                const isCurrent = line.startsWith('*');
+                const name = isCurrent ? line.substring(1).trim() : line;
+                // tslint:disable-next-line:prefer-type-cast
+                return {
+                    name,
+                    current: isCurrent
+                } as Branch;
+            });
+    }
+    public async getCurrentBranch(): Promise<string> {
+        const args = ['rev-parse', '--abbrev-ref', 'HEAD'];
+        return await this.exec(args);
+    }
+    public async getObjectHash(object: string): Promise<string> {
+
+        // Get the hash of the given ref
+        // E.g. git show --format=%H --shortstat remotes/origin/tyriar/xterm-v3
+        const args = ['show', '--format=%H', '--shortstat', object];
+        const output = await this.exec(args);
+        return output.split(/\r?\n/g)[0].trim();
+    }
+    public async getRefsContainingCommit(hash: string): Promise<string[]> {
+        const args = ['git', 'branch', '--all', '--contains', hash];
+        const entries = await this.exec(args);
+        return entries.split(/\r?\n/g)
+            .map(line => line.trim())
+            // Remove the '*' prefix from current branch
+            .map(line => line.startsWith('*') ? line.substring(1) : line)
+            // Remove the '->' from ref pointers (take first portion)
+            .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
+    }
     public async getLogEntries(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
         const args = await this.getLogArgs(pageIndex, pageSize, branch, searchText, file);
 
@@ -165,11 +179,10 @@ export class Repository {
         const countOutputPromise = this.execInShell(args.counterArgs);
 
         const values = await Promise.all([gitRootPathPromise, outputPromise, countOutputPromise]);
-
-        const gitRootPath = values[0];
+        const gitRepoPath = values[0];
         const output = values[1];
         const countOutput = values[2];
-        const count = parseInt(countOutput.trim());
+        const count = parseInt(countOutput.trim(), 10);
 
         // Run another git history, but get file stats instead of the changes
         // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);
@@ -180,13 +193,14 @@ export class Repository {
                 if (entry.length === 0) {
                     return;
                 }
-                return logEntryParser(entry, gitRootPath, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS);
+                return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS);
             })
             .filter(logEntry => logEntry !== undefined)
             .map(logEntry => logEntry!);
 
         const headHashes = await this.getHeadHashes();
         const headHashesOnly = headHashes.map(item => item.hash);
+        // tslint:disable-next-line:prefer-type-cast
         const headHashMap = new Map<string, string>(headHashes.map(item => [item.ref, item.hash] as [string, string]));
 
         items.forEach(async item => {
@@ -203,15 +217,18 @@ export class Repository {
             const hashesOfRefs = refsContainingThisCommit
                 .filter(ref => headHashMap.has(ref))
                 .map(ref => headHashMap.get(ref)!)
+                // tslint:disable-next-line:possible-timing-attack
                 .filter(hash => hash !== item.hash.full);
             // If we have hashes other than current, then yes it has been merged
             item.isThisLastCommitMerged = hashesOfRefs.length > 0;
         });
 
-        return {
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const entries: LogEntries = {
             items,
             count
-        } as LogEntries;
+        };
+        return entries;
     }
 
     public async getCommitDate(hash: string): Promise<Date | undefined> {
@@ -222,7 +239,7 @@ export class Repository {
             return undefined;
         }
 
-        const unixTime = parseInt(lines[0]);
+        const unixTime = parseInt(lines[0], 10);
         if (isNaN(unixTime) || unixTime <= 0) {
             return undefined;
         }
@@ -242,8 +259,10 @@ export class Repository {
         const entries = output
             .split(LOG_ENTRY_SEPARATOR)
             .map((entry, index) => {
-                if (entry.trim().length === 0) return undefined;
-                return logEntryParser(entry, gitRootPath, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS, entriesWithFileModeChanges[index]);
+                if (entry.trim().length === 0) {
+                    return undefined;
+                }
+                return this.logParser.parse(gitRootPath, entry, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS, entriesWithFileModeChanges[index]);
             })
             .filter(entry => entry !== undefined)
             .map(entry => entry!);

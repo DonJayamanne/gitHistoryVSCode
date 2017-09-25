@@ -1,25 +1,26 @@
 import { Uri } from 'vscode';
+export * from './exec/contracts';
 
 export enum RefType {
     Head,
     RemoteHead,
     Tag
 }
-export interface Ref {
+export type Ref = {
     type: RefType;
     name?: string;
-}
-export interface Remote {
+};
+export type Remote = {
     name: string;
     url: string;
-}
+};
 
-export interface Branch {
+export type Branch = {
     name: string;
     current: boolean;
-}
+};
 
-export interface CommittedFile {
+export type CommittedFile = {
     uri: Uri;
     oldUri?: Uri;
     oldRelativePath?: string;
@@ -27,20 +28,20 @@ export interface CommittedFile {
     status: Status;
     additions?: number;
     deletions?: number;
-}
+};
 
 /////////////////////////////////////////////////////////
-export interface ActionedDetails {
+export type ActionedDetails = {
     name: string;
     email: string;
     date: Date;
     localisedDate: string;
-}
-export interface LogEntries {
+};
+export type LogEntries = {
     items: LogEntry[];
     count: number;
-}
-export interface LogEntry {
+};
+export type LogEntry = {
     author?: ActionedDetails;
     committer?: ActionedDetails;
     parents: Hash[];
@@ -53,17 +54,17 @@ export interface LogEntry {
     committedFiles?: CommittedFile[];
     isLastCommit?: boolean;
     isThisLastCommitMerged?: boolean;
-}
+};
 
-export interface CherryPickEntry {
+export type CherryPickEntry = {
     branch: string;
     hash: string;
-}
+};
 
-export interface Hash {
+export type Hash = {
     full: string;
     short: string;
-}
+};
 
 export enum Status {
     Modified,
@@ -71,4 +72,16 @@ export enum Status {
     Deleted,
     Renamed,
     Copied
+}
+
+export interface IGit {
+    getGitRoot(): Promise<string>;
+    getHeadHashes(): Promise<{ ref: string, hash: string }[]>;
+    getBranches(): Promise<Branch[]>;
+    getCurrentBranch(): Promise<string>;
+    getObjectHash(object: string): Promise<string>;
+    getRefsContainingCommit(hash: string): Promise<string[]>;
+    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri): Promise<LogEntries>;
+    getCommitDate(hash: string): Promise<Date | undefined>;
+    getCommit(hash: string): Promise<LogEntry | undefined>;
 }

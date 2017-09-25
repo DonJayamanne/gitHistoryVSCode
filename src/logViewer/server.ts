@@ -1,15 +1,17 @@
-import { ApiController } from './apiController';
-import * as io from 'socket.io';
-import * as http from 'http';
-import { createDeferred, Deferred } from '../common/helpers';
-import { EventEmitter } from 'events';
-import * as express from 'express';
-import { Express, Request, Response } from 'express';
-import * as path from 'path';
-import * as cors from 'cors';
-import * as vscode from 'vscode';
 import * as  bodyParser from 'body-parser';
+import * as cors from 'cors';
+import { EventEmitter } from 'events';
+import { Express, Request, Response } from 'express';
+import * as express from 'express';
+import * as http from 'http';
+import * as path from 'path';
+import * as io from 'socket.io';
+import * as vscode from 'vscode';
+import { IGit } from '../adapter/contracts';
+import { createDeferred, Deferred } from '../common/helpers';
+import { ApiController } from './apiController';
 
+// tslint:disable-next-line:no-require-imports no-var-requires
 const uniqid = require('uniqid');
 export class Server extends EventEmitter {
     private server?: SocketIO.Server;
@@ -39,14 +41,14 @@ export class Server extends EventEmitter {
         if (this.port) {
             return Promise.resolve(this.port);
         }
-        let def = createDeferred<number>();
+        const def = createDeferred<number>();
 
         this.app = express();
         this.httpServer = http.createServer(this.app);
         this.server = io(this.httpServer);
 
-        let rootDirectory = path.join(__dirname, '..', '..', 'browser');
-        let node_modulesDirectory = path.join(__dirname, '..', '..', '..', 'node_modules');
+        const rootDirectory = path.join(__dirname, '..', '..', 'browser');
+        const node_modulesDirectory = path.join(__dirname, '..', '..', '..', 'node_modules');
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(bodyParser.json());
         this.app.use(express.static(rootDirectory));
@@ -72,19 +74,20 @@ export class Server extends EventEmitter {
             }
         });
 
-        this.apiController = new ApiController(this.app);
+        // tslint:disable-next-line:prefer-type-cast no-any
+        this.apiController = new ApiController(this.app, null as any as IGit);
         this.server.on('connection', this.onSocketConnection.bind(this));
         return def.promise;
     }
     private apiController: ApiController;
     public rootRequestHandler(req: Request, res: Response) {
-        let theme: string = req.query.theme;
-        let backgroundColor: string = req.query.backgroundColor;
-        let color: string = req.query.color;
-        let editorConfig = vscode.workspace.getConfiguration('editor');
-        let fontFamily = editorConfig.get<string>('fontFamily')!.split('\'').join('').split('"').join('');
-        let fontSize = editorConfig.get<number>('fontSize') + 'px';
-        let fontWeight = editorConfig.get<string>('fontWeight');
+        const theme: string = req.query.theme;
+        const backgroundColor: string = req.query.backgroundColor;
+        const color: string = req.query.color;
+        const editorConfig = vscode.workspace.getConfiguration('editor');
+        const fontFamily = editorConfig.get<string>('fontFamily')!.split('\'').join('').split('"').join('');
+        const fontSize = editorConfig.get<number>('fontSize') + 'px';
+        const fontWeight = editorConfig.get<string>('fontWeight');
         res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'),
             {
                 theme: theme,
@@ -96,18 +99,18 @@ export class Server extends EventEmitter {
             }
         );
     }
-    private buffer: any[] = [];
+    private buffer: {}[] = [];
     public clearBuffer() {
         this.buffer = [];
     }
-    public sendResults(data: any[]) {
+    public sendResults(data: {}[]) {
         // Add an id to each item (poor separation of concerns... but what ever)
         let results = data.map(item => { return { id: uniqid('x'), value: item }; });
         this.buffer = this.buffer.concat(results);
         this.broadcast('results', results);
     }
 
-    public sendSetting(name: string, value: any) {
+    public sendSetting(name: string, value: {}) {
         this.broadcast(name, value);
     }
     private broadcast(eventName: string, data: any) {
@@ -146,7 +149,7 @@ export class Server extends EventEmitter {
     }
 
     private responsePromises: Map<string, Deferred<boolean>>;
-    public clientsConnected(timeoutMilliSeconds: number): Promise<any> {
+    public clientsConnected(timeoutMilliSeconds: number): Promise<{}> {
         const id = new Date().getTime().toString();
         const def = createDeferred<boolean>();
         this.broadcast('clientExists', { id: id });

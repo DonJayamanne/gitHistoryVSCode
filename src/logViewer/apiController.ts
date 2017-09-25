@@ -1,12 +1,15 @@
-import { CommittedFile } from '../adapter/git';
-import { Repository } from '../adapter/repository';
 import { Express, Request, Response } from 'express';
-import * as vscode from 'vscode';
+import { injectable } from 'inversify';
+// tslint:disable-next-line:no-import-side-effect
+import 'reflect-metadata';
+import { CommittedFile } from '../adapter/contracts';
+import { IGit } from '../adapter/contracts';
 
+@injectable()
 export class ApiController {
-    private repository: Repository;
-    constructor(private app: Express) {
-        this.repository = new Repository(vscode.workspace.rootPath!);
+    // private repository: IGit;
+    constructor(private app: Express, private repository: IGit) {
+        // this.repository = new Git(vscode.workspace.rootPath!, new GitCommandExecutor());
         this.app.get('/log', this.getLogEntries.bind(this));
         this.app.get('/branches', this.getBranches.bind(this));
         this.app.get('/log/:hash', this.getCommit.bind(this));
@@ -50,6 +53,7 @@ export class ApiController {
         //     .catch(err => response.status(500).send(err));
     }
     private onCommittedFileSelected(request: Request, response: Response) {
+        // tslint:disable-next-line:prefer-type-cast
         const committedFile = request.body as CommittedFile;
         console.log(committedFile);
     }
