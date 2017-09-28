@@ -1,15 +1,10 @@
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
+// import { Ref, RefType } from '../../../contracts';
 import { Ref, RefType } from '../../../contracts';
 import { HEAD_REF_PREFIXES } from './../constants';
 import { IRefParser } from './../contracts';
-
-import { makeProvideDecorator } from 'inversify-binding-decorators';
-import 'reflect-metadata';
-
-var container = new Container();
-let provide = makeProvideDecorator(container);
 
 @injectable()
 export class HeadRefParser implements IRefParser {

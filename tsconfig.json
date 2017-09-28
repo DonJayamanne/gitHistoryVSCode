@@ -1,11 +1,10 @@
 {
     "compilerOptions": {
-        "strict": false,
+        "strict": true,
         "lib": ["dom", "es6"],
         "module": "commonjs",
         "moduleResolution": "node",
         "outDir": "out",
-        "rootDir": ".",
         "sourceMap": true,
         "target": "es6",
         "experimentalDecorators": true,

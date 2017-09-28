@@ -1,24 +1,26 @@
-// import { Container } from 'inversify';
-// // tslint:disable-next-line:no-import-side-effect
-// import 'reflect-metadata';
-// import { ActionDetailsParser } from './actionDetails/parser';
-// import { IActionDetailsParser, IFileStatParser, IFileStatStatusParser, ILogParser } from './contracts';
-// import { FileStatParser } from './fileStat/parser';
-// import { FileStatStatusParser } from './fileStatStatus/parser';
-// import { LogParser } from './log/parser';
-// import { container as refsContainer } from './refs/ioc';
+import { ContainerModule, interfaces } from 'inversify';
+// tslint:disable-next-line:no-import-side-effect
+import 'reflect-metadata';
+import { ActionDetailsParser } from './actionDetails/parser';
+import { TYPES } from './constants';
+import { IActionDetailsParser, IFileStatParser, IFileStatStatusParser, ILogParser, IRefsParser } from './contracts';
+import { FileStatParser } from './fileStat/parser';
+import { FileStatStatusParser } from './fileStatStatus/parser';
+import { LogParser } from './log/parser';
+import { IRefParser } from './refs/contracts';
+import { RefsParser } from './refs/parser';
+import { HeadRefParser } from './refs/parsers/headRefParser';
+import { RemoteHeadParser } from './refs/parsers/remoteHeadParser';
+import { TagRefParser } from './refs/parsers/tagRefParser';
 
-// export const TYPES = {
-//     IActionDetailsParser: Symbol('IActionDetailsParser'),
-//     IFileStatParser: Symbol('IFileStatParser'),
-//     IFileStatStatusParser: Symbol('IFileStatStatusParser'),
-//     ILogParser: Symbol('ILogParser')
-// };
+export const container = new ContainerModule((bind: interfaces.Bind) => {
+    bind<IRefParser>(TYPES.IRefParser).to(HeadRefParser).inSingletonScope();
+    bind<IRefParser>(TYPES.IRefParser).to(RemoteHeadParser).inSingletonScope();
+    bind<IRefParser>(TYPES.IRefParser).to(TagRefParser).inSingletonScope();
+    bind<IRefsParser>(TYPES.IRefsParser).to(RefsParser).inSingletonScope();
 
-// const cont = new Container();
-// cont.bind<IActionDetailsParser>(TYPES.IActionDetailsParser).to(ActionDetailsParser);
-// cont.bind<IFileStatParser>(TYPES.IFileStatParser).to(FileStatParser);
-// cont.bind<IFileStatStatusParser>(TYPES.IFileStatStatusParser).to(FileStatStatusParser);
-// cont.bind<ILogParser>(TYPES.ILogParser).to(LogParser);
-
-// export const container = Container.merge(cont, refsContainer);
+    bind<IActionDetailsParser>(TYPES.IActionDetailsParser).to(ActionDetailsParser);
+    bind<IFileStatParser>(TYPES.IFileStatParser).to(FileStatParser);
+    bind<IFileStatStatusParser>(TYPES.IFileStatStatusParser).to(FileStatStatusParser);
+    bind<ILogParser>(TYPES.ILogParser).to(LogParser);
+});

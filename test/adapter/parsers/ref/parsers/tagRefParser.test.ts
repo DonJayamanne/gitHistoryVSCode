@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { RefType } from '../../../../../src/adapter';
+import { RefType } from '../../../../../src/adapter/contracts';
 import { IRefParser } from '../../../../../src/adapter/parsers/refs/contracts';
 import { TagRefParser } from '../../../../../src/adapter/parsers/refs/parsers/tagRefParser';
 

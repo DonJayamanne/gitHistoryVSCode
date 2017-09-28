@@ -4,12 +4,13 @@ import * as vscode from 'vscode';
 import * as fileHistory from './commands/fileHistory';
 import * as lineHistory from './commands/lineHistory';
 import * as searchHistory from './commands/searchHistory';
-import * as logViewer from './logViewer/logViewer';
-import * as commitViewer from './commitViewer/main';
 import * as commitComparer from './commitCompare/main';
+import * as commitViewer from './commitViewer/main';
+import * as logViewer from './logViewer/logViewer';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
+// tslint:disable-next-line:no-any
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
     fileHistory.activate(context);
     lineHistory.activate(context);

@@ -3,21 +3,17 @@ import { inject, injectable, multiInject } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { ILogService } from '../../../common/log';
-// import { TYPES as coreTYPES } from '../../../ioc';
+import { TYPES as coreTYPES } from '../../../constants';
 import { Ref } from '../../contracts';
+import { TYPES } from '../constants';
 import { IRefsParser } from '../contracts';
 import { IRefParser } from './contracts';
-// import { TYPES } from './ioc';
 
 @injectable()
 export class RefsParser implements IRefsParser {
     constructor( @multiInject(TYPES.IRefParser) private parsers: IRefParser[],
         @inject(coreTYPES.ILogService) private logger: ILogService) {
     }
-
-    // constructor( private parsers: IRefParser[],
-    //     private logger: ILogService) {
-    // }
 
     /**
      * Parses refs returned by the following two commands
