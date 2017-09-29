@@ -7,20 +7,26 @@ export class LogParser implements ILogParser {
         private actionDetailsParser: IActionDetailsParser) {
 
     }
+
+    private parserCommittedFiles(logItems: string[], statsSeparator: string, nameStatEntry?: string | undefined): CommittedFile[] {
+        if (nameStatEntry && nameStatEntry.length > 0) {
+            const statsSeparatorIndex = logItems.indexOf(statsSeparator) + 1;
+            const filesWithNumStat = logItems.slice(statsSeparatorIndex).join(EOL).split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
+            const filesWithModeChanges = nameStatEntry.split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
+            return this.fileStatParser.parse(filesWithNumStat, filesWithModeChanges);
+        }
+        else {
+            return [];
+        }
+    }
+
     public parse(gitRepoPath: string, summaryEntry: string, itemEntrySeparator: string, statsSeparator: string, logFormatArgs: string[], nameStatEntry?: string | undefined): LogEntry {
         const logItems = summaryEntry.split(itemEntrySeparator);
 
         const fullParentHash = logItems[logFormatArgs.indexOf('%P')].split(' ').filter(hash => hash.trim().length > 0);
         const shortParentHash = logItems[logFormatArgs.indexOf('%p')].split(' ').filter(hash => hash.trim().length > 0);
         const parents = fullParentHash.map((hash, index) => { return { full: hash, short: shortParentHash[index] }; });
-
-        let committedFiles: CommittedFile[] = [];
-        if (nameStatEntry && nameStatEntry.length > 0) {
-            const statsSeparatorIndex = logItems.indexOf(statsSeparator) + 1;
-            const filesWithNumStat = logItems.slice(statsSeparatorIndex).join(EOL).split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
-            const filesWithModeChanges = nameStatEntry.split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
-            committedFiles = this.fileStatParser.parse(filesWithNumStat, filesWithModeChanges);
-        }
+        const committedFiles = this.parserCommittedFiles(logItems, statsSeparator, nameStatEntry);
 
         return {
             refs: this.refsparser.parse(logItems[logFormatArgs.indexOf('%D')]),
