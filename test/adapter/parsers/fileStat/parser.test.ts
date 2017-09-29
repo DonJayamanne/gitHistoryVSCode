@@ -5,6 +5,7 @@ import { Status } from '../../../../src/adapter/contracts';
 import { FileStatParser } from '../../../../src/adapter/parsers/fileStat/parser';
 import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatStatus/parser';
 
+// tslint:disable-next-line:max-func-body-length
 suite('Adapter Parser File Stat', () => {
     const gitRootPath = path.join('src', 'adapter');
     const statusParser = new FileStatStatusParser();
@@ -83,5 +84,55 @@ suite('Adapter Parser File Stat', () => {
         assert.equal(files[0].uri.fsPath, Uri.file(path.join(gitRootPath, filePaths[0])).fsPath, '0. Incorrect path');
         assert.equal(files[1].uri.fsPath, Uri.file(path.join(gitRootPath, filePaths[1])).fsPath, '1. Incorrect path');
         assert.equal(files[2].uri.fsPath, Uri.file(path.join(gitRootPath, filePaths[2])).fsPath, '2. Incorrect path');
+    });
+    test('Must correctly identify copied files', () => {
+
+        // src/client/{common/comms => }/Socket Stream.ts
+        // src/client/common/{space in folder => comms}/id Dispenser.ts
+        // src/client/common/space in folder/{idDispenser.ts => id Dispenser.ts}
+        // src/client/common/{comms => space in folder}/SocketStream.ts
+        // src/client/common/{comms => }/socketCallbackHandler.ts
+        // src/client/common/comms/{ => another dir}/id Dispenser.ts
+        // src/{test/autocomplete => client/common/comms/another dir}/base.test.ts
+        // src/{client/common/comms/another dir => }/id Dispenser.ts
+        // src/test/jupyter/{extension.jupyter.comms.jupyterKernelManager.test.ts => jupyterKernelManager.test.ts}
+
+        // tslint:disable-next-line:no-multiline-string
+        const filePaths = [
+            'src/client/{common/comms => }/Socket Stream.ts',
+            'src/client/common/{space in folder => comms}/id Dispenser.ts',
+            'src/client/common/space in folder/{idDispenser.ts => id Dispenser.ts}',
+            'src/client/common/comms/{ => another dir}/id Dispenser.ts',
+            'src/{test/autocomplete => client/common/comms/another dir}/base.test.ts',
+            '{client/common/comms/another dir => }/id Dispenser.ts',
+            'LICENSE => LICENSEx'
+        ];
+        const numStatFileLog = filePaths.map(f => `1 2 ${f}`);
+        const nameStatusFileLog = filePaths.map((f, idx) => `${idx % 2 === 0 ? 'C123' : 'R01'} ${f}`);
+
+        const parser = new FileStatParser(gitRootPath, statusParser);
+        const files = parser.parse(numStatFileLog, nameStatusFileLog);
+        assert.lengthOf(files, filePaths.length, 'Incorrect number of entries');
+
+        assert.equal(files[0].uri.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'Socket Stream.ts'])).fsPath, '0. Incorrect current path');
+        assert.equal(files[0].oldUri!.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'common', 'comms', 'Socket Stream.ts'])).fsPath, '0. Incorrect original path');
+
+        assert.equal(files[1].uri.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'common', 'comms', 'id Dispenser.ts'])).fsPath, '1. Incorrect current path');
+        assert.equal(files[1].oldUri!.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'common', 'space in folder', 'id Dispenser.ts'])).fsPath, '1. Incorrect original path');
+
+        assert.equal(files[2].uri.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'common', 'space in folder', 'id Dispenser.ts'])).fsPath, '2. Incorrect current path');
+        assert.equal(files[2].oldUri!.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'common', 'space in folder', 'idDispenser.ts'])).fsPath, '2. Incorrect original path');
+
+        assert.equal(files[3].uri.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'common', 'comms', 'another dir', 'id Dispenser.ts'])).fsPath, '3. Incorrect current path');
+        assert.equal(files[3].oldUri!.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'common', 'comms', 'id Dispenser.ts'])).fsPath, '3. Incorrect original path');
+
+        assert.equal(files[4].uri.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'common', 'comms', 'another dir', 'base.test.ts'])).fsPath, '4. Incorrect current path');
+        assert.equal(files[4].oldUri!.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'test', 'autocomplete', 'base.test.ts'])).fsPath, '4. Incorrect original path');
+
+        assert.equal(files[5].uri.fsPath, Uri.file(path.join(gitRootPath, ...['id Dispenser.ts'])).fsPath, '5. Incorrect current path');
+        assert.equal(files[5].oldUri!.fsPath, Uri.file(path.join(gitRootPath, ...['client', 'common', 'comms', 'another dir', 'id Dispenser.ts'])).fsPath, '5. Incorrect original path');
+
+        assert.equal(files[6].uri.fsPath, Uri.file(path.join(gitRootPath, ...['LICENSEx'])).fsPath, '6. Incorrect current path');
+        assert.equal(files[6].oldUri!.fsPath, Uri.file(path.join(gitRootPath, ...['LICENSE'])).fsPath, '6. Incorrect original path');
     });
 });

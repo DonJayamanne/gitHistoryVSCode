@@ -12,7 +12,7 @@ export class FileStatStatusParser implements IFileStatStatusParser {
     }
     public parse(status: string): Status | undefined {
         status = status || '';
-        status = status.length === 0 ? '' : status.trim().substring(0, 1).toUpperCase();
+        status = status.length === 0 ? '' : status.trim().substring(0, 1);
         switch (status) {
             case 'A':
                 return Status.Added;
@@ -24,6 +24,14 @@ export class FileStatStatusParser implements IFileStatStatusParser {
                 return Status.Copied;
             case 'R':
                 return Status.Renamed;
+            case 'T':
+                return Status.TypeChanged;
+            case 'X':
+                return Status.Unknown;
+            case 'U':
+                return Status.Unmerged;
+            case 'B':
+                return Status.Broken;
             default: {
                 console.error(`Unrecognized file stat status '${status}`);
                 return;

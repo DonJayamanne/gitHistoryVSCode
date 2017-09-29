@@ -71,7 +71,11 @@ export enum Status {
     Added,
     Deleted,
     Renamed,
-    Copied
+    Copied,
+    Unmerged,
+    Unknown,
+    Broken,
+    TypeChanged
 }
 
 export interface IGit {
