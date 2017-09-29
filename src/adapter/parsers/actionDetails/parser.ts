@@ -7,18 +7,16 @@ import { IActionDetailsParser } from '../contracts';
 @injectable()
 export class ActionDetailsParser implements IActionDetailsParser {
     public parse(name: string, email: string, unixTime: string): ActionedDetails | undefined {
-        if (name.trim().length === 0 || unixTime.trim().length === 0) {
+        name = (name || '').trim();
+        unixTime = (unixTime || '').trim();
+        if (name.length === 0 || unixTime.length === 0) {
             return;
         }
 
         const time = parseInt(unixTime, 10);
         const date = new Date(time * 1000);
-        // Todo: Formatting of dates shouldn't be done here
-        const localisedDate = '';
-
         return {
-            date, localisedDate,
-            email, name
+            date, email, name
         };
     }
 }

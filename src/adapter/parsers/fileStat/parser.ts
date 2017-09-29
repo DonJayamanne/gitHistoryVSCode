@@ -11,9 +11,16 @@ export class FileStatParser implements IFileStatParser {
     constructor(private gitRootPath: string, private statusParser: IFileStatStatusParser) {
     }
 
-    public parse(filesWithNumStat: string[], filesWithStats: string[]) {
-        return filesWithStats.map((line, index) => {
-            const info = line.split(/\t/g);
+    /**
+     * Parsers the file status
+     * @param {string[]} filesWithNumStat Files returned using `git log --numstat`
+     * @param {string[]} filesWithNameStat Files returned using `git log --name-status`
+     * @returns {CommittedFile[]}
+     * @memberof FileStatParser
+     */
+    public parse(filesWithNumStat: string[], filesWithNameStat: string[]): CommittedFile[] {
+        return filesWithNameStat.map((line, index) => {
+            const info = line.split(/\s/g).map(part => part.trim()).filter(part => part.length > 0);
             if (info.length < 2) {
                 return;
             }
@@ -43,10 +50,13 @@ export class FileStatParser implements IFileStatParser {
 
             let additions: number | undefined;
             let deletions: number | undefined;
-            const parts = filesWithNumStat[index].split('\t').filter(part => part.trim().length > 0);
+            const parts = filesWithNumStat[index].split(/\s/g).map(part => part.trim()).filter(part => part.length > 0);
             if (parts.length === 3) {
                 additions = parts[0] === '-' ? undefined : parseInt(parts[0], 10);
+                additions = isNaN(additions!) ? undefined : additions;
+
                 deletions = parts[1] === '-' ? undefined : parseInt(parts[1], 10);
+                deletions = isNaN(deletions!) ? undefined : deletions;
             }
 
             // tslint:disable-next-line:no-unnecessary-local-variable

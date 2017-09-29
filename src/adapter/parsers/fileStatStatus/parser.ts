@@ -11,6 +11,8 @@ export class FileStatStatusParser implements IFileStatStatusParser {
         return parsedStatus !== undefined && parsedStatus !== null;
     }
     public parse(status: string): Status | undefined {
+        status = status || '';
+        status = status.length === 0 ? '' : status.trim().substring(0, 1).toUpperCase();
         switch (status) {
             case 'A':
                 return Status.Added;
