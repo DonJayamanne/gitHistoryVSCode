@@ -1,8 +1,8 @@
-// // import { FileStat } from '../contracts';
+// // import { FileStat } from '../types';
 // import { injectable } from 'inversify';
 // import * as path from 'path';
 // import { Uri } from 'vscode';
-// import { Branch, IGit, LogEntries, LogEntry } from '../contracts';
+// import { Branch, IGit, LogEntries, LogEntry } from '../types';
 // import { IGitCommandExecutor } from '../exec';
 // import { ILogParser } from '../parsers';
 

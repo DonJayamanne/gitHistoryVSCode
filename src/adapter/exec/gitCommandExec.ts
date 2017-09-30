@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import { IGitExecutableLocator } from '../locator';
-import { IGitCommandExecutor } from './contracts';
+import { IGitCommandExecutor } from './types';
 
 export class GitCommandExecutor implements IGitCommandExecutor {
     constructor(private gitExecLocator: IGitExecutableLocator) {

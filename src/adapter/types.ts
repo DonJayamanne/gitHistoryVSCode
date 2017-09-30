@@ -1,5 +1,5 @@
 import { Uri } from 'vscode';
-export * from './exec/contracts';
+export * from './exec/types';
 
 export enum RefType {
     Head,
@@ -88,4 +88,28 @@ export interface IGit {
     getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri): Promise<LogEntries>;
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
+}
+
+// export type CommitInfoIndexes = { commitInfo: CommitInfo, index: number };
+// export type CommitInfoFormatCode = { commitInfo: CommitInfo, formatCode: string };
+// export type CommitInfoIndexAndFormatCode = CommitInfoIndexes & CommitInfoFormatCode;
+
+export enum CommitInfo {
+    ParentFullHash,
+    ParentShortHash,
+    RefsNames,
+    AuthorName,
+    AuthorEmail,
+    AuthorDateUnixTime,
+    CommitterName,
+    CommitterEmail,
+    CommitterDateUnixTime,
+    Body,
+    Notes,
+    FullHash,
+    ShortHash,
+    TreeFullHash,
+    TreeShortHash,
+    Subject,
+    NewLine
 }

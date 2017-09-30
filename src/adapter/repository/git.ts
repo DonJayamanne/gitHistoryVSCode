@@ -1,17 +1,19 @@
-// import { FileStat } from '../contracts';
 import { injectable } from 'inversify';
 import * as path from 'path';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Uri } from 'vscode';
-import { Branch, IGit, LogEntries, LogEntry } from '../contracts';
 import { IGitCommandExecutor } from '../exec';
-import { ILogParser } from '../parsers';
+import { Helpers } from '../helpers';
+import { ILogParser } from '../parsers/types';
+import { Branch, CommitInfo, IGit, LogEntries, LogEntry } from '../types';
 
 const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
 const ITEM_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA6';
 const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA7';
-const LOG_FORMAT_ARGS = ['%D', '%H', '%h', '%T', '%t', '%P', '%p', '%an', '%ae', '%at', '%c', '%ce', '%ct', '%s', '%b', '%N'];
+// const LOG_FORMAT_ARGS = ['%D', '%H', '%h', '%T', '%t', '%P', '%p', '%an', '%ae', '%at', '%c', '%ce', '%ct', '%s', '%b', '%N'];
+const LOG_FORMAT_ARGS = Helpers.GetLogArguments();
+const newLineFormatCode = Helpers.GetCommitInfoFormatCode(CommitInfo.NewLine);
 const LOG_FORMAT = `--format=${LOG_ENTRY_SEPARATOR}${[...LOG_FORMAT_ARGS, STATS_SEPARATOR, ITEM_ENTRY_SEPARATOR].join(ITEM_ENTRY_SEPARATOR)}`;
 
 @injectable()
@@ -51,7 +53,8 @@ export class Git implements IGit {
         const specificBranch = !allBranches && !currentBranch;
 
         const logArgs = ['log', LOG_FORMAT];
-        const fileStatArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}%n`];
+        const fileStatArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
+        // TODO: Don't we need %n instead of %h
         const counterArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}%h`];
 
         if (searchText && searchText.length > 0) {
@@ -155,7 +158,7 @@ export class Git implements IGit {
 
         // Get the hash of the given ref
         // E.g. git show --format=%H --shortstat remotes/origin/tyriar/xterm-v3
-        const args = ['show', '--format=%H', '--shortstat', object];
+        const args = ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
         const output = await this.exec(args);
         return output.split(/\r?\n/g)[0].trim();
     }
@@ -232,22 +235,22 @@ export class Git implements IGit {
     }
 
     public async getCommitDate(hash: string): Promise<Date | undefined> {
-        const args = ['show', '--format=%ct', hash];
+        const args = ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.CommitterDateUnixTime)}`, hash];
         const output = await this.exec(args);
         const lines = output.split(/\r?\n/g).map(line => line.trim()).filter(line => line.length > 0);
         if (lines.length === 0) {
-            return undefined;
+            return;
         }
 
         const unixTime = parseInt(lines[0], 10);
         if (isNaN(unixTime) || unixTime <= 0) {
-            return undefined;
+            return;
         }
         return new Date(unixTime * 1000);
     }
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
         const numStartArgs = ['show', LOG_FORMAT, '--decorate=full', '--numstat', hash];
-        const nameStatusArgs = ['show', `--format=${LOG_ENTRY_SEPARATOR}%n`, '--decorate=full', '--name-status', hash];
+        const nameStatusArgs = ['show', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`, '--decorate=full', '--name-status', hash];
 
         const gitRootPath = await this.getGitRoot();
         const output = await this.exec(numStartArgs);

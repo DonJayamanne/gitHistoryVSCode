@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { RefType } from '../../../../../src/adapter/contracts';
-import { IRefParser } from '../../../../../src/adapter/parsers/refs/contracts';
+import { RefType } from '../../../../../src/adapter/types';
+import { IRefParser } from '../../../../../src/adapter/parsers/refs/types';
 import { RemoteHeadParser } from '../../../../../src/adapter/parsers/refs/parsers/remoteHeadParser';
 
 suite('Adapter Parser Ref - RemoteHeadParser', () => {

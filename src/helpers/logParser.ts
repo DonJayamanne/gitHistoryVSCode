@@ -1,11 +1,11 @@
-import { ActionedDetails, FileStat, LogEntry, Modification } from '../contracts';
 import * as vscode from 'vscode';
+import { ActionedDetails, FileStat, LogEntry, Modification } from '../types';
 export const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA1';
 
-let author_regex = /([^<]+)<([^>]+)>/;
-let headers = {
-    'Author': function (current_commit: CommitInfo, author: string) {
-        let capture = author_regex.exec(author);
+const author_regex = /([^<]+)<([^>]+)>/;
+const headers = {
+    'Author': (current_commit: CommitInfo, author: string) => {
+        const capture = author_regex.exec(author);
         if (capture) {
             current_commit.author_name = capture[1].trim();
             current_commit.author_email = capture[2].trim();
@@ -13,8 +13,8 @@ let headers = {
             current_commit.author_name = author;
         }
     },
-    'Commit': function (current_commit: CommitInfo, author: string) {
-        let capture = author_regex.exec(author);
+    'Commit': (current_commit: CommitInfo, author: string) => {
+        const capture = author_regex.exec(author);
         if (capture) {
             current_commit.committer_name = capture[1].trim();
             current_commit.committer_email = capture[2].trim();
@@ -24,18 +24,18 @@ let headers = {
         }
     },
 
-    'AuthorDate': function (current_commit: CommitInfo, date: Date) {
+    'AuthorDate': (current_commit: CommitInfo, date: Date) => {
         current_commit.author_date = date;
     },
 
-    'CommitDate': function (current_commit: CommitInfo, date: Date) {
+    'CommitDate': (current_commit: CommitInfo, date: Date) => {
         current_commit.commit_date = date;
     },
 
-    'Reflog': function (current_commit: CommitInfo, data: any) {
+    'Reflog': (current_commit: CommitInfo, data: any) => {
         current_commit.reflog_name = data.substring(0, data.indexOf(' '));
-        let author = data.substring(data.indexOf(' ') + 2, data.length - 1);
-        let capture = author_regex.exec(author);
+        const author = data.substring(data.indexOf(' ') + 2, data.length - 1);
+        const capture = author_regex.exec(author);
         if (capture) {
             current_commit.reflog_author_name = capture[1].trim();
             current_commit.reflog_author_email = capture[2].trim();
@@ -43,7 +43,7 @@ let headers = {
         else {
             current_commit.reflog_author_name = author;
         }
-    },
+    }
 };
 
 export type CommitInfo = {
@@ -62,12 +62,12 @@ export type CommitInfo = {
     reflog_author_name: string;
     reflog_author_email: string;
 };
-let parse_git_log = function (data: any): CommitInfo[] {
-    let commits: CommitInfo[] = [];
+const parse_git_log = function (data: any): CommitInfo[] {
+    const commits: CommitInfo[] = [];
     let current_commit: CommitInfo;
-    let temp_file_change: string[] = [];
+    const temp_file_change: string[] = [];
 
-    let parse_commit_line = function (row: string) {
+    const parse_commit_line = function (row: string) {
         if (!row.trim()) return;
         current_commit = {
             refs: [], file_line_diffs: [], hash: '', parents: [], message: '',
@@ -75,23 +75,23 @@ let parse_git_log = function (data: any): CommitInfo[] {
             committer_email: '', committer_name: '',
             reflog_author_email: '', reflog_author_name: '', reflog_name: ''
         };
-        let ss = row.split('(');
-        let hashes = ss[0].split(' ').slice(1).filter(function (hash: string) { return hash && hash.length; });
+        const ss = row.split('(');
+        const hashes = ss[0].split(' ').slice(1).filter(function (hash: string) { return hash && hash.length; });
         current_commit.hash = hashes[0];
         current_commit.parents = hashes.slice(1);
         if (ss[1]) {
-            let refs = ss[1].slice(0, ss[1].length - 1);
+            const refs = ss[1].slice(0, ss[1].length - 1);
             current_commit.refs = refs.split(', ');
         }
         commits.push(current_commit);
         parser = parse_header_line;
     };
 
-    let parse_header_line = function (row: string) {
+    const parse_header_line = function (row: string) {
         if (row.trim() === '') {
             parser = parse_commit_message;
         } else {
-            for (let key in headers) {
+            for (const key in headers) {
                 if (row.indexOf(key + ': ') === 0) {
                     headers[key](current_commit, row.slice((key + ': ').length).trim());
                     return;
@@ -100,7 +100,7 @@ let parse_git_log = function (data: any): CommitInfo[] {
         }
     };
 
-    let parse_commit_message = function (row: string, index: number) {
+    const parse_commit_message = function (row: string, index: number) {
         if (/:[\d]+\s[\d]+\s[\d|\w]+.../g.test(rows[index + 1])) {
             parser = parse_file_changes;
             return;
@@ -109,17 +109,20 @@ let parse_git_log = function (data: any): CommitInfo[] {
             parser = parse_commit_line;
             return;
         }
-        if (current_commit.message)
+        if (current_commit.message) {
             current_commit.message += '\n';
-        else current_commit.message = '';
+        }
+        else {
+            current_commit.message = '';
+        }
         current_commit.message += row.trim();
     };
 
-    let parse_file_changes = function (row: string, index: number) {
+    const parse_file_changes = (row: string, index: number) => {
         if (rows.length === index + 1 || rows[index + 1] && rows[index + 1].indexOf('commit ') === 0) {
-            let total: any = [0, 0, 'Total'];
+            const total: any = [0, 0, 'Total'];
             for (let n = 0; n < current_commit.file_line_diffs.length; n++) {
-                let file_line_diff = current_commit.file_line_diffs[n];
+                const file_line_diff = current_commit.file_line_diffs[n];
                 if (!isNaN(parseInt(file_line_diff[0], 10))) {
                     total[0] += file_line_diff[0] = parseInt(file_line_diff[0], 10);
                 }
@@ -132,11 +135,11 @@ let parse_git_log = function (data: any): CommitInfo[] {
             return;
         }
         if (row[0] === ':') {
-            let val = row[row.lastIndexOf('... ') + 4];
+            const val = row[row.lastIndexOf('... ') + 4];
             temp_file_change.push(val);
         }
         else {
-            let nextChange = temp_file_change.shift();
+            const nextChange = temp_file_change.shift();
             if (nextChange !== undefined) {
                 current_commit.file_line_diffs.push(row.split('\t').concat(nextChange));
             }
@@ -144,13 +147,15 @@ let parse_git_log = function (data: any): CommitInfo[] {
     };
 
     let parser: any = parse_commit_line;
-    let rows = data.split('\n');
+    const rows = data.split('\n');
 
-    rows.forEach(function (row: string, index: number) {
+    rows.forEach((row: string, index: number) => {
         parser(row, index);
     });
 
-    commits.forEach(function (commit) { commit.message = (typeof commit.message) === 'string' ? commit.message.trim() : ''; });
+    commits.forEach(commit => {
+        commit.message = (typeof commit.message) === 'string' ? commit.message.trim() : '';
+    });
     return commits;
 };
 
@@ -187,17 +192,19 @@ const prefixLengths = {
     notes: prefixes.notes.length
 };
 
+// tslint:disable-next-line:max-func-body-length
 export function parseLogEntry(lines: string[], startWithNumstat: boolean = false): LogEntry | null {
-    let logEntry: LogEntry = {} as LogEntry;
+    const logEntry: LogEntry = {} as LogEntry;
     let multiLineProperty: string = '';
-    let filesAltered: string[] = [];
+    const filesAltered: string[] = [];
     let processingNumStat = startWithNumstat;
     let regMatch = null;
-    let fileSummary: string[] = [];
+    const fileSummary: string[] = [];
     if (lines.filter(line => line.trim().length > 0).length === 0) {
         return null;
     }
 
+    // tslint:disable-next-line:no-shadowed-variable cyclomatic-complexity
     lines.forEach((line, index, lines) => {
         if (line.indexOf(prefixes.refs) === 0) {
             regMatch = line.match(/HEAD -> refs\/heads\/([\w_\-\/.]+)/);
@@ -206,8 +213,9 @@ export function parseLogEntry(lines: string[], startWithNumstat: boolean = false
                 logEntry.headRef = regMatch[1];
             }
 
-            let re = /refs\/remotes\/([\w+_\-\/.]+)/g;
+            const re = /refs\/remotes\/([\w+_\-\/.]+)/g;
             logEntry.remoteRefs = [];
+            // tslint:disable-next-line:no-conditional-assignment
             while (regMatch = re.exec(line)) {
                 logEntry.remoteRefs.push(regMatch[1]);
             }
@@ -237,8 +245,8 @@ export function parseLogEntry(lines: string[], startWithNumstat: boolean = false
             return;
         }
         if (line.indexOf(prefixes.parentsAbbrev) === 0) {
-            line.substring(prefixLengths.parentsAbbrev).trim().split(' ').forEach((hashShort, index) => {
-                logEntry.parents[index].short = hashShort;
+            line.substring(prefixLengths.parentsAbbrev).trim().split(' ').forEach((hashShort, idx) => {
+                logEntry.parents[idx].short = hashShort;
             });
             return;
         }
@@ -269,8 +277,8 @@ export function parseLogEntry(lines: string[], startWithNumstat: boolean = false
             return;
         }
         if (processingNumStat) {
-            let trimmedLine = line.trim();
-            if (trimmedLine.length > 0 && !Number.isInteger(parseInt(trimmedLine[0]))) {
+            const trimmedLine = line.trim();
+            if (trimmedLine.length > 0 && !Number.isInteger(parseInt(trimmedLine[0], 10))) {
                 fileSummary.push(line.trim());
             }
             else {
@@ -292,14 +300,14 @@ export function parseLogEntry(lines: string[], startWithNumstat: boolean = false
 }
 
 function parseAlteredFiles(alteredFiles: string[], fileSummary: string[]): FileStat[] {
-    let stats: FileStat[] = [];
+    const stats: FileStat[] = [];
     alteredFiles.filter(line => line.trim().length > 0).map(line => {
         const parts = line.split('\t').filter(part => part.trim().length > 0);
         if (parts.length !== 3) {
             return;
         }
-        const add = parts[0] === '-' ? undefined : parseInt(parts[0]);
-        const del = parts[1] === '-' ? undefined : parseInt(parts[1]);
+        const add = parts[0] === '-' ? undefined : parseInt(parts[0], 10);
+        const del = parts[1] === '-' ? undefined : parseInt(parts[1], 10);
         stats.push({ additions: add, deletions: del, path: parts[2], mode: Modification.Modified });
     });
 
@@ -332,6 +340,7 @@ function parseAlteredFiles(alteredFiles: string[], fileSummary: string[]): FileS
             // Look for this file list
             const fileSat = stats.find(fileStat => fileStat.path === file);
             if (fileSat) {
+                // tslint:disable-next-line:switch-default
                 switch (firstWord) {
                     case 'create': {
                         fileSat.mode = Modification.Created;
@@ -352,11 +361,11 @@ function parseAlteredFiles(alteredFiles: string[], fileSummary: string[]): FileS
 }
 
 function parseAuthCommitter(details: string): ActionedDetails {
-    let pos = details.lastIndexOf('>');
-    let time = parseInt(details.substring(pos + 1));
-    let date = new Date(time * 1000);
-    let localisedDate = formatDate(date);
-    let startPos = details.lastIndexOf('<');
+    const pos = details.lastIndexOf('>');
+    const time = parseInt(details.substring(pos + 1), 10);
+    const date = new Date(time * 1000);
+    const localisedDate = formatDate(date);
+    const startPos = details.lastIndexOf('<');
 
     return {
         date: date,
@@ -367,7 +376,7 @@ function parseAuthCommitter(details: string): ActionedDetails {
 }
 
 export function formatDate(date: Date) {
-    let lang = vscode.env.language;
-    let dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+    const lang = vscode.env.language;
+    const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
     return date.toLocaleString(lang, dateOptions);
 }

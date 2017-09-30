@@ -1,2 +1,2 @@
 export * from './gitPath';
-export * from './contracts';
+export * from './types';

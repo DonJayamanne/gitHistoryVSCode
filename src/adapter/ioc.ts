@@ -1,7 +1,7 @@
 // import { Container } from 'inversify';
 // // tslint:disable-next-line:no-import-side-effect
 // import 'reflect-metadata';
-// import { IGit } from './contracts';
+// import { IGit } from './types';
 // import { GitCommandExecutor, IGitCommandExecutor } from './exec';
 // import { GitExecutableLocator, IGitExecutableLocator } from './locator';
 // // import { refContainer, TYPES } from './parsers/refs/ioc';

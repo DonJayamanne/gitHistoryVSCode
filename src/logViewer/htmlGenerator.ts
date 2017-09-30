@@ -1,4 +1,4 @@
-import { LogEntry } from '../contracts';
+import { LogEntry } from '../types';
 import { encode as htmlEncode } from 'he';
 
 export function generateErrorView(error: any): string {

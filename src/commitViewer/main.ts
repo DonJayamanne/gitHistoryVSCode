@@ -1,11 +1,11 @@
-import * as vscode from 'vscode';
-import { CommitProvider } from './commitProvider';
-import { LogEntry } from '../contracts';
-import * as gitHistory from '../helpers/gitHistory';
-import { FileStatNode, LogEntryNode } from './LogEntryNode';
-import * as historyUtil from '../helpers/historyUtils';
-import { getFile, viewFile, diffFiles, viewLog } from '../commands/fileHistory';
 import * as path from 'path';
+import * as vscode from 'vscode';
+import { diffFiles, getFile, viewFile, viewLog } from '../commands/fileHistory';
+import * as gitHistory from '../helpers/gitHistory';
+import * as historyUtil from '../helpers/historyUtils';
+import { LogEntry } from '../types';
+import { CommitProvider } from './commitProvider';
+import { FileStatNode, LogEntryNode } from './LogEntryNode';
 
 let provider: CommitProvider;
 let getGitRepoPath: () => string;
@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
     vscode.commands.registerCommand('git.commit.LogEntry.ViewChangeLog', async (node: LogEntryNode | FileStatNode) => {
         const gitRepoPath = await getGitRepoPath();
         const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.logEntry.fileStats[0].path, node.logEntry.committer.date.toISOString());
-        const historyItem = data.find(data => data.hash === node.logEntry.hash.full);
+        const historyItem = data.find(item => item.hash === node.logEntry.hash.full);
         if (historyItem) {
             viewLog(historyItem);
         }

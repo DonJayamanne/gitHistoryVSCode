@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as logger from '../../logger';
-import { IGitExecutableLocator } from './contracts';
+import { IGitExecutableLocator } from './types';
 
 export class GitExecutableLocator implements IGitExecutableLocator {
     private gitPath: string;

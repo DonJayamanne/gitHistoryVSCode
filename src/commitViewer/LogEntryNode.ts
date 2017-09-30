@@ -1,5 +1,5 @@
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
-import { LogEntry, FileStat, Modification } from '../contracts';
+import { LogEntry, FileStat, Modification } from '../types';
 import * as path from 'path';
 
 export const GitCommitIcon = {

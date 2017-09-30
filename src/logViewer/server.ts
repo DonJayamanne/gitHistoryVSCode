@@ -7,7 +7,7 @@ import * as http from 'http';
 import * as path from 'path';
 import * as io from 'socket.io';
 import * as vscode from 'vscode';
-import { IGit } from '../adapter/contracts';
+import { IGit } from '../adapter/types';
 import { createDeferred, Deferred } from '../common/helpers';
 import { ApiController } from './apiController';
 
@@ -105,7 +105,7 @@ export class Server extends EventEmitter {
     }
     public sendResults(data: {}[]) {
         // Add an id to each item (poor separation of concerns... but what ever)
-        let results = data.map(item => { return { id: uniqid('x'), value: item }; });
+        const results = data.map(item => { return { id: uniqid('x'), value: item }; });
         this.buffer = this.buffer.concat(results);
         this.broadcast('results', results);
     }
@@ -113,7 +113,7 @@ export class Server extends EventEmitter {
     public sendSetting(name: string, value: {}) {
         this.broadcast(name, value);
     }
-    private broadcast(eventName: string, data: any) {
+    private broadcast(eventName: string, data: {}) {
         this.server!.emit(eventName, data);
     }
 
@@ -133,7 +133,7 @@ export class Server extends EventEmitter {
             this.responsePromises.delete(data.id);
             def!.resolve(true);
         });
-        socket.on('settings.appendResults', (data: any) => {
+        socket.on('settings.appendResults', (data: {}) => {
             this.emit('settings.appendResults', data);
         });
         socket.on('clearResults', () => {

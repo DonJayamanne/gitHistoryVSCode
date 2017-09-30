@@ -3,8 +3,8 @@ import * as path from 'path';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Uri } from 'vscode';
-import { CommittedFile, Status } from '../../contracts';
-import { IFileStatParser, IFileStatStatusParser } from '../contracts';
+import { CommittedFile, Status } from '../../types';
+import { IFileStatParser, IFileStatStatusParser } from '../types';
 
 @injectable()
 export class FileStatParser implements IFileStatParser {

@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { Ref, RefType } from '../../../contracts';
-import { IRefParser } from './../contracts';
+import { Ref, RefType } from '../../../types';
+import { IRefParser } from './../types';
 import { getRemoteHeadName, isRemoteHead } from './../helpers';
 
 @injectable()

@@ -1,13 +1,13 @@
-export * from './contracts';
+export * from './types';
 import { inject, injectable, multiInject } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { ILogService } from '../../../common/log';
 import { TYPES as coreTYPES } from '../../../constants';
-import { Ref } from '../../contracts';
+import { Ref } from '../../types';
 import { TYPES } from '../constants';
-import { IRefsParser } from '../contracts';
-import { IRefParser } from './contracts';
+import { IRefsParser } from '../types';
+import { IRefParser } from './types';
 
 @injectable()
 export class RefsParser implements IRefsParser {

@@ -1,9 +1,9 @@
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { Ref, RefType } from '../../../contracts';
+import { Ref, RefType } from '../../../types';
 import { TAG_REF_PREFIXES } from './../constants';
-import { IRefParser } from './../contracts';
+import { IRefParser } from './../types';
 
 @injectable()
 export class TagRefParser implements IRefParser {

@@ -1,4 +1,4 @@
-import { ActionedDetails, CommittedFile, LogEntry, Ref, Status } from '../contracts';
+import { ActionedDetails, CommittedFile, LogEntry, Ref, Status } from '../types';
 
 export const IRefsParser = '';
 export interface IRefsParser {

@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { Status } from '../../contracts';
-import { IFileStatStatusParser } from '../contracts';
+import { Status } from '../../types';
+import { IFileStatStatusParser } from '../types';
 
 @injectable()
 export class FileStatStatusParser implements IFileStatStatusParser {

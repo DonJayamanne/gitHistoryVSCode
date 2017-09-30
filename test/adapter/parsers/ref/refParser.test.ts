@@ -1,15 +1,15 @@
 import { assert } from 'chai';
 import { Container, injectable } from 'inversify';
-import { RefType } from '../../../../src/adapter';
-import { IRefsParser } from '../../../../src/adapter/parsers';
 // import { IRefsParser } from 'adapter/parsers';
-// import { IRefsParser } from 'adapter/parsers/contracts';
+// import { IRefsParser } from 'adapter/parsers/types';
 import { TYPES as parserTYPES } from '../../../../src/adapter/parsers/constants';
 import { container as parserContainer } from '../../../../src/adapter/parsers/ioc';
 import { IRefParser, RefsParser } from '../../../../src/adapter/parsers/refs/parser';
 // import { RefsParser, IRefParser } from 'adapter/parsers/refs/parser';
 import { HeadRefParser } from '../../../../src/adapter/parsers/refs/parsers/headRefParser';
 import { RemoteHeadParser } from '../../../../src/adapter/parsers/refs/parsers/remoteHeadParser';
+import { IRefsParser } from '../../../../src/adapter/parsers/types';
+import { RefType } from '../../../../src/adapter/types';
 import { ILogService } from '../../../../src/common/log';
 import { TYPES as coreTYPES } from '../../../../src/constants';
 

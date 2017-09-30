@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { Status } from '../../../../src/adapter/contracts';
 import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatStatus/parser';
+import { Status } from '../../../../src/adapter/types';
 
 suite('Adapter Parser File Status', () => {
 

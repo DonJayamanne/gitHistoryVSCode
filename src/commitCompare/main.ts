@@ -1,15 +1,14 @@
 // import { getGitRepositoryPath } from '../helpers/gitPaths';
-import { LogEntry } from '../contracts';
+import * as path from 'path';
 // import { getGitRepositoryPath } from '../helpers/gitPaths';
 import * as vscode from 'vscode';
-// import { CommitProvider } from './commitProvider';
-import { getLogEntries } from '../helpers/gitHistory';
-import { getDiff } from '../helpers/gitDiff';
+import { diffFiles, getFile } from '../commands/fileHistory';
 import { LogEntryNode } from '../commitViewer/logEntryNode';
-import { CompareFileStatNode } from './logEntryNode';
+import { getDiff } from '../helpers/gitDiff';
+import { getLogEntries } from '../helpers/gitHistory';
+import { LogEntry } from '../types';
 import { CommitCompareProvider } from './commitCompareProvider';
-import { getFile, diffFiles } from '../commands/fileHistory';
-import * as path from 'path';
+import { CompareFileStatNode } from './logEntryNode';
 
 let provider: CommitCompareProvider;
 let getGitRepoPath: () => string;
@@ -88,8 +87,8 @@ async function showComparisonInformation(leftNode: LogEntry, rightNode: LogEntry
     // Dirty hack
     const clonedLeftNode: LogEntry = JSON.parse(JSON.stringify(leftNode));
     clonedLeftNode.fileStats = diff[0].fileStats;
-    console.log(diff);
 
+    // tslint:disable-next-line:no-shadowed-variable
     const provider = createCommitCompareProvider();
     provider.setComparisonEntries(clonedLeftNode, rightNode);
     provider.refresh();

@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { ActionedDetails } from '../../contracts';
-import { IActionDetailsParser } from '../contracts';
+import { ActionedDetails } from '../../types';
+import { IActionDetailsParser } from '../types';
 
 @injectable()
 export class ActionDetailsParser implements IActionDetailsParser {

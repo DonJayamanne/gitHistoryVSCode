@@ -2,8 +2,8 @@ import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { CommittedFile } from '../adapter/contracts';
-import { IGit } from '../adapter/contracts';
+import { CommittedFile } from '../adapter/types';
+import { IGit } from '../adapter/types';
 
 @injectable()
 export class ApiController {

@@ -1,5 +1,5 @@
-import { LogEntry, FileStat, Modification } from '../contracts';
 import { AddedIcon, FileStatNode, ModifiedIcon, RemovedIcon } from '../commitViewer/logEntryNode';
+import { FileStat, LogEntry, Modification } from '../types';
 
 export class CompareFileStatNode extends FileStatNode {
     constructor(public fileStat: FileStat, leftLogEntry: LogEntry, public rightLogEntry: LogEntry) {
@@ -34,6 +34,9 @@ export class CompareFileStatNode extends FileStatNode {
                     arguments: [new FileStatNode(fileStat, leftLogEntry)]
                 };
                 break;
+            }
+            default: {
+                // Do ntohing
             }
         }
     }

@@ -1,30 +1,28 @@
 import * as vscode from 'vscode';
-import { LogEntry } from '../contracts';
-import { LogEntryNode, CommitEntryNode, TextNode, FileStatNode } from './logEntryNode';
+import { LogEntry } from '../types';
+import { CommitEntryNode, FileStatNode, LogEntryNode, TextNode } from './logEntryNode';
 // import * as path from 'path';
 export class CommitProvider implements vscode.TreeDataProvider<CommitEntryNode> {
 
     private _onDidChangeTreeData: vscode.EventEmitter<CommitEntryNode | undefined> = new vscode.EventEmitter<CommitEntryNode | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<CommitEntryNode | undefined> = this._onDidChangeTreeData.event;
     private _logEntries: LogEntry[] = [];
-    constructor() {
-    }
+    public readonly onDidChangeTreeData: vscode.Event<CommitEntryNode | undefined> = this._onDidChangeTreeData.event;
 
-    addLogEntry(logEntry: LogEntry) {
+    public addLogEntry(logEntry: LogEntry) {
         this._logEntries.push(logEntry);
     }
-    clear() {
+    public clear() {
         this._logEntries = [];
     }
-    refresh(): void {
+    public refresh(): void {
         this._onDidChangeTreeData.fire();
     }
 
-    getTreeItem(element: CommitEntryNode): vscode.TreeItem {
+    public getTreeItem(element: CommitEntryNode): vscode.TreeItem {
         return element;
     }
 
-    getChildren(element?: CommitEntryNode): Thenable<CommitEntryNode[]> {
+    public getChildren(element?: CommitEntryNode): Thenable<CommitEntryNode[]> {
         if (this._logEntries.length === 0) {
             return Promise.resolve([]);
         }
