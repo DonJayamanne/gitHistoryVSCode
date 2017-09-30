@@ -1,6 +1,6 @@
 language: node
 sudo: required
-dist: trustyÏ
+dist: trusty
 os:
   - osx
   - linux
