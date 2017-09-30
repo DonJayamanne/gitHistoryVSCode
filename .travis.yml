@@ -1,4 +1,4 @@
-language: python
+language: node
 sudo: required
 dist: trustyÏ
 os:
