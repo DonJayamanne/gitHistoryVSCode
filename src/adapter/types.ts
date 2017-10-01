@@ -35,7 +35,6 @@ export type ActionedDetails = {
     name: string;
     email: string;
     date: Date;
-    // localisedDate: string;
 };
 export type LogEntries = {
     items: LogEntry[];

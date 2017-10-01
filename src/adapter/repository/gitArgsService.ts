@@ -1,8 +1,10 @@
+import { injectable } from 'inversify';
 import { Helpers } from '../helpers';
 import { CommitInfo } from '../types';
 import { LOG_ENTRY_SEPARATOR, LOG_FORMAT, newLineFormatCode } from './constants';
 import { GitLogArgs, IGitArgsService } from './types';
 
+@injectable()
 export class GitArgsService implements IGitArgsService {
     constructor(private isWindows: boolean = /^win/.test(process.platform)) { }
 
