@@ -1,21 +1,14 @@
-// import { Container } from 'inversify';
-// // tslint:disable-next-line:no-import-side-effect
-// import 'reflect-metadata';
-// import { IGit } from './types';
-// import { GitCommandExecutor, IGitCommandExecutor } from './exec';
-// import { GitExecutableLocator, IGitExecutableLocator } from './locator';
-// // import { refContainer, TYPES } from './parsers/refs/ioc';
-// import { Git } from './repository/git';
+import { ContainerModule, interfaces } from 'inversify';
+// tslint:disable-next-line:no-import-side-effect
+import 'reflect-metadata';
+import { TYPES } from './constants';
+import { GitCommandExecutor, IGitCommandExecutor } from './exec/index';
+import { GitExecutableLocator, IGitExecutableLocator } from './locator';
+import { Git } from './repository/git';
+import { IGit } from './types';
 
-// export const TYPES = {
-//     IGit: Symbol('IGit'),
-//     IGitExecutableLocator: Symbol('IGitExecutableLocator'),
-//     IGitCommandExecutor: Symbol('IGitCommandExecutor')
-// };
-
-// const cont = new Container();
-// cont.bind<IGit>(TYPES.IGit).to(Git);
-// cont.bind<IGitExecutableLocator>(TYPES.IGitExecutableLocator).to(GitExecutableLocator);
-// cont.bind<IGitCommandExecutor>(TYPES.IGitCommandExecutor).to(GitCommandExecutor);
-
-// export const container = Container.merge(cont, parserContainer);
+export const containerModule = new ContainerModule((bind: interfaces.Bind) => {
+    bind<IGit>(TYPES.IGit).to(Git);
+    bind<IGitExecutableLocator>(TYPES.IGitExecutableLocator).to(GitExecutableLocator);
+    bind<IGitCommandExecutor>(TYPES.IGitCommandExecutor).to(GitCommandExecutor);
+});

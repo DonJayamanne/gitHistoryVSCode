@@ -4,6 +4,7 @@ import * as logger from '../logger';
 import { CherryPickEntry } from '../types';
 import { getGitBranch, getGitPath } from './gitPaths';
 
+// tslint:disable-next-line:function-name
 export async function CherryPick(rootDir: string, branch: string, hash: string): Promise<CherryPickEntry> {
     const args = ['cherry-pick', hash];
     // This is how you can view the log across all branches
@@ -21,6 +22,7 @@ export async function CherryPick(rootDir: string, branch: string, hash: string):
             return;
         }
         let error = '';
+        // tslint:disable-next-line:prefer-type-cast
         const entry = {} as CherryPickEntry;
 
         logger.logInfo(`git ${args.join(' ')}`);
@@ -57,6 +59,7 @@ export async function CherryPick(rootDir: string, branch: string, hash: string):
     });
 }
 
+// tslint:disable-next-line:function-name
 export async function CherryPickAbort(rootDir: string): Promise<null> {
     const args = ['cherry-pick', '--abort'];
     // This is how you can view the log across all branches

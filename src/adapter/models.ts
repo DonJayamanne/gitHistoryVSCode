@@ -1,3 +1,4 @@
+// tslint:disable-next-line:no-useless-files
 // /*---------------------------------------------------------------------------------------------
 //  *  Copyright (c) Microsoft Corporation. All rights reserved.
 //  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -263,11 +264,9 @@
 //         this.status();
 //     }
 
-
 //     async getCommit(ref: string): Promise<Commit> {
 //         return await this.repository.getCommit(ref);
 //     }
-
 
 //     async show(ref: string, filePath: string): Promise<string> {
 //         return await this.run(Operation.Show, async () => {

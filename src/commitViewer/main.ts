@@ -11,6 +11,7 @@ let provider: CommitProvider;
 let getGitRepoPath: () => string;
 export function activate(context: vscode.ExtensionContext, gitPath: () => string) {
     getGitRepoPath = gitPath;
+    // tslint:disable-next-line:no-unnecessary-callback-wrapper
     vscode.commands.registerCommand('git.viewTreeView', (branch: string, hash: string) => showCommitInTreeView(branch, hash));
     getGitRepoPath = getGitRepoPath;
 
@@ -38,7 +39,7 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
         const workspaceFile = path.join(gitRepoPath, node.fileStat.path);
         const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.fileStat.path, node.logEntry.committer.date.toISOString());
         const filePath = await getFile(node.logEntry.hash.full, gitRepoPath, node.fileStat.path);
-        const previousItems = data.filter(data => data.hash !== node.logEntry.hash.full);
+        const previousItems = data.filter(dataItem => dataItem.hash !== node.logEntry.hash.full);
         if (previousItems.length > 0) {
             const previousFile = await getFile(previousItems[0].hash, gitRepoPath, node.fileStat.path);
             await diffFiles(workspaceFile, previousFile, previousItems[0].hash, filePath, node.logEntry.hash.full);
@@ -47,10 +48,10 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
 
 }
 export function showLogEntries(entries: LogEntry[]) {
-    const provider = createCommitProvider();
-    provider.clear();
-    entries.forEach(entry => provider.addLogEntry(entry));
-    provider.refresh();
+    const commitProvider = createCommitProvider();
+    commitProvider.clear();
+    entries.forEach(entry => commitProvider.addLogEntry(entry));
+    commitProvider.refresh();
 }
 function createCommitProvider(): CommitProvider {
     if (provider) {
@@ -60,16 +61,18 @@ function createCommitProvider(): CommitProvider {
     vscode.window.registerTreeDataProvider('commitViewProvider', provider);
     return provider;
 }
+// tslint:disable-next-line:no-any
 function showCommitInTreeView(branch: string, hash: string): Promise<any> | undefined {
-    const provider = createCommitProvider();
-    return getCommitDetails(provider, branch, hash);
+    const commitProvider = createCommitProvider();
+    return getCommitDetails(commitProvider, branch, hash);
 }
-function getCommitDetails(provider: CommitProvider, branch: string, hash: string): Promise<any> {
+// tslint:disable-next-line:no-any
+function getCommitDetails(commitProvider: CommitProvider, branch: string, hash: string): Promise<any> {
     const gitRepoPath = getGitRepoPath();
     return gitHistory.getLogEntries(gitRepoPath, branch, '', 0, 1, hash)
         .then(entries => {
-            entries.forEach(entry => provider.addLogEntry(entry));
-            provider.refresh();
+            entries.forEach(entry => commitProvider.addLogEntry(entry));
+            commitProvider.refresh();
         })
         .catch(ex => {
             console.error(ex);

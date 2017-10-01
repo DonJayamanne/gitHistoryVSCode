@@ -39,6 +39,7 @@ export class ApiController {
             .catch(err => response.status(500).send(err));
     }
     private cherryPickCommit(request: Request, response: Response) {
+        // tslint:disable-next-line:no-console
         console.log(request.params.hash);
         response.send('');
         // this.repository.getCommit(request.params.hash)
@@ -46,6 +47,7 @@ export class ApiController {
         //     .catch(err => response.status(500).send(err));
     }
     private selectCommit(request: Request, response: Response) {
+        // tslint:disable-next-line:no-console
         console.log(request.params.hash);
         response.send('');
         // this.repository.getCommit(request.params.hash)
@@ -55,6 +57,7 @@ export class ApiController {
     private onCommittedFileSelected(request: Request, response: Response) {
         // tslint:disable-next-line:prefer-type-cast
         const committedFile = request.body as CommittedFile;
+        // tslint:disable-next-line:no-console
         console.log(committedFile);
     }
 }

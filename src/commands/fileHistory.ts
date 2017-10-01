@@ -1,15 +1,15 @@
+import * as fs from 'fs';
+import { decode as htmlDecode } from 'he';
+import * as path from 'path';
+import * as tmp from 'tmp';
 import * as vscode from 'vscode';
 import { getGitRepositoryPath } from '../helpers/gitPaths';
 import * as historyUtil from '../helpers/historyUtils';
-import * as path from 'path';
-import * as tmp from 'tmp';
-import * as logger from '../logger';
 import { CommitInfo, formatDate } from '../helpers/logParser';
-import * as fs from 'fs';
-import { decode as htmlDecode } from 'he';
+import * as logger from '../logger';
 
 export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
+    const disposable = vscode.commands.registerCommand('git.viewFileHistory', (fileUri?: vscode.Uri) => {
         let fileName = '';
         if (fileUri && fileUri.fsPath) {
             fileName = fileUri.fsPath;
@@ -31,16 +31,20 @@ vscode.commands.registerCommand('git.viewFileCommitDetails', async (hash: string
         const fileName = path.join(vscode.workspace.rootPath!, relativeFilePath);
         const gitRepositoryPath = await getGitRepositoryPath(vscode.workspace.rootPath!);
         const data = await historyUtil.getFileHistoryBefore(gitRepositoryPath, relativeFilePath, isoStrictDateTime);
-        const historyItem: any = data.find(data => data.hash === hash);
-        const previousItems = data.filter(data => data.hash !== hash);
-        historyItem.previousHash = previousItems.length === 0 ? '' : previousItems[0].hash as string;
-        const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
+        // tslint:disable-next-line:possible-timing-attack
+        const historyItem = data.find(item => item.hash === hash);
+        // tslint:disable-next-line:possible-timing-attack
+        const previousItems = data.filter(item => item.hash !== hash);
+        // tslint:disable-next-line:no-any prefer-type-cast
+        (historyItem as any).previousHash = previousItems.length === 0 ? '' : previousItems[0].hash;
+        const commitItem: vscode.QuickPickItem = <vscode.QuickPickItem>{
             label: '',
             description: '',
             data: historyItem,
-            isLast: historyItem.previousHash.length === 0
+            // tslint:disable-next-line:no-any prefer-type-cast
+            isLast: (historyItem as any).previousHash.length === 0
         };
-        onItemSelected(item, fileName, relativeFilePath);
+        onItemSelected(commitItem, fileName, relativeFilePath);
     }
     catch (error) {
         logger.logError(error);
@@ -58,19 +62,28 @@ export async function run(fileName: string) {
             return;
         }
 
-        let itemPickList: vscode.QuickPickItem[] = fileHistory.map(item => {
-            let dateTime = formatDate(new Date(Date.parse(item.author_date)));
+        const itemPickList: vscode.QuickPickItem[] = fileHistory.map(item => {
+            const dateTime = formatDate(new Date(Date.parse(item.author_date)));
+            // tslint:disable-next-line:no-backbone-get-set-outside-model
             let label = <string>vscode.workspace.getConfiguration('gitHistory').get('displayLabel');
+            // tslint:disable-next-line:no-backbone-get-set-outside-model
             let description = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDescription');
+            // tslint:disable-next-line:no-backbone-get-set-outside-model
             let detail = <string>vscode.workspace.getConfiguration('gitHistory').get('displayDetail');
 
             const firstLineofMessage = item.message.split('\n')[0];
 
+            // tslint:disable-next-line:no-invalid-template-strings
             label = label.replace('${date}', dateTime).replace('${name}', item.author_name)
+                // tslint:disable-next-line:no-invalid-template-strings
                 .replace('${email}', item.author_email).replace('${message}', firstLineofMessage);
+            // tslint:disable-next-line:no-invalid-template-strings
             description = description.replace('${date}', dateTime).replace('${name}', item.author_name)
+                // tslint:disable-next-line:no-invalid-template-strings
                 .replace('${email}', item.author_email).replace('${message}', firstLineofMessage);
+            // tslint:disable-next-line:no-invalid-template-strings
             detail = detail.replace('${date}', dateTime).replace('${name}', item.author_name)
+                // tslint:disable-next-line:no-invalid-template-strings
                 .replace('${email}', item.author_email).replace('${message}', firstLineofMessage);
 
             return { label: label, description: description, detail: detail, data: item };
@@ -78,9 +91,11 @@ export async function run(fileName: string) {
 
         itemPickList.forEach((item, index) => {
             if (index === (itemPickList.length - 1)) {
+                // tslint:disable-next-line:no-any
                 (<any>item).isLast = true;
             }
             else {
+                // tslint:disable-next-line:no-any
                 (<any>item).data.previousHash = fileHistory[index + 1].hash;
             }
         });
@@ -100,18 +115,21 @@ export async function run(fileName: string) {
 export async function getFileCommitHistory(hash: string, relativeFilePath: string, isoStrictDateTime: string, gitGitRepositoryPath: string): Promise<CommitInfo & { previousHash: string } | undefined> {
     // const fileName = path.join(gitGitRepositoryPath, relativeFilePath);
     const data = await historyUtil.getFileHistoryBefore(gitGitRepositoryPath, relativeFilePath, isoStrictDateTime);
-    const historyItem = data.find(data => data.hash === hash);
+    // tslint:disable-next-line:possible-timing-attack
+    const historyItem = data.find(item => item.hash === hash);
     if (!historyItem) {
         return;
     }
-    const previousItems = data.filter(data => data.hash !== hash);
-    const previousHash = previousItems.length === 0 ? '' : previousItems[0].hash as string;
+    // tslint:disable-next-line:possible-timing-attack
+    const previousItems = data.filter(item => item.hash !== hash);
+    const previousHash = previousItems.length === 0 ? '' : previousItems[0].hash;
     return {
         ...historyItem!,
         previousHash
     };
 }
 export async function onItemSelected(item: vscode.QuickPickItem, fileName: string, relativeFilePath: string) {
+    // tslint:disable-next-line:no-any
     const commit = (<any>item).data;
     const gitRepositoryPath = await getGitRepositoryPath(fileName);
     const getThisFile = getFile(commit.hash, gitRepositoryPath, relativeFilePath);
@@ -136,6 +154,7 @@ export async function onItemSelected(item: vscode.QuickPickItem, fileName: strin
         if (!cmd) {
             return;
         }
+        // tslint:disable-next-line:no-any
         const data = (<any>item).data;
         if (cmd.label === 'View Change Log') {
             viewLog(data);
@@ -168,9 +187,10 @@ export async function viewFile(fileName: string) {
 }
 
 export function viewLog(details: CommitInfo) {
-    let authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
-    let committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
-    let log = `Hash : ${details.hash}\n` +
+    const authorDate = new Date(Date.parse(details.author_date)).toLocaleString();
+    const committerDate = new Date(Date.parse(details.commit_date)).toLocaleString();
+    // tslint:disable-next-line:prefer-template
+    const log = `Hash : ${details.hash}\n` +
         `Author : ${details.author_name} <${details.author_email}>\n` +
         `Author Date : ${authorDate}\n` +
         `Committer Name : ${details.committer_name} <${details.committer_email}>\n` +
@@ -198,8 +218,9 @@ export async function getFile(commitHash: string, gitRepositoryPath: string, loc
             resolve('');
             return;
         }
-        let ext = path.extname(localFilePath);
-        tmp.file({ postfix: ext }, async function _tempFileCreated(err: any, tmpFilePath: string, fd: number, cleanupCallback: () => void) {
+        const ext = path.extname(localFilePath);
+        // tslint:disable-next-line:no-any
+        tmp.file({ postfix: ext }, async (err: any, tmpFilePath: string, fd: number, cleanupCallback: () => void) => {
             if (err) {
                 reject(err);
                 return;

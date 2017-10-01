@@ -13,7 +13,7 @@ import { TagRefParser } from './refs/parsers/tagRefParser';
 import { IRefParser } from './refs/types';
 import { IActionDetailsParser, IFileStatParser, IFileStatStatusParser, ILogParser, IRefsParser } from './types';
 
-export const container = new ContainerModule((bind: interfaces.Bind) => {
+export const containerModule = new ContainerModule((bind: interfaces.Bind) => {
     bind<IRefParser>(TYPES.IRefParser).to(HeadRefParser).inSingletonScope();
     bind<IRefParser>(TYPES.IRefParser).to(RemoteHeadParser).inSingletonScope();
     bind<IRefParser>(TYPES.IRefParser).to(TagRefParser).inSingletonScope();

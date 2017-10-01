@@ -1,6 +1,6 @@
-import { TreeItem, TreeItemCollapsibleState } from 'vscode';
-import { LogEntry, FileStat, Modification } from '../types';
 import * as path from 'path';
+import { TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { FileStat, LogEntry, Modification } from '../types';
 
 export const GitCommitIcon = {
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'darkTheme', 'git-commit.png'),
@@ -42,13 +42,14 @@ export class LogEntryNode extends CommitEntryNode {
         this.iconPath = GitCommitIcon;
     }
 
-    contextValue = 'logEntry';
+    public contextValue = 'logEntry';
 }
 export class TextNode extends CommitEntryNode {
     constructor(public label: string) {
         super(label, TreeItemCollapsibleState.None);
     }
 }
+// tslint:disable-next-line:max-classes-per-file
 export class DirectoryNode extends CommitEntryNode {
     constructor(public fullPath: string, public logEntry: LogEntry) {
         super(path.basename(fullPath), TreeItemCollapsibleState.Collapsed);
@@ -59,11 +60,12 @@ export class DirectoryNode extends CommitEntryNode {
     }
 
     public fileStats: FileStat[] = [];
-    contextValue = 'directory';
+    public contextValue = 'directory';
 }
+// tslint:disable-next-line:max-classes-per-file
 export class FileStatNode extends CommitEntryNode {
     constructor(public fileStat: FileStat, public logEntry: LogEntry) {
-        super(FileStatNode.getTitle(fileStat), TreeItemCollapsibleState.None);
+        super(getTitle(fileStat), TreeItemCollapsibleState.None);
         switch (fileStat.mode) {
             case Modification.Created: {
                 this.contextValue = 'fileStatA';
@@ -105,11 +107,15 @@ export class FileStatNode extends CommitEntryNode {
                 };
             }
         }
-
     }
 
-    static getTitle(fileStat: FileStat): string {
-        const fileName = path.basename(fileStat.path);
-        return fileName === fileStat.path ? fileName : `${fileName} (${path.dirname(fileStat.path)})`;
-    }
+    // public static getTitle(fileStat: FileStat): string {
+    //     const fileName = path.basename(fileStat.path);
+    //     return fileName === fileStat.path ? fileName : `${fileName} (${path.dirname(fileStat.path)})`;
+    // }
+}
+
+function getTitle(fileStat: FileStat): string {
+    const fileName = path.basename(fileStat.path);
+    return fileName === fileStat.path ? fileName : `${fileName} (${path.dirname(fileStat.path)})`;
 }

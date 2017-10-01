@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as io from 'socket.io';
 import * as vscode from 'vscode';
 import { IGit } from '../adapter/types';
-import { createDeferred, Deferred } from '../common/helpers';
+import { createDeferred, IDeferred } from '../common/helpers';
 import { ApiController } from './apiController';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -20,7 +20,7 @@ export class Server extends EventEmitter {
     private clients: SocketIO.Socket[] = [];
     constructor() {
         super();
-        this.responsePromises = new Map<string, Deferred<boolean>>();
+        this.responsePromises = new Map<string, IDeferred<boolean>>();
     }
 
     public dispose() {
@@ -85,8 +85,11 @@ export class Server extends EventEmitter {
         const backgroundColor: string = req.query.backgroundColor;
         const color: string = req.query.color;
         const editorConfig = vscode.workspace.getConfiguration('editor');
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
         const fontFamily = editorConfig.get<string>('fontFamily')!.split('\'').join('').split('"').join('');
-        const fontSize = editorConfig.get<number>('fontSize') + 'px';
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
+        const fontSize = `${editorConfig.get<number>('fontSize')}px`;
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
         const fontWeight = editorConfig.get<string>('fontWeight');
         res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'),
             {
@@ -148,7 +151,7 @@ export class Server extends EventEmitter {
         socket.emit('results', this.buffer);
     }
 
-    private responsePromises: Map<string, Deferred<boolean>>;
+    private responsePromises: Map<string, IDeferred<boolean>>;
     public clientsConnected(timeoutMilliSeconds: number): Promise<{}> {
         const id = new Date().getTime().toString();
         const def = createDeferred<boolean>();

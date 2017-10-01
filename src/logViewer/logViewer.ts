@@ -1,15 +1,15 @@
-import * as vscode from 'vscode';
-import * as gitCherryPick from '../helpers/gitCherryPick';
-import * as path from 'path';
-import * as gitPaths from '../helpers/gitPaths';
 import { decode as htmlDecode } from 'he';
+import * as path from 'path';
+import * as vscode from 'vscode';
+import * as fileHistory from '../commands/fileHistory';
+import * as gitCherryPick from '../helpers/gitCherryPick';
+import * as gitPaths from '../helpers/gitPaths';
 import * as historyUtil from '../helpers/historyUtils';
 import * as logger from '../logger';
-import * as fileHistory from '../commands/fileHistory';
 import { Server } from './server';
 
 const gitHistorySchema = 'git-history-viewer';
-let previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
+let previewUri = vscode.Uri.parse(`${gitHistorySchema}://authority/git-history`);
 let pageIndex = 0;
 let canGoPrevious = false;
 let canGoNext = true;
@@ -29,7 +29,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
         // Fix for issue #669 "Results Panel not Refreshing Automatically" - always include a unique time
         // so that the content returned is different. Otherwise VSCode will not refresh the document since it
         // thinks that there is nothing to be updated.
-        let timeNow = new Date().getTime();
+        const timeNow = new Date().getTime();
         const htmlContent = `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
@@ -63,15 +63,16 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 }
 
 let server: Server;
+// tslint:disable-next-line:max-func-body-length
 export async function activate(context: vscode.ExtensionContext) {
-    let provider = new TextDocumentContentProvider();
-    let registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
+    const provider = new TextDocumentContentProvider();
+    const registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
 
     let disposable = vscode.commands.registerCommand('git.viewHistory', async () => {
         const itemPickList: vscode.QuickPickItem[] = [];
         itemPickList.push({ label: 'Current branch', description: '' });
         itemPickList.push({ label: 'All branches', description: '' });
-        let modeChoice = await vscode.window.showQuickPick(itemPickList, { placeHolder: 'Show history for...', matchOnDescription: true });
+        const modeChoice = await vscode.window.showQuickPick(itemPickList, { placeHolder: 'Show history for...', matchOnDescription: true });
 
         let title = 'Git History (All Branches)';
         if (modeChoice === undefined) {
@@ -98,12 +99,12 @@ export async function activate(context: vscode.ExtensionContext) {
         canGoNext = true;
 
         if (modeChoice.label === 'All branches') {
-            previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
+            previewUri = vscode.Uri.parse(`${gitHistorySchema}://authority/git-history`);
             title = 'Git History (all branches)';
         }
         else {
-            previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history?branch=' + encodeURI(branchName));
-            title = 'Git History (' + branchName + ')';
+            previewUri = vscode.Uri.parse(`${gitHistorySchema}://authority/git-history?branch=${encodeURI(branchName)}`);
+            title = `Git History (${branchName})`;
         }
 
         // Unique name everytime, so that we always refresh the history log
@@ -115,7 +116,8 @@ export async function activate(context: vscode.ExtensionContext) {
             pageIndex = 0;
             canGoPrevious = false;
             canGoNext = true;
-            previewUri = vscode.Uri.parse(gitHistorySchema + '://authority/git-history');
+            previewUri = vscode.Uri.parse(`${gitHistorySchema}://authority/git-history`);
+            // tslint:disable-next-line:no-any no-empty
             return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Git History (git log)').then((success: any) => {
             }, (reason: string) => {
                 vscode.window.showErrorMessage(reason);
@@ -126,13 +128,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
     disposable = vscode.commands.registerCommand('git.cherry-pick-into', (branch: string, hash: string) => {
         gitCherryPick.CherryPick(vscode.workspace.rootPath!, branch, hash).then((value) => {
-            vscode.window.showInformationMessage('Cherry picked into ' + value.branch + ' (' + value.hash + ')');
+            vscode.window.showInformationMessage(`Cherry picked into ${value.branch} (${value.hash})`);
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });
     });
     context.subscriptions.push(disposable);
-
 
     context.subscriptions.push(disposable);
 
@@ -141,9 +142,11 @@ export async function activate(context: vscode.ExtensionContext) {
             relativeFilePath = htmlDecode(relativeFilePath);
             const fileName = path.join(gitRepoPath!, relativeFilePath);
             const data = await historyUtil.getFileHistoryBefore(gitRepoPath!, relativeFilePath, isoStrictDateTime);
-            const historyItem: any = data.find(data => data.hash === hash);
-            const previousItems = data.filter(data => data.hash !== hash);
-            historyItem.previousHash = previousItems.length === 0 ? '' : previousItems[0].hash as string;
+            // tslint:disable-next-line:possible-timing-attack o-shadowed-variable no-any
+            const historyItem: any = data.find(dataItem => dataItem.hash === hash);
+            // tslint:disable-next-line:possible-timing-attack
+            const previousItems = data.filter(dataItem => dataItem.hash !== hash);
+            historyItem.previousHash = previousItems.length === 0 ? '' : previousItems[0].hash;
             const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
                 label: '',
                 description: '',
@@ -164,9 +167,11 @@ export async function activate(context: vscode.ExtensionContext) {
             relativeFilePath = htmlDecode(relativeFilePath);
             const fileName = path.join(gitRepoPath!, relativeFilePath);
             const data = await historyUtil.getFileHistoryBefore(gitRepoPath!, relativeFilePath, isoStrictDateTime);
-            const historyItem: any = data.find(data => data.hash === hash);
-            const previousItems = data.filter(data => data.hash !== hash);
-            historyItem.previousHash = previousItems.length === 0 ? '' : previousItems[0].hash as string;
+            // tslint:disable-next-line:no-shadowed-variable no-any possible-timing-attack
+            const historyItem: any = data.find(dataItem => dataItem.hash === hash);
+            // tslint:disable-next-line:no-shadowed-variable no-any possible-timing-attack
+            const previousItems = data.filter(dataItem => dataItem.hash !== hash);
+            historyItem.previousHash = previousItems.length === 0 ? '' : previousItems[0].hash;
             const item: vscode.QuickPickItem = <vscode.QuickPickItem>{
                 label: '',
                 description: '',

@@ -1,6 +1,7 @@
-import { LogEntry } from '../types';
 import { encode as htmlEncode } from 'he';
+import { LogEntry } from '../types';
 
+// tslint:disable-next-line:no-any
 export function generateErrorView(error: any): string {
     return `
         <div class="error-box animated pulse">
@@ -26,8 +27,8 @@ export function generateProgressHtmlView(progressMessage: string): string {
 }
 
 function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, canGoPrevious: boolean, canGoNext: boolean): string {
-    let prevHref = canGoPrevious ? encodeURI('command:git.logNavigate?' + JSON.stringify(['previous'])) : '#';
-    let nextHref = canGoNext ? encodeURI('command:git.logNavigate?' + JSON.stringify(['next'])) : '#';
+    const prevHref = canGoPrevious ? encodeURI(`command:git.logNavigate?${JSON.stringify(['previous'])}`) : '#';
+    const nextHref = canGoNext ? encodeURI(`command:git.logNavigate?${JSON.stringify(['next'])}`) : '#';
 
     return `
         <div id="log-view" class="list-group">
@@ -93,6 +94,7 @@ function generateHistoryListContainer(entries: LogEntry[], entriesHtml: string, 
 }
 
 export function generateHeadRefHtmlView(entry: LogEntry): string {
+    // tslint:disable-next-line:curly
     if (entry.headRef)
         return `
             <div class="media-image">
@@ -102,7 +104,7 @@ export function generateHeadRefHtmlView(entry: LogEntry): string {
                     </div>
                 </div>
             </div>`;
-    return ``;
+    return '';
 }
 
 export function generateRemoteRefHtmlView(entry: LogEntry): string {
@@ -118,7 +120,7 @@ export function generateRemoteRefHtmlView(entry: LogEntry): string {
                 </div>`;
         }).join('');
     }
-    return ``;
+    return '';
 }
 
 export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: boolean, canGoNext: boolean, skipGraph: boolean = false): string {
@@ -137,14 +139,14 @@ export function generateHistoryHtmlView(entries: LogEntry[], canGoPrevious: bool
                             </div>
                             <div class="cherry-pick-button">
                                 <span class="btnx hint--bottom hint--rounded hint--bounce" aria-label="Cherry pick into branch"><span aria-label="Cherry pick into branch">
-                                    <a href="${encodeURI('command:git.cherry-pick-into?' + JSON.stringify([entry.headRef, entry.hash.full]))}">
+                                    <a href="${encodeURI(`command:git.cherry-pick-into?${JSON.stringify([entry.headRef, entry.hash.full])}`)}">
                                         <i class="octicon octicon-git-pull-request"></i>
                                     </a>
                                 </span>
                             </div>
                             <div class="cherry-pick-button">
                                 <span class="btnx hint--bottom hint--rounded hint--bounce" aria-label="Compare"><span aria-label="Compare">
-                                    <a href="${encodeURI('command:git.commit.compare?' + JSON.stringify([entry.headRef, entry.hash.full]))}">
+                                    <a href="${encodeURI(`command:git.commit.compare?${JSON.stringify([entry.headRef, entry.hash.full])}`)}">
                                         <i class="octicon octicon-git-commit"></i>
                                     </a>
                                 </span>

@@ -4,7 +4,7 @@ export const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA1';
 
 const author_regex = /([^<]+)<([^>]+)>/;
 const headers = {
-    'Author': (current_commit: CommitInfo, author: string) => {
+    Author: (current_commit: CommitInfo, author: string) => {
         const capture = author_regex.exec(author);
         if (capture) {
             current_commit.author_name = capture[1].trim();
@@ -13,7 +13,7 @@ const headers = {
             current_commit.author_name = author;
         }
     },
-    'Commit': (current_commit: CommitInfo, author: string) => {
+    Commit: (current_commit: CommitInfo, author: string) => {
         const capture = author_regex.exec(author);
         if (capture) {
             current_commit.committer_name = capture[1].trim();
@@ -24,15 +24,16 @@ const headers = {
         }
     },
 
-    'AuthorDate': (current_commit: CommitInfo, date: Date) => {
+    AuthorDate: (current_commit: CommitInfo, date: Date) => {
         current_commit.author_date = date;
     },
 
-    'CommitDate': (current_commit: CommitInfo, date: Date) => {
+    CommitDate: (current_commit: CommitInfo, date: Date) => {
         current_commit.commit_date = date;
     },
 
-    'Reflog': (current_commit: CommitInfo, data: any) => {
+    // tslint:disable-next-line:no-any
+    Reflog: (current_commit: CommitInfo, data: any) => {
         current_commit.reflog_name = data.substring(0, data.indexOf(' '));
         const author = data.substring(data.indexOf(' ') + 2, data.length - 1);
         const capture = author_regex.exec(author);
@@ -48,13 +49,16 @@ const headers = {
 
 export type CommitInfo = {
     refs: string[];
+    // tslint:disable-next-line:no-any
     file_line_diffs: any[];
     hash: string;
     parents: string[];
     message: string;
     author_email: string;
+    // tslint:disable-next-line:no-any
     author_date: any;
     author_name: string;
+    // tslint:disable-next-line:no-any
     commit_date: any;
     committer_name: string;
     committer_email: string;
@@ -62,13 +66,16 @@ export type CommitInfo = {
     reflog_author_name: string;
     reflog_author_email: string;
 };
-const parse_git_log = function (data: any): CommitInfo[] {
+// tslint:disable-next-line:no-any max-func-body-length
+const parse_git_log = (data: any): CommitInfo[] => {
     const commits: CommitInfo[] = [];
     let current_commit: CommitInfo;
     const temp_file_change: string[] = [];
 
-    const parse_commit_line = function (row: string) {
-        if (!row.trim()) return;
+    const parse_commit_line = (row: string) => {
+        if (!row.trim()) {
+            return;
+        }
         current_commit = {
             refs: [], file_line_diffs: [], hash: '', parents: [], message: '',
             author_email: '', author_date: null, author_name: '', commit_date: null,
@@ -76,7 +83,7 @@ const parse_git_log = function (data: any): CommitInfo[] {
             reflog_author_email: '', reflog_author_name: '', reflog_name: ''
         };
         const ss = row.split('(');
-        const hashes = ss[0].split(' ').slice(1).filter(function (hash: string) { return hash && hash.length; });
+        const hashes = ss[0].split(' ').slice(1).filter((hash: string) => { return hash && hash.length; });
         current_commit.hash = hashes[0];
         current_commit.parents = hashes.slice(1);
         if (ss[1]) {
@@ -87,20 +94,21 @@ const parse_git_log = function (data: any): CommitInfo[] {
         parser = parse_header_line;
     };
 
-    const parse_header_line = function (row: string) {
+    const parse_header_line = (row: string) => {
         if (row.trim() === '') {
             parser = parse_commit_message;
         } else {
+            // tslint:disable-next-line:no-for-in
             for (const key in headers) {
-                if (row.indexOf(key + ': ') === 0) {
-                    headers[key](current_commit, row.slice((key + ': ').length).trim());
+                if (row.indexOf(`${key}: `) === 0) {
+                    headers[key](current_commit, row.slice((`${key}: `).length).trim());
                     return;
                 }
             }
         }
     };
 
-    const parse_commit_message = function (row: string, index: number) {
+    const parse_commit_message = (row: string, index: number) => {
         if (/:[\d]+\s[\d]+\s[\d|\w]+.../g.test(rows[index + 1])) {
             parser = parse_file_changes;
             return;
@@ -120,7 +128,9 @@ const parse_git_log = function (data: any): CommitInfo[] {
 
     const parse_file_changes = (row: string, index: number) => {
         if (rows.length === index + 1 || rows[index + 1] && rows[index + 1].indexOf('commit ') === 0) {
+            // tslint:disable-next-line:no-any
             const total: any = [0, 0, 'Total'];
+            // tslint:disable-next-line:prefer-for-of no-increment-decrement
             for (let n = 0; n < current_commit.file_line_diffs.length; n++) {
                 const file_line_diff = current_commit.file_line_diffs[n];
                 if (!isNaN(parseInt(file_line_diff[0], 10))) {
@@ -146,6 +156,7 @@ const parse_git_log = function (data: any): CommitInfo[] {
         }
     };
 
+    // tslint:disable-next-line:no-any
     let parser: any = parse_commit_line;
     const rows = data.split('\n');
 
@@ -194,6 +205,7 @@ const prefixLengths = {
 
 // tslint:disable-next-line:max-func-body-length
 export function parseLogEntry(lines: string[], startWithNumstat: boolean = false): LogEntry | null {
+    // tslint:disable-next-line:prefer-type-cast
     const logEntry: LogEntry = {} as LogEntry;
     let multiLineProperty: string = '';
     const filesAltered: string[] = [];

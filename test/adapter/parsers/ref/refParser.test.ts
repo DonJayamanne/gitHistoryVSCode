@@ -3,7 +3,7 @@ import { Container, injectable } from 'inversify';
 // import { IRefsParser } from 'adapter/parsers';
 // import { IRefsParser } from 'adapter/parsers/types';
 import { TYPES as parserTYPES } from '../../../../src/adapter/parsers/constants';
-import { container as parserContainer } from '../../../../src/adapter/parsers/ioc';
+import { containerModule as parserContainer } from '../../../../src/adapter/parsers/ioc';
 import { IRefParser, RefsParser } from '../../../../src/adapter/parsers/refs/parser';
 // import { RefsParser, IRefParser } from 'adapter/parsers/refs/parser';
 import { HeadRefParser } from '../../../../src/adapter/parsers/refs/parsers/headRefParser';
