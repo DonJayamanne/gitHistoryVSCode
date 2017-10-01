@@ -4,17 +4,10 @@ import * as path from 'path';
 import 'reflect-metadata';
 import { Uri } from 'vscode';
 import { IGitCommandExecutor } from '../exec';
-import { Helpers } from '../helpers';
 import { ILogParser } from '../parsers/types';
-import { Branch, CommitInfo, IGit, LogEntries, LogEntry } from '../types';
-
-const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
-const ITEM_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA6';
-const STATS_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA7';
-// const LOG_FORMAT_ARGS = ['%D', '%H', '%h', '%T', '%t', '%P', '%p', '%an', '%ae', '%at', '%c', '%ce', '%ct', '%s', '%b', '%N'];
-const LOG_FORMAT_ARGS = Helpers.GetLogArguments();
-const newLineFormatCode = Helpers.GetCommitInfoFormatCode(CommitInfo.NewLine);
-const LOG_FORMAT = `--format=${LOG_ENTRY_SEPARATOR}${[...LOG_FORMAT_ARGS, STATS_SEPARATOR, ITEM_ENTRY_SEPARATOR].join(ITEM_ENTRY_SEPARATOR)}`;
+import { Branch, IGit, LogEntries, LogEntry } from '../types';
+import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, STATS_SEPARATOR } from './constants';
+import { IGitArgsService } from './types';
 
 @injectable()
 export class Git implements IGit {
@@ -47,77 +40,19 @@ export class Git implements IGit {
         return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
     }
 
-    private async getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', file?: Uri) {
-        const allBranches = branch.trim().length === 0;
-        const currentBranch = branch.trim() === '*';
-        const specificBranch = !allBranches && !currentBranch;
-
-        const logArgs = ['log', LOG_FORMAT];
-        const fileStatArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
-        // TODO: Don't we need %n instead of %h
-        const counterArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}%h`];
-
-        if (searchText && searchText.length > 0) {
-            searchText.split(' ')
-                .map(text => text.trim())
-                .filter(text => text.length > 0)
-                .forEach(text => {
-                    logArgs.push(`--grep=${text}`);
-                    fileStatArgs.push(`--grep=${text}`);
-                    counterArgs.push(`--grep=${text}`);
-                });
-        }
-
-        logArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
-        fileStatArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
-        counterArgs.push('--date-order', '--decorate=full');
-
-        if (allBranches) {
-            logArgs.push('--all');
-            fileStatArgs.push('--all');
-            counterArgs.push('--all');
-        }
-
-        // Check if we need a specific file
-        if (file) {
-            const relativePath = await this.getGitRelativePath(file);
-            logArgs.push(relativePath);
-            fileStatArgs.push(relativePath);
-            counterArgs.push(relativePath);
-        }
-        // logArgs.push('--numstat');
-        // fileStatArgs.push('--name-status');
-
-        // Count only the number of lines in the log
-        if (this.isWindows) {
-            counterArgs.push('|', 'find', '/c', '/v', '""');
-        }
-        else {
-            counterArgs.push('|', 'wc', '-l');
-        }
-
-        if (specificBranch) {
-            logArgs.push(branch);
-            fileStatArgs.push(branch);
-            counterArgs.push(branch);
-        }
-
-        return { logArgs, fileStatArgs, counterArgs };
-    }
-
     private getWorkspaceRootPath(): Promise<string> {
         return Promise.resolve('');
     }
 
     // tslint:disable-next-line:member-ordering
-    constructor(private gitCmdExecutor: IGitCommandExecutor,
-        private logParser: ILogParser, private isWindows: boolean = /^win/.test(process.platform)) {
+    constructor(private gitCmdExecutor: IGitCommandExecutor, private logParser: ILogParser,
+        private gitArgsService: IGitArgsService) {
     }
 
     public async  getGitRoot(): Promise<string> {
         if (!this.gitRootPath) {
             const workspaceRoot = await this.getWorkspaceRootPath();
-            const gitRootPath = await this.gitCmdExecutor.exec(['rev-parse', '--show-toplevel'], workspaceRoot);
+            const gitRootPath = await this.gitCmdExecutor.exec(this.gitArgsService.getGitRootArgs(), workspaceRoot);
             this.gitRootPath = gitRootPath.trim();
         }
         return this.gitRootPath;
@@ -143,27 +78,26 @@ export class Git implements IGit {
             .map(line => {
                 const isCurrent = line.startsWith('*');
                 const name = isCurrent ? line.substring(1).trim() : line;
-                // tslint:disable-next-line:prefer-type-cast
                 return {
                     name,
                     current: isCurrent
-                } as Branch;
+                };
             });
     }
     public async getCurrentBranch(): Promise<string> {
-        const args = ['rev-parse', '--abbrev-ref', 'HEAD'];
+        const args = this.gitArgsService.getCurrentBranchArgs();
         return await this.exec(args);
     }
     public async getObjectHash(object: string): Promise<string> {
 
         // Get the hash of the given ref
         // E.g. git show --format=%H --shortstat remotes/origin/tyriar/xterm-v3
-        const args = ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
+        const args = this.gitArgsService.getObjectHashArgs(object);
         const output = await this.exec(args);
         return output.split(/\r?\n/g)[0].trim();
     }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
-        const args = ['git', 'branch', '--all', '--contains', hash];
+        const args = this.gitArgsService.getRefsContainingCommitArgs(hash);
         const entries = await this.exec(args);
         return entries.split(/\r?\n/g)
             .map(line => line.trim())
@@ -173,7 +107,8 @@ export class Git implements IGit {
             .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
     }
     public async getLogEntries(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
-        const args = await this.getLogArgs(pageIndex, pageSize, branch, searchText, file);
+        const relativePath = file ? await this.getGitRelativePath(file) : undefined;
+        const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath);
 
         const gitRootPathPromise = this.getGitRoot();
         const outputPromise = this.exec(args.logArgs);
@@ -226,16 +161,14 @@ export class Git implements IGit {
             item.isThisLastCommitMerged = hashesOfRefs.length > 0;
         });
 
-        // tslint:disable-next-line:no-unnecessary-local-variable
-        const entries: LogEntries = {
+        return {
             items,
             count
         };
-        return entries;
     }
 
     public async getCommitDate(hash: string): Promise<Date | undefined> {
-        const args = ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.CommitterDateUnixTime)}`, hash];
+        const args = this.gitArgsService.getCommitDateArgs(hash);
         const output = await this.exec(args);
         const lines = output.split(/\r?\n/g).map(line => line.trim()).filter(line => line.length > 0);
         if (lines.length === 0) {
@@ -249,8 +182,8 @@ export class Git implements IGit {
         return new Date(unixTime * 1000);
     }
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
-        const numStartArgs = ['show', LOG_FORMAT, '--decorate=full', '--numstat', hash];
-        const nameStatusArgs = ['show', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`, '--decorate=full', '--name-status', hash];
+        const numStartArgs = this.gitArgsService.getCommitNameStatusArgs(hash);
+        const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgs(hash);
 
         const gitRootPath = await this.getGitRoot();
         const output = await this.exec(numStartArgs);

@@ -1,10 +1,10 @@
-import { RootState } from '../reducers';
-import { LogEntries } from '../../../src/adapter/git';
-import { CommittedFile, LogEntry } from '../definitions';
-import { createAction } from 'redux-actions';
-import * as Actions from '../constants/resultActions';
-import { Dispatch, Store } from 'redux';
 import axios from 'axios';
+import { Dispatch, Store } from 'redux';
+import { createAction } from 'redux-actions';
+import { LogEntries } from '../../../src/adapter/git';
+import * as Actions from '../constants/resultActions';
+import { CommittedFile, LogEntry } from '../definitions';
+import { RootState } from '../reducers';
 
 export const clearResults = createAction(Actions.CLEAR_RESULTS);
 export const addResult = createAction<any>(Actions.ADD_RESULT);

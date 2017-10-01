@@ -7,7 +7,7 @@
   "author": {
     "name": "Don Jayamanne",
     "email": "don.jayamanne@yahoo.com"
-  },  
+  },
   "license": "MIT",
   "homepage": "https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/README.md",
   "repository": {
@@ -266,8 +266,10 @@
     "react-icons": "^2.2.3",
     "react-json-tree": "^0.10.5",
     "react-redux": "^5.0.2",
+    "react-rnd": "^7.1.4",
     "react-router": "^3.0.2",
     "react-router-redux": "^4.0.7",
+    "react-scroll": "^1.5.4",
     "react-toolbox": "^2.0.0-beta.12",
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",

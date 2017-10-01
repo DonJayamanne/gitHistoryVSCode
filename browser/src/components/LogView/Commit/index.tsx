@@ -1,14 +1,15 @@
-import { RootState } from '../../../reducers';
-import { LogEntry, CommittedFile } from '../../../definitions';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { CommittedFile, LogEntry } from '../../../definitions';
+import { RootState } from '../../../reducers';
 import Author from './Author';
 import { FileEntry } from './FileEntry';
+// tslint:disable-next-line:no-require-imports no-var-requires
 const GoX = require('react-icons/lib/go/x');
+import * as jQuery from 'jquery';
 import Rnd from 'react-rnd';
 import { Direction } from 'react-rnd';
 import * as ResultActions from '../../../actions/results';
-import * as jQuery from 'jquery';
 
 interface CommitProps {
   selectedEntry?: LogEntry;
