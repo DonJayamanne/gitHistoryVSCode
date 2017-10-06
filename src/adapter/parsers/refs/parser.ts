@@ -4,7 +4,7 @@ import { inject, injectable, multiInject } from 'inversify';
 import 'reflect-metadata';
 import { ILogService } from '../../../common/log';
 import { TYPES as coreTYPES } from '../../../constants';
-import { Ref } from '../../types';
+import { Ref } from '../../../types';
 import { TYPES } from '../constants';
 import { IRefsParser } from '../types';
 import { IRefParser } from './types';

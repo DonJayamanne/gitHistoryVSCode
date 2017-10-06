@@ -79,6 +79,7 @@
         // remove this
         "member-ordering": false,
         "no-suspicious-comment": false,
-        "no-useless-files": false
+        "no-useless-files": false,
+        "interface-name": false
     }
 }

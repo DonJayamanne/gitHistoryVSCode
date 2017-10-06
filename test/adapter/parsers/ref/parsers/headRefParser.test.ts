@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import { HeadRefParser } from '../../../../../src/adapter/parsers/refs/parsers/headRefParser';
 import { IRefParser } from '../../../../../src/adapter/parsers/refs/types';
-import { RefType } from '../../../../../src/adapter/types';
+import { RefType } from '../../../../../src/types';
 
 suite('Adapter Parser Ref - HeadRefParser', () => {
     let parser: IRefParser;

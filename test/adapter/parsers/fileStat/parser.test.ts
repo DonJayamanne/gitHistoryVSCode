@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Uri } from 'vscode';
 import { FileStatParser } from '../../../../src/adapter/parsers/fileStat/parser';
 import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatStatus/parser';
-import { Status } from '../../../../src/adapter/types';
+import { Status } from '../../../../src/types';
 
 // tslint:disable-next-line:max-func-body-length
 suite('Adapter Parser File Stat', () => {

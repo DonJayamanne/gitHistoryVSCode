@@ -3,10 +3,12 @@
 import * as vscode from 'vscode';
 import * as fileHistory from './commands/fileHistory';
 import * as lineHistory from './commands/lineHistory';
+import { CommandRegister } from './commands/register';
 import * as searchHistory from './commands/searchHistory';
 import * as commitComparer from './commitCompare/main';
 import * as commitViewer from './commitViewer/main';
 import * as logViewer from './logViewer/logViewer';
+import { LogViewer } from './logViewer/logViewer';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -15,7 +17,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     fileHistory.activate(context);
     lineHistory.activate(context);
     searchHistory.activate(context);
-    commitViewer.activate(context, logViewer.getGitRepoPath);
-    logViewer.activate(context);
-    commitComparer.activate(context, logViewer.getGitRepoPath);
+    // commitViewer.activate(context, logViewer.getGitRepoPath);
+    // logViewer.activate(context);
+    // commitComparer.activate(context, logViewer.getGitRepoPath);
+    context.subscriptions.push(new LogViewer(null, null, null));
+    context.subscriptions.push(new CommandRegister());
 }

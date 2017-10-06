@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
 
     vscode.commands.registerCommand('git.commit.LogEntry.ViewChangeLog', async (node: LogEntryNode | FileStatNode) => {
         const gitRepoPath = await getGitRepoPath();
-        const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.logEntry.fileStats[0].path, node.logEntry.committer.date.toISOString());
+        const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.logEntry.committedFiles![0].uri.fsPath, node.logEntry.committer!.date.toISOString());
         const historyItem = data.find(item => item.hash === node.logEntry.hash.full);
         if (historyItem) {
             viewLog(historyItem);
@@ -25,23 +25,23 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
     });
     vscode.commands.registerCommand('git.commit.FileEntry.ViewFileContents', async (node: FileStatNode) => {
         const gitRepoPath = await getGitRepoPath();
-        const filePath = await getFile(node.logEntry.hash.full, gitRepoPath, node.fileStat.path);
+        const filePath = await getFile(node.logEntry.hash.full, gitRepoPath, node.fileStat.uri.fsPath);
         await viewFile(filePath);
     });
     vscode.commands.registerCommand('git.commit.FileEntry.CompareAgainstWorkspace', async (node: FileStatNode) => {
         const gitRepoPath = await getGitRepoPath();
-        const workspaceFile = path.join(gitRepoPath, node.fileStat.path);
-        const filePath = await getFile(node.logEntry.hash.full, gitRepoPath, node.fileStat.path);
+        const workspaceFile = path.join(gitRepoPath, node.fileStat.uri.fsPath);
+        const filePath = await getFile(node.logEntry.hash.full, gitRepoPath, node.fileStat.uri.fsPath);
         await diffFiles(workspaceFile, filePath, node.logEntry.hash.full, workspaceFile, '');
     });
     vscode.commands.registerCommand('git.commit.FileEntry.CompareAgainstPrevious', async (node: FileStatNode) => {
         const gitRepoPath = await getGitRepoPath();
-        const workspaceFile = path.join(gitRepoPath, node.fileStat.path);
-        const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.fileStat.path, node.logEntry.committer.date.toISOString());
-        const filePath = await getFile(node.logEntry.hash.full, gitRepoPath, node.fileStat.path);
+        const workspaceFile = path.join(gitRepoPath, node.fileStat.uri.fsPath);
+        const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.fileStat.uri.fsPath, node.logEntry.committer!.date.toISOString());
+        const filePath = await getFile(node.logEntry.hash.full, gitRepoPath, node.fileStat.uri.fsPath);
         const previousItems = data.filter(dataItem => dataItem.hash !== node.logEntry.hash.full);
         if (previousItems.length > 0) {
-            const previousFile = await getFile(previousItems[0].hash, gitRepoPath, node.fileStat.path);
+            const previousFile = await getFile(previousItems[0].hash, gitRepoPath, node.fileStat.uri.fsPath);
             await diffFiles(workspaceFile, previousFile, previousItems[0].hash, filePath, node.logEntry.hash.full);
         }
     });

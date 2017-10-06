@@ -1,5 +1,5 @@
+import { CommitInfo } from '../../types';
 import { Helpers } from '../helpers';
-import { CommitInfo } from '../types';
 
 export const LOG_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA5';
 export const ITEM_ENTRY_SEPARATOR = '95E9659B-27DC-43C4-A717-D75969757EA6';

@@ -1,5 +1,5 @@
 import { ContainerModule, interfaces } from 'inversify';
-import { IGit } from '../types';
+import { IGit } from '../../types';
 import { TYPES } from './constants';
 import { Git } from './git';
 import { GitArgsService } from './gitArgsService';

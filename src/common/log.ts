@@ -4,7 +4,7 @@ export interface ILogService {
     // tslint:disable-next-line:no-any
     log(...args: any[]): void;
     // tslint:disable-next-line:no-any
-    warn(...args: any[]): void;
+    trace(...args: any[]): void;
     // tslint:disable-next-line:no-any
     error(...args: any[]): void;
 }
@@ -21,7 +21,7 @@ export class Logger implements ILogService {
         console.error(...args);
     }
     // tslint:disable-next-line:no-any
-    public warn(...args: any[]): void {
+    public trace(...args: any[]): void {
         console.warn(...args);
     }
 }

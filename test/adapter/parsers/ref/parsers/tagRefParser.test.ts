@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import { TagRefParser } from '../../../../../src/adapter/parsers/refs/parsers/tagRefParser';
 import { IRefParser } from '../../../../../src/adapter/parsers/refs/types';
-import { RefType } from '../../../../../src/adapter/types';
+import { RefType } from '../../../../../src/types';
 
 suite('Adapter Parser Ref - TagRefParser', () => {
     let parser: IRefParser;

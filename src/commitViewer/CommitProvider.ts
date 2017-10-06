@@ -48,8 +48,8 @@ export class CommitProvider implements vscode.TreeDataProvider<CommitEntryNode> 
         ];
     }
     private buildChildDirectoriesForLogEntry(logEntry: LogEntry): CommitEntryNode[] {
-        return logEntry.fileStats
+        return (logEntry.committedFiles || [])
             .map(fileStat => new FileStatNode(fileStat, logEntry))
-            .sort((a, b) => a.fileStat.path < b.fileStat.path ? -1 : 1);
+            .sort((a, b) => a.fileStat.uri.fsPath < b.fileStat.uri.fsPath ? -1 : 1);
     }
 }

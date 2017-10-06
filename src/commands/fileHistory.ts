@@ -3,9 +3,10 @@ import { decode as htmlDecode } from 'he';
 import * as path from 'path';
 import * as tmp from 'tmp';
 import * as vscode from 'vscode';
+import { formatDate } from '../common/helpers';
 import { getGitRepositoryPath } from '../helpers/gitPaths';
 import * as historyUtil from '../helpers/historyUtils';
-import { CommitInfo, formatDate } from '../helpers/logParser';
+import { CommitInfo } from '../helpers/logParser';
 import * as logger from '../logger';
 
 export function activate(context: vscode.ExtensionContext) {

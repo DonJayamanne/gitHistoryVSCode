@@ -1,11 +1,14 @@
+import { inject } from 'inversify';
 import { EOL } from 'os';
+import { CommitInfo, CommittedFile, LogEntry } from '../../../types';
 import { Helpers } from '../../helpers';
-import { CommitInfo, CommittedFile, LogEntry } from '../../types';
+import { TYPES } from '../constants';
 import { IActionDetailsParser, IFileStatParser, ILogParser, IRefsParser } from '../types';
 
 export class LogParser implements ILogParser {
-    constructor(private refsparser: IRefsParser, private fileStatParser: IFileStatParser,
-        private actionDetailsParser: IActionDetailsParser) {
+    constructor( @inject(TYPES.IRefsParser) private refsparser: IRefsParser,
+        @inject(TYPES.IFileStatParser) private fileStatParser: IFileStatParser,
+        @inject(TYPES.IActionDetailsParser) private actionDetailsParser: IActionDetailsParser) {
 
     }
     private parserCommittedFiles(logItems: string[], statsSeparator: string, nameStatEntry?: string | undefined): CommittedFile[] {

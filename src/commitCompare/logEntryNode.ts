@@ -1,11 +1,11 @@
 import { AddedIcon, FileStatNode, ModifiedIcon, RemovedIcon } from '../commitViewer/logEntryNode';
-import { FileStat, LogEntry, Modification } from '../types';
+import { CommittedFile, LogEntry, Status } from '../types';
 
 export class CompareFileStatNode extends FileStatNode {
-    constructor(public fileStat: FileStat, leftLogEntry: LogEntry, public rightLogEntry: LogEntry) {
+    constructor(public fileStat: CommittedFile, leftLogEntry: LogEntry, public rightLogEntry: LogEntry) {
         super(fileStat, leftLogEntry);
-        switch (fileStat.mode) {
-            case Modification.Modified: {
+        switch (fileStat.status) {
+            case Status.Modified: {
                 this.contextValue = 'fileStatM';
                 this.iconPath = ModifiedIcon;
                 this.command = {
@@ -15,7 +15,7 @@ export class CompareFileStatNode extends FileStatNode {
                 };
                 break;
             }
-            case Modification.Created: {
+            case Status.Added: {
                 this.contextValue = 'fileStatA';
                 this.iconPath = AddedIcon;
                 this.command = {
@@ -25,7 +25,7 @@ export class CompareFileStatNode extends FileStatNode {
                 };
                 break;
             }
-            case Modification.Deleted: {
+            case Status.Deleted: {
                 this.contextValue = 'fileStatD';
                 this.iconPath = RemovedIcon;
                 this.command = {

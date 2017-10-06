@@ -29,7 +29,7 @@ export class CommitCompareProvider implements vscode.TreeDataProvider<CompareFil
         if (!this._leftEntry) {
             return Promise.resolve([]);
         }
-        const entries = this._leftEntry.fileStats.map(entry => {
+        const entries = this._leftEntry.committedFiles!.map(entry => {
             return new CompareFileStatNode(entry, this._leftEntry!, this._rightEntry!);
         });
         return Promise.resolve(entries);

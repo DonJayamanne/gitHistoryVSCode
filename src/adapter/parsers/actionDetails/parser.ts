@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { ActionedDetails } from '../../types';
+import { ActionedDetails } from '../../../types';
 import { IActionDetailsParser } from '../types';
 
 @injectable()

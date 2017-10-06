@@ -1,5 +1,5 @@
 import { EnumHelpers } from '../common/enumHelper';
-import { CommitInfo } from './types';
+import { CommitInfo } from '../types';
 // tslint:disable-next-line:no-stateless-class
 export class Helpers {
     // tslint:disable-next-line:function-name

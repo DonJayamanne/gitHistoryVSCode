@@ -50,6 +50,42 @@
                 "base": "$tslint5",
                 "fileLocation": "relative"
             }
+        },
+        {
+            "type": "npm",
+            "script": "watchReact",
+            "problemMatcher": [{
+                "fileLocation": "relative",
+                "pattern": [{
+                        "regexp": "ERROR in \\[at-loader\\] ([^:]*):(\\d+):(\\d+)",
+                        "file": 1,
+                        "line": 2,
+                        "column": 3
+                    },
+                    {
+                        "regexp": "TS(.*)",
+                        "message": 1
+                    }
+                ]
+            }]
+        },
+        {
+            "type": "npm",
+            "script": "buildReact",
+            "problemMatcher": [{
+                "fileLocation": "relative",
+                "pattern": [{
+                        "regexp": "ERROR in \\[at-loader\\] ([^:]*):(\\d+):(\\d+)",
+                        "file": 1,
+                        "line": 2,
+                        "column": 3
+                    },
+                    {
+                        "regexp": "TS(.*)",
+                        "message": 1
+                    }
+                ]
+            }]
         }
     ]
 }

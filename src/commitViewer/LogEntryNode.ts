@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
-import { FileStat, LogEntry, Modification } from '../types';
+import { formatDate } from '../common/helpers';
+import { CommittedFile, LogEntry, Status } from '../types';
 
 export const GitCommitIcon = {
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'darkTheme', 'git-commit.png'),
@@ -38,7 +39,7 @@ export abstract class CommitEntryNode extends TreeItem {
 }
 export class LogEntryNode extends CommitEntryNode {
     constructor(public logEntry: LogEntry) {
-        super(`${logEntry.author.name} on ${logEntry.author.localisedDate}`, TreeItemCollapsibleState.Collapsed);
+        super(`${logEntry.author!.name} on ${formatDate(logEntry.author!.date)}`, TreeItemCollapsibleState.Collapsed);
         this.iconPath = GitCommitIcon;
     }
 
@@ -55,19 +56,19 @@ export class DirectoryNode extends CommitEntryNode {
         super(path.basename(fullPath), TreeItemCollapsibleState.Collapsed);
 
         const upperDirPath = fullPath.toUpperCase();
-        this.fileStats = logEntry.fileStats.filter(fileStat => path.dirname(fileStat.path).toUpperCase() === upperDirPath);
+        this.fileStats = (logEntry.committedFiles || []).filter(fileStat => path.dirname(fileStat.uri.fsPath).toUpperCase() === upperDirPath);
         this.iconPath = FolderIcon;
     }
 
-    public fileStats: FileStat[] = [];
+    public fileStats: CommittedFile[] = [];
     public contextValue = 'directory';
 }
 // tslint:disable-next-line:max-classes-per-file
 export class FileStatNode extends CommitEntryNode {
-    constructor(public fileStat: FileStat, public logEntry: LogEntry) {
+    constructor(public fileStat: CommittedFile, public logEntry: LogEntry) {
         super(getTitle(fileStat), TreeItemCollapsibleState.None);
-        switch (fileStat.mode) {
-            case Modification.Created: {
+        switch (fileStat.status) {
+            case Status.Added: {
                 this.contextValue = 'fileStatA';
                 this.iconPath = AddedIcon;
                 this.command = {
@@ -77,7 +78,7 @@ export class FileStatNode extends CommitEntryNode {
                 };
                 break;
             }
-            case Modification.Modified: {
+            case Status.Modified: {
                 this.contextValue = 'fileStatM';
                 this.iconPath = ModifiedIcon;
                 this.command = {
@@ -87,12 +88,12 @@ export class FileStatNode extends CommitEntryNode {
                 };
                 break;
             }
-            case Modification.Deleted: {
+            case Status.Deleted: {
                 this.contextValue = 'fileStatD';
                 this.iconPath = RemovedIcon;
                 break;
             }
-            case Modification.Renamed: {
+            case Status.Renamed: {
                 this.contextValue = 'fileStatR';
                 this.iconPath = RenameIcon;
                 break;
@@ -115,7 +116,7 @@ export class FileStatNode extends CommitEntryNode {
     // }
 }
 
-function getTitle(fileStat: FileStat): string {
-    const fileName = path.basename(fileStat.path);
-    return fileName === fileStat.path ? fileName : `${fileName} (${path.dirname(fileStat.path)})`;
+function getTitle(fileStat: CommittedFile): string {
+    const fileName = path.basename(fileStat.uri.fsPath);
+    return fileName === fileStat.uri.fsPath ? fileName : `${fileName} (${path.dirname(fileStat.uri.fsPath)})`;
 }

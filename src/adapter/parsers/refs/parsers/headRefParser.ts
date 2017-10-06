@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { Ref, RefType } from '../../../types';
+import { Ref, RefType } from '../../../../types';
 import { HEAD_REF_PREFIXES } from './../constants';
 import { IRefParser } from './../types';
 

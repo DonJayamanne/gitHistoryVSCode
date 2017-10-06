@@ -1,24 +1,28 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import * as path from 'path';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
+import * as tmp from 'tmp';
 import { Uri } from 'vscode';
+import { Branch, IGit, LogEntries, LogEntry } from '../../types';
+import { TYPES as adapterTYPES } from '../constants';
 import { IGitCommandExecutor } from '../exec';
+import { TYPES } from '../parsers/constants';
 import { ILogParser } from '../parsers/types';
-import { Branch, IGit, LogEntries, LogEntry } from '../types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, STATS_SEPARATOR } from './constants';
+import { TYPES as repoTYPES } from './constants';
 import { IGitArgsService } from './types';
 
 @injectable()
 export class Git implements IGit {
     private gitRootPath: string;
-    private async exec(args: string[]): Promise<string> {
+    private async exec(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
-        return await this.gitCmdExecutor.exec(args, gitRootPath);
+        return await this.gitCmdExecutor.exec(gitRootPath, ...args);
     }
-    private async execInShell(args: string[]): Promise<string> {
+    private async execInShell(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
-        return await this.gitCmdExecutor.exec(args, { cwd: gitRootPath, shell: true });
+        return await this.gitCmdExecutor.exec({ cwd: gitRootPath, shell: true }, ...args);
     }
     // how to check if a commit has been merged into any other branch
     //  $ git branch --all --contains 019daf673583208aaaf8c3f18f8e12696033e3fc
@@ -45,14 +49,15 @@ export class Git implements IGit {
     }
 
     // tslint:disable-next-line:member-ordering
-    constructor(private gitCmdExecutor: IGitCommandExecutor, private logParser: ILogParser,
-        private gitArgsService: IGitArgsService) {
+    constructor( @inject(adapterTYPES.IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
+        @inject(TYPES.ILogParser) private logParser: ILogParser,
+        @inject(repoTYPES.IGitArgsService) private gitArgsService: IGitArgsService) {
     }
 
     public async  getGitRoot(): Promise<string> {
         if (!this.gitRootPath) {
             const workspaceRoot = await this.getWorkspaceRootPath();
-            const gitRootPath = await this.gitCmdExecutor.exec(this.gitArgsService.getGitRootArgs(), workspaceRoot);
+            const gitRootPath = await this.gitCmdExecutor.exec(workspaceRoot, ...this.gitArgsService.getGitRootArgs());
             this.gitRootPath = gitRootPath.trim();
         }
         return this.gitRootPath;
@@ -61,7 +66,7 @@ export class Git implements IGit {
     // tslint:disable-next-line:member-ordering
     public async getHeadHashes(): Promise<{ ref: string, hash: string }[]> {
         const fullHashArgs = ['show-ref'];
-        const fullHashRefsOutput = await this.exec(fullHashArgs);
+        const fullHashRefsOutput = await this.exec(...fullHashArgs);
         return fullHashRefsOutput.split(/\r?\n/g)
             .filter(line => line.length > 0)
             .filter(line => line.indexOf('refs/heads/') > 0 || line.indexOf('refs/remotes/') > 0)
@@ -71,7 +76,7 @@ export class Git implements IGit {
     }
     // tslint:disable-next-line:member-ordering
     public async getBranches(): Promise<Branch[]> {
-        const output = await this.exec(['branch']);
+        const output = await this.exec('branch');
         return output.split(/\r?\n/g)
             .filter(line => line.trim())
             .filter(line => line.length > 0)
@@ -86,19 +91,19 @@ export class Git implements IGit {
     }
     public async getCurrentBranch(): Promise<string> {
         const args = this.gitArgsService.getCurrentBranchArgs();
-        return await this.exec(args);
+        return await this.exec(...args);
     }
     public async getObjectHash(object: string): Promise<string> {
 
         // Get the hash of the given ref
         // E.g. git show --format=%H --shortstat remotes/origin/tyriar/xterm-v3
         const args = this.gitArgsService.getObjectHashArgs(object);
-        const output = await this.exec(args);
+        const output = await this.exec(...args);
         return output.split(/\r?\n/g)[0].trim();
     }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
         const args = this.gitArgsService.getRefsContainingCommitArgs(hash);
-        const entries = await this.exec(args);
+        const entries = await this.exec(...args);
         return entries.split(/\r?\n/g)
             .map(line => line.trim())
             // Remove the '*' prefix from current branch
@@ -111,10 +116,10 @@ export class Git implements IGit {
         const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath);
 
         const gitRootPathPromise = this.getGitRoot();
-        const outputPromise = this.exec(args.logArgs);
+        const outputPromise = this.exec(...args.logArgs);
 
         // Since we're using find and wc (shell commands, we need to execute the command in a shell)
-        const countOutputPromise = this.execInShell(args.counterArgs);
+        const countOutputPromise = this.execInShell(...args.counterArgs);
 
         const values = await Promise.all([gitRootPathPromise, outputPromise, countOutputPromise]);
         const gitRepoPath = values[0];
@@ -169,7 +174,7 @@ export class Git implements IGit {
 
     public async getCommitDate(hash: string): Promise<Date | undefined> {
         const args = this.gitArgsService.getCommitDateArgs(hash);
-        const output = await this.exec(args);
+        const output = await this.exec(...args);
         const lines = output.split(/\r?\n/g).map(line => line.trim()).filter(line => line.length > 0);
         if (lines.length === 0) {
             return;
@@ -186,10 +191,10 @@ export class Git implements IGit {
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgs(hash);
 
         const gitRootPath = await this.getGitRoot();
-        const output = await this.exec(numStartArgs);
+        const output = await this.exec(...numStartArgs);
 
         // Run another git history, but get file stats instead of the changes
-        const outputWithFileModeChanges = await this.exec(nameStatusArgs);
+        const outputWithFileModeChanges = await this.exec(...nameStatusArgs);
         const entriesWithFileModeChanges = outputWithFileModeChanges.split(LOG_ENTRY_SEPARATOR);
 
         const entries = output
@@ -204,5 +209,21 @@ export class Git implements IGit {
             .map(entry => entry!);
 
         return entries.length > 0 ? entries[0] : undefined;
+    }
+
+    public async getCommitFile(hash: string, file: Uri | string): Promise<Uri> {
+        const gitRootPath = await this.getGitRoot();
+        return new Promise<Uri>((resolve, reject) => {
+            tmp.tmpName((err: Error, tmpPath: string) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filePath = typeof file === 'string' ? file : file.fsPath.toString();
+                const relativeFilePath = path.relative(gitRootPath, filePath);
+                this.exec('show', `${hash}:${relativeFilePath}`, '>', tmpPath)
+                    .then(() => resolve(Uri.file(tmpPath)))
+                    .catch(reject);
+            });
+        });
     }
 }

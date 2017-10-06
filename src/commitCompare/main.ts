@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { diffFiles, getFile } from '../commands/fileHistory';
 import { LogEntryNode } from '../commitViewer/logEntryNode';
+import { formatDate } from '../common/helpers';
 import { getDiff } from '../helpers/gitDiff';
 import { getLogEntries } from '../helpers/gitHistory';
 import { LogEntry } from '../types';
@@ -28,14 +29,14 @@ export function activate(context: vscode.ExtensionContext, gitPath: () => string
         const items: vscode.QuickPickItem[] = [
             {
                 label: 'Select for compare',
-                description: `${logEntry.author.email} on ${logEntry.author.localisedDate}`,
+                description: `${logEntry.author!.email} on ${formatDate(logEntry.author!.date)}`,
                 detail: logEntry.subject
             }
         ];
         if (leftSelectedNode) {
             items.push({
                 label: 'Compare with selected commit',
-                description: `${logEntry.author.email} on ${logEntry.author.localisedDate}`,
+                description: `${logEntry.author!.email} on ${formatDate(logEntry.author!.date)}`,
                 detail: logEntry.subject
             });
         }

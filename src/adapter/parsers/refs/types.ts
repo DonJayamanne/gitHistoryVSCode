@@ -1,4 +1,4 @@
-import { Ref } from '../../types';
+import { Ref } from '../../../types';
 
 export interface IRefParser {
     canParse(refContent: string): boolean;

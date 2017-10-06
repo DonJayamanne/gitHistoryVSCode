@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { Dispatch, Store } from 'redux';
 import { createAction } from 'redux-actions';
-import { LogEntries } from '../../../src/adapter/git';
 import * as Actions from '../constants/resultActions';
 import { CommittedFile, LogEntry } from '../definitions';
 import { RootState } from '../reducers';
+import { LogEntries } from '../types';
 
 export const clearResults = createAction(Actions.CLEAR_RESULTS);
+// tslint:disable-next-line:no-any
 export const addResult = createAction<any>(Actions.ADD_RESULT);
 export const addResults = createAction<Partial<{ logEntries: LogEntries, pageIndex: number, pageSize?: number }>>(Actions.FETCHED_COMMITS);
 export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
@@ -44,6 +45,7 @@ export const notifyIsFetchingCommit = createAction(Actions.IS_FETCHING_COMMIT);
 //   }
 
 export const getPreviousCommits = () => {
+    // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const pageIndex = state.logEntries.pageIndex - 1;
@@ -60,6 +62,7 @@ export const selectCommittedFile = (logEntry: LogEntry, committedFile: Committed
 function notifyCommittedFileSelected(logEntry: LogEntry, committedFile: CommittedFile) {
     return axios.post(`/log/${logEntry.hash.full}/committedFile`, committedFile)
         .catch(err => {
+            // tslint:disable-next-line:no-debugger
             debugger;
             console.error('Result failed');
             console.error(err);
@@ -67,14 +70,16 @@ function notifyCommittedFileSelected(logEntry: LogEntry, committedFile: Committe
 }
 export const cherryPickCommit = (logEntry: LogEntry) => () => {
     return axios.post(`/log/${logEntry.hash.full}/cherryPick`, logEntry.hash.full);
-}
+};
 
 export const viewCommit = (hash: string) => {
+    // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>) => {
         return fetchCommit(dispatch, hash);
     };
 };
 export const getNextCommits = () => {
+    // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const pageIndex = state.logEntries.pageIndex + 1;
@@ -82,12 +87,14 @@ export const getNextCommits = () => {
     };
 };
 export const getCommits = () => {
+    // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         return fetchCommits(dispatch, state);
     };
 };
 
+// tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: number = 0, pageSize?: number) {
     pageSize = pageSize || store.logEntries.pageSize;
     dispatch(notifyIsLoading());
@@ -96,11 +103,13 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: numb
             dispatch(addResults({ logEntries: result.data, pageIndex: pageIndex, pageSize }));
         })
         .catch(err => {
+            // tslint:disable-next-line:no-debugger
             debugger;
             console.error('Result failed');
             console.error(err);
         });
 }
+// tslint:disable-next-line:no-any
 function fetchCommit(dispatch: Dispatch<any>, hash: string) {
     dispatch(notifyIsFetchingCommit());
     return axios.get(`/log/${hash}`)
@@ -108,6 +117,7 @@ function fetchCommit(dispatch: Dispatch<any>, hash: string) {
             dispatch(updateCommit(result.data));
         })
         .catch(err => {
+            // tslint:disable-next-line:no-debugger
             debugger;
             console.error('Result failed');
             console.error(err);
@@ -136,4 +146,3 @@ export const commitsRendered = createAction(Actions.COMMITS_RENDERED);
 export const selectCommit = createAction<LogEntry>(Actions.SELECT_COMMIT);
 export const closeCommitView = createAction(Actions.CLOSE_COMMIT_VIEW);
 export const closeCommittedFile = createAction(Actions.CLOSE_COMMIT_VIEW);
-

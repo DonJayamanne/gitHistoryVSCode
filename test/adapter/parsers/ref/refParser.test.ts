@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { Container, injectable } from 'inversify';
+import { Container } from 'inversify';
 // import { IRefsParser } from 'adapter/parsers';
 // import { IRefsParser } from 'adapter/parsers/types';
 import { TYPES as parserTYPES } from '../../../../src/adapter/parsers/constants';
@@ -9,25 +9,10 @@ import { IRefParser, RefsParser } from '../../../../src/adapter/parsers/refs/par
 import { HeadRefParser } from '../../../../src/adapter/parsers/refs/parsers/headRefParser';
 import { RemoteHeadParser } from '../../../../src/adapter/parsers/refs/parsers/remoteHeadParser';
 import { IRefsParser } from '../../../../src/adapter/parsers/types';
-import { RefType } from '../../../../src/adapter/types';
 import { ILogService } from '../../../../src/common/log';
 import { TYPES as coreTYPES } from '../../../../src/constants';
-
-@injectable()
-class MockLogger implements ILogService {
-    // tslint:disable-next-line:no-any
-    public log(...args: any[]): void {
-        return;
-    }
-    // tslint:disable-next-line:no-any
-    public warn(...args: any[]): void {
-        return;
-    }
-    // tslint:disable-next-line:no-any
-    public error(...args: any[]): void {
-        return;
-    }
-}
+import { RefType } from '../../../../src/types';
+import { MockLogger } from '../../../mocks';
 
 suite('Adapter Parser Ref', () => {
     test('null,undefined and empty strings cannot be parsed', () => {
