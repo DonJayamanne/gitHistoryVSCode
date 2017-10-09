@@ -55,12 +55,12 @@ export class Git implements IGit {
     }
 
     public async  getGitRoot(): Promise<string> {
-        if (!this.gitRootPath) {
-            const workspaceRoot = await this.getWorkspaceRootPath();
-            const gitRootPath = await this.gitCmdExecutor.exec(workspaceRoot, ...this.gitArgsService.getGitRootArgs());
-            this.gitRootPath = gitRootPath.trim();
+        if (this.gitRootPath) {
+            return this.gitRootPath;
         }
-        return this.gitRootPath;
+        const workspaceRoot = await this.getWorkspaceRootPath();
+        const gitRootPath = await this.gitCmdExecutor.exec(workspaceRoot, ...this.gitArgsService.getGitRootArgs());
+        return this.gitRootPath = gitRootPath.trim();
     }
 
     // tslint:disable-next-line:member-ordering
