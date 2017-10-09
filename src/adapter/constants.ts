@@ -1,4 +1,5 @@
 export const TYPES = {
     IGitExecutableLocator: Symbol('IGitExecutableLocator'),
-    IGitCommandExecutor: Symbol('IGitCommandExecutor')
+    IGitCommandExecutor: Symbol('IGitCommandExecutor'),
+    IGitWorkspaceRoot: Symbol('IGitWorkspaceRoot')
 };

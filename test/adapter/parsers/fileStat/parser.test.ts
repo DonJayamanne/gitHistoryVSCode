@@ -4,11 +4,13 @@ import { Uri } from 'vscode';
 import { FileStatParser } from '../../../../src/adapter/parsers/fileStat/parser';
 import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatStatus/parser';
 import { Status } from '../../../../src/types';
+import { MockLogger } from '../../../mocks';
 
 // tslint:disable-next-line:max-func-body-length
 suite('Adapter Parser File Stat', () => {
     const gitRootPath = path.join('src', 'adapter');
-    const statusParser = new FileStatStatusParser();
+    const mockLogger = new MockLogger();
+    const statusParser = new FileStatStatusParser(mockLogger);
     test('Must return the right number of files', () => {
         // tslint:disable-next-line:no-multiline-string
         const numStatFileLog = ['1       1       package.json',

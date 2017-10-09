@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import { inject } from 'inversify';
+import { TYPES as coreTYPES } from '../../common/constants';
 import { ILogService } from '../../common/log';
-import { TYPES as coreTYPES } from '../../constants';
 import { TYPES } from '../constants';
 import { IGitExecutableLocator } from '../locator';
 import { IGitCommandExecutor } from './types';

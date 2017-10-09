@@ -75,6 +75,7 @@
         "linebreak-style": false,
         "import-name": false,
         "no-non-null-assertion": false,
+        "prefer-type-cast": false,
 
         // remove this
         "member-ordering": false,

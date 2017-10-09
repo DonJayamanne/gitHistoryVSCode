@@ -1,16 +1,17 @@
 import { assert } from 'chai';
 import { Container } from 'inversify';
-// import { IRefsParser } from 'adapter/parsers';
-// import { IRefsParser } from 'adapter/parsers/types';
-import { TYPES as parserTYPES } from '../../../../src/adapter/parsers/constants';
 import { containerModule as parserContainer } from '../../../../src/adapter/parsers/ioc';
 import { IRefParser, RefsParser } from '../../../../src/adapter/parsers/refs/parser';
 // import { RefsParser, IRefParser } from 'adapter/parsers/refs/parser';
 import { HeadRefParser } from '../../../../src/adapter/parsers/refs/parsers/headRefParser';
 import { RemoteHeadParser } from '../../../../src/adapter/parsers/refs/parsers/remoteHeadParser';
+// import { IRefsParser } from 'adapter/parsers';
+// import { IRefsParser } from 'adapter/parsers/types';
+// import { TYPES as parserTYPES } from '../../../../src/adapter/parsers/constants';
+import * as parserTYPES from '../../../../src/adapter/parsers/types';
 import { IRefsParser } from '../../../../src/adapter/parsers/types';
+import { TYPES as coreTYPES } from '../../../../src/common/constants';
 import { ILogService } from '../../../../src/common/log';
-import { TYPES as coreTYPES } from '../../../../src/constants';
 import { RefType } from '../../../../src/types';
 import { MockLogger } from '../../../mocks';
 
@@ -44,7 +45,7 @@ suite('Adapter Parser Ref', () => {
         const container = new Container();
         container.load(parserContainer);
 
-        const parsers = container.getAll<IRefParser>(parserTYPES.IRefParser);
+        const parsers = container.getAll<IRefParser>(IRefParser);
         assert.lengthOf(parsers, 3, 'Should return three items');
 
         container.bind<ILogService>(coreTYPES.ILogService).to(MockLogger);

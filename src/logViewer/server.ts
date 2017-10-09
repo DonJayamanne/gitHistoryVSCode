@@ -5,12 +5,17 @@ import { Express, Request, Response } from 'express';
 import * as express from 'express';
 import * as http from 'http';
 import * as path from 'path';
+import { createDeferred } from '../common/helpers';
 // import * as io from 'socket.io';
 // import * as vscode from 'vscode';
-import { IGit } from '../adapter/types';
-import { createDeferred } from '../common/helpers';
+import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
 import { IThemeService } from './types';
+
+type PortAndId = {
+    port: number,
+    id: string
+};
 
 // tslint:disable-next-line:no-require-imports no-var-requires
 // const uniqid = require('uniqid');
@@ -19,7 +24,7 @@ export class Server extends EventEmitter {
     private app?: Express;
     private httpServer?: http.Server;
     // private clients: SocketIO.Socket[] = [];
-    constructor(private themeService: IThemeService) {
+    constructor(private themeService: IThemeService, private gitServiceFactory: IGitServiceFactory) {
         super();
         // this.responsePromises = new Map<string, IDeferred<boolean>>();
     }
@@ -38,9 +43,9 @@ export class Server extends EventEmitter {
     }
 
     private port?: number;
-    public async start(): Promise<number> {
+    public async start(workspaceFolder: string): Promise<PortAndId> {
         if (this.port) {
-            return this.port;
+            return { port: this.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) };
         }
         const def = createDeferred<number>();
 
@@ -65,20 +70,20 @@ export class Server extends EventEmitter {
             this.rootRequestHandler(req, res);
         });
 
-        return new Promise<number>((resolve, reject) => {
+        return new Promise<PortAndId>((resolve, reject) => {
+            // tslint:disable-next-line:prefer-type-cast no-any
+            this.apiController = new ApiController(this.app!, this.gitServiceFactory);
+            // this.socketServer!.on('connection', this.onSocketConnection.bind(this));
+
             this.httpServer!.listen(0, () => {
                 this.port = this.httpServer!.address().port;
-                resolve(this.port);
+                resolve({ port: this.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) });
             });
             this.httpServer!.on('error', error => {
                 if (!def.completed) {
                     reject(error);
                 }
             });
-
-            // tslint:disable-next-line:prefer-type-cast no-any
-            this.apiController = new ApiController(this.app!, null as any as IGit);
-            // this.socketServer!.on('connection', this.onSocketConnection.bind(this));
         });
     }
     private apiController: ApiController;

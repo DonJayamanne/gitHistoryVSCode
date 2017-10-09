@@ -4,7 +4,8 @@ import * as path from 'path';
 import 'reflect-metadata';
 import { Uri } from 'vscode';
 import { CommittedFile, Status } from '../../../types';
-import { TYPES } from '../constants';
+// import { TYPES } from '../constants';
+import * as TYPES from '../types';
 import { IFileStatParser, IFileStatStatusParser } from '../types';
 
 @injectable()

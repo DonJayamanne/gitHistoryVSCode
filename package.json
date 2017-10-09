@@ -23,7 +23,7 @@
     "theme": "dark"
   },
   "engines": {
-    "vscode": "^1.13.0"
+    "vscode": "^1.15.0"
   },
   "categories": [
     "Other"
@@ -307,6 +307,7 @@
     "query-string": "^4.3.2",
     "reflect-metadata": "^0.1.10",
     "relative": "^3.0.2",
+    "shorthash": "0.0.2",
     "socket.io": "^2.0.3",
     "tmp": "^0.0.31",
     "uniqid": "^4.1.1",

@@ -1,19 +1,16 @@
-import { decode as htmlDecode } from 'he';
-import { injectable } from 'inversify';
-import * as path from 'path';
+// import { decode as htmlDecode } from 'he';
+import { inject, injectable } from 'inversify';
 import * as querystring from 'query-string';
 import { Disposable } from 'vscode';
 import * as vscode from 'vscode';
-import { IGit } from '../adapter';
-import * as fileHistory from '../commands/fileHistory';
+import { TYPES as repoTYPES } from '../adapter/repository/constants';
 import { command } from '../commands/register';
-import * as gitCherryPick from '../helpers/gitCherryPick';
-import * as historyUtil from '../helpers/historyUtils';
-import * as logger from '../logger';
+import { TYPES as commonTYPES } from '../common/constants';
+import { BranchSelection, IUiService } from '../common/types';
+import { IGitServiceFactory } from '../types';
+import { TYPES } from './constants';
 import { Server } from './server';
-import { ThemeService } from './themeService';
-import { BranchSelection, IThemeService, IUiService } from './types';
-import { UiService } from './uiService';
+import { IThemeService } from './types';
 
 const gitHistorySchema = 'git-history-viewer';
 const previewUri = vscode.Uri.parse(`${gitHistorySchema}://authority/git-history`);
@@ -21,14 +18,13 @@ const previewUri = vscode.Uri.parse(`${gitHistorySchema}://authority/git-history
 class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     public async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         const query = querystring.parse(uri.toString())!;
-        // tslint:disable-next-line:prefer-type-cast
         const port: number = parseInt(query.port!.toString(), 10);
-        // tslint:disable-next-line:prefer-type-cast
-        const branchName: string = query.port! as string;
-        return this.generateResultsView(port, branchName || '');
+        const id: string = query.id! as string;
+        const branchName: string = query.branchName! as string;
+        return this.generateResultsView(port, id, branchName);
     }
 
-    private generateResultsView(port: number, branchName: string): Promise<string> {
+    private generateResultsView(port: number, id: string, branchName: string): Promise<string> {
         // Fix for issue #669 "Results Panel not Refreshing Automatically" - always include a unique time
         // so that the content returned is different. Otherwise VSCode will not refresh the document since it
         // thinks that there is nothing to be updated.
@@ -57,7 +53,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
                             catch(ex){
                             }
                             var queryArgs = [
-                                            'id=DEFAULT',
+                                            'id=${id}',
                                             'branchName=${encodeURIComponent(branchName)}',
                                             'theme=' + theme,
                                             'color=' + encodeURIComponent(color),
@@ -77,11 +73,14 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 }
 
+// export const Symbol('LogViewer')
 @injectable()
 export class LogViewer implements vscode.Disposable {
     private disposables: Disposable[] = [];
     private server: Server | undefined;
-    constructor(private git: IGit, private uiService: IUiService, private themeService: IThemeService) {
+    constructor( @inject(repoTYPES.IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
+        @inject(commonTYPES.IUiService) private uiService: IUiService,
+        @inject(TYPES.IThemeService) private themeService: IThemeService) {
         const provider = new TextDocumentContentProvider();
         const registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
         this.disposables.push(registration);
@@ -95,20 +94,25 @@ export class LogViewer implements vscode.Disposable {
         }
     }
 
-    private startServer() {
-        return this.server || new Server(this.themeService);
+    private createServer() {
+        return this.server || new Server(this.themeService, this.gitServiceFactory);
     }
     @command('git.viewHistory')
     public async viewHistory() {
+        const workspacefolder = await this.uiService.getWorkspaceFolder();
+        if (!workspacefolder) {
+            return undefined;
+        }
         const branchSelection = await this.uiService.getBranchSelection();
         if (!branchSelection) {
             return;
         }
-
-        const branchName = await this.git.getCurrentBranch();
+        const gitService = await this.gitServiceFactory.createGitService(workspacefolder);
+        const branchName = await gitService.getCurrentBranch();
         const title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
-        const port = await this.startServer().start();
-        const uri = `${previewUri}?id=${new Date().getTime()}&port=${port}&branchName=${branchName}`;
+        const server = await this.createServer();
+        const portAndId = await server.start(workspacefolder);
+        const uri = `${previewUri}?_=${new Date().getTime()}&id=${portAndId.id}&port=${portAndId.port}&branchName=${branchName}`;
         return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode.ViewColumn.One, title);
     }
 }

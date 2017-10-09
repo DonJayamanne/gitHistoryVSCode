@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
+import { TYPES } from '../../../common/constants';
 import { ILogService } from '../../../common/log';
-import { TYPES } from '../../../constants';
 import { Status } from '../../../types';
 import { IFileStatStatusParser } from '../types';
 

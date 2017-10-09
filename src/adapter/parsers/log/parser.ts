@@ -2,7 +2,8 @@ import { inject } from 'inversify';
 import { EOL } from 'os';
 import { CommitInfo, CommittedFile, LogEntry } from '../../../types';
 import { Helpers } from '../../helpers';
-import { TYPES } from '../constants';
+// import { TYPES } from '../constants';
+import * as TYPES from '../types';
 import { IActionDetailsParser, IFileStatParser, ILogParser, IRefsParser } from '../types';
 
 export class LogParser implements ILogParser {

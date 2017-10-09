@@ -1,4 +1,6 @@
+import { interfaces } from 'inversify';
 import { Uri } from 'vscode';
+import { Disposable } from 'vscode';
 export * from './adapter/exec/types';
 
 export enum RefType {
@@ -77,7 +79,7 @@ export enum Status {
     TypeChanged
 }
 
-export interface IGit {
+export interface IGitService {
     getGitRoot(): Promise<string>;
     getHeadHashes(): Promise<{ ref: string, hash: string }[]>;
     getBranches(): Promise<Branch[]>;
@@ -88,6 +90,10 @@ export interface IGit {
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
     getCommitFile(hash: string, file: Uri | string): Promise<Uri>;
+}
+
+export interface IGitServiceFactory {
+    createGitService(workspaceRoot: string): IGitService;
 }
 
 // export type CommitInfoIndexes = { commitInfo: CommitInfo, index: number };
@@ -161,3 +167,7 @@ export enum CommitInfo {
 //     deletions?: number;
 //     mode: Modification;
 // }
+
+export interface IDiContainer extends Disposable {
+    get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T;
+}

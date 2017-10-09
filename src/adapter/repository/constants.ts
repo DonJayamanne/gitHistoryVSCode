@@ -11,5 +11,6 @@ export const LOG_FORMAT = `--format=${LOG_ENTRY_SEPARATOR}${[...LOG_FORMAT_ARGS,
 
 export const TYPES = {
     IGit: Symbol('IGit'),
-    IGitArgsService: Symbol('IGitArgsService')
+    IGitArgsService: Symbol('IGitArgsService'),
+    IGitServiceFactory: Symbol('IGitServiceFactory')
 };

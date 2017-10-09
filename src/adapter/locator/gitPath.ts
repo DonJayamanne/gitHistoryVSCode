@@ -2,8 +2,8 @@ import { exec } from 'child_process';
 import * as fs from 'fs';
 import { inject } from 'inversify';
 import * as vscode from 'vscode';
+import { TYPES } from '../../common/constants';
 import { ILogService } from '../../common/log';
-import { TYPES } from '../../constants';
 import { IGitExecutableLocator } from './types';
 
 export class GitExecutableLocator implements IGitExecutableLocator {

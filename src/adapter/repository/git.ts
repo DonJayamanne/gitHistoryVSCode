@@ -4,17 +4,18 @@ import * as path from 'path';
 import 'reflect-metadata';
 import * as tmp from 'tmp';
 import { Uri } from 'vscode';
-import { Branch, IGit, LogEntries, LogEntry } from '../../types';
+import { Branch, IGitService, LogEntries, LogEntry } from '../../types';
 import { TYPES as adapterTYPES } from '../constants';
 import { IGitCommandExecutor } from '../exec';
-import { TYPES } from '../parsers/constants';
+// import { TYPES } from '../parsers/constants';
+import * as TYPES from '../parsers/types';
 import { ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, STATS_SEPARATOR } from './constants';
 import { TYPES as repoTYPES } from './constants';
 import { IGitArgsService } from './types';
 
 @injectable()
-export class Git implements IGit {
+export class Git implements IGitService {
     private gitRootPath: string;
     private async exec(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
@@ -44,12 +45,9 @@ export class Git implements IGit {
         return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
     }
 
-    private getWorkspaceRootPath(): Promise<string> {
-        return Promise.resolve('');
-    }
-
     // tslint:disable-next-line:member-ordering
-    constructor( @inject(adapterTYPES.IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
+    constructor( @inject(adapterTYPES.IGitWorkspaceRoot) private workspaceRoot: string,
+        @inject(adapterTYPES.IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(TYPES.ILogParser) private logParser: ILogParser,
         @inject(repoTYPES.IGitArgsService) private gitArgsService: IGitArgsService) {
     }
@@ -58,8 +56,7 @@ export class Git implements IGit {
         if (this.gitRootPath) {
             return this.gitRootPath;
         }
-        const workspaceRoot = await this.getWorkspaceRootPath();
-        const gitRootPath = await this.gitCmdExecutor.exec(workspaceRoot, ...this.gitArgsService.getGitRootArgs());
+        const gitRootPath = await this.gitCmdExecutor.exec(this.workspaceRoot, ...this.gitArgsService.getGitRootArgs());
         return this.gitRootPath = gitRootPath.trim();
     }
 
