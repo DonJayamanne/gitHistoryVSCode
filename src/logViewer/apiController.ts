@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import { CommittedFile } from '../types';
 import { IGitService, IGitServiceFactory } from '../types';
 import { IApiRouteHandler } from './types';
+// tslint:disable-next-line:no-require-imports no-var-requires
 const shorthash = require('shorthash');
 
 @injectable()

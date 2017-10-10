@@ -99,10 +99,6 @@ export interface IGitServiceFactory {
     createGitService(workspaceRoot: string): IGitService;
 }
 
-// export type CommitInfoIndexes = { commitInfo: CommitInfo, index: number };
-// export type CommitInfoFormatCode = { commitInfo: CommitInfo, formatCode: string };
-// export type CommitInfoIndexAndFormatCode = CommitInfoIndexes & CommitInfoFormatCode;
-
 export enum CommitInfo {
     ParentFullHash,
     ParentShortHash,
