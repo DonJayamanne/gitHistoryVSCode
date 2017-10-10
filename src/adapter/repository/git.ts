@@ -4,11 +4,9 @@ import * as path from 'path';
 import 'reflect-metadata';
 import * as tmp from 'tmp';
 import { Uri } from 'vscode';
-import { Branch, IGitService, LogEntries, LogEntry } from '../../types';
+import { Branch, CommittedFile, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
-// import { TYPES } from '../parsers/constants';
-import * as TYPES from '../parsers/types';
-import { ILogParser } from '../parsers/types';
+import { IFileStatParserFactory, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, STATS_SEPARATOR } from './constants';
 import { IGitArgsService } from './types';
 
@@ -46,8 +44,9 @@ export class Git implements IGitService {
     // tslint:disable-next-line:member-ordering
     constructor(private workspaceRoot: string,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
-        @inject(TYPES.ILogParser) private logParser: ILogParser,
-        @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
+        @inject(ILogParser) private logParser: ILogParser,
+        @inject(IGitArgsService) private gitArgsService: IGitArgsService,
+        @inject(IFileStatParserFactory) private fileStatParserFactory: IFileStatParserFactory) {
     }
 
     public async  getGitRoot(): Promise<string> {
@@ -182,7 +181,7 @@ export class Git implements IGitService {
         return new Date(unixTime * 1000);
     }
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
-        const numStartArgs = this.gitArgsService.getCommitNameStatusArgs(hash);
+        const numStartArgs = this.gitArgsService.getCommitWithNumStatArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgs(hash);
 
         const gitRootPath = await this.getGitRoot();
@@ -220,5 +219,30 @@ export class Git implements IGitService {
                     .catch(reject);
             });
         });
+    }
+    public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
+        const gitRepoPath = await this.getGitRoot();
+        const numStartArgs = this.gitArgsService.getDiffCommitWithNumStatArgs(hash1, hash2);
+        const nameStatusArgs = this.gitArgsService.getDiffCommitNameStatusArgs(hash1, hash2);
+
+        const output = await this.exec(...numStartArgs);
+        const outputWithFileModeChanges = await this.exec(...nameStatusArgs);
+        const entriesWithFileModeChanges = outputWithFileModeChanges.split(/\r?\n/g);
+
+        const bothEntries = output
+            .split(/\r?\n/g)
+            .map((entry, index) => {
+                if (entry.trim().length === 0) {
+                    return undefined;
+                }
+                return { numstat: entry, namestat: entriesWithFileModeChanges[index] };
+            })
+            .filter(entry => entry !== undefined)
+            .map(entry => entry!);
+
+        const numstatEntries = bothEntries.map(items => items.numstat);
+        const namestatEntries = bothEntries.map(items => items.namestat);
+
+        return this.fileStatParserFactory.createFileStatParser(gitRepoPath).parse(numstatEntries, namestatEntries);
     }
 }

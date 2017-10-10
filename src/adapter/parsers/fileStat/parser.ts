@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject } from 'inversify';
 import * as path from 'path';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
@@ -8,7 +8,6 @@ import { CommittedFile, Status } from '../../../types';
 import * as TYPES from '../types';
 import { IFileStatParser, IFileStatStatusParser } from '../types';
 
-@injectable()
 export class FileStatParser implements IFileStatParser {
     constructor(private gitRootPath: string, @inject(TYPES.IFileStatStatusParser) private statusParser: IFileStatStatusParser) {
     }

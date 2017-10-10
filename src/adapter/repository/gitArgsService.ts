@@ -29,6 +29,13 @@ export class GitArgsService implements IGitArgsService {
     public getRefsContainingCommitArgs(hash: string): string[] {
         return ['git', 'branch', '--all', '--contains', hash];
     }
+    public getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[] {
+        return ['git', 'diff', '--numstat', '--summary', hash1, hash2];
+    }
+    public getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[] {
+        return ['git', 'diff', '--name-status', '--summary', hash1, hash2];
+    }
+
     public getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', relativeFilePath?: string): GitLogArgs {
         const allBranches = branch.trim().length === 0;
         const currentBranch = branch.trim() === '*';

@@ -14,4 +14,6 @@ export interface IGitArgsService {
     getObjectHashArgs(object: string): string[];
     getRefsContainingCommitArgs(hash: string): string[];
     getLogArgs(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, relativeFilePath?: string): GitLogArgs;
+    getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[];
+    getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[];
 }

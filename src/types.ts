@@ -91,6 +91,7 @@ export interface IGitService {
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
     getCommitFile(hash: string, file: Uri | string): Promise<Uri>;
+    getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
 }
 
 export const IGitServiceFactory = Symbol('IGitServiceFactory');

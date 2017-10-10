@@ -5,11 +5,13 @@ export interface IRefsParser {
     parse(refsContent: string): Ref[];
 }
 
-export const IFileStatParser = Symbol('IFileStatParser');
 export interface IFileStatParser {
     parse(filesWithNumStat: string[], filesWithStats: string[]): CommittedFile[];
 }
-
+export const IFileStatParserFactory = Symbol('IFileStatParserFactory');
+export interface IFileStatParserFactory {
+    createFileStatParser(gitRootPath: string): IFileStatParser;
+}
 export const IFileStatStatusParser = Symbol('IFileStatStatusParser');
 export interface IFileStatStatusParser {
     canParse(status: string): boolean;
