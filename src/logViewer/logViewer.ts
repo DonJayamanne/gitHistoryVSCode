@@ -3,12 +3,9 @@ import { inject, injectable } from 'inversify';
 import * as querystring from 'query-string';
 import { Disposable } from 'vscode';
 import * as vscode from 'vscode';
-import { TYPES as repoTYPES } from '../adapter/repository/constants';
 import { command } from '../commands/register';
-import { TYPES as commonTYPES } from '../common/constants';
 import { BranchSelection, IUiService } from '../common/types';
 import { IGitServiceFactory } from '../types';
-import { TYPES } from './constants';
 import { Server } from './server';
 import { IThemeService } from './types';
 
@@ -78,9 +75,9 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 export class LogViewer implements vscode.Disposable {
     private disposables: Disposable[] = [];
     private server: Server | undefined;
-    constructor( @inject(repoTYPES.IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
-        @inject(commonTYPES.IUiService) private uiService: IUiService,
-        @inject(TYPES.IThemeService) private themeService: IThemeService) {
+    constructor( @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
+        @inject(IUiService) private uiService: IUiService,
+        @inject(IThemeService) private themeService: IThemeService) {
         const provider = new TextDocumentContentProvider();
         const registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
         this.disposables.push(registration);

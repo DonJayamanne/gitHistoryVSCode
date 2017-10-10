@@ -1,14 +1,12 @@
 import { spawn } from 'child_process';
 import { inject } from 'inversify';
-import { TYPES as coreTYPES } from '../../common/constants';
-import { ILogService } from '../../common/log';
-import { TYPES } from '../constants';
+import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from '../locator';
 import { IGitCommandExecutor } from './types';
 
 export class GitCommandExecutor implements IGitCommandExecutor {
-    constructor( @inject(TYPES.IGitExecutableLocator) private gitExecLocator: IGitExecutableLocator,
-        @inject(coreTYPES.ILogService) private logger: ILogService) {
+    constructor( @inject(IGitExecutableLocator) private gitExecLocator: IGitExecutableLocator,
+        @inject(ILogService) private logger: ILogService) {
     }
     public async exec(cwd: string, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:unified-signatures

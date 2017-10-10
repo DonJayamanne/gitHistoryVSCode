@@ -9,7 +9,6 @@ import { getDiContainer } from './ioc';
 // import * as commitComparer from './commitCompare/main';
 // import * as commitViewer from './commitViewer/main';
 // import * as logViewer from './logViewer/logViewer';
-import { TYPES as logViewerTYPES } from './logViewer/constants';
 import { LogViewer } from './logViewer/logViewer';
 
 // this method is called when your extension is activated
@@ -24,7 +23,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     // commitViewer.activate(context, logViewer.getGitRepoPath);
     // logViewer.activate(context);
     // commitComparer.activate(context, logViewer.getGitRepoPath);
-    const logViewer = container.get<LogViewer>(logViewerTYPES.LogViewer);
+    const logViewer = container.get<LogViewer>(LogViewer);
     context.subscriptions.push(logViewer);
     context.subscriptions.push(new CommandRegister());
 }

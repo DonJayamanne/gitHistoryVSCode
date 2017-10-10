@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { ILogService } from '../src/common/log';
+import { ILogService } from '../src/common/types';
 
 @injectable()
 export class MockLogger implements ILogService {

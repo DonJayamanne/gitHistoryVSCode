@@ -3,6 +3,7 @@ export type GitLogArgs = {
     fileStatArgs: string[],
     counterArgs: string[]
 };
+export const IGitArgsService = Symbol('IGitArgsService');
 
 export interface IGitArgsService {
     getGitRootArgs(): string[];

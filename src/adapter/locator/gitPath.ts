@@ -2,13 +2,12 @@ import { exec } from 'child_process';
 import * as fs from 'fs';
 import { inject } from 'inversify';
 import * as vscode from 'vscode';
-import { TYPES } from '../../common/constants';
-import { ILogService } from '../../common/log';
+import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from './types';
 
 export class GitExecutableLocator implements IGitExecutableLocator {
     private gitPath: string;
-    constructor( @inject(TYPES.ILogService) private logger: ILogService) {
+    constructor( @inject(ILogService) private logger: ILogService) {
     }
     public async getGitPath(): Promise<string> {
         if (typeof this.gitPath === 'string') {

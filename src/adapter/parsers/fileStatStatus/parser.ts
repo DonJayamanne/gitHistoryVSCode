@@ -1,14 +1,13 @@
 import { inject, injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { TYPES } from '../../../common/constants';
-import { ILogService } from '../../../common/log';
+import { ILogService } from '../../../common/types';
 import { Status } from '../../../types';
 import { IFileStatStatusParser } from '../types';
 
 @injectable()
 export class FileStatStatusParser implements IFileStatStatusParser {
-    constructor( @inject(TYPES.ILogService) private logger: ILogService) { }
+    constructor( @inject(ILogService) private logger: ILogService) { }
     public canParse(status: string): boolean {
         const parsedStatus = this.parse(status);
         return parsedStatus !== undefined && parsedStatus !== null;

@@ -7,10 +7,12 @@ export type ThemeDetails = {
     fontSize: string,
     fontWeight?: string
 };
+export const IThemeService = Symbol('IThemeService');
 
 export interface IThemeService {
     getThemeDetails(theme: string, backgroundColor: string, color: string): ThemeDetails;
 }
+export const IApiRouteHandler = Symbol('IApiRouteHandler');
 
 export interface IApiRouteHandler {
     getLogEntries(request: Request, response: Response): void;

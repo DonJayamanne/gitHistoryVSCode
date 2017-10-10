@@ -10,8 +10,7 @@ import { RemoteHeadParser } from '../../../../src/adapter/parsers/refs/parsers/r
 // import { TYPES as parserTYPES } from '../../../../src/adapter/parsers/constants';
 import * as parserTYPES from '../../../../src/adapter/parsers/types';
 import { IRefsParser } from '../../../../src/adapter/parsers/types';
-import { TYPES as coreTYPES } from '../../../../src/common/constants';
-import { ILogService } from '../../../../src/common/log';
+import { ILogService } from '../../../../src/common/types';
 import { RefType } from '../../../../src/types';
 import { MockLogger } from '../../../mocks';
 
@@ -48,7 +47,7 @@ suite('Adapter Parser Ref', () => {
         const parsers = container.getAll<IRefParser>(IRefParser);
         assert.lengthOf(parsers, 3, 'Should return three items');
 
-        container.bind<ILogService>(coreTYPES.ILogService).to(MockLogger);
+        container.bind<ILogService>(ILogService).to(MockLogger);
         const refsParser = container.get<IRefsParser>(parserTYPES.IRefsParser);
         assert.isObject(refsParser, 'RefsParser not resolved');
     });

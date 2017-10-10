@@ -78,6 +78,7 @@ export enum Status {
     Broken,
     TypeChanged
 }
+export const IGitService = Symbol('IGitService');
 
 export interface IGitService {
     getGitRoot(): Promise<string>;
@@ -91,6 +92,8 @@ export interface IGitService {
     getCommit(hash: string): Promise<LogEntry | undefined>;
     getCommitFile(hash: string, file: Uri | string): Promise<Uri>;
 }
+
+export const IGitServiceFactory = Symbol('IGitServiceFactory');
 
 export interface IGitServiceFactory {
     createGitService(workspaceRoot: string): IGitService;

@@ -5,13 +5,11 @@ import 'reflect-metadata';
 import * as tmp from 'tmp';
 import { Uri } from 'vscode';
 import { Branch, IGitService, LogEntries, LogEntry } from '../../types';
-import { TYPES as adapterTYPES } from '../constants';
 import { IGitCommandExecutor } from '../exec';
 // import { TYPES } from '../parsers/constants';
 import * as TYPES from '../parsers/types';
 import { ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, STATS_SEPARATOR } from './constants';
-import { TYPES as repoTYPES } from './constants';
 import { IGitArgsService } from './types';
 
 @injectable()
@@ -46,10 +44,10 @@ export class Git implements IGitService {
     }
 
     // tslint:disable-next-line:member-ordering
-    constructor( @inject(adapterTYPES.IGitWorkspaceRoot) private workspaceRoot: string,
-        @inject(adapterTYPES.IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
+    constructor(private workspaceRoot: string,
+        @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(TYPES.ILogParser) private logParser: ILogParser,
-        @inject(repoTYPES.IGitArgsService) private gitArgsService: IGitArgsService) {
+        @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
     }
 
     public async  getGitRoot(): Promise<string> {

@@ -1,3 +1,5 @@
+export const IGitCommandExecutor = Symbol('IGitCommandExecutor');
+
 export interface IGitCommandExecutor {
     exec(cwd: string, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:unified-signatures

@@ -1,13 +1,5 @@
 import { injectable } from 'inversify';
-
-export interface ILogService {
-    // tslint:disable-next-line:no-any
-    log(...args: any[]): void;
-    // tslint:disable-next-line:no-any
-    trace(...args: any[]): void;
-    // tslint:disable-next-line:no-any
-    error(...args: any[]): void;
-}
+import { ILogService } from './types';
 
 @injectable()
 export class Logger implements ILogService {
