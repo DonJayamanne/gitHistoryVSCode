@@ -1,9 +1,10 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { EOL } from 'os';
 import { CommitInfo, CommittedFile, LogEntry } from '../../../types';
 import { Helpers } from '../../helpers';
 import { IActionDetailsParser, IFileStatParserFactory, ILogParser, IRefsParser } from '../types';
 
+@injectable()
 export class LogParser implements ILogParser {
     constructor( @inject(IRefsParser) private refsparser: IRefsParser,
         @inject(IFileStatParserFactory) private fileStatParserFactory: IFileStatParserFactory,

@@ -7,7 +7,7 @@ import { command } from '../commands/register';
 import { BranchSelection, IUiService } from '../common/types';
 import { IGitServiceFactory } from '../types';
 import { Server } from './server';
-import { IThemeService } from './types';
+import { ILogViewer, IThemeService } from './types';
 
 const gitHistorySchema = 'git-history-viewer';
 const previewUri = vscode.Uri.parse(`${gitHistorySchema}://authority/git-history`);
@@ -70,14 +70,21 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     }
 }
 
-// export const Symbol('LogViewer')
 @injectable()
-export class LogViewer implements vscode.Disposable {
+export class LogViewer implements ILogViewer {
     private disposables: Disposable[] = [];
     private server: Server | undefined;
-    constructor( @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
-        @inject(IUiService) private uiService: IUiService,
-        @inject(IThemeService) private themeService: IThemeService) {
+    private readonly gitServiceFactory: IGitServiceFactory;
+    private readonly uiService: IUiService;
+    private readonly themeService: IThemeService;
+    constructor( @inject(IGitServiceFactory) gitServiceFactory: IGitServiceFactory,
+        @inject(IUiService) uiService: IUiService,
+        @inject(IThemeService) themeService: IThemeService) {
+
+        this.gitServiceFactory = gitServiceFactory;
+        this.uiService = uiService;
+        this.themeService = themeService;
+
         const provider = new TextDocumentContentProvider();
         const registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
         this.disposables.push(registration);
@@ -94,7 +101,7 @@ export class LogViewer implements vscode.Disposable {
     private createServer() {
         return this.server || new Server(this.themeService, this.gitServiceFactory);
     }
-    @command('git.viewHistory')
+    @command('git.viewHistory', ILogViewer)
     public async viewHistory() {
         const workspacefolder = await this.uiService.getWorkspaceFolder();
         if (!workspacefolder) {

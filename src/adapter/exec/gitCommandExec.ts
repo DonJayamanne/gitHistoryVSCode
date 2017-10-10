@@ -1,9 +1,10 @@
 import { spawn } from 'child_process';
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from '../locator';
 import { IGitCommandExecutor } from './types';
 
+@injectable()
 export class GitCommandExecutor implements IGitCommandExecutor {
     constructor( @inject(IGitExecutableLocator) private gitExecLocator: IGitExecutableLocator,
         @inject(ILogService) private logger: ILogService) {

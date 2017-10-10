@@ -22,6 +22,7 @@
     "exclude": [
         "node_modules",
         ".vscode-test",
-        "browser"
+        "browser",
+        "browser/src/**/*"
     ]
 }

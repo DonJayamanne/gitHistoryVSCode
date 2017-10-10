@@ -1,15 +1,14 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import * as path from 'path';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Uri } from 'vscode';
 import { CommittedFile, Status } from '../../../types';
-// import { TYPES } from '../constants';
-import * as TYPES from '../types';
 import { IFileStatParser, IFileStatStatusParser } from '../types';
 
+@injectable()
 export class FileStatParser implements IFileStatParser {
-    constructor(private gitRootPath: string, @inject(TYPES.IFileStatStatusParser) private statusParser: IFileStatStatusParser) {
+    constructor(private gitRootPath: string, @inject(IFileStatStatusParser) private statusParser: IFileStatStatusParser) {
     }
 
     private static parseFileMovement(fileInfo: string): { original: string, current: string } | undefined {

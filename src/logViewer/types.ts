@@ -1,4 +1,12 @@
 import { Request, Response } from 'express';
+import { Disposable } from 'vscode';
+
+export const ILogViewer = Symbol('ILogViewer');
+// tslint:disable-next-line:no-empty-interface
+export interface ILogViewer extends Disposable {
+
+}
+
 export type ThemeDetails = {
     theme: string,
     backgroundColor: string,

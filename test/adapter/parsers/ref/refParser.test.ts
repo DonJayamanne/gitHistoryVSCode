@@ -2,13 +2,8 @@ import { assert } from 'chai';
 import { Container } from 'inversify';
 import { containerModule as parserContainer } from '../../../../src/adapter/parsers/ioc';
 import { IRefParser, RefsParser } from '../../../../src/adapter/parsers/refs/parser';
-// import { RefsParser, IRefParser } from 'adapter/parsers/refs/parser';
 import { HeadRefParser } from '../../../../src/adapter/parsers/refs/parsers/headRefParser';
 import { RemoteHeadParser } from '../../../../src/adapter/parsers/refs/parsers/remoteHeadParser';
-// import { IRefsParser } from 'adapter/parsers';
-// import { IRefsParser } from 'adapter/parsers/types';
-// import { TYPES as parserTYPES } from '../../../../src/adapter/parsers/constants';
-import * as parserTYPES from '../../../../src/adapter/parsers/types';
 import { IRefsParser } from '../../../../src/adapter/parsers/types';
 import { ILogService } from '../../../../src/common/types';
 import { RefType } from '../../../../src/types';
@@ -48,7 +43,7 @@ suite('Adapter Parser Ref', () => {
         assert.lengthOf(parsers, 3, 'Should return three items');
 
         container.bind<ILogService>(ILogService).to(MockLogger);
-        const refsParser = container.get<IRefsParser>(parserTYPES.IRefsParser);
+        const refsParser = container.get<IRefsParser>(IRefsParser);
         assert.isObject(refsParser, 'RefsParser not resolved');
     });
 });

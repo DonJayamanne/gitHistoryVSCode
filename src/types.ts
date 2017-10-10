@@ -171,3 +171,6 @@ export enum CommitInfo {
 export interface IDiContainer extends Disposable {
     get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T;
 }
+export interface IDiContainerLocator extends Disposable {
+    getContainer(): IDiContainer;
+}

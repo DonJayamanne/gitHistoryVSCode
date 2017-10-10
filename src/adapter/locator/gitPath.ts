@@ -1,10 +1,11 @@
 import { exec } from 'child_process';
 import * as fs from 'fs';
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import * as vscode from 'vscode';
 import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from './types';
 
+@injectable()
 export class GitExecutableLocator implements IGitExecutableLocator {
     private gitPath: string;
     constructor( @inject(ILogService) private logger: ILogService) {

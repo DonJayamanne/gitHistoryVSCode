@@ -4,18 +4,20 @@ import * as vscode from 'vscode';
 // import * as fileHistory from './commands/fileHistory';
 // import * as lineHistory from './commands/lineHistory';
 import { CommandRegister } from './commands/register';
-import { getDiContainer } from './ioc';
+import { DiContainer } from './ioc/container';
+import { setDiContainer } from './ioc/index';
 // import * as searchHistory from './commands/searchHistory';
 // import * as commitComparer from './commitCompare/main';
 // import * as commitViewer from './commitViewer/main';
 // import * as logViewer from './logViewer/logViewer';
-import { LogViewer } from './logViewer/logViewer';
+import { ILogViewer } from './logViewer/types';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 // tslint:disable-next-line:no-any
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
-    const container = getDiContainer();
+    const container = DiContainer.getInstance();
+    setDiContainer(container);
     context.subscriptions.push(container);
     // fileHistory.activate(context);
     // lineHistory.activate(context);
@@ -23,7 +25,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     // commitViewer.activate(context, logViewer.getGitRepoPath);
     // logViewer.activate(context);
     // commitComparer.activate(context, logViewer.getGitRepoPath);
-    const logViewer = container.get<LogViewer>(LogViewer);
+    const logViewer = container.get<ILogViewer>(ILogViewer);
     context.subscriptions.push(logViewer);
     context.subscriptions.push(new CommandRegister());
 }

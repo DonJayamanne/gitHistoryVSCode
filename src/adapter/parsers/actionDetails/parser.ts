@@ -20,9 +20,3 @@ export class ActionDetailsParser implements IActionDetailsParser {
         };
     }
 }
-
-// export function formatDate(date: Date) {
-//     const lang = env.language;
-//     const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
-//     return date.toLocaleString(lang, dateOptions);
-// }

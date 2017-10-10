@@ -1,4 +1,4 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { IGitService, IGitServiceFactory } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParserFactory } from '../parsers';
@@ -8,6 +8,7 @@ import { IGitArgsService } from './types';
 // tslint:disable-next-line:no-require-imports no-var-requires
 const shorthash = require('shorthash');
 
+@injectable()
 export class GitServiceFactory implements IGitServiceFactory {
     private readonly gitServices = new Map<string, IGitService>();
     constructor( @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,

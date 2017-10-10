@@ -1,10 +1,11 @@
+import { injectable } from 'inversify';
 import { QuickPickItem, window, workspace, WorkspaceFolder } from 'vscode';
-import { } from '../../browser/src/reducers/vscode';
 import { BranchSelection, IUiService } from './types';
 
 const allBranches = 'All branches';
 const currentBranch = 'Current branch';
 
+@injectable()
 export class UiService implements IUiService {
     public async getBranchSelection(): Promise<BranchSelection | undefined> {
         const itemPickList: QuickPickItem[] = [];
