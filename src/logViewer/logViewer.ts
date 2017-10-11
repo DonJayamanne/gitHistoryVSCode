@@ -74,16 +74,9 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
 export class LogViewer implements ILogViewer {
     private disposables: Disposable[] = [];
     private server: Server | undefined;
-    private readonly gitServiceFactory: IGitServiceFactory;
-    private readonly uiService: IUiService;
-    private readonly themeService: IThemeService;
-    constructor( @inject(IGitServiceFactory) gitServiceFactory: IGitServiceFactory,
-        @inject(IUiService) uiService: IUiService,
-        @inject(IThemeService) themeService: IThemeService) {
-
-        this.gitServiceFactory = gitServiceFactory;
-        this.uiService = uiService;
-        this.themeService = themeService;
+    constructor( @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
+        @inject(IUiService) private uiService: IUiService,
+        @inject(IThemeService) private themeService: IThemeService) {
 
         const provider = new TextDocumentContentProvider();
         const registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
