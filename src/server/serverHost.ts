@@ -8,7 +8,7 @@ import { decorate, inject, injectable } from 'inversify';
 import * as path from 'path';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IServerHost, IThemeService } from './types';
+import { IServerHost, IStateStore, IThemeService } from './types';
 
 type PortAndId = {
     port: number,
@@ -24,7 +24,8 @@ export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
     private httpServer?: http.Server;
     constructor( @inject(IThemeService) private themeService: IThemeService,
-        @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory) {
+        @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
+        @inject(IStateStore) private stateStore: IStateStore) {
         super();
     }
 
@@ -67,7 +68,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
         });
 
         return this.startPromise = new Promise<PortAndId>((resolve, reject) => {
-            this.apiController = new ApiController(this.app!, this.gitServiceFactory);
+            this.apiController = new ApiController(this.app!, this.gitServiceFactory, this.stateStore);
             this.httpServer!.listen(0, () => {
                 this.port = this.httpServer!.address().port;
                 resolve({ port: this.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) });

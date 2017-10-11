@@ -3,7 +3,7 @@ import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Uri } from 'vscode';
-import { CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntry } from '../types';
+import { CommittedFile, IGitService, IGitServiceFactory, LogEntries } from '../types';
 import { IApiRouteHandler, IStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
