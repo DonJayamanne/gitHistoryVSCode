@@ -10,7 +10,7 @@ import { IGitHistoryViewer } from './commands/types';
 import { gitHistorySchema } from './constants';
 import { DiContainer } from './ioc/container';
 import { setDiContainer } from './ioc/index';
-import { ContentProvider } from './logViewer/contentProvider';
+import { ContentProvider } from './server/contentProvider';
 
 // tslint:disable-next-line:no-any
 export async function activate(context: vscode.ExtensionContext): Promise<any> {

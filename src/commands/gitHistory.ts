@@ -3,13 +3,13 @@ import * as vscode from 'vscode';
 import { command } from '../commands/register';
 import { BranchSelection, IUiService } from '../common/types';
 import { previewUri } from '../constants';
-import { IServer } from '../logViewer/types';
+import { IServerHost } from '../server/types';
 import { IGitServiceFactory } from '../types';
 import { IGitHistoryViewer } from './types';
 
 @injectable()
 export class GitHistory implements IGitHistoryViewer {
-    constructor( @inject(IServer) private server: IServer,
+    constructor( @inject(IServerHost) private server: IServerHost,
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
         @inject(IUiService) private uiService: IUiService) {
     }

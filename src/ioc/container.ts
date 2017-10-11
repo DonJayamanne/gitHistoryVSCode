@@ -7,9 +7,9 @@ import { IGitHistoryViewer } from '../commands/types';
 import { Logger } from '../common/log';
 import { ILogService, IUiService } from '../common/types';
 import { UiService } from '../common/uiService';
-import { Server } from '../logViewer/server';
-import { ThemeService } from '../logViewer/themeService';
-import { IServer, IThemeService } from '../logViewer/types';
+import { ServerHost } from '../server/serverHost';
+import { ThemeService } from '../server/themeService';
+import { IServerHost, IThemeService } from '../server/types';
 import { IDiContainer } from '../types';
 
 export class DiContainer implements IDiContainer {
@@ -24,7 +24,7 @@ export class DiContainer implements IDiContainer {
         cont.bind<IGitHistoryViewer>(IGitHistoryViewer).to(GitHistory);
         cont.bind<IUiService>(IUiService).to(UiService);
         cont.bind<IThemeService>(IThemeService).to(ThemeService);
-        cont.bind<IServer>(IServer).to(Server).inSingletonScope();
+        cont.bind<IServerHost>(IServerHost).to(ServerHost).inSingletonScope();
         cont.load(adapterContainer, repoContainer, parsersContainer);
         DiContainer.instance = this;
     }

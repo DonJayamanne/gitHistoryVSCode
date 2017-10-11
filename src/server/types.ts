@@ -30,7 +30,7 @@ export type PortAndId = {
     id: string
 };
 
-export const IServer = Symbol('IServer');
-export interface IServer extends Disposable {
+export const IServerHost = Symbol('IServer');
+export interface IServerHost extends Disposable {
     start(workspaceFolder: string): Promise<PortAndId>;
 }

@@ -8,7 +8,7 @@ import { decorate, inject, injectable } from 'inversify';
 import * as path from 'path';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IServer, IThemeService } from './types';
+import { IServerHost, IThemeService } from './types';
 
 type PortAndId = {
     port: number,
@@ -20,7 +20,7 @@ type PortAndId = {
 decorate(injectable(), EventEmitter);
 
 @injectable()
-export class Server extends EventEmitter implements IServer {
+export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
     private httpServer?: http.Server;
     constructor( @inject(IThemeService) private themeService: IThemeService,
