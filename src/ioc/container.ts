@@ -8,8 +8,9 @@ import { Logger } from '../common/log';
 import { ILogService, IUiService } from '../common/types';
 import { UiService } from '../common/uiService';
 import { ServerHost } from '../server/serverHost';
+import { StateStore } from '../server/stateStore';
 import { ThemeService } from '../server/themeService';
-import { IServerHost, IThemeService } from '../server/types';
+import { IServerHost, IStateStore, IThemeService } from '../server/types';
 import { IDiContainer } from '../types';
 
 export class DiContainer implements IDiContainer {
@@ -25,6 +26,7 @@ export class DiContainer implements IDiContainer {
         cont.bind<IUiService>(IUiService).to(UiService);
         cont.bind<IThemeService>(IThemeService).to(ThemeService);
         cont.bind<IServerHost>(IServerHost).to(ServerHost).inSingletonScope();
+        cont.bind<IStateStore>(IStateStore).to(StateStore).inSingletonScope();
         cont.load(adapterContainer, repoContainer, parsersContainer);
         DiContainer.instance = this;
     }
