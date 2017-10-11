@@ -6,8 +6,6 @@ import * as express from 'express';
 import * as http from 'http';
 import { decorate, inject, injectable } from 'inversify';
 import * as path from 'path';
-// import * as io from 'socket.io';
-// import * as vscode from 'vscode';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
 import { IServer, IThemeService } from './types';
@@ -23,14 +21,11 @@ decorate(injectable(), EventEmitter);
 
 @injectable()
 export class Server extends EventEmitter implements IServer {
-    // private socketServer?: SocketIO.Server;
     private app?: Express;
     private httpServer?: http.Server;
-    // private clients: SocketIO.Socket[] = [];
     constructor( @inject(IThemeService) private themeService: IThemeService,
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory) {
         super();
-        // this.responsePromises = new Map<string, IDeferred<boolean>>();
     }
 
     public dispose() {
@@ -40,10 +35,6 @@ export class Server extends EventEmitter implements IServer {
             this.httpServer.close();
             this.httpServer = undefined;
         }
-        // if (this.socketServer) {
-        //     this.socketServer.close();
-        //     this.socketServer = undefined;
-        // }
     }
 
     private port?: number;
@@ -57,7 +48,6 @@ export class Server extends EventEmitter implements IServer {
 
         this.app = express();
         this.httpServer = http.createServer(this.app);
-        // this.socketServer = io(this.httpServer);
 
         const rootDirectory = path.join(__dirname, '..', '..', 'browser');
         const node_modulesDirectory = path.join(__dirname, '..', '..', '..', 'node_modules');
@@ -78,8 +68,6 @@ export class Server extends EventEmitter implements IServer {
 
         return this.startPromise = new Promise<PortAndId>((resolve, reject) => {
             this.apiController = new ApiController(this.app!, this.gitServiceFactory);
-            // this.socketServer!.on('connection', this.onSocketConnection.bind(this));
-
             this.httpServer!.listen(0, () => {
                 this.port = this.httpServer!.address().port;
                 resolve({ port: this.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) });
@@ -99,69 +87,4 @@ export class Server extends EventEmitter implements IServer {
         const themeDetails = this.themeService.getThemeDetails(theme, backgroundColor, color);
         res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), themeDetails);
     }
-    // private buffer: {}[] = [];
-    // public clearBuffer() {
-    //     this.buffer = [];
-    // }
-    // public sendResults(data: {}[]) {
-    //     // Add an id to each item (poor separation of concerns... but what ever)
-    //     const results = data.map(item => { return { id: uniqid('x'), value: item }; });
-    //     this.buffer = this.buffer.concat(results);
-    //     this.broadcast('results', results);
-    // }
-
-    // public sendSetting(name: string, value: {}) {
-    //     this.broadcast(name, value);
-    // }
-    // private broadcast(eventName: string, data: {}) {
-    //     this.socketServer!.emit(eventName, data);
-    // }
-
-    // private onSocketConnection(socket: SocketIO.Socket) {
-    //     this.clients.push(socket);
-    //     socket.on('disconnect', () => {
-    //         const index = this.clients.findIndex(sock => sock.id === socket.id);
-    //         if (index >= 0) {
-    //             this.clients.splice(index, 1);
-    //         }
-    //     });
-    //     socket.on('clientExists', (data: { id: string }) => {
-    //         if (!this.responsePromises.has(data.id)) {
-    //             return;
-    //         }
-    //         const def = this.responsePromises.get(data.id);
-    //         this.responsePromises.delete(data.id);
-    //         def!.resolve(true);
-    //     });
-    //     socket.on('settings.appendResults', (data: {}) => {
-    //         this.emit('settings.appendResults', data);
-    //     });
-    //     socket.on('clearResults', () => {
-    //         this.buffer = [];
-    //     });
-    //     socket.on('results.ack', () => {
-    //         this.buffer = [];
-    //     });
-    //     this.emit('connected');
-
-    //     // Someone is connected, send them the data we have
-    //     socket.emit('results', this.buffer);
-    // }
-
-    // private responsePromises: Map<string, IDeferred<boolean>>;
-    // public clientsConnected(timeoutMilliSeconds: number): Promise<{}> {
-    //     const id = new Date().getTime().toString();
-    //     const def = createDeferred<boolean>();
-    //     // this.broadcast('clientExists', { id: id });
-    //     this.responsePromises.set(id, def);
-
-    //     setTimeout(() => {
-    //         if (this.responsePromises.has(id)) {
-    //             this.responsePromises.delete(id);
-    //             def.resolve(false);
-    //         }
-    //     }, timeoutMilliSeconds);
-
-    //     return def.promise;
-    // }
 }
