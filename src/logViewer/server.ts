@@ -4,27 +4,31 @@ import { EventEmitter } from 'events';
 import { Express, Request, Response } from 'express';
 import * as express from 'express';
 import * as http from 'http';
+import { decorate, inject, injectable } from 'inversify';
 import * as path from 'path';
-import { createDeferred } from '../common/helpers';
 // import * as io from 'socket.io';
 // import * as vscode from 'vscode';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IThemeService } from './types';
+import { IServer, IThemeService } from './types';
 
 type PortAndId = {
     port: number,
     id: string
 };
 
-// tslint:disable-next-line:no-require-imports no-var-requires
-// const uniqid = require('uniqid');
-export class Server extends EventEmitter {
+// inversify requires inherited classes to be decorated with @injectable()
+// This is a workaround forat that requirement
+decorate(injectable(), EventEmitter);
+
+@injectable()
+export class Server extends EventEmitter implements IServer {
     // private socketServer?: SocketIO.Server;
     private app?: Express;
     private httpServer?: http.Server;
     // private clients: SocketIO.Socket[] = [];
-    constructor(private themeService: IThemeService, private gitServiceFactory: IGitServiceFactory) {
+    constructor( @inject(IThemeService) private themeService: IThemeService,
+        @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory) {
         super();
         // this.responsePromises = new Map<string, IDeferred<boolean>>();
     }
@@ -43,11 +47,13 @@ export class Server extends EventEmitter {
     }
 
     private port?: number;
+    private startPromise: Promise<PortAndId>;
     public async start(workspaceFolder: string): Promise<PortAndId> {
-        if (this.port) {
-            return { port: this.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) };
+        if (this.startPromise) {
+            return this.startPromise.then(value => {
+                return { port: value.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) };
+            });
         }
-        const def = createDeferred<number>();
 
         this.app = express();
         this.httpServer = http.createServer(this.app);
@@ -70,8 +76,7 @@ export class Server extends EventEmitter {
             this.rootRequestHandler(req, res);
         });
 
-        return new Promise<PortAndId>((resolve, reject) => {
-            // tslint:disable-next-line:prefer-type-cast no-any
+        return this.startPromise = new Promise<PortAndId>((resolve, reject) => {
             this.apiController = new ApiController(this.app!, this.gitServiceFactory);
             // this.socketServer!.on('connection', this.onSocketConnection.bind(this));
 
@@ -80,7 +85,7 @@ export class Server extends EventEmitter {
                 resolve({ port: this.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) });
             });
             this.httpServer!.on('error', error => {
-                if (!def.completed) {
+                if (!this.port) {
                     reject(error);
                 }
             });

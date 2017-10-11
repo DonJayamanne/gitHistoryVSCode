@@ -19,7 +19,7 @@ export class ApiController implements IApiRouteHandler {
         this.app.post('/log/:hash/cherryPick', this.cherryPickCommit);
     }
 
-    private workspaceFolders: Map<string, string>;
+    private workspaceFolders: Map<string, string> = new Map<string, string>();
     public registerWorkspaceFolder(workspaceFolder: string) {
         const id: string = shorthash.unique(workspaceFolder);
         this.workspaceFolders.set(id, workspaceFolder);

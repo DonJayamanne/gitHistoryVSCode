@@ -54,7 +54,7 @@ export class Git implements IGitService {
             return this.gitRootPath;
         }
         const gitRootPath = await this.gitCmdExecutor.exec(this.workspaceRoot, ...this.gitArgsService.getGitRootArgs());
-        return this.gitRootPath = gitRootPath.trim();
+        return this.gitRootPath = gitRootPath.split(/\r?\n/g)[0].trim();
     }
 
     // tslint:disable-next-line:member-ordering
@@ -85,7 +85,8 @@ export class Git implements IGitService {
     }
     public async getCurrentBranch(): Promise<string> {
         const args = this.gitArgsService.getCurrentBranchArgs();
-        return await this.exec(...args);
+        const branch = await this.exec(...args);
+        return branch.split(/\r?\n/g)[0].trim();
     }
     public async getObjectHash(object: string): Promise<string> {
 

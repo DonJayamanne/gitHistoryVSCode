@@ -1,12 +1,6 @@
 import { Request, Response } from 'express';
 import { Disposable } from 'vscode';
 
-export const ILogViewer = Symbol('ILogViewer');
-// tslint:disable-next-line:no-empty-interface
-export interface ILogViewer extends Disposable {
-
-}
-
 export type ThemeDetails = {
     theme: string,
     backgroundColor: string,
@@ -29,4 +23,14 @@ export interface IApiRouteHandler {
     cherryPickCommit(request: Request, response: Response): void;
     selectCommit(request: Request, response: Response): void;
     selectCommittedFile(request: Request, response: Response): void;
+}
+
+export type PortAndId = {
+    port: number,
+    id: string
+};
+
+export const IServer = Symbol('IServer');
+export interface IServer extends Disposable {
+    start(workspaceFolder: string): Promise<PortAndId>;
 }

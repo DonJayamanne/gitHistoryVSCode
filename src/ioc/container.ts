@@ -2,13 +2,14 @@ import { Container, interfaces } from 'inversify';
 import { containerModule as adapterContainer } from '../adapter/ioc';
 import { containerModule as parsersContainer } from '../adapter/parsers/ioc';
 import { containerModule as repoContainer } from '../adapter/repository/ioc';
+import { GitHistory } from '../commands/gitHistory';
+import { IGitHistoryViewer } from '../commands/types';
 import { Logger } from '../common/log';
 import { ILogService, IUiService } from '../common/types';
 import { UiService } from '../common/uiService';
-import { LogViewer } from '../logViewer/logViewer';
+import { Server } from '../logViewer/server';
 import { ThemeService } from '../logViewer/themeService';
-import { ILogViewer } from '../logViewer/types';
-import { IThemeService } from '../logViewer/types';
+import { IServer, IThemeService } from '../logViewer/types';
 import { IDiContainer } from '../types';
 
 export class DiContainer implements IDiContainer {
@@ -20,9 +21,10 @@ export class DiContainer implements IDiContainer {
         }
         const cont = this.container = new Container();
         cont.bind<ILogService>(ILogService).to(Logger);
-        cont.bind<ILogViewer>(ILogViewer).to(LogViewer);
+        cont.bind<IGitHistoryViewer>(IGitHistoryViewer).to(GitHistory);
         cont.bind<IUiService>(IUiService).to(UiService);
         cont.bind<IThemeService>(IThemeService).to(ThemeService);
+        cont.bind<IServer>(IServer).to(Server).inSingletonScope();
         cont.load(adapterContainer, repoContainer, parsersContainer);
         DiContainer.instance = this;
     }
