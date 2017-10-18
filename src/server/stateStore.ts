@@ -6,23 +6,32 @@ import { IStateStore, State } from './types';
 
 @injectable()
 export class StateStore implements IStateStore {
-    public initialize(workspaceFolder: string, branchName: string, branchSelection: BranchSelection): Promise<void> {
-        throw new Error('Not implemented yet.');
+    private storesPerWorkspace = new Map<string, State>();
+    public async initialize(workspaceFolder: string, branch: string, branchSelection: BranchSelection): Promise<void> {
+        this.storesPerWorkspace.set(workspaceFolder, { branch, branchSelection });
     }
 
-    public updateEntries(workspaceFolder: string, entries: Promise<LogEntries>, pageIndex: number, pageSize: number, branch: string, searchText: string, file: Uri): Promise<void> {
-        throw new Error('Not implemented yet.');
+    public async updateEntries(workspaceFolder: string, entries: Promise<LogEntries>, pageIndex: number, pageSize: number, branch: string, searchText: string, file: Uri): Promise<void> {
+        const state = this.storesPerWorkspace.get(workspaceFolder)!;
+        state.branch = branch;
+        state.entries = entries;
+        state.pageIndex = pageIndex;
+        state.pageSize = pageSize;
+        state.searchText = searchText;
+        state.file = file;
     }
 
-    public updateSelection(workspaceFolder: string, hash: string, commit: Promise<LogEntry>): Promise<void> {
-        throw new Error('Not implemented yet.');
+    public async updateLastHashCommit(workspaceFolder: string, hash: string, commit: Promise<LogEntry>): Promise<void> {
+        const state = this.storesPerWorkspace.get(workspaceFolder)!;
+        state.lastFetchedHash = hash;
+        state.lastFetchedCommit = commit;
     }
 
-    public getState(workspaceFolder: string): State {
-        throw new Error('Not implemented yet.');
+    public getState(workspaceFolder: string): Readonly<State> | undefined {
+        return this.storesPerWorkspace.get(workspaceFolder);
     }
 
     public dispose() {
-        throw new Error('Not implemented yet.');
+        this.storesPerWorkspace.clear();
     }
 }

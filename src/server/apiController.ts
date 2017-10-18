@@ -3,7 +3,7 @@ import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Uri } from 'vscode';
-import { CommittedFile, IGitService, IGitServiceFactory, LogEntries } from '../types';
+import { CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntry } from '../types';
 import { IApiRouteHandler, IStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -49,7 +49,8 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(workspaceFolder);
 
-        if (currentState.searchText === searchText &&
+        if (currentState &&
+            currentState.searchText === searchText &&
             currentState.pageIndex === pageIndex &&
             currentState.branch === branch &&
             currentState.pageSize === pageSize &&
@@ -80,7 +81,19 @@ export class ApiController implements IApiRouteHandler {
         const id: string = request.query.id;
         const hash: string = request.params.hash;
 
-        this.getRepository(id).getCommit(hash)
+        const workspaceFolder = this.getWorkspace(id);
+        const currentState = this.stateStore.getState(workspaceFolder);
+        let commitPromise: Promise<LogEntry | undefined>;
+        // tslint:disable-next-line:possible-timing-attack
+        if (currentState && currentState.lastFetchedHash === hash && currentState.lastFetchedCommit) {
+            commitPromise = currentState.lastFetchedCommit;
+        }
+        else {
+            commitPromise = this.getRepository(id).getCommit(hash);
+            this.stateStore.updateLastHashCommit(workspaceFolder, hash, commitPromise);
+        }
+
+        commitPromise
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
     }
@@ -96,28 +109,7 @@ export class ApiController implements IApiRouteHandler {
     }
     public selectCommit = (request: Request, response: Response) => {
         // const id: string = request.query.id;
-        const hash: string = request.params.hash;
-        // tslint:disable-next-line:no-console
-        console.log(hash);
-
-        // let promise: Promise<LogEntry | undefined>;
-        // const workspaceFolder = this.getWorkspace(id);
-        // const currentState = this.stateStore.getState(workspaceFolder);
-
-        // // tslint:disable-next-line:possible-timing-attack
-        // if (currentState.hash === hash &&
-        //     currentState.commit) {
-
-        //     promise = currentState.commit;
-        // }
-        // else {
-        // promise = this.getRepository(id).getCommit(hash);
-        // this.stateStore.updateSelection(workspaceFolder, hash, promise);
-        // }
-
-        // promise
-        //     .then(data => response.send(data))
-        //     .catch(err => response.status(500).send(err));
+        // const hash: string = request.params.hash;
 
         response.send('');
     }

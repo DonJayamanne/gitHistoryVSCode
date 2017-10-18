@@ -1,5 +1,14 @@
-import { Uri } from 'vscode';
-export * from './adapter/exec/types';
+// Do not include any VS Code types in here
+// This file will be imported by the client side code (WebPack)
+
+export type FsUri = Readonly<{
+    scheme: string;
+    authority: string;
+    path: string;
+    query: string;
+    fragment: string;
+    fsPath: string;
+}>;
 
 export enum RefType {
     Head,
@@ -21,8 +30,8 @@ export type Branch = {
 };
 
 export type CommittedFile = {
-    uri: Uri;
-    oldUri?: Uri;
+    uri: FsUri;
+    oldUri?: FsUri;
     oldRelativePath?: string;
     relativePath: string;
     status: Status;
@@ -85,10 +94,10 @@ export interface IGitService {
     getCurrentBranch(): Promise<string>;
     getObjectHash(object: string): Promise<string>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
-    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri): Promise<LogEntries>;
+    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri): Promise<LogEntries>;
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
-    getCommitFile(hash: string, file: Uri | string): Promise<Uri>;
+    getCommitFile(hash: string, file: FsUri | string): Promise<FsUri>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
 }
 

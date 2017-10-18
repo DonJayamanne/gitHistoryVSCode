@@ -44,8 +44,9 @@ export type State = {
     searchText?: string;
     file?: Uri;
     entries?: Promise<LogEntries>;
-    hash?: string;
-    commit?: Promise<LogEntry | undefined>;
+    lastFetchedHash?: string;
+    lastFetchedCommit?: Promise<LogEntry | undefined>;
+    branchSelection?: BranchSelection
 };
 
 export const IStateStore = Symbol('IStateStore');
@@ -53,6 +54,6 @@ export const IStateStore = Symbol('IStateStore');
 export interface IStateStore extends Disposable {
     initialize(workspaceFolder: string, branchName: string, branchSelection: BranchSelection): Promise<void>;
     updateEntries(workspaceFolder: string, entries: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri): Promise<void>;
-    updateSelection(workspaceFolder: string, hash: string, commit: Promise<LogEntry | undefined>): Promise<void>;
-    getState(workspaceFolder: string): State;
+    updateLastHashCommit(workspaceFolder: string, hash: string, commit: Promise<LogEntry | undefined>): Promise<void>;
+    getState(workspaceFolder: string): Readonly<State> | undefined;
 }
