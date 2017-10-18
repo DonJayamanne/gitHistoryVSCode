@@ -74,8 +74,9 @@ export const cherryPickCommit = (logEntry: LogEntry) => () => {
 
 export const viewCommit = (hash: string) => {
     // tslint:disable-next-line:no-any
-    return (dispatch: Dispatch<any>) => {
-        return fetchCommit(dispatch, hash);
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        return fetchCommit(dispatch, state, hash);
     };
 };
 export const getNextCommits = () => {
@@ -86,7 +87,7 @@ export const getNextCommits = () => {
         return fetchCommits(dispatch, state, pageIndex);
     };
 };
-export const getCommits = () => {
+export const getCommits = (id?: string) => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
@@ -97,8 +98,10 @@ export const getCommits = () => {
 // tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: number = 0, pageSize?: number) {
     pageSize = pageSize || store.logEntries.pageSize;
+    const id = store.settings.id || '';
+    const branch = store.settings.selectedBranchName || '';
     dispatch(notifyIsLoading());
-    return axios.get(`/log?pageSize=${pageSize}&pageIndex=${pageIndex}`)
+    return axios.get(`/log?pageSize=${pageSize}&pageIndex=${pageIndex}&id=${encodeURIComponent(id)}&branch=${encodeURIComponent(branch)}`)
         .then(result => {
             dispatch(addResults({ logEntries: result.data, pageIndex: pageIndex, pageSize }));
         })
@@ -110,9 +113,10 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: numb
         });
 }
 // tslint:disable-next-line:no-any
-function fetchCommit(dispatch: Dispatch<any>, hash: string) {
+function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
     dispatch(notifyIsFetchingCommit());
-    return axios.get(`/log/${hash}`)
+    const id = store.settings.id || '';
+    return axios.get(`/log/${hash}?id=${encodeURIComponent(id)}`)
         .then(result => {
             dispatch(updateCommit(result.data));
         })

@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
 import * as vscode from 'vscode';
 import { command } from '../commands/register';
-import { BranchSelection, IUiService } from '../common/types';
+import { IUiService } from '../common/types';
 import { previewUri } from '../constants';
 import { IServerHost } from '../server/types';
-import { IGitServiceFactory } from '../types';
+import { IGitServiceFactory, BranchSelection } from '../types';
 import { IGitHistoryViewer } from './types';
 
 @injectable()
@@ -33,7 +33,12 @@ export class GitHistory implements IGitHistoryViewer {
         const branchName = await gitService.getCurrentBranch();
         const title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
         const portAndId = await this.server.start(workspacefolder);
-        const uri = `${previewUri}?_=${new Date().getTime()}&id=${portAndId.id}&port=${portAndId.port}&branchName=${encodeURIComponent(branchName)}&branchSelection=${branchSelection}`;
+        const locale = process.env.language || '';
+        const queryArgs = [
+            `id=${portAndId.id}`, `port=${portAndId.port}`, `branchName=${encodeURIComponent(branchName)}`,
+            `branchSelection=${branchSelection}`, `locale=${encodeURIComponent(locale)}`
+        ];
+        const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
         return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode.ViewColumn.One, title);
     }
 }

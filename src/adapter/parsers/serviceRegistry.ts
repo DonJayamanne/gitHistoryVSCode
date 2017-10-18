@@ -10,7 +10,8 @@ import { HeadRefParser } from './refs/parsers/headRefParser';
 import { RemoteHeadParser } from './refs/parsers/remoteHeadParser';
 import { TagRefParser } from './refs/parsers/tagRefParser';
 import { IRefParser } from './refs/types';
-import { IActionDetailsParser, IFileStatStatusParser, ILogParser, IRefsParser } from './types';
+import { IActionDetailsParser, IFileStatStatusParser, ILogParser, IRefsParser, IFileStatParser } from './types';
+import { FileStatParser } from './fileStat/parser';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IRefParser>(IRefParser, HeadRefParser);
@@ -20,5 +21,6 @@ export function registerTypes(serviceManager: IServiceManager) {
 
     serviceManager.add<IActionDetailsParser>(IActionDetailsParser, ActionDetailsParser);
     serviceManager.add<IFileStatStatusParser>(IFileStatStatusParser, FileStatStatusParser);
+    serviceManager.add<IFileStatParser>(IFileStatParser, FileStatParser);
     serviceManager.add<ILogParser>(ILogParser, LogParser);
 }

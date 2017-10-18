@@ -3,6 +3,7 @@ import * as Actions from '../constants/actions';
 
 export type IVSCodeSettings = {
   theme?: string;
+  locale?: string;
 };
 
 

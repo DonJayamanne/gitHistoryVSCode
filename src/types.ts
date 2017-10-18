@@ -1,6 +1,10 @@
 // Do not include any VS Code types in here
 // This file will be imported by the client side code (WebPack)
 
+export enum BranchSelection {
+    Current,
+    All
+}
 export type FsUri = Readonly<{
     scheme: string;
     authority: string;

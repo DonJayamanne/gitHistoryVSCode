@@ -10,6 +10,7 @@ import * as ResultActions from './actions/results';
 // import 'semantic-ui-css/semantic.min.css';
 import App from './containers/App';
 import configureStore from './store';
+import { BranchSelection } from './types';
 
 let query = querystring.parse(window.location.href);
 const id = query.id as string;
@@ -17,12 +18,15 @@ const id = query.id as string;
 // Get settings related to this id
 const settingsData = window.localStorage.getItem(id);
 let defaultSettings: ISettings = { pageIndex: 0 };
+defaultSettings.id = (query.id || '').toString();
+defaultSettings.selectedBranchName = (query.branchName || '').toString();
+defaultSettings.selectedBranchType = parseInt((query.branchSelection || '').toString()) as BranchSelection;
 try {
   defaultSettings = settingsData ? JSON.parse(settingsData) : defaultSettings;
 }
 catch (ex) { }
-
-const store = configureStore({ settings: defaultSettings, searchCriteria: {}, graph: {}, vscode: { theme: query.theme as any } });
+const locale = (query.locale || '').toString();
+const store = configureStore({ settings: defaultSettings, searchCriteria: {}, graph: {}, vscode: { theme: query.theme as any, locale } });
 const history = syncHistoryWithStore(browserHistory, store);
 
 ReactDOM.render(
@@ -37,4 +41,4 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-store.dispatch(ResultActions.getCommits());
+store.dispatch(ResultActions.getCommits(defaultSettings.id));

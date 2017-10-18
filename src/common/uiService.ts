@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import { QuickPickItem, window, workspace, WorkspaceFolder } from 'vscode';
-import { BranchSelection, IUiService } from './types';
+import { IUiService } from './types';
+import { BranchSelection } from '../types';
 
 const allBranches = 'All branches';
 const currentBranch = 'Current branch';

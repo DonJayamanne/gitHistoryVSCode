@@ -76,18 +76,18 @@ export class GitArgsService implements IGitArgsService {
         // logArgs.push('--numstat');
         // fileStatArgs.push('--name-status');
 
+        if (specificBranch) {
+            logArgs.push(branch);
+            fileStatArgs.push(branch);
+            counterArgs.push(branch);
+        }
+
         // Count only the number of lines in the log
         if (this.isWindows) {
             counterArgs.push('|', 'find', '/c', '/v', '""');
         }
         else {
             counterArgs.push('|', 'wc', '-l');
-        }
-
-        if (specificBranch) {
-            logArgs.push(branch);
-            fileStatArgs.push(branch);
-            counterArgs.push(branch);
         }
 
         return { logArgs, fileStatArgs, counterArgs };

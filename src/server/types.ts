@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { Disposable, Uri } from 'vscode';
-import { BranchSelection } from '../common/types';
-import { LogEntries, LogEntry } from '../types';
+import { BranchSelection, LogEntries, LogEntry } from '../types';
 
 export type ThemeDetails = {
     theme: string,

@@ -9,7 +9,7 @@ import Header from '../../components/Header';
 import LogEntryList from '../../components/LogView/LogEntryList';
 import * as style from './style.css';
 import axios from 'axios';
-import { Branch, BranchType, ISettings, LogEntries, LogEntry } from '../../definitions';
+import { Branch, ISettings, LogEntries, LogEntry } from '../../definitions';
 import LogView from '../../components/LogView/LogView';
 import Footer from '../../components/Footer';
 import Rnd from 'react-rnd';

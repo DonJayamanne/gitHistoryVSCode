@@ -1,6 +1,6 @@
 import * as querystring from 'query-string';
 import { CancellationToken, TextDocumentContentProvider, Uri } from 'vscode';
-import { BranchSelection } from '../common/types';
+import { BranchSelection } from '../types';
 // import { decode as htmlDecode } from 'he';
 
 export class ContentProvider implements TextDocumentContentProvider {
@@ -10,10 +10,11 @@ export class ContentProvider implements TextDocumentContentProvider {
         const id: string = query.id! as string;
         const branchName: string = decodeURIComponent(query.branchName! as string);
         const branchSelection: BranchSelection = parseInt(query.branchSelection!.toString(), 10) as BranchSelection;
-        return this.generateResultsView(port, id, branchName, branchSelection);
+        const locale: string = decodeURIComponent(query.locale!.toString()) as string;
+        return this.generateResultsView(port, id, branchName, branchSelection, locale);
     }
 
-    private generateResultsView(port: number, id: string, branchName: string, branchSelection: BranchSelection): string {
+    private generateResultsView(port: number, id: string, branchName: string, branchSelection: BranchSelection, locale: string): string {
         // Fix for issue #669 "Results Panel not Refreshing Automatically" - always include a unique time
         // so that the content returned is different. Otherwise VSCode will not refresh the document since it
         // thinks that there is nothing to be updated.
@@ -50,7 +51,8 @@ export class ContentProvider implements TextDocumentContentProvider {
                                             'backgroundColor=' + encodeURIComponent(backgroundColor),
                                             'fontFamily=' + encodeURIComponent(fontFamily),
                                             'fontWeight=' + encodeURIComponent(fontWeight),
-                                            'fontSize=' + encodeURIComponent(fontSize)
+                                            'fontSize=' + encodeURIComponent(fontSize),
+                                            'locale=' + encodeURIComponent(${locale})
                                         ];
                             document.getElementById('myframe').src = 'http://localhost:${port}/?_=${timeNow}&' + queryArgs.join('&');
                         }

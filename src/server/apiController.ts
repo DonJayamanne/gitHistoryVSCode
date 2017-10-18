@@ -37,11 +37,11 @@ export class ApiController implements IApiRouteHandler {
         return this.gitServiceFactory.createGitService(workspaceFolder);
     }
     public getLogEntries = (request: Request, response: Response) => {
-        const id: string = request.query.id;
+        const id: string = decodeURIComponent(request.query.id);
         const searchText = request.query.searchText;
-        const pageIndex: number | undefined = request.query.pageIndex;
+        const pageIndex: number | undefined = request.query.pageIndex ? parseInt(request.query.pageIndex, 10) : undefined;
         const branch = request.query.branch;
-        const pageSize: number | undefined = request.query.pageSize;
+        const pageSize: number | undefined = request.query.pageSize ? parseInt(request.query.pageSize, 10) : undefined;
         const filePath: string | undefined = request.query.file;
         const file = filePath ? Uri.file(filePath) : undefined;
 
@@ -60,7 +60,7 @@ export class ApiController implements IApiRouteHandler {
             promise = currentState.entries;
         }
         else {
-            promise = this.getRepository(request.query.id)
+            promise = this.getRepository(decodeURIComponent(request.query.id))
                 .getLogEntries(pageIndex, pageSize, branch, searchText);
             this.stateStore.updateEntries(workspaceFolder, promise,
                 pageIndex, pageSize, branch, searchText, file);
@@ -71,14 +71,14 @@ export class ApiController implements IApiRouteHandler {
             .catch(err => response.status(500).send(err));
     }
     public getBranches = (request: Request, response: Response) => {
-        const id: string = request.query.id;
+        const id: string = decodeURIComponent(request.query.id);
         this.getRepository(id)
             .getBranches()
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
     }
     public getCommit = (request: Request, response: Response) => {
-        const id: string = request.query.id;
+        const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
 
         const workspaceFolder = this.getWorkspace(id);
@@ -98,7 +98,7 @@ export class ApiController implements IApiRouteHandler {
             .catch(err => response.status(500).send(err));
     }
     public cherryPickCommit = (request: Request, response: Response) => {
-        // const id: string = request.query.id;
+        // const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
         // tslint:disable-next-line:no-console
         console.log(hash);
@@ -108,7 +108,7 @@ export class ApiController implements IApiRouteHandler {
         //     .catch(err => response.status(500).send(err));
     }
     public selectCommit = (request: Request, response: Response) => {
-        // const id: string = request.query.id;
+        // const id: string = decodeURIComponent(request.query.id);
         // const hash: string = request.params.hash;
 
         response.send('');

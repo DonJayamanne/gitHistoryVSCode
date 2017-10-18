@@ -7,7 +7,7 @@ import Header from '../../../components/Header';
 import LogEntryList from '../LogEntryList';
 import * as style from './style.css';
 import axios from 'axios';
-import { Branch, BranchType, ISettings, LogEntries, LogEntry } from '../../../definitions';
+import { Branch, ISettings, LogEntries, LogEntry } from '../../../definitions';
 import * as jQuery from 'jquery';
 import BranchGraph from '../BranchGraph';
 import Scroll from 'react-scroll';
