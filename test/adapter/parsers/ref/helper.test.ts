@@ -2,8 +2,8 @@ import { assert } from 'chai';
 import { HEAD_REF_PREFIXES, REMOTE_REF_PREFIXES, TAG_REF_PREFIXES } from '../../../../src/adapter/parsers/refs/constants';
 import { getRemoteHeadName, isRemoteHead } from '../../../../src/adapter/parsers/refs/helpers';
 
-suite('Adapter Parser Ref Helper', () => {
-    test('Must correctly identify remote heads', () => {
+describe('Adapter Parser Ref Helper', () => {
+    it('Must correctly identify remote heads', () => {
         assert.isFalse(isRemoteHead(''), 'Empty string incorrectly identified as a remote head');
         // tslint:disable-next-line:no-any prefer-type-cast
         assert.isFalse(isRemoteHead(null as any), 'null string incorrectly identified as a remote head');
@@ -19,7 +19,7 @@ suite('Adapter Parser Ref Helper', () => {
         });
     });
 
-    test('Must extract remote head names', () => {
+    it('Must extract remote head names', () => {
         assert.isEmpty(getRemoteHeadName(''), 'Empty string cannot have a ref name');
         // tslint:disable-next-line:no-any prefer-type-cast
         assert.isEmpty(getRemoteHeadName(null as any), 'null string cannot have a ref name');

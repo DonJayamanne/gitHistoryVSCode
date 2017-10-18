@@ -1,14 +1,15 @@
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import * as path from 'path';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Uri } from 'vscode';
+import { IServiceContainer } from '../../../ioc/types';
 import { CommittedFile, Status } from '../../../types';
 import { IFileStatParser, IFileStatStatusParser } from '../types';
 
 @injectable()
 export class FileStatParser implements IFileStatParser {
-    constructor(private gitRootPath: string, @inject(IFileStatStatusParser) private statusParser: IFileStatStatusParser) {
+    constructor(private serviceContainer: IServiceContainer) {
     }
 
     private static parseFileMovement(fileInfo: string): { original: string, current: string } | undefined {
@@ -104,7 +105,7 @@ export class FileStatParser implements IFileStatParser {
      * @returns {CommittedFile[]}
      * @memberof FileStatParser
      */
-    public parse(filesWithNumStat: string[], filesWithNameStat: string[]): CommittedFile[] {
+    public parse(gitRootPath: string, filesWithNumStat: string[], filesWithNameStat: string[]): CommittedFile[] {
         return filesWithNameStat.map((line, index) => {
             const numStatParts = FileStatParser.getAdditionsAndDeletionsFromNumStatLine(filesWithNumStat[index]);
             const additions = numStatParts ? numStatParts.additions : undefined;
@@ -112,14 +113,15 @@ export class FileStatParser implements IFileStatParser {
 
             const indexOfStartOfFileName = line.split('').findIndex((c, idx) => idx > 0 && (c.toUpperCase() !== c.toLocaleLowerCase()));
             const statusCode = line.substring(0, indexOfStartOfFileName).trim();
-            if (!this.statusParser.canParse(statusCode)) {
+            const statusParser = this.serviceContainer.get<IFileStatStatusParser>(IFileStatStatusParser);
+            if (!statusParser.canParse(statusCode)) {
                 return;
             }
-            const status = this.statusParser.parse(statusCode)!;
+            const status = statusParser.parse(statusCode)!;
             const currentAndOriginalFile = FileStatParser.getNewAndOldFileNameFromNumStatLine(line, status)!;
             const oldRelativePath = currentAndOriginalFile ? currentAndOriginalFile.original : undefined;
             const relativePath = currentAndOriginalFile.current;
-            const oldUri = oldRelativePath ? Uri.file(path.join(this.gitRootPath, oldRelativePath)) : undefined;
+            const oldUri = oldRelativePath ? Uri.file(path.join(gitRootPath, oldRelativePath)) : undefined;
 
             // tslint:disable-next-line:no-unnecessary-local-variable
             const fileInfo: CommittedFile = {
@@ -128,7 +130,7 @@ export class FileStatParser implements IFileStatParser {
                 status,
                 relativePath,
                 oldRelativePath,
-                uri: Uri.file(path.join(this.gitRootPath, relativePath)),
+                uri: Uri.file(path.join(gitRootPath, relativePath)),
                 oldUri
             };
             return fileInfo;

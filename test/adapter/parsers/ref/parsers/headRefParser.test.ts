@@ -3,13 +3,13 @@ import { HeadRefParser } from '../../../../../src/adapter/parsers/refs/parsers/h
 import { IRefParser } from '../../../../../src/adapter/parsers/refs/types';
 import { RefType } from '../../../../../src/types';
 
-suite('Adapter Parser Ref - HeadRefParser', () => {
+describe('Adapter Parser Ref - HeadRefParser', () => {
     let parser: IRefParser;
-    suiteSetup(() => {
+    before(() => {
         parser = new HeadRefParser();
     });
 
-    test('null,undefined and empty strings cannot be parsed', () => {
+    it('null,undefined and empty strings cannot be parsed', () => {
         assert.isFalse(parser.canParse(''), 'Parsing of empty string is not possible');
         // tslint:disable-next-line:prefer-type-cast no-any
         assert.isFalse(parser.canParse(null as any), 'Parsing of null is not possible');
@@ -17,7 +17,7 @@ suite('Adapter Parser Ref - HeadRefParser', () => {
         assert.isFalse(parser.canParse(undefined as any), 'Parsing of undefined is not possible');
     });
 
-    test('refs/heads/master', () => {
+    it('refs/heads/master', () => {
         const refContent = 'refs/heads/master';
         assert.isTrue(parser.canParse(refContent), 'Parsing failed');
         assert.isObject(parser.parse(refContent), 'Should be an object');
@@ -25,7 +25,7 @@ suite('Adapter Parser Ref - HeadRefParser', () => {
         assert.equal(parser.parse(refContent).type, RefType.Head, 'Type is wrong');
     });
 
-    test('HEAD -> refs/heads/master', () => {
+    it('HEAD -> refs/heads/master', () => {
         const refContent = 'HEAD -> refs/heads/master';
         assert.isTrue(parser.canParse(refContent), 'Parsing failed');
         assert.isObject(parser.parse(refContent), 'Should be an object');

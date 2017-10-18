@@ -1,17 +1,24 @@
-import { assert } from 'chai';
+import { assert, expect } from 'chai';
 import * as path from 'path';
 import { Uri } from 'vscode';
 import { FileStatParser } from '../../../../src/adapter/parsers/fileStat/parser';
 import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatStatus/parser';
+import { IFileStatStatusParser } from '../../../../src/adapter/parsers/types';
+import { ILogService } from '../../../../src/common/types';
 import { Status } from '../../../../src/types';
-import { MockLogger } from '../../../mocks';
+import { MockLogger, MockServiceContainer } from '../../../mocks';
 
 // tslint:disable-next-line:max-func-body-length
-suite('Adapter Parser File Stat', () => {
+describe('Adapter Parser File Stat', () => {
+    // tslint:disable-next-line:mocha-no-side-effect-code
     const gitRootPath = path.join('src', 'adapter');
-    const mockLogger = new MockLogger();
-    const statusParser = new FileStatStatusParser(mockLogger);
-    test('Must return the right number of files', () => {
+    // tslint:disable-next-line:mocha-no-side-effect-code
+    const svcContainer = new MockServiceContainer();
+    before(() => {
+        svcContainer.add(IFileStatStatusParser, FileStatStatusParser);
+        svcContainer.add(ILogService, MockLogger);
+    });
+    it('Must return the right number of files', () => {
         // tslint:disable-next-line:no-multiline-string
         const numStatFileLog = ['1       1       package.json',
             '1       1       src/adapter/ioc.ts',
@@ -22,11 +29,11 @@ suite('Adapter Parser File Stat', () => {
             'A       src/adapter/parsers/constants.ts',
             'M       src/adapter/parsers/ioc.ts'];
 
-        const parser = new FileStatParser(gitRootPath, statusParser);
-        const files = parser.parse(numStatFileLog, nameStatusFileLog);
-        assert.lengthOf(files, 4, 'Incorrect number of entries');
+        const parser = new FileStatParser(svcContainer);
+        const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
+        expect(files).to.have.length(4, 'Incorrect number of entries');
     });
-    test('Must have the right number of additions, deletions and right status (using spaces as column separators)', () => {
+    it('Must have the right number of additions, deletions and right status (using spaces as column separators)', () => {
         // tslint:disable-next-line:no-multiline-string
         const numStatFileLog = ['1       1       package.json',
             '8       0       src/adapter/parsers/constants.ts',
@@ -35,9 +42,9 @@ suite('Adapter Parser File Stat', () => {
             'A       src/adapter/parsers/constants.ts',
             'M       src/adapter/parsers/ioc.ts'];
 
-        const parser = new FileStatParser(gitRootPath, statusParser);
-        const files = parser.parse(numStatFileLog, nameStatusFileLog);
-        assert.lengthOf(files, 3, 'Incorrect number of entries');
+        const parser = new FileStatParser(svcContainer);
+        const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
+        expect(files).to.have.length(3, 'Incorrect number of entries');
 
         assert.equal(files[0].additions, 1, '0. Incorrect number of additions');
         assert.equal(files[0].deletions, 1, '0. Incorrect number of deletions');
@@ -47,7 +54,7 @@ suite('Adapter Parser File Stat', () => {
         assert.equal(files[1].deletions, 0, '1. Incorrect number of deletions');
         assert.equal(files[1].status, Status.Added, '1. Incorrect Status');
     });
-    test('Must have the right number of additions, deletions and right status (using tabs as column separators)', () => {
+    it('Must have the right number of additions, deletions and right status (using tabs as column separators)', () => {
         // tslint:disable-next-line:no-multiline-string
         const numStatFileLog = ['1	1	package.json',
             '8	0	src/adapter/parsers/constants.ts',
@@ -56,8 +63,8 @@ suite('Adapter Parser File Stat', () => {
             'A	src/adapter/parsers/constants.ts',
             'M	src/adapter/parsers/ioc.ts'];
 
-        const parser = new FileStatParser(gitRootPath, statusParser);
-        const files = parser.parse(numStatFileLog, nameStatusFileLog);
+        const parser = new FileStatParser(svcContainer);
+        const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
         assert.lengthOf(files, 3, 'Incorrect number of entries');
 
         assert.equal(files[0].additions, 1, '0. Incorrect number of additions');
@@ -68,7 +75,7 @@ suite('Adapter Parser File Stat', () => {
         assert.equal(files[1].deletions, 0, '1. Incorrect number of deletions');
         assert.equal(files[1].status, Status.Added, '1. Incorrect Status');
     });
-    test('Must have the right paths', () => {
+    it('Must have the right paths', () => {
         // tslint:disable-next-line:no-multiline-string
         const filePaths = ['package.json',
             path.join('src', 'adapter', 'parsers', 'constants.ts'),
@@ -80,14 +87,14 @@ suite('Adapter Parser File Stat', () => {
         `A       ${filePaths[1]}`,
         `M       ${filePaths[2]}`];
 
-        const parser = new FileStatParser(gitRootPath, statusParser);
-        const files = parser.parse(numStatFileLog, nameStatusFileLog);
+        const parser = new FileStatParser(svcContainer);
+        const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
         assert.lengthOf(files, 3, 'Incorrect number of entries');
         assert.equal(files[0].uri.fsPath, Uri.file(path.join(gitRootPath, filePaths[0])).fsPath, '0. Incorrect path');
         assert.equal(files[1].uri.fsPath, Uri.file(path.join(gitRootPath, filePaths[1])).fsPath, '1. Incorrect path');
         assert.equal(files[2].uri.fsPath, Uri.file(path.join(gitRootPath, filePaths[2])).fsPath, '2. Incorrect path');
     });
-    test('Must correctly identify copied files', () => {
+    it('Must correctly identify copied files', () => {
 
         // src/client/{common/comms => }/Socket Stream.ts
         // src/client/common/{space in folder => comms}/id Dispenser.ts
@@ -112,8 +119,8 @@ suite('Adapter Parser File Stat', () => {
         const numStatFileLog = filePaths.map(f => `1 2 ${f}`);
         const nameStatusFileLog = filePaths.map((f, idx) => `${idx % 2 === 0 ? 'C123' : 'R01'} ${f}`);
 
-        const parser = new FileStatParser(gitRootPath, statusParser);
-        const files = parser.parse(numStatFileLog, nameStatusFileLog);
+        const parser = new FileStatParser(svcContainer);
+        const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
         assert.lengthOf(files, filePaths.length, 'Incorrect number of entries');
 
         assert.equal(files[0].uri.fsPath, Uri.file(path.join(gitRootPath, ...['src', 'client', 'Socket Stream.ts'])).fsPath, '0. Incorrect current path');

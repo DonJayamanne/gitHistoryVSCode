@@ -1,6 +1,4 @@
-import { interfaces } from 'inversify';
 import { Uri } from 'vscode';
-import { Disposable } from 'vscode';
 export * from './adapter/exec/types';
 
 export enum RefType {
@@ -167,10 +165,3 @@ export enum CommitInfo {
 //     deletions?: number;
 //     mode: Modification;
 // }
-
-export interface IDiContainer extends Disposable {
-    get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T;
-}
-export interface IDiContainerLocator extends Disposable {
-    getContainer(): IDiContainer;
-}

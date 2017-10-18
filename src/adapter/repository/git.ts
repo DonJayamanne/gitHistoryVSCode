@@ -4,9 +4,10 @@ import * as path from 'path';
 import 'reflect-metadata';
 import * as tmp from 'tmp';
 import { Uri } from 'vscode';
+import { IServiceContainer } from '../../ioc/types';
 import { Branch, CommittedFile, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
-import { IFileStatParserFactory, ILogParser } from '../parsers/types';
+import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, STATS_SEPARATOR } from './constants';
 import { IGitArgsService } from './types';
 
@@ -42,11 +43,11 @@ export class Git implements IGitService {
     }
 
     // tslint:disable-next-line:member-ordering
-    constructor(private workspaceRoot: string,
+    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        private workspaceRoot: string,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
-        @inject(IGitArgsService) private gitArgsService: IGitArgsService,
-        @inject(IFileStatParserFactory) private fileStatParserFactory: IFileStatParserFactory) {
+        @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
     }
 
     public async  getGitRoot(): Promise<string> {
@@ -243,7 +244,7 @@ export class Git implements IGitService {
 
         const numstatEntries = bothEntries.map(items => items.numstat);
         const namestatEntries = bothEntries.map(items => items.namestat);
-
-        return this.fileStatParserFactory.createFileStatParser(gitRepoPath).parse(numstatEntries, namestatEntries);
+        const fileStatParser = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
+        return fileStatParser.parse(gitRepoPath, numstatEntries, namestatEntries);
     }
 }

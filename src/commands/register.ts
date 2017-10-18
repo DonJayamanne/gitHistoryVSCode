@@ -1,6 +1,6 @@
 import { interfaces } from 'inversify';
 import { commands, Disposable, window } from 'vscode';
-import { getDiContainer } from '../ioc/index';
+import { getServiceContainer } from '../ioc/index';
 
 // tslint:disable-next-line:no-any
 type CommandHandler = (...args: any[]) => any;
@@ -27,7 +27,7 @@ export function command(commandName: string, serviceIdentifier: interfaces.Servi
         CommandRegister.register(commandName, async function () {
             try {
                 // hack hack (but this preserves context)
-                const container = getDiContainer();
+                const container = getServiceContainer();
                 const newTarget = container.get(serviceIdentifier) as { propertyKey: Function };
                 const value = newTarget[propertyKey].call(newTarget, ...Array.from(arguments));
                 // const value = descriptor.value!.call(target, ...Array.from(arguments));

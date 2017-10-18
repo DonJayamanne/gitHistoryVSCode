@@ -1,9 +1,9 @@
-import { IDiContainer } from '../types';
+import { IServiceContainer } from './types';
 
-let container: IDiContainer;
-export function getDiContainer() {
+let container: IServiceContainer;
+export function getServiceContainer() {
     return container;
 }
-export function setDiContainer(diContainer: IDiContainer) {
-    container = diContainer;
+export function setServiceContainer(serviceContainer: IServiceContainer) {
+    container = serviceContainer;
 }

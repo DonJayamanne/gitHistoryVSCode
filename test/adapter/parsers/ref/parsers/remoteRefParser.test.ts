@@ -3,13 +3,13 @@ import { RemoteHeadParser } from '../../../../../src/adapter/parsers/refs/parser
 import { IRefParser } from '../../../../../src/adapter/parsers/refs/types';
 import { RefType } from '../../../../../src/types';
 
-suite('Adapter Parser Ref - RemoteHeadParser', () => {
+describe('Adapter Parser Ref - RemoteHeadParser', () => {
     let parser: IRefParser;
-    suiteSetup(() => {
+    before(() => {
         parser = new RemoteHeadParser();
     });
 
-    test('null,undefined and empty strings cannot be parsed', () => {
+    it('null,undefined and empty strings cannot be parsed', () => {
         assert.isFalse(parser.canParse(''), 'Parsing of empty string is not possible');
         // tslint:disable-next-line:prefer-type-cast no-any
         assert.isFalse(parser.canParse(null as any), 'Parsing of null is not possible');
@@ -17,7 +17,7 @@ suite('Adapter Parser Ref - RemoteHeadParser', () => {
         assert.isFalse(parser.canParse(undefined as any), 'Parsing of undefined is not possible');
     });
 
-    test('refs/remotes/origin/HEAD', () => {
+    it('refs/remotes/origin/HEAD', () => {
         const refContent = 'refs/remotes/origin/HEAD';
         assert.isTrue(parser.canParse(refContent), 'Parsing failed');
         assert.isObject(parser.parse(refContent), 'Should be an object');
@@ -25,7 +25,7 @@ suite('Adapter Parser Ref - RemoteHeadParser', () => {
         assert.equal(parser.parse(refContent).type, RefType.RemoteHead, 'Type is wrong');
     });
 
-    test('refs/remotes/origin/sandy081/refactorWorkspace', () => {
+    it('refs/remotes/origin/sandy081/refactorWorkspace', () => {
         const refContent = 'refs/remotes/origin/sandy081/refactorWorkspace';
         assert.isTrue(parser.canParse(refContent), 'Parsing failed');
         assert.isObject(parser.parse(refContent), 'Should be an object');
@@ -33,7 +33,7 @@ suite('Adapter Parser Ref - RemoteHeadParser', () => {
         assert.equal(parser.parse(refContent).type, RefType.RemoteHead, 'Type is wrong');
     });
 
-    test('remotes/origin/HEAD -> origin/master', () => {
+    it('remotes/origin/HEAD -> origin/master', () => {
         const refContent = 'remotes/origin/HEAD -> origin/master';
         assert.isTrue(parser.canParse(refContent), 'Parsing failed');
         assert.isObject(parser.parse(refContent), 'Should be an object');

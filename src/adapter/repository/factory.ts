@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
+import { IServiceContainer } from '../../ioc/types';
 import { IGitService, IGitServiceFactory } from '../../types';
 import { IGitCommandExecutor } from '../exec';
-import { IFileStatParserFactory } from '../parsers';
 import { ILogParser } from '../parsers/types';
 import { Git } from './git';
 import { IGitArgsService } from './types';
@@ -14,13 +14,13 @@ export class GitServiceFactory implements IGitServiceFactory {
     constructor( @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
-        @inject(IFileStatParserFactory) private fileStatParserFactory: IFileStatParserFactory) {
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer) {
 
     }
     public createGitService(workspaceRoot: string): IGitService {
         const id: string = shorthash.unique(workspaceRoot);
         if (!this.gitServices.has(id)) {
-            this.gitServices.set(id, new Git(workspaceRoot, this.gitCmdExecutor, this.logParser, this.gitArgsService, this.fileStatParserFactory));
+            this.gitServices.set(id, new Git(this.serviceContainer, workspaceRoot, this.gitCmdExecutor, this.logParser, this.gitArgsService));
         }
         return this.gitServices.get(id)!;
     }

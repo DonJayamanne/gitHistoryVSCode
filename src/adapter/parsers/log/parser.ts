@@ -1,13 +1,14 @@
 import { inject, injectable } from 'inversify';
 import { EOL } from 'os';
+import { IServiceContainer } from '../../../ioc/types';
 import { CommitInfo, CommittedFile, LogEntry } from '../../../types';
 import { Helpers } from '../../helpers';
-import { IActionDetailsParser, IFileStatParserFactory, ILogParser, IRefsParser } from '../types';
+import { IActionDetailsParser, IFileStatParser, ILogParser, IRefsParser } from '../types';
 
 @injectable()
 export class LogParser implements ILogParser {
     constructor( @inject(IRefsParser) private refsparser: IRefsParser,
-        @inject(IFileStatParserFactory) private fileStatParserFactory: IFileStatParserFactory,
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IActionDetailsParser) private actionDetailsParser: IActionDetailsParser) {
 
     }
@@ -16,7 +17,8 @@ export class LogParser implements ILogParser {
             const statsSeparatorIndex = logItems.indexOf(statsSeparator) + 1;
             const filesWithNumStat = logItems.slice(statsSeparatorIndex).join(EOL).split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
             const filesWithModeChanges = nameStatEntry.split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
-            return this.fileStatParserFactory.createFileStatParser(gitRepoPath).parse(filesWithNumStat, filesWithModeChanges);
+            const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
+            return fileStatParserFactory.parse(gitRepoPath, filesWithNumStat, filesWithModeChanges);
         }
         else {
             return [];

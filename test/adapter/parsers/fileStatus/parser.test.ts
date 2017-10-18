@@ -3,9 +3,9 @@ import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatSt
 import { Status } from '../../../../src/types';
 import { MockLogger } from '../../../mocks';
 
-suite('Adapter Parser File Status', () => {
+describe('Adapter Parser File Status', () => {
 
-    test('Ensure status can be parsed correctly', () => {
+    it('Ensure status can be parsed correctly', () => {
         const parser = new FileStatStatusParser(new MockLogger());
         ['A', 'M', 'D', 'C', 'R', 'C1234', 'R1234', 'U', 'X', 'B', 'T'].forEach(status => {
             assert.isTrue(parser.canParse(status), `Status '${status}' must be parseable`);
@@ -15,7 +15,7 @@ suite('Adapter Parser File Status', () => {
         });
     });
 
-    test('Ensure status is parsed correctly', () => {
+    it('Ensure status is parsed correctly', () => {
         const parser = new FileStatStatusParser(new MockLogger());
         const statuses = [['A', Status.Added], ['M', Status.Modified],
         ['D', Status.Deleted], ['C', Status.Copied],
