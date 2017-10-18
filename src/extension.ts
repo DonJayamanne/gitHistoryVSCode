@@ -46,8 +46,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 
     setServiceContainer(serviceContainer);
 
-    context.subscriptions.push(serviceContainer);
-
     const provider = new ContentProvider();
     const registration = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, provider);
     context.subscriptions.push(registration);
