@@ -19,7 +19,7 @@ export class ContentProvider implements TextDocumentContentProvider {
         // so that the content returned is different. Otherwise VSCode will not refresh the document since it
         // thinks that there is nothing to be updated.
         const timeNow = '';  // new Date().getTime();
-        return `
+        const html = `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
                     <script type="text/javascript">
@@ -52,7 +52,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                                             'fontFamily=' + encodeURIComponent(fontFamily),
                                             'fontWeight=' + encodeURIComponent(fontWeight),
                                             'fontSize=' + encodeURIComponent(fontSize),
-                                            'locale=' + encodeURIComponent(${locale})
+                                            'locale=${encodeURIComponent(locale)}'
                                         ];
                             document.getElementById('myframe').src = 'http://localhost:${port}/?_=${timeNow}&' + queryArgs.join('&');
                         }
@@ -61,5 +61,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                     <body onload="start()">
                     <iframe id="myframe" frameborder="0" style="border: 0px solid transparent;height:100%;width:100%;" src="" seamless></iframe>
                     </body></html>`;
+
+        return html;
     }
 }

@@ -25,6 +25,7 @@ try {
   defaultSettings = settingsData ? JSON.parse(settingsData) : defaultSettings;
 }
 catch (ex) { }
+
 const locale = (query.locale || '').toString();
 const store = configureStore({ settings: defaultSettings, searchCriteria: {}, graph: {}, vscode: { theme: query.theme as any, locale } });
 const history = syncHistoryWithStore(browserHistory, store);
