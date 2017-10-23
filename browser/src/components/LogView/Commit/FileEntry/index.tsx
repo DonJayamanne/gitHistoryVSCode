@@ -72,8 +72,8 @@ export class FileEntry extends React.Component<FileEntryProps> {
             return <span key={index} className={className}></span>;
         });
 
-        const oldFile = this.props.committedFile.oldRelativePath || '';
-        const constFileMovementSymbol = this.props.committedFile.oldRelativePath ? ' => ' : '';
+        const oldFile = ''; //this.props.committedFile.oldRelativePath || '';
+        const constFileMovementSymbol = ''; //this.props.committedFile.oldRelativePath ? ' => ' : '';
 
         return (<div className='diff-row'>
             <span className='diff-stats hint--right hint--rounded hint--bounce' aria-label={summary}>
