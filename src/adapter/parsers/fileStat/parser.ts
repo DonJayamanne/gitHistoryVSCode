@@ -22,8 +22,17 @@ export class FileStatParser implements IFileStatParser {
         // src/{test/autocomplete => client/common/comms/another dir}/base.test.ts
         // src/{client/common/comms/another dir => }/id Dispenser.ts
         // src/test/jupyter/{extension.jupyter.comms.jupyterKernelManager.test.ts => jupyterKernelManager.test.ts}
-        const diffSeparator = ' => ';
-        if (fileInfo.indexOf(diffSeparator) === -1) {
+
+        // Another exampe is as follows, where a tab is used as a separator
+        // src/vs/workbench/services/extensions/node/ipcRemoteCom.ts       src/vs/workbench/services/extensions/node/rpcProtocol.ts
+        
+        const diffSeparator = [' => ', '\t'].reduce<string | undefined>((separator, item) => {
+            if (typeof separator === 'string') {
+                return separator;
+            }
+            return fileInfo.indexOf(item) === -1 ? undefined : item;
+        }, undefined);
+        if (!diffSeparator) {
             console.error(`Parsing file movements failed for ${fileInfo}`);
             return;
         }
