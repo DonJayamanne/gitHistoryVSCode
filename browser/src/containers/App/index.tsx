@@ -44,17 +44,19 @@ class App extends React.Component<AppProps, AppState> {
   render() {
     const { children, settings } = this.props;
     return (
-      <div className='appRoot'>
-        <Header {...this.props }></Header >
-        <LogView logEntries={this.props.logEntries}></LogView>
-        <div id='placeHolderCommit' />
-        <Commit />
-        <Footer
-          canGoBack={this.props.logEntries.pageIndex > 0}
-          canGoForward={(this.props.logEntries.pageIndex + 1) * 100 < this.props.logEntries.count}
-          goBack={() => this.goBack()}
-          goForward={() => this.goForward()}></Footer>
-        {children}
+      <div className='appRootParent'>
+        <div className='appRoot'>
+          <Header {...this.props }></Header >
+          <LogView logEntries={this.props.logEntries}></LogView>
+          <div id='placeHolderCommit'></div>
+          <Footer
+            canGoBack={this.props.logEntries.pageIndex > 0}
+            canGoForward={(this.props.logEntries.pageIndex + 1) * 100 < this.props.logEntries.count}
+            goBack={() => this.goBack()}
+            goForward={() => this.goForward()}></Footer>
+          {children}
+        </div >
+        {this.props.logEntries && this.props.logEntries.selected ? <Commit /> : ''}
       </div >
     );
   }

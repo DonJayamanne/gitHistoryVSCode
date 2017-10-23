@@ -71,6 +71,10 @@ body {
 	margin: 0 0 0 1em;
 }
 
+div.appRootParent {
+	height: 100vh;
+	overflow: hidden;
+}
 div.appRoot {
 	display: flex;
 	flex-direction: column;
@@ -367,24 +371,30 @@ header {
 
 
 /* Details View */
-
+.hidden {
+	display:none;
+}
+.detailsCnt {
+	overflow: auto;
+	border-top: 1px solid hsla(0, 0%, 100%, 0.50);	
+}
 #details-view {
 	/* position: absolute;
 	bottom: 0;
 	left: 0;
 	right: 0; */
 	/* height: 20rem; */
-	max-height: 50vh;
-	overflow: auto;
+	/* max-height: 50vh; */
+	/* overflow: auto; */
 	padding: 1rem 1rem 0 1rem;
-	border: 1px solid hsla(0, 0%, 100%, 0.12);
-	border-top: 1px solid hsla(0, 0%, 100%, 0.50);
-	border-bottom: none;
+	/* border: 1px solid hsla(0, 0%, 100%, 0.12); */
+	/* border-top: 1px solid hsla(0, 0%, 100%, 0.50); */
+	/* border-bottom: none; */
 }
 
-#details-view.resized {
+/* #details-view.resized {
 	height: calc(100% - 20rem);
-}
+} */
 
 #details-view .action-btn {
 	float: right;
@@ -409,7 +419,7 @@ div.commitCntDrag {
 div.react-draggable.react-draggable-dragged,
 div.react-draggable {
 	width: 100% !important;
-	bottom: 0;
+	bottom: 35px !important;
 	position: absolute;
 }
 
@@ -429,7 +439,7 @@ div.react-draggable {
 
 div.details-view-cnt {
 	bottom: 30px;
-	overflow-y: scroll;
+	overflow-y: .hidden;
 	overflow-x: hidden;
 }
 
@@ -456,7 +466,7 @@ div.details-view-cnt {
 	padding: 0;
 }
 
-.committed-files .diff-row {
+.committed-files .diff-row , .diff-row {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -468,19 +478,19 @@ div.details-view-cnt {
 	position: relative;
 }
 
-.committed-files .file-name {
+.committed-files .file-name, .file-name {
 	display: inline-block;
 	padding-left: 0.5em;
 }
 
-.committed-files a.file-name {
+.committed-files a.file-name, a.file-name {
 	position: absolute;
 	top: 0;
 	left: 0;
 	color: transparent;
 }
 
-.committed-files .file-name-cnt:hover .file-name {
+.committed-files .file-name-cnt:hover .file-name , .file-name-cnt:hover .file-name {
 	text-decoration: underline;
 	cursor: pointer;
 }
