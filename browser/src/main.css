@@ -490,7 +490,7 @@ div.details-view-cnt {
 	color: transparent;
 }
 
-.committed-files .file-name-cnt:hover .file-name , .file-name-cnt:hover .file-name {
+.committed-files .file-name-cnt:hover .file-name , .file-name-cnt:hover .file-name Ï{
 	text-decoration: underline;
 	cursor: pointer;
 }
