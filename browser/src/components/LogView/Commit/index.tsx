@@ -43,11 +43,8 @@ class Commit extends React.Component<CommitProps> {
   }
   private resize() {
     const $ref = jQuery('.react-draggable');
-    $ref.removeClass('hidden');
-    $ref.css('top', '');
-    const $x = jQuery('#details-view');
-    $x.removeClass('hidden');
-    const $y = jQuery(this.ref);
+    $ref.removeClass('hidden').css('top', '');
+    jQuery('#details-view').removeClass('hidden');
     const height = $ref.height();
     const newHeight = (height + 40) + 'px';
 
