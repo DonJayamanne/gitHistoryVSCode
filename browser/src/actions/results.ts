@@ -100,8 +100,15 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: numb
     pageSize = pageSize || store.logEntries.pageSize;
     const id = store.settings.id || '';
     const branch = store.settings.selectedBranchName || '';
+    const queryParts = [];
+    queryParts.push(`pageIndex=${pageIndex}`);
+    queryParts.push(`id=${encodeURIComponent(id)}`);
+    queryParts.push(`branch=${encodeURIComponent(branch)}`);
+    if (pageSize) {
+        queryParts.push(`pageSize=${pageSize}`);
+    }
     dispatch(notifyIsLoading());
-    return axios.get(`/log?pageSize=${pageSize}&pageIndex=${pageIndex}&id=${encodeURIComponent(id)}&branch=${encodeURIComponent(branch)}`)
+    return axios.get(`/log?${queryParts.join('&')}`)
         .then(result => {
             dispatch(addResults({ logEntries: result.data, pageIndex: pageIndex, pageSize }));
         })

@@ -8,30 +8,30 @@ import settings from './settings';
 import { default as graph, IGraphState } from './graph';
 
 export interface LogEntriesState extends LogEntries {
-  pageIndex: number;
-  isLoading: boolean;
-  isLoadingCommit: boolean;
-  pageSize: number;
-  selected?: LogEntry;
+    pageIndex: number;
+    isLoading: boolean;
+    isLoadingCommit: boolean;
+    pageSize?: number;
+    selected?: LogEntry;
 }
 export interface RootState {
-  vscode: IVSCodeSettings;
-  logEntries?: LogEntriesState;
-  settings?: ISettings;
-  searchCriteria: ISearchCriteria;
-  graph: IGraphState;
+    vscode: IVSCodeSettings;
+    logEntries?: LogEntriesState;
+    settings?: ISettings;
+    searchCriteria: ISearchCriteria;
+    graph: IGraphState;
 }
 export interface ISearchCriteria {
-  selectedBranchType?: Branch;
-  selectedBranchName?: string;
-  pageIndex?: number;
-  searchText?: string;
+    selectedBranchType?: Branch;
+    selectedBranchName?: string;
+    pageIndex?: number;
+    searchText?: string;
 }
 export default combineReducers<RootState>({
-  routing,
-  logEntries,
-  settings,
-  searchCriteria,
-  graph,
-  vscode
+    routing,
+    logEntries,
+    settings,
+    searchCriteria,
+    graph,
+    vscode
 });

@@ -10,7 +10,7 @@ export class StateStore implements IStateStore {
         this.storesPerWorkspace.set(workspaceFolder, { branch, branchSelection });
     }
 
-    public async updateEntries(workspaceFolder: string, entries: Promise<LogEntries>, pageIndex: number, pageSize: number, branch: string, searchText: string, file: Uri): Promise<void> {
+    public async updateEntries(workspaceFolder: string, entries?: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri): Promise<void> {
         const state = this.storesPerWorkspace.get(workspaceFolder) || {};
         state.branch = branch;
         state.entries = entries;
