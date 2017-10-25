@@ -1,5 +1,5 @@
 export * from './types';
-import { inject, injectable, multiInject } from 'inversify';
+import { injectable, multiInject } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { ILogService } from '../../../common/types';
@@ -12,7 +12,7 @@ import { IRefParser } from './types';
 @injectable()
 export class RefsParser implements IRefsParser {
     constructor( @multiInject(IRefParser) private parsers: IRefParser[],
-        @inject(ILogService) private logger: ILogService) {
+        @multiInject(ILogService) private loggers: ILogService[]) {
     }
 
     /**
@@ -31,7 +31,7 @@ export class RefsParser implements IRefsParser {
             .map(ref => {
                 const parser = this.parsers.find(item => item.canParse(ref));
                 if (!parser) {
-                    this.logger.error(`No parser found for ref '${ref}'`);
+                    this.loggers.forEach(logger => logger.error(`No parser found for ref '${ref}'`));
                     return;
                 }
                 return parser.parse(ref);

@@ -86,6 +86,7 @@ div.appRoot {
 .log-view {
 	position: relative;
 	overflow-y: scroll;
+	overflow-x: hidden;
 	height: 100vh;
 	/* cheight: 100%;
 	overflow-y: auto; */
@@ -376,7 +377,7 @@ header {
 }
 .detailsCnt {
 	overflow: auto;
-	border-top: 1px solid hsla(0, 0%, 100%, 0.50);	
+	border-top: 1px solid hsla(0, 0%, 100%, 0.50);
 }
 #details-view {
 	/* position: absolute;

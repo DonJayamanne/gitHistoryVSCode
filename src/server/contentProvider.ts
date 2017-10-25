@@ -8,7 +8,7 @@ export class ContentProvider implements TextDocumentContentProvider {
         const query = querystring.parse(uri.query.toString())!;
         const port: number = parseInt(query.port!.toString(), 10);
         const id: string = query.id! as string;
-        const branchName: string = decodeURIComponent(query.branchName! as string);
+        const branchName: string | undefined = query.branchName ? decodeURIComponent(query.branchName! as string) : '';
         const branchSelection: BranchSelection = parseInt(query.branchSelection!.toString(), 10) as BranchSelection;
         const locale: string = decodeURIComponent(query.locale!.toString()) as string;
         return this.generateResultsView(port, id, branchName, branchSelection, locale);
@@ -19,7 +19,7 @@ export class ContentProvider implements TextDocumentContentProvider {
         // so that the content returned is different. Otherwise VSCode will not refresh the document since it
         // thinks that there is nothing to be updated.
         const timeNow = '';  // new Date().getTime();
-        const html = `
+        return `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
                     <script type="text/javascript">
@@ -61,7 +61,5 @@ export class ContentProvider implements TextDocumentContentProvider {
                     <body onload="start()">
                     <iframe id="myframe" frameborder="0" style="border: 0px solid transparent;height:100%;width:100%;" src="" seamless></iframe>
                     </body></html>`;
-
-        return html;
     }
 }

@@ -35,9 +35,12 @@ export class GitHistory implements IGitHistoryViewer {
         const portAndId = await this.server.start(workspacefolder);
         const locale = process.env.language || '';
         const queryArgs = [
-            `id=${portAndId.id}`, `port=${portAndId.port}`, `branchName=${encodeURIComponent(branchName)}`,
+            `id=${portAndId.id}`, `port=${portAndId.port}`,
             `branchSelection=${branchSelection}`, `locale=${encodeURIComponent(locale)}`
         ];
+        if (branchSelection === BranchSelection.Current) {
+            queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
+        }
         const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
         return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode.ViewColumn.One, title);
     }

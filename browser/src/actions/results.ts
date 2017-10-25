@@ -99,11 +99,12 @@ export const getCommits = (id?: string) => {
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: number = 0, pageSize?: number) {
     pageSize = pageSize || store.logEntries.pageSize;
     const id = store.settings.id || '';
-    const branch = store.settings.selectedBranchName || '';
     const queryParts = [];
     queryParts.push(`pageIndex=${pageIndex}`);
     queryParts.push(`id=${encodeURIComponent(id)}`);
-    queryParts.push(`branch=${encodeURIComponent(branch)}`);
+    if (store.settings.selectedBranchName) {
+        queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
+    }
     if (pageSize) {
         queryParts.push(`pageSize=${pageSize}`);
     }

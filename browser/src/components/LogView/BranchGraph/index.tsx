@@ -1,7 +1,7 @@
-import { LogEntry, RefType } from '../../../definitions';
-import * as React from 'react';
 import * as jQuery from 'jquery';
+import * as React from 'react';
 import { connect } from 'react-redux';
+import { LogEntry, RefType } from '../../../definitions';
 import { RootState } from '../../../reducers';
 
 type BranchGrapProps = {
@@ -12,6 +12,7 @@ type BranchGrapProps = {
     updateTick?: number;
 };
 
+// tslint:disable-next-line:no-any
 let branches: { hash: string, path: any, x?: number, wasFictional: boolean }[] = [];
 let branchColor = 0;
 const COLORS = ['#ffab1d', '#fd8c25', '#f36e4a', '#fc6148', '#d75ab6', '#b25ade', '#6575ff', '#7b77e9', '#4ea8ec', '#00d0f5', '#4eb94e', '#51af23', '#8b9f1c', '#d0b02f', '#d0853a', '#a4a4a4',
@@ -28,9 +29,12 @@ const COLORS = ['#ffab1d', '#fd8c25', '#f36e4a', '#fc6148', '#d75ab6', '#b25ade'
     '#ff911a', '#fc8120', '#e7623e', '#fa5236', '#ca4da9', '#a74fd3', '#5a68ff', '#6d69db', '#489bd9', '#00bcde', '#36a436', '#47a519', '#798d0a', '#c1a120', '#bf7730', '#8e8e8e'];
 
 // TODO: Think about appending (could be very expensive, but could be something worthwhile)
-// Appending could produce a better UX 
+// Appending could produce a better UX
 // Dunno, I think, cuz this way you can see where merges take place, rather than seeing a line vanish off
+// tslint:disable-next-line:max-func-body-length cyclomatic-complexity
 function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number, logEntryHeight: number = 60.8, entries: LogEntry[]) {
+    // tslint:disable-next-line:no-debugger
+    debugger;
     while (svg.children.length > 0) {
         svg.removeChild(svg.children[0]);
     }
@@ -44,10 +48,10 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
     }
     svg.style.display = '';
     // Draw the graph
-    const circleOffset = 0; //0.5 * logEntryHeight;
+    const circleOffset = 0; // 0.5 * logEntryHeight;
     const standardOffset = (0 + 0.5) * logEntryHeight;
     let currentY = (0 + 0.5) * logEntryHeight;
-    let topMostY = (0 + 0.5) * logEntryHeight;
+    const topMostY = (0 + 0.5) * logEntryHeight;
     // topMostY = (0 + 0.5) * logEntryHeight;
     let maxLeft = 0;
     let lastXOffset = 12;
@@ -55,36 +59,40 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
     if (startAt === 0) {
         branchColor = 0;
     }
+    // tslint:disable-next-line:no-increment-decrement
     for (let i = 0; i < startAt; i++) {
         content.children[i].className = 'hidden';
     }
     // Use this for new orphaned branches
-    let circlesToAppend: SVGCircleElement[] = [];
+    const circlesToAppend: SVGCircleElement[] = [];
     let fictionalBranches: { path: string, x?: number }[] = [];
     // let fictionalBranch2;
     let tabbedOnce = false;
     let fictionalBranchesUsed = false;
     let branched = false;
+    // tslint:disable-next-line:no-increment-decrement
     for (let i = startAt; i < content.children.length; ++i) {
         if (i >= entries.length) {
             break;
         }
-        let entry = entries[i];
-        let entryElement = content.children[i];
+        const entry = entries[i];
+        const entryElement = content.children[i];
         if (!entry) {
             break;
         }
         let index = 0;
+        // tslint:disable-next-line:no-any
         (entryElement as any).branchesOnLeft = branches.length;
 
         // Find branches to join
         let childCount = 0;
-        let xOffset = 12;
+        const xOffset = 12;
         let removedBranches = 0;
         let branchFound = i === startAt ? true : false;
         let padParentCount = 0;
+        // tslint:disable-next-line:no-shadowed-variable
         for (let j = 0; j < branches.length;) {
-            let branch = branches[j];
+            const branch = branches[j];
             if (branch.hash === entry.hash.full) {
                 branchFound = true;
                 if (childCount === 0) {
@@ -97,21 +105,27 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                         branch.hash = entry.parents[0].full;
                     }
                     index = j;
+                    // tslint:disable-next-line:no-increment-decrement
                     ++j;
                 } else {
                     // Join the branch
-                    let x = (index + 1) * xOffset;
+                    const x = (index + 1) * xOffset;
+                    // tslint:disable-next-line:prefer-template
                     branch.path.setAttribute('d', branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
                     branches.splice(j, 1);
                     branched = true;
+                    // tslint:disable-next-line:no-increment-decrement
                     ++removedBranches;
                 }
+                // tslint:disable-next-line:no-increment-decrement
                 ++childCount;
             } else {
                 if (removedBranches !== 0) {
-                    let x = (j + 1) * xOffset;
+                    const x = (j + 1) * xOffset;
+                    // tslint:disable-next-line:prefer-template
                     branch.path.setAttribute('d', branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
                 }
+                // tslint:disable-next-line:no-increment-decrement
                 ++j;
             }
         }
@@ -119,25 +133,30 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         // Add new branches
         let xFromFictionalBranch = 0;
         let j = 0;
+        // tslint:disable-next-line:no-increment-decrement
         for (j = 0; j < entry.parents.length; ++j) {
-            let parent = entry.parents[j];
-            let x = (index + j + 1) * xOffset;
+            const parent = entry.parents[j];
+            const x = (index + j + 1) * xOffset;
             if (j !== 0 || branches.length === 0) {
-                let svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                // tslint:disable-next-line:no-http-string
+                const svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                // tslint:disable-next-line:no-increment-decrement
                 ++branchColor;
                 if (branchColor === COLORS.length) {
                     branchColor = 0;
                 }
+                // tslint:disable-next-line:prefer-template
                 svgPath.setAttribute('style', 'stroke:' + COLORS[branchColor]);
-                let origX = (index + 1) * xOffset;
+                const origX = (index + 1) * xOffset;
                 let origY = currentY === standardOffset ? 0 : currentY;
                 origY = currentY;
                 if (entry.isLastCommit && !entry.isThisLastCommitMerged) {
                     origY = currentY;
                 }
+                // tslint:disable-next-line:no-any prefer-template
                 (svgPath as any).cmds = 'M ' + origX + ' ' + origY + ' L ' + x + ' ' + (currentY + logEntryHeight / 2) + ' L ' + x + ' ';
                 svg.appendChild(svgPath);
-                let obj = {
+                const obj = {
                     hash: parent.full,
                     path: svgPath,
                     wasFictional: false
@@ -151,9 +170,11 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                         fictionalBranches = [];
                     }
                     // Generate at least 10 fictional branches, so we can lay them out neatly
+                    // tslint:disable-next-line:no-increment-decrement
                     for (let counter = 1; counter < 11; counter++) {
-                        let newOrigX = (index + 1 + counter) * xOffset;
-                        let fictionalBranch = 'M ' + newOrigX + ' ' + currentY + ' L ' + newOrigX + ' ' + topMostY + ' L ' + newOrigX + ' ';
+                        const newOrigX = (index + 1 + counter) * xOffset;
+                        // tslint:disable-next-line:prefer-template
+                        const fictionalBranch = 'M ' + newOrigX + ' ' + currentY + ' L ' + newOrigX + ' ' + topMostY + ' L ' + newOrigX + ' ';
                         fictionalBranches.push({ path: fictionalBranch, x: newOrigX });
                     }
                 }
@@ -163,24 +184,52 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             if (!branchFound && i > 0) {
                 index = branches.length;
 
-                let svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                // tslint:disable-next-line:no-http-string
+                const svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                // tslint:disable-next-line:no-increment-decrement
                 ++branchColor;
                 if (branchColor === COLORS.length) {
                     branchColor = 0;
                 }
+                // tslint:disable-next-line:prefer-template
                 svgPath.setAttribute('style', 'stroke:' + COLORS[branchColor]);
                 fictionalBranchesUsed = true;
-                let fictionalBranch = fictionalBranches.splice(0, 1)[0];
+
+                // Start
+                // Build branch
+                const pathDetails: string[] = [];
+                let xValue = 0;
+                for (let elementCount = 0; elementCount <= i; elementCount += 1) {
+                    const eleToCheck = content.children[elementCount];
+                    // tslint:disable-next-line:no-any
+                    const brancheCount = (eleToCheck as any).branchesOnLeft as number;
+                    xValue = (brancheCount + 1) * xOffset;
+                    if (elementCount === 0) {
+                        pathDetails.push(`M ${xValue} ${topMostY} L ${xValue} ${standardOffset}`);
+                    }
+                    else {
+                        pathDetails.push(`L ${xValue} ${standardOffset + (elementCount * logEntryHeight)}`);
+                    }
+                }
+                pathDetails.push(`L ${xValue} `);
+                // end
+
+                const fictionalBranch = fictionalBranches.splice(0, 1)[0];
                 if (entry.isLastCommit && !entry.isThisLastCommitMerged) {
                     // Don't start from the very top, this is the last commit for this branch
+                    // tslint:disable-next-line:prefer-template
                     fictionalBranch.path = 'M ' + fictionalBranch.x + ' ' + currentY + ' L ' + fictionalBranch.x + ' ' + currentY + ' L ' + fictionalBranch.x + ' ';
+                }
+                else {
+                    fictionalBranch.path = pathDetails.join(' ');
                 }
                 if (fictionalBranch.x !== undefined) {
                     xFromFictionalBranch = fictionalBranch.x;
                 }
+                // tslint:disable-next-line:no-any
                 (svgPath as any).cmds = fictionalBranch.path;
                 svg.appendChild(svgPath);
-                let obj = {
+                const obj = {
                     hash: parent.full,
                     path: svgPath,
                     wasFictional: true
@@ -191,33 +240,40 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             }
 
             // Incremental updates for debugging
+            // tslint:disable-next-line:no-increment-decrement no-shadowed-variable prefer-for-of
             for (let i = 0; i < branches.length; ++i) {
-                let branch = branches[i];
+                const branch = branches[i];
                 branch.path.setAttribute('d', branch.path.cmds + currentY);
             }
         }
 
         // What does this do?
         let tabBranch = false;
+        // tslint:disable-next-line:no-increment-decrement
         for (j = index + j; j < branches.length; ++j) {
             tabBranch = true;
-            let branch = branches[j];
-            let x = (j + 1) * xOffset;
+            const branch = branches[j];
+            const x = (j + 1) * xOffset;
+            // tslint:disable-next-line:prefer-template
             branch.path.cmds += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY + ' L ' + x + ' ';
         }
         tabBranch = tabBranch ? tabBranch : (entry.parents.length > 1 || branched);
         if (tabBranch && fictionalBranches.length > 0) {
+            // tslint:disable-next-line:no-increment-decrement
             for (let counter = 0; counter < fictionalBranches.length; counter++) {
-                let x = (j + 1 + counter) * xOffset;
-                let fictionalBranch = fictionalBranches[counter];
+                const x = (j + 1 + counter) * xOffset;
+                const fictionalBranch = fictionalBranches[counter];
                 if (tabbedOnce) {
+                    // tslint:disable-next-line:prefer-template
                     fictionalBranch.path += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + (currentY) + ' L ' + x + ' ';
                 }
                 else {
                     if (currentY <= logEntryHeight) {
+                        // tslint:disable-next-line:prefer-template
                         fictionalBranch.path += currentY + ' L ' + x + ' ' + logEntryHeight + ' L ' + x + ' ';
                     }
                     else {
+                        // tslint:disable-next-line:prefer-template
                         fictionalBranch.path += currentY + ' L ' + x + ' ' + (currentY + logEntryHeight / 2) + ' L ' + x + ' ';
                     }
                 }
@@ -226,7 +282,8 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             tabbedOnce = true;
         }
 
-        let svgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        // tslint:disable-next-line:no-http-string
+        const svgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         let cx = ((branchFound || i === 0 ? index : branches.length - 1) + 1) * xOffset;
         if (xFromFictionalBranch > 0) {
             cx = xFromFictionalBranch;
@@ -239,7 +296,9 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         svg.appendChild(svgCircle);
         circlesToAppend.push(svgCircle);
 
+        // tslint:disable-next-line:no-any
         (entryElement as any).branchesOnLeft = Math.max((entryElement as any).branchesOnLeft, branches.length);
+        // tslint:disable-next-line:no-any
         maxLeft = Math.max(maxLeft, (entryElement as any).branchesOnLeft);
 
         currentY += logEntryHeight;
@@ -249,22 +308,27 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         }
 
         if (padParentCount > 0) {
+            // tslint:disable-next-line:no-increment-decrement
             for (let parentElemtnCounter = startAt; parentElemtnCounter <= i; parentElemtnCounter++) {
                 if (parentElemtnCounter >= entries.length) {
                     break;
                 }
-                let el = content.children[parentElemtnCounter];
+                const el = content.children[parentElemtnCounter];
+                // tslint:disable-next-line:no-any
                 (el as any).branchesOnLeft += padParentCount;
             }
         }
     }
+    // tslint:disable-next-line:no-increment-decrement
     for (let i = startAt; i < content.children.length; ++i) {
-        let element = content.children[i];
+        const element = content.children[i];
         if (i >= entries.length) {
             break;
         }
-        let minLeft = Math.min(maxLeft, 3);
-        let left = element ? Math.max(minLeft, (element as any).branchesOnLeft) : minLeft;
+        const minLeft = Math.min(maxLeft, 3);
+        // tslint:disable-next-line:no-any
+        const left = element ? Math.max(minLeft, (element as any).branchesOnLeft) : minLeft;
+        // tslint:disable-next-line:prefer-template
         element.setAttribute('style', element.getAttribute('style') + ';padding-left:' + (left + 1) * lastXOffset + 'px');
     }
     branches.forEach(branch => {
@@ -276,9 +340,11 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
 }
 
 class BrachGraph extends React.Component<BranchGrapProps> {
-    componentWillReceiveProps(newProps: BranchGrapProps) {
+    // tslint:disable-next-line:no-empty
+    public componentWillReceiveProps(newProps: BranchGrapProps) {
     }
-    componentWillUpdate(newProps: BranchGrapProps) {
+    // tslint:disable-next-line:cyclomatic-complexity
+    public componentWillUpdate(newProps: BranchGrapProps) {
         if (Array.isArray(newProps.logEntries) && newProps.logEntries.length === 0) {
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
         }
@@ -309,7 +375,7 @@ class BrachGraph extends React.Component<BranchGrapProps> {
         this.lastDrawnDetails = {
             count: newProps.logEntries.length,
             firstHash: newProps.logEntries.length > 0 ? newProps.logEntries[0].hash.full : '',
-            lastHash: newProps.logEntries.length > 0 ? newProps.logEntries[newProps.logEntries.length - 1].hash.full : '',
+            lastHash: newProps.logEntries.length > 0 ? newProps.logEntries[newProps.logEntries.length - 1].hash.full : ''
         };
 
         this.svg.setAttribute('height', newProps.height);
@@ -322,8 +388,9 @@ class BrachGraph extends React.Component<BranchGrapProps> {
     private lastDrawnDetails: { firstHash: string, lastHash: string, count: number };
     private svg: SVGSVGElement;
 
-    render() {
+    public render() {
         return (
+            // tslint:disable-next-line:react-this-binding-issue no-http-string
             <svg className='commitGraph' ref={(ref) => this.svg = ref} xmlns='http://www.w3.org/2000/svg'></svg>
         );
     }

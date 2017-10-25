@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { injectable, multiInject } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { ILogService } from '../../../common/types';
@@ -7,7 +7,7 @@ import { IFileStatStatusParser } from '../types';
 
 @injectable()
 export class FileStatStatusParser implements IFileStatStatusParser {
-    constructor( @inject(ILogService) private logger: ILogService) { }
+    constructor( @multiInject(ILogService) private loggers: ILogService[]) { }
     public canParse(status: string): boolean {
         const parsedStatus = this.parse(status);
         return parsedStatus !== undefined && parsedStatus !== null;
@@ -35,7 +35,7 @@ export class FileStatStatusParser implements IFileStatStatusParser {
             case 'B':
                 return Status.Broken;
             default: {
-                this.logger.error(`Unrecognized file stat status '${status}`);
+                this.loggers.forEach(logger => logger.error(`Unrecognized file stat status '${status}`));
                 return;
             }
         }

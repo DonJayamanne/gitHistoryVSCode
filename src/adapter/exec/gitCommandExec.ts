@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { inject, injectable } from 'inversify';
+import { inject, injectable, multiInject } from 'inversify';
 import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from '../locator';
 import { IGitCommandExecutor } from './types';
@@ -7,7 +7,7 @@ import { IGitCommandExecutor } from './types';
 @injectable()
 export class GitCommandExecutor implements IGitCommandExecutor {
     constructor( @inject(IGitExecutableLocator) private gitExecLocator: IGitExecutableLocator,
-        @inject(ILogService) private logger: ILogService) {
+        @multiInject(ILogService) private loggers: ILogService[]) {
     }
     public async exec(cwd: string, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:unified-signatures
@@ -16,7 +16,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
     public async exec(options: any, ...args: string[]): Promise<string> {
         const gitPath = await this.gitExecLocator.getGitPath();
         const childProcOptions = typeof options === 'string' ? { cwd: options } : options;
-        this.logger.log('git', ...args);
+        this.loggers.forEach(logger => logger.log(`git ${args.join(' ')}`));
         const gitShow = spawn(gitPath, args, childProcOptions);
 
         const out = gitShow.stdout;

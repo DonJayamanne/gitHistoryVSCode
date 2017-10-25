@@ -12,9 +12,9 @@ function getInfoChannel() {
     return outInfoChannel;
 }
 
-function getLogChannel() {
+export function getLogChannel() {
     if (outLogChannel === undefined) {
-        outLogChannel = vscode.window.createOutputChannel('Git History Log');
+        outLogChannel = vscode.window.createOutputChannel('Git History');
     }
     return outLogChannel;
 }

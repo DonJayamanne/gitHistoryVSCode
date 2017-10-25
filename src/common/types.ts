@@ -1,4 +1,4 @@
-import { BranchSelection } from "../types";
+import { BranchSelection } from '../types';
 
 export const ILogService = Symbol('ILogService');
 

@@ -14,6 +14,7 @@ import { CommandRegister } from './commands/register';
 import { IGitHistoryViewer } from './commands/types';
 import { Logger } from './common/log';
 import { ILogService, IUiService } from './common/types';
+import { OutputPanelLogger } from './common/uiLogger';
 import { UiService } from './common/uiService';
 import { gitHistorySchema } from './constants';
 import { ServiceContainer } from './ioc/container';
@@ -33,6 +34,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     const serviceContainer = new ServiceContainer(cont);
 
     cont.bind<ILogService>(ILogService).to(Logger).inSingletonScope();
+    cont.bind<ILogService>(ILogService).to(OutputPanelLogger).inSingletonScope();
     cont.bind<IGitHistoryViewer>(IGitHistoryViewer).to(GitHistory);
     cont.bind<IUiService>(IUiService).to(UiService);
     cont.bind<IThemeService>(IThemeService).to(ThemeService);
