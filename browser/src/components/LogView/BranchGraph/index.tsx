@@ -65,10 +65,6 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
     }
     // Use this for new orphaned branches
     const circlesToAppend: SVGCircleElement[] = [];
-    let fictionalBranches: { path: string, x?: number }[] = [];
-    // let fictionalBranch2;
-    let tabbedOnce = false;
-    let fictionalBranchesUsed = false;
     let branched = false;
     // tslint:disable-next-line:no-increment-decrement
     for (let i = startAt; i < content.children.length; ++i) {
@@ -161,23 +157,6 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                     path: svgPath,
                     wasFictional: false
                 };
-                if (fictionalBranches.length === 0 || !fictionalBranchesUsed) {
-                    // Re-set the fictional branches if they haven't been used
-                    // In case we have a merge as the very first step,
-                    // Why? If we have a merge as the first step, then the fictional branch will have to move to the right
-                    // due to the second parent which will take another index
-                    if (!fictionalBranchesUsed) {
-                        fictionalBranches = [];
-                    }
-                    // Generate at least 10 fictional branches, so we can lay them out neatly
-                    // tslint:disable-next-line:no-increment-decrement
-                    for (let counter = 1; counter < 11; counter++) {
-                        const newOrigX = (index + 1 + counter) * xOffset;
-                        // tslint:disable-next-line:prefer-template
-                        const fictionalBranch = 'M ' + newOrigX + ' ' + currentY + ' L ' + newOrigX + ' ' + topMostY + ' L ' + newOrigX + ' ';
-                        fictionalBranches.push({ path: fictionalBranch, x: newOrigX });
-                    }
-                }
                 branchFound = true;
                 branches.splice(index + j, 0, obj);
             }
@@ -193,7 +172,6 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                 }
                 // tslint:disable-next-line:prefer-template
                 svgPath.setAttribute('style', 'stroke:' + COLORS[branchColor]);
-                fictionalBranchesUsed = true;
 
                 // Start
                 // Build branch
@@ -214,18 +192,17 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                 pathDetails.push(`L ${xValue} `);
                 // end
 
-                const fictionalBranch = fictionalBranches.splice(0, 1)[0];
+                // tslint:disable-next-line:no-any
+                const fictionalBranch = {} as any; // fictionalBranches.splice(0, 1)[0];
                 if (entry.isLastCommit && !entry.isThisLastCommitMerged) {
                     // Don't start from the very top, this is the last commit for this branch
                     // tslint:disable-next-line:prefer-template
-                    fictionalBranch.path = 'M ' + fictionalBranch.x + ' ' + currentY + ' L ' + fictionalBranch.x + ' ' + currentY + ' L ' + fictionalBranch.x + ' ';
+                    fictionalBranch.path = 'M ' + xValue + ' ' + currentY + ' L ' + xValue + ' ' + currentY + ' L ' + xValue + ' ';
                 }
                 else {
                     fictionalBranch.path = pathDetails.join(' ');
                 }
-                if (fictionalBranch.x !== undefined) {
-                    xFromFictionalBranch = fictionalBranch.x;
-                }
+                xFromFictionalBranch = xValue;
                 // tslint:disable-next-line:no-any
                 (svgPath as any).cmds = fictionalBranch.path;
                 svg.appendChild(svgPath);
@@ -258,29 +235,6 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             branch.path.cmds += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY + ' L ' + x + ' ';
         }
         tabBranch = tabBranch ? tabBranch : (entry.parents.length > 1 || branched);
-        if (tabBranch && fictionalBranches.length > 0) {
-            // tslint:disable-next-line:no-increment-decrement
-            for (let counter = 0; counter < fictionalBranches.length; counter++) {
-                const x = (j + 1 + counter) * xOffset;
-                const fictionalBranch = fictionalBranches[counter];
-                if (tabbedOnce) {
-                    // tslint:disable-next-line:prefer-template
-                    fictionalBranch.path += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + (currentY) + ' L ' + x + ' ';
-                }
-                else {
-                    if (currentY <= logEntryHeight) {
-                        // tslint:disable-next-line:prefer-template
-                        fictionalBranch.path += currentY + ' L ' + x + ' ' + logEntryHeight + ' L ' + x + ' ';
-                    }
-                    else {
-                        // tslint:disable-next-line:prefer-template
-                        fictionalBranch.path += currentY + ' L ' + x + ' ' + (currentY + logEntryHeight / 2) + ' L ' + x + ' ';
-                    }
-                }
-                fictionalBranch.x = x;
-            }
-            tabbedOnce = true;
-        }
 
         // tslint:disable-next-line:no-http-string
         const svgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
