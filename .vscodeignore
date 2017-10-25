@@ -13,3 +13,4 @@ typings.json
 webpack.config.js
 browser/**
 browserdist/**
+geomoji/**

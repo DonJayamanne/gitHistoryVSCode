@@ -6,7 +6,7 @@ import { MockLogger } from '../../../mocks';
 describe('Adapter Parser File Status', () => {
 
     it('Ensure status can be parsed correctly', () => {
-        const parser = new FileStatStatusParser(new MockLogger());
+        const parser = new FileStatStatusParser([new MockLogger()]);
         ['A', 'M', 'D', 'C', 'R', 'C1234', 'R1234', 'U', 'X', 'B', 'T'].forEach(status => {
             assert.isTrue(parser.canParse(status), `Status '${status}' must be parseable`);
         });
@@ -16,7 +16,7 @@ describe('Adapter Parser File Status', () => {
     });
 
     it('Ensure status is parsed correctly', () => {
-        const parser = new FileStatStatusParser(new MockLogger());
+        const parser = new FileStatStatusParser([new MockLogger()]);
         const statuses = [['A', Status.Added], ['M', Status.Modified],
         ['D', Status.Deleted], ['C', Status.Copied],
         ['R', Status.Renamed], ['C1234', Status.Copied],
