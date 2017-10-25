@@ -54,6 +54,8 @@
         {
             "type": "npm",
             "script": "watchReact",
+            "group": "build",
+            "isBackground": true,
             "problemMatcher": [{
                 "fileLocation": "relative",
                 "pattern": [{
