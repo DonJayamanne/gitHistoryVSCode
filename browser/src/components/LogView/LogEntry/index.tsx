@@ -35,21 +35,21 @@ function ResultList(props: ResultListProps) {
                 <div className='commit-hash-container'>
                     <CopyToClipboard text={props.logEntry.hash.full}>
                         <div className='copy-button'>
-                            <span className='btnx clipboard hint--bottom hint--rounded hint--bounce'
+                            <span className='btnx clipboard hint--right hint--rounded hint--bounce'
                                 aria-label='Copy the full Hash'>
                                 <GoClippy></GoClippy>
                             </span>
                         </div>
                     </CopyToClipboard>
                     <div className='cherry-pick-button'>
-                        <span className='btnx hint--bottom hint--rounded hint--bounce' aria-label='Cherry pick into branch'><span aria-label='Cherry pick into branch' />
+                        <span className='btnx hint--right hint--rounded hint--bounce' aria-label='Cherry pick into branch'><span aria-label='Cherry pick into branch' />
                             <a href='javascript:void(0);' onClick={() => props.onCherryPick(props.logEntry)}>
                                 <GoGitPullRequest></GoGitPullRequest>
                             </a>
                         </span>
                     </div>
                     <div className='cherry-pick-button'>
-                        <span className='btnx hint--bottom hint--rounded hint--bounce' aria-label='Compare'><span aria-label='Compare' />
+                        <span className='btnx hint--right hint--rounded hint--bounce' aria-label='Compare'><span aria-label='Compare' />
                             <a href='javascript:void(0);' onClick={() => props.onClick(props.logEntry)}>
                                 <GoGitCommit></GoGitCommit>
                             </a>

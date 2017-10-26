@@ -20,7 +20,8 @@ html {
 }
 
 body {
-	font-size: 16px;
+	/* font-size: 16px; */
+	font-size: 1.5em;
 	height: 100vh;
 }
 
@@ -125,7 +126,7 @@ div.appRoot {
 }
 
 .log-entry {
-	padding: 1em 0.5em 1em 1em;
+	padding: 0.5em;
 	position: relative;
 	border-bottom: 1px solid hsla(0, 0%, 100%, 0.3);
 }
@@ -158,11 +159,15 @@ div.appRoot {
 	cursor: pointer;
 }
 
-.commit-subject {
+.log-entry .commit-subject {
 	font-weight: bold;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.commit-subject {
+	font-weight: bold;
 }
 
 .commit-author {
@@ -447,7 +452,6 @@ div.details-view-cnt {
 #details-view .commit-subject {
 	font-size: 1.4em;
 	font-weight: lighter;
-	line-height: 2;
 	margin: 0;
 }
 

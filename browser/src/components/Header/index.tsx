@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, SplitButton, MenuItem, ButtonGroup, DropdownButton } from 'react-bootstrap';
 import * as ResultActions from '../../actions/results';
 
 type HeaderProps = {
@@ -49,6 +49,14 @@ export default class Header extends React.Component<HeaderProps, HeaderState> {
             <label>
                 Append Results
         </label>
+            <ButtonGroup>
+                <DropdownButton bsStyle="success" title="Dropdown">
+                    <MenuItem key="1">Dropdown link</MenuItem>
+                    <MenuItem key="2">Dropdown link</MenuItem>
+                </DropdownButton>
+                <Button bsStyle="info">Middle</Button>
+                <Button bsStyle="info">Right</Button>
+            </ButtonGroup>
             <Button
                 bsStyle='primary' bsSize='small'
                 disabled={this.state.isLoading}
