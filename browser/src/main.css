@@ -293,8 +293,7 @@ header {
 #history-navbar {
 	text-align: right;
 	/* Approximation for scroll bar width of 15px*/
-	margin: 0.5em 1.3em 0.5em;
-	xposition: relative;
+	margin: 0em 1.3em 0.5em 0.5em;
 }
 
 #history-navbar .navbar {
@@ -304,7 +303,9 @@ header {
 	border: 1px solid hsla(0, 0%, 0%, 0.2);
 	background-color: hsla(204, 70%, 40%, 1);
 	padding: 0;
-	margin: 0;
+    margin: 0;
+    min-height: inherit;
+    border-radius: 0;
 }
 
 .navbar .navbar-item {
