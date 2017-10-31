@@ -1,3 +1,4 @@
+import { LogEntriesResponse } from '../types';
 import { Branch, ISettings, LogEntries, LogEntry } from '../definitions';
 import { routerReducer as routing, RouteActions } from 'react-router-redux';
 import { combineReducers, Reducer } from 'redux';
@@ -7,12 +8,9 @@ import searchCriteria from './searchCriteria';
 import settings from './settings';
 import { default as graph, IGraphState } from './graph';
 
-export interface LogEntriesState extends LogEntries {
-    pageIndex: number;
+export interface LogEntriesState extends LogEntriesResponse {
     isLoading: boolean;
     isLoadingCommit: boolean;
-    pageSize?: number;
-    selected?: LogEntry;
 }
 export interface RootState {
     vscode: IVSCodeSettings;

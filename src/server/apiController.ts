@@ -1,9 +1,10 @@
+import { BranchSelection } from '../../browser/src/types';
 import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Uri } from 'vscode';
-import { CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntry } from '../types';
+import { CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntry, LogEntriesResponse } from '../types';
 import { IApiRouteHandler, IStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -18,7 +19,8 @@ export class ApiController implements IApiRouteHandler {
         this.app.get('/log', this.getLogEntries);
         this.app.get('/branches', this.getBranches);
         this.app.get('/log/:hash', this.getCommit);
-        this.app.post('/log/:hash', this.selectCommit);
+        this.app.post('/log/clearSelection', this.clearSelectedCommit);
+        this.app.post('/log/:hash/doSomething', this.doSomethingWithCommit);
         this.app.post('/log/:hash/committedFile', this.selectCommittedFile);
         this.app.post('/log/:hash/cherryPick', this.cherryPickCommit);
     }
@@ -36,7 +38,8 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         return this.gitServiceFactory.createGitService(workspaceFolder);
     }
-    public getLogEntries = (request: Request, response: Response) => {
+    // tslint:disable-next-line:cyclomatic-complexity
+    public getLogEntries = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
         const searchText = request.query.searchText;
         const pageIndex: number | undefined = request.query.pageIndex ? parseInt(request.query.pageIndex, 10) : undefined;
@@ -44,12 +47,36 @@ export class ApiController implements IApiRouteHandler {
         const pageSize: number | undefined = request.query.pageSize ? parseInt(request.query.pageSize, 10) : undefined;
         const filePath: string | undefined = request.query.file;
         const file = filePath ? Uri.file(filePath) : undefined;
+        const branchSelection = request.query.pageSize ? parseInt(request.query.branchSelection, 10) as BranchSelection : undefined;
 
         let promise: Promise<LogEntries>;
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(workspaceFolder);
 
-        if (currentState &&
+        const branchesMatch = currentState && (typeof currentState.branch === 'string' && typeof branch === 'string' && currentState.branch === branch);
+        const noBranchDefinedByClient = !currentState;
+        if (!searchText && !pageIndex && !pageSize && !filePath && !file &&
+            currentState && currentState.entries && (branchesMatch || noBranchDefinedByClient)) {
+
+            let selected: LogEntry | undefined;
+            if (currentState.lastFetchedCommit) {
+                selected = await currentState.lastFetchedCommit;
+            }
+            promise = currentState.entries.then(data => {
+                // tslint:disable-next-line:no-unnecessary-local-variable
+                const entriesResponse: LogEntriesResponse = {
+                    ...data,
+                    branch: currentState.branch,
+                    branchSelection: currentState.branchSelection,
+                    file: currentState.file,
+                    pageIndex: currentState.pageIndex,
+                    pageSize: currentState.pageSize,
+                    searchText: currentState.searchText,
+                    selected: selected
+                };
+                return entriesResponse;
+            });
+        } else if (currentState &&
             currentState.searchText === searchText &&
             currentState.pageIndex === pageIndex &&
             currentState.branch === branch &&
@@ -61,9 +88,22 @@ export class ApiController implements IApiRouteHandler {
         }
         else {
             promise = this.getRepository(decodeURIComponent(request.query.id))
-                .getLogEntries(pageIndex, pageSize, branch, searchText);
+                .getLogEntries(pageIndex, pageSize, branch, searchText)
+                .then(data => {
+                    // tslint:disable-next-line:no-unnecessary-local-variable
+                    const entriesResponse: LogEntriesResponse = {
+                        ...data,
+                        branch,
+                        branchSelection,
+                        file,
+                        pageIndex,
+                        pageSize,
+                        searchText
+                    };
+                    return entriesResponse;
+                });
             this.stateStore.updateEntries(workspaceFolder, promise,
-                pageIndex, pageSize, branch, searchText, file);
+                pageIndex, pageSize, branch, searchText, file, branchSelection);
         }
 
         promise
@@ -107,7 +147,14 @@ export class ApiController implements IApiRouteHandler {
         //     .then(data => response.send(data))
         //     .catch(err => response.status(500).send(err));
     }
-    public selectCommit = (request: Request, response: Response) => {
+    public clearSelectedCommit = async (request: Request, response: Response) => {
+        const id: string = decodeURIComponent(request.query.id);
+
+        const workspaceFolder = this.getWorkspace(id);
+        await this.stateStore.clearLastHashCommit(workspaceFolder);
+        response.send('');
+    }
+    public doSomethingWithCommit = (request: Request, response: Response) => {
         // const id: string = decodeURIComponent(request.query.id);
         // const hash: string = request.params.hash;
 

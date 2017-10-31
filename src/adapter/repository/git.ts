@@ -164,8 +164,13 @@ export class Git implements IGitService {
 
         return {
             items,
-            count
-        };
+            count,
+            branch,
+            file,
+            pageIndex,
+            pageSize,
+            searchText
+        } as LogEntries;
     }
 
     public async getCommitDate(hash: string): Promise<Date | undefined> {

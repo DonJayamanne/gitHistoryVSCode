@@ -17,10 +17,11 @@ const id = query.id as string;
 
 // Get settings related to this id
 const settingsData = window.localStorage.getItem(id);
-let defaultSettings: ISettings = { pageIndex: 0 };
+let defaultSettings: ISettings = {};
 defaultSettings.id = (query.id || '').toString();
 defaultSettings.selectedBranchName = typeof query.branchName === 'string' ? (query.branchName as string) : undefined;
-defaultSettings.selectedBranchType = parseInt((query.branchSelection || '').toString(), 10) as BranchSelection;
+const num = parseInt((query.branchSelection || '-1').toString(), 10);
+defaultSettings.selectedBranchType = (num === -1) ? undefined : num as BranchSelection;
 try {
     defaultSettings = settingsData ? JSON.parse(settingsData) : defaultSettings;
 }

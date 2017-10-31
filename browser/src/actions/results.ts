@@ -2,15 +2,16 @@ import axios from 'axios';
 import { Dispatch, Store } from 'redux';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
-import { CommittedFile, LogEntry } from '../definitions';
+import { CommittedFile, LogEntriesResponse, LogEntry } from '../definitions';
 import { RootState } from '../reducers';
 import { LogEntries } from '../types';
 
 export const clearResults = createAction(Actions.CLEAR_RESULTS);
 // tslint:disable-next-line:no-any
 export const addResult = createAction<any>(Actions.ADD_RESULT);
-export const addResults = createAction<Partial<{ logEntries: LogEntries, pageIndex: number, pageSize?: number }>>(Actions.FETCHED_COMMITS);
+export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
 export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
+export const clearCommitSelection = createAction(Actions.CLEAR_SELECTED_COMMIT);
 export const setAppendResults = createAction<boolean>(Actions.SET_APPEND_RESULTS);
 export const goToPreviousPage = createAction<void>(Actions.GO_TO_PREVIOUS_PAGE);
 export const goToNextPage = createAction<void>(Actions.GO_TO_NEXT_PAGE);
@@ -71,12 +72,20 @@ function notifyCommittedFileSelected(logEntry: LogEntry, committedFile: Committe
 export const cherryPickCommit = (logEntry: LogEntry) => () => {
     return axios.post(`/log/${logEntry.hash.full}/cherryPick`, logEntry.hash.full);
 };
-
-export const viewCommit = (hash: string) => {
+export const closeCommitView = () => {
+    selectCommit();
+};
+export const selectCommit = (hash?: string) => {
     // tslint:disable-next-line:no-any
-    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        return fetchCommit(dispatch, state, hash);
+        if (hash) {
+            await fetchCommit(dispatch, state, hash);
+        } else {
+            // tslint:disable-next-line:no-backbone-get-set-outside-model
+            await axios.get('/log/clearSelection');
+            await dispatch(clearCommitSelection());
+        }
     };
 };
 export const getNextCommits = () => {
@@ -96,22 +105,27 @@ export const getCommits = (id?: string) => {
 };
 
 // tslint:disable-next-line:no-any
-function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex: number = 0, pageSize?: number) {
+function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
     pageSize = pageSize || store.logEntries.pageSize;
     const id = store.settings.id || '';
     const queryParts = [];
-    queryParts.push(`pageIndex=${pageIndex}`);
     queryParts.push(`id=${encodeURIComponent(id)}`);
+    if (typeof pageIndex === 'number') {
+        queryParts.push(`pageIndex=${pageIndex}`);
+    }
     if (store.settings.selectedBranchName) {
         queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
+    }
+    if (store.settings.selectedBranchType) {
+        queryParts.push(`branchSelection=${encodeURIComponent(store.settings.selectedBranchType)}`);
     }
     if (pageSize) {
         queryParts.push(`pageSize=${pageSize}`);
     }
     dispatch(notifyIsLoading());
     return axios.get(`/log?${queryParts.join('&')}`)
-        .then(result => {
-            dispatch(addResults({ logEntries: result.data, pageIndex: pageIndex, pageSize }));
+        .then((result: { data: LogEntriesResponse }) => {
+            dispatch(addResults(result.data));
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
@@ -155,6 +169,6 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
 export const logViewSizeCalculated = createAction<{ height: string, width: string }>(Actions.LOGVIEW_SIZE_CALCULATED);
 export const logEntryHeightCalculated = createAction<number>(Actions.LOGENTRY_ITEM_HEIGHT_CALCULATED);
 export const commitsRendered = createAction(Actions.COMMITS_RENDERED);
-export const selectCommit = createAction<LogEntry>(Actions.SELECT_COMMIT);
-export const closeCommitView = createAction(Actions.CLOSE_COMMIT_VIEW);
-export const closeCommittedFile = createAction(Actions.CLOSE_COMMIT_VIEW);
+// export const doSomethingWithCommit = createAction<LogEntry>(Actions.SELECT_COMMIT);
+// export const closeCommitView = createAction(Actions.CLOSE_COMMIT_VIEW);
+// export const closeCommittedFile = createAction(Actions.CLOSE_COMMIT_VIEW);

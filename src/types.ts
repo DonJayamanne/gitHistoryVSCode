@@ -2,8 +2,8 @@
 // This file will be imported by the client side code (WebPack)
 
 export enum BranchSelection {
-    Current,
-    All
+    Current = 1,
+    All = 2
 }
 export type FsUri = Readonly<{
     scheme: string;
@@ -48,6 +48,17 @@ export type ActionedDetails = {
     name: string;
     email: string;
     date: Date;
+};
+export type LogEntriesResponse = {
+    items: LogEntry[];
+    count: number;
+    pageIndex?: number;
+    pageSize?: number;
+    branch?: string;
+    searchText?: string;
+    file?: FsUri;
+    branchSelection?: BranchSelection
+    selected?: LogEntry;
 };
 export type LogEntries = {
     items: LogEntry[];

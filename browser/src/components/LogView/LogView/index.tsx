@@ -18,7 +18,7 @@ type LogViewProps = {
   setSize: typeof ResultActions.logViewSizeCalculated;
   setHeight: typeof ResultActions.logEntryHeightCalculated;
   commitsRendered: typeof ResultActions.commitsRendered;
-  onViewCommit: typeof ResultActions.viewCommit;
+  onViewCommit: typeof ResultActions.selectCommit;
   onCherryPick: typeof ResultActions.cherryPickCommit;
   actionACommit: typeof ResultActions.actionACommit;
 };
@@ -107,7 +107,7 @@ function mapDispatchToProps(dispatch) {
     setSize: (size: Size) => dispatch(ResultActions.logViewSizeCalculated(size)),
     setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
     commitsRendered: () => dispatch(ResultActions.commitsRendered()),
-    onViewCommit: (hash: string) => dispatch(ResultActions.viewCommit(hash)),
+    onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
     onCherryPick: (logEntry: LogEntry) => dispatch(ResultActions.cherryPickCommit(logEntry)),
     actionACommit: (logEntry: LogEntry) => dispatch(ResultActions.actionACommit(logEntry))
   };

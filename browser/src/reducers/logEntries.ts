@@ -1,3 +1,4 @@
+import { LogEntriesResponse } from '../types';
 import { handleActions } from 'redux-actions';
 import * as Actions from '../constants/actions';
 import { LogEntries, LogEntry } from '../definitions';
@@ -7,13 +8,10 @@ const initialState: LogEntriesState = { count: 0, isLoading: true, isLoadingComm
 
 // tslint:disable-next-line:no-any
 export default handleActions<LogEntriesState, any>({
-    [Actions.FETCHED_COMMITS]: (state, action: ReduxActions.Action<{ logEntries: LogEntries, pageIndex: number, pageSize?: number }>) => {
+    [Actions.FETCHED_COMMITS]: (state, action: ReduxActions.Action<LogEntriesResponse>) => {
         return {
             ...state,
-            items: action.payload!.logEntries.items,
-            count: action.payload!.logEntries.count,
-            pageIndex: action.payload.pageIndex,
-            pageSize: action.payload.pageSize || state.pageSize,
+            ...action.payload!,
             isLoading: false
         };
     },
@@ -44,7 +42,11 @@ export default handleActions<LogEntriesState, any>({
         return { ...state, selected: action.payload } as LogEntriesState;
     },
     // tslint:disable-next-line:no-any
-    [Actions.CLOSE_COMMIT_VIEW]: (state, action: any) => {
+    // [Actions.CLOSE_COMMIT_VIEW]: (state, action: any) => {
+    //     return { ...state, selected: undefined } as LogEntriesState;
+    // },
+    // tslint:disable-next-line:no-any
+    [Actions.CLEAR_SELECTED_COMMIT]: (state, action: any) => {
         return { ...state, selected: undefined } as LogEntriesState;
     },
 

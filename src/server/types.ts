@@ -22,7 +22,7 @@ export interface IApiRouteHandler {
     getBranches(request: Request, response: Response): void;
     getCommit(request: Request, response: Response): void;
     cherryPickCommit(request: Request, response: Response): void;
-    selectCommit(request: Request, response: Response): void;
+    doSomethingWithCommit(request: Request, response: Response): void;
     selectCommittedFile(request: Request, response: Response): void;
 }
 
@@ -52,7 +52,8 @@ export const IStateStore = Symbol('IStateStore');
 
 export interface IStateStore extends Disposable {
     initialize(workspaceFolder: string, branchName: string, branchSelection: BranchSelection): Promise<void>;
-    updateEntries(workspaceFolder: string, entries: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri): Promise<void>;
+    updateEntries(workspaceFolder: string, entries: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection): Promise<void>;
     updateLastHashCommit(workspaceFolder: string, hash: string, commit: Promise<LogEntry | undefined>): Promise<void>;
+    clearLastHashCommit(workspaceFolder: string): Promise<void>;
     getState(workspaceFolder: string): Readonly<State> | undefined;
 }
