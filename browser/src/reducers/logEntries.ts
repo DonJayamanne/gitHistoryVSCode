@@ -1,7 +1,7 @@
-import { LogEntriesResponse } from '../types';
 import { handleActions } from 'redux-actions';
 import * as Actions from '../constants/actions';
 import { LogEntries, LogEntry } from '../definitions';
+import { LogEntriesResponse } from '../types';
 import { LogEntriesState } from './';
 
 const initialState: LogEntriesState = { count: 0, isLoading: true, isLoadingCommit: false, items: [], pageIndex: 0 };
@@ -12,6 +12,7 @@ export default handleActions<LogEntriesState, any>({
         return {
             ...state,
             ...action.payload!,
+            selected: action.payload ? action.payload.selected : undefined,
             isLoading: false
         };
     },

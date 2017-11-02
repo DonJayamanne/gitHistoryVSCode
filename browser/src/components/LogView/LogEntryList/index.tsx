@@ -1,7 +1,7 @@
-import { LogEntry } from '../../../definitions';
 import * as React from 'react';
-import ResultList from '../LogEntry';
-import { Element, Events, scrollSpy, scroller } from 'react-scroll';
+import { Element, Events, scroller, scrollSpy } from 'react-scroll';
+import { LogEntry } from '../../../definitions';
+import LogEntryView from '../LogEntry';
 
 interface ResultProps {
   logEntries: LogEntry[];
@@ -54,7 +54,7 @@ export default class LogEntryList extends React.Component<ResultProps> {
 
     let results = this.props.logEntries.map(entry =>
       <Element name={entry.hash.full} className='myItem' key={entry.hash.full}>
-        <ResultList
+        <LogEntryView
           key={entry.hash.full}
           logEntry={entry}
           onViewCommit={this.props.onViewCommit}

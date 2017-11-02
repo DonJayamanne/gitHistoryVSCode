@@ -8,12 +8,7 @@ import { decorate, inject, injectable } from 'inversify';
 import * as path from 'path';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IServerHost, IStateStore, IThemeService } from './types';
-
-type PortAndId = {
-    port: number,
-    id: string
-};
+import { IServerHost, IWorkspaceQueryStateStore, IThemeService, StartupInfo } from './types';
 
 // inversify requires inherited classes to be decorated with @injectable()
 // This is a workaround forat that requirement
@@ -25,7 +20,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     private httpServer?: http.Server;
     constructor( @inject(IThemeService) private themeService: IThemeService,
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
-        @inject(IStateStore) private stateStore: IStateStore) {
+        @inject(IWorkspaceQueryStateStore) private stateStore: IWorkspaceQueryStateStore) {
         super();
     }
 
@@ -36,19 +31,21 @@ export class ServerHost extends EventEmitter implements IServerHost {
             this.httpServer.close();
             this.httpServer = undefined;
         }
+        if (this.apiController) {
+            this.apiController.dispose();
+        }
     }
 
     private port?: number;
-    private startPromise: Promise<PortAndId>;
-    public async start(workspaceFolder: string): Promise<PortAndId> {
+    private startPromise: Promise<StartupInfo>;
+    public async start(workspaceFolder: string): Promise<StartupInfo> {
         if (this.startPromise) {
-            return this.startPromise.then(value => {
-                return { port: value.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) };
-            });
+            return this.startPromise;
         }
 
         this.app = express();
-        this.httpServer = http.createServer(this.app);
+        // tslint:disable-next-line:no-any
+        this.httpServer = http.createServer(this.app as any);
 
         const rootDirectory = path.join(__dirname, '..', '..', 'browser');
         const node_modulesDirectory = path.join(__dirname, '..', '..', '..', 'node_modules');
@@ -67,11 +64,11 @@ export class ServerHost extends EventEmitter implements IServerHost {
             this.rootRequestHandler(req, res);
         });
 
-        return this.startPromise = new Promise<PortAndId>((resolve, reject) => {
+        return this.startPromise = new Promise<StartupInfo>((resolve, reject) => {
             this.apiController = new ApiController(this.app!, this.gitServiceFactory, this.stateStore);
             this.httpServer!.listen(0, () => {
                 this.port = this.httpServer!.address().port;
-                resolve({ port: this.port, id: this.apiController.registerWorkspaceFolder(workspaceFolder) });
+                resolve({ port: this.port });
             });
             this.httpServer!.on('error', error => {
                 if (!this.port) {

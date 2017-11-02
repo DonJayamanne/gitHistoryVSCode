@@ -1,20 +1,19 @@
-import { BranchSelection } from '../../browser/src/types';
 import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Uri } from 'vscode';
-import { CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntry, LogEntriesResponse } from '../types';
-import { IApiRouteHandler, IStateStore } from './types';
+import { BranchSelection } from '../../browser/src/types';
+import { CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
+import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
-const shorthash = require('shorthash');
 
 @injectable()
 export class ApiController implements IApiRouteHandler {
     constructor(private app: Express,
         private gitServiceFactory: IGitServiceFactory,
-        private stateStore: IStateStore) {
+        private stateStore: IWorkspaceQueryStateStore) {
 
         this.app.get('/log', this.getLogEntries);
         this.app.get('/branches', this.getBranches);
@@ -25,19 +24,15 @@ export class ApiController implements IApiRouteHandler {
         this.app.post('/log/:hash/cherryPick', this.cherryPickCommit);
     }
 
-    private workspaceFolders: Map<string, string> = new Map<string, string>();
-    public registerWorkspaceFolder(workspaceFolder: string) {
-        const id: string = shorthash.unique(workspaceFolder);
-        this.workspaceFolders.set(id, workspaceFolder);
-        return id;
-    }
     private getWorkspace(id: string) {
-        return this.workspaceFolders.get(id)!;
+        return this.stateStore.getState(id)!.workspaceFolder;
     }
     private getRepository(id: string): IGitService {
         const workspaceFolder = this.getWorkspace(id);
         return this.gitServiceFactory.createGitService(workspaceFolder);
     }
+    // tslint:disable-next-line:no-empty
+    public dispose() { }
     // tslint:disable-next-line:cyclomatic-complexity
     public getLogEntries = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
@@ -50,12 +45,12 @@ export class ApiController implements IApiRouteHandler {
         const branchSelection = request.query.pageSize ? parseInt(request.query.branchSelection, 10) as BranchSelection : undefined;
 
         let promise: Promise<LogEntries>;
-        const workspaceFolder = this.getWorkspace(id);
-        const currentState = this.stateStore.getState(workspaceFolder);
+        const currentState = this.stateStore.getState(id);
 
         const branchesMatch = currentState && (typeof currentState.branch === 'string' && typeof branch === 'string' && currentState.branch === branch);
         const noBranchDefinedByClient = !currentState;
-        if (!searchText && !pageIndex && !pageSize && !filePath && !file &&
+        if (searchText === undefined && pageIndex === undefined && pageSize === undefined &&
+            filePath === undefined && file === undefined &&
             currentState && currentState.entries && (branchesMatch || noBranchDefinedByClient)) {
 
             let selected: LogEntry | undefined;
@@ -98,11 +93,12 @@ export class ApiController implements IApiRouteHandler {
                         file,
                         pageIndex,
                         pageSize,
-                        searchText
+                        searchText,
+                        selected: undefined
                     };
                     return entriesResponse;
                 });
-            this.stateStore.updateEntries(workspaceFolder, promise,
+            this.stateStore.updateEntries(id, promise,
                 pageIndex, pageSize, branch, searchText, file, branchSelection);
         }
 
@@ -121,8 +117,7 @@ export class ApiController implements IApiRouteHandler {
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
 
-        const workspaceFolder = this.getWorkspace(id);
-        const currentState = this.stateStore.getState(workspaceFolder);
+        const currentState = this.stateStore.getState(id);
         let commitPromise: Promise<LogEntry | undefined>;
         // tslint:disable-next-line:possible-timing-attack
         if (currentState && currentState.lastFetchedHash === hash && currentState.lastFetchedCommit) {
@@ -130,7 +125,7 @@ export class ApiController implements IApiRouteHandler {
         }
         else {
             commitPromise = this.getRepository(id).getCommit(hash);
-            this.stateStore.updateLastHashCommit(workspaceFolder, hash, commitPromise);
+            this.stateStore.updateLastHashCommit(id, hash, commitPromise);
         }
 
         commitPromise

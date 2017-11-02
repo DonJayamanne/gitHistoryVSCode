@@ -1,20 +1,29 @@
 import * as React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { connect } from 'react-redux';
 import { LogEntry, Ref, RefType } from '../../../definitions';
+import { RootState } from '../../../reducers/index';
 import Author from '../Commit/Author';
 import { gitmojify } from '../gitmojify';
 import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
+// tslint:disable-next-line:no-require-imports no-var-requires
 const GoClippy = require('react-icons/lib/go/clippy');
+// tslint:disable-next-line:no-require-imports no-var-requires
 const GoGitCommit = require('react-icons/lib/go/git-commit');
+// tslint:disable-next-line:no-require-imports no-var-requires
 const GoGitPullRequest = require('react-icons/lib/go/git-pull-request');
 
-interface ResultListProps {
+type ResultListPropsSentToComponent = {
     logEntry: LogEntry;
     onViewCommit(entry: LogEntry): void;
     onClick(entry: LogEntry): void;
     onCherryPick(entry: LogEntry): void;
-}
+};
+
+type ResultListProps = ResultListPropsSentToComponent & {
+    selected: LogEntry;
+};
 
 function renderRemoteRefs(refs: Ref[]) {
     return refs
@@ -28,8 +37,11 @@ function renderHeadRef(refs: Ref[]) {
         .map(ref => (<HeadRef key={ref.name} {...ref} />));
 }
 
-function ResultList(props: ResultListProps) {
-    return (<div className='log-entry'>
+// tslint:disable-next-line:function-name
+function LogEntry(props: ResultListProps) {
+    const isActive = props.selected && props.logEntry && props.selected.hash.full === props.logEntry.hash.full;
+    const cssClassName = `log-entry ${isActive ? 'active' : ''}`;
+    return (<div className={cssClassName}>
         <div className='media right'>
             <div className='media-image'>
                 <div className='commit-hash-container'>
@@ -43,26 +55,26 @@ function ResultList(props: ResultListProps) {
                     </CopyToClipboard>
                     <div className='cherry-pick-button'>
                         <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick into branch'><span aria-label='Cherry pick into branch' />
-                            <a href='javascript:void(0);' onClick={() => props.onCherryPick(props.logEntry)}>
+                            <a role='button' href='javascript:void(0);' onClick={() => props.onCherryPick(props.logEntry)}>
                                 <GoGitPullRequest></GoGitPullRequest>
                             </a>
                         </span>
                     </div>
                     <div className='cherry-pick-button'>
                         <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Compare'><span aria-label='Compare' />
-                            <a href='javascript:void(0);' onClick={() => props.onClick(props.logEntry)}>
+                            <a role='button' href='javascript:void(0);' onClick={() => props.onClick(props.logEntry)}>
                                 <GoGitCommit></GoGitCommit>
                             </a>
                         </span>
                     </div>
-                    <div className='commit-hash' onClick={() => props.onViewCommit(props.logEntry)}>
+                    <div role='button' className='commit-hash' onClick={() => props.onViewCommit(props.logEntry)}>
                         <span className='sha-code short' aria-label={props.logEntry.hash.short}>{props.logEntry.hash.short}</span>
                     </div>
                 </div>
             </div>
             {renderRemoteRefs(props.logEntry.refs)}
             {renderHeadRef(props.logEntry.refs)}
-            <div className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>
+            <div role='button' className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>
                 <a className='commit-subject-link'>{props.logEntry.subject}</a>
                 <div className='commit-subject' title={gitmojify(props.logEntry.subject)}>{gitmojify(props.logEntry.subject)}</div>
                 <Author result={props.logEntry.author}></Author>
@@ -71,4 +83,13 @@ function ResultList(props: ResultListProps) {
     </div>);
 }
 
-export default ResultList;
+function mapStateToProps(state: RootState, wrapper: ResultListPropsSentToComponent): ResultListProps {
+    return {
+        ...wrapper,
+        selected: state.logEntries.selected
+    };
+}
+
+export default connect(
+    mapStateToProps
+)(LogEntry);

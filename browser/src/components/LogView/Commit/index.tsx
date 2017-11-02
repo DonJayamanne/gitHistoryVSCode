@@ -26,7 +26,7 @@ const ContainerStyle = {
 };
 
 class Commit extends React.Component<CommitProps> {
-    componentDidUpdate() {
+    public componentDidUpdate() {
         if (this.props && this.props.selectedEntry) {
             setTimeout(this.resize.bind(this), 1);
         }
@@ -34,12 +34,12 @@ class Commit extends React.Component<CommitProps> {
             jQuery('#placeHolderCommit').hide();
         }
     }
-    componentDidMount() {
+    public componentDidMount() {
         if (this.props && this.props.selectedEntry) {
             setTimeout(this.resize.bind(this), 1);
         }
     }
-    componentWillUnmount() {
+    public componentWillUnmount() {
         jQuery('#placeHolderCommit').hide();
     }
     private resize() {
@@ -52,10 +52,10 @@ class Commit extends React.Component<CommitProps> {
         jQuery('#placeHolderCommit').css('padding-top', height / 2).css('padding-bottom', (height / 2) + 10).show();
     }
     private ref: HTMLElement;
-    onSelectFile = (fileEntry: CommittedFile) => {
+    private onSelectFile = (fileEntry: CommittedFile) => {
         this.props.selectCommittedFile(this.props.selectedEntry, fileEntry);
     }
-    onClose = () => {
+    private onClose = () => {
         this.props.closeCommitView();
     }
     private renderFileEntries() {
@@ -63,13 +63,13 @@ class Commit extends React.Component<CommitProps> {
             .map((fileEntry, index) => <FileEntry theme={this.props.theme} committedFile={fileEntry} key={index + fileEntry.relativePath} onSelect={this.onSelectFile} />);
     }
 
-    onResize = (_, direction: Direction, ref: HTMLElement, delta: number) => {
+    private onResize = (_, direction: Direction, ref: HTMLElement, delta: number) => {
         const $ref = jQuery(ref);
         const height = $ref.height();
         const padding = height / 2;
         jQuery('#placeHolderCommit').show().css('padding-top', padding).css('padding-bottom', padding);
     }
-    render() {
+    public render() {
         if (!this.props.selectedEntry) {
             jQuery('#placeHolderCommit').hide();
             return null;
@@ -78,12 +78,13 @@ class Commit extends React.Component<CommitProps> {
         const resizing = { top: true, right: false, bottom: false, left: false, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false };
 
         return (
+            // tslint:disable-next-line:react-this-binding-issue
             <Rnd className='details-view-cnt hidden' ref={ref => this.ref = ref} default={ContainerStyle} minWidth={50} minHeight={50} bounds='parent'
                 onResize={this.onResize} onResizeStart={this.onResize} enableResizing={resizing} disableDragging={true}>
                 <div className='detailsCnt'>
                     <div id='details-view' className='hidden' >
-                        <a className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
-                        <h1 className='commit-subject'>{this.props.selectedEntry.subject}</h1>
+                        <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
+                        <h1 className='commit-subject'>{gitmojify(this.props.selectedEntry.subject)}</h1>
                         <Author result={this.props.selectedEntry.author}></Author>
                         <div className='commit-body'>{gitmojify(this.props.selectedEntry.body)}</div>
                         <div className='commit-notes'>{gitmojify(this.props.selectedEntry.notes)}</div>

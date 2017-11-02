@@ -117,7 +117,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
         queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
     }
     if (store.settings.selectedBranchType) {
-        queryParts.push(`branchSelection=${encodeURIComponent(store.settings.selectedBranchType)}`);
+        queryParts.push(`branchSelection=${encodeURIComponent(store.settings.selectedBranchType.toString())}`);
     }
     if (pageSize) {
         queryParts.push(`pageSize=${pageSize}`);

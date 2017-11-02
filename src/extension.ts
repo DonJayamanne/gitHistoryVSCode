@@ -25,7 +25,7 @@ import { ContentProvider } from './server/contentProvider';
 import { ServerHost } from './server/serverHost';
 import { StateStore } from './server/stateStore';
 import { ThemeService } from './server/themeService';
-import { IServerHost, IStateStore, IThemeService } from './server/types';
+import { IServerHost, IWorkspaceQueryStateStore, IThemeService } from './server/types';
 
 // tslint:disable-next-line:no-any
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
@@ -39,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     cont.bind<IUiService>(IUiService).to(UiService);
     cont.bind<IThemeService>(IThemeService).to(ThemeService);
     cont.bind<IServerHost>(IServerHost).to(ServerHost).inSingletonScope();
-    cont.bind<IStateStore>(IStateStore).to(StateStore).inSingletonScope();
+    cont.bind<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).to(StateStore).inSingletonScope();
     cont.bind<IServiceContainer>(IServiceContainer).toConstantValue(serviceContainer);
 
     registerParserTypes(serviceManager);

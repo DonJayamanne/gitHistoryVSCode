@@ -1,17 +1,17 @@
 import { injectable } from 'inversify';
 import { Uri } from 'vscode';
 import { BranchSelection, LogEntries, LogEntry } from '../types';
-import { IStateStore, State } from './types';
+import { IWorkspaceQueryStateStore, State } from './types';
 
 @injectable()
-export class StateStore implements IStateStore {
+export class StateStore implements IWorkspaceQueryStateStore {
     private storesPerWorkspace = new Map<string, State>();
-    public async initialize(workspaceFolder: string, branch: string, branchSelection: BranchSelection): Promise<void> {
-        this.storesPerWorkspace.set(workspaceFolder, { branch, branchSelection });
+    public async initialize(id: string, workspaceFolder: string, branch: string, branchSelection: BranchSelection): Promise<void> {
+        this.storesPerWorkspace.set(id, { branch, branchSelection, workspaceFolder });
     }
 
-    public async updateEntries(workspaceFolder: string, entries?: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection): Promise<void> {
-        const state = this.storesPerWorkspace.get(workspaceFolder) || {};
+    public async updateEntries(id: string, entries?: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection): Promise<void> {
+        const state = this.storesPerWorkspace.get(id)!;
         state.branch = branch;
         state.entries = entries;
         state.pageIndex = pageIndex;
@@ -19,25 +19,25 @@ export class StateStore implements IStateStore {
         state.searchText = searchText;
         state.file = file;
         state.branchSelection = branchSelection;
-        this.storesPerWorkspace.set(workspaceFolder, state);
+        this.storesPerWorkspace.set(id, state);
     }
 
-    public async updateLastHashCommit(workspaceFolder: string, hash: string, commit: Promise<LogEntry>): Promise<void> {
-        const state = this.storesPerWorkspace.get(workspaceFolder) || {};
+    public async updateLastHashCommit(id: string, hash: string, commit: Promise<LogEntry>): Promise<void> {
+        const state = this.storesPerWorkspace.get(id)!;
         state.lastFetchedHash = hash;
         state.lastFetchedCommit = commit;
-        this.storesPerWorkspace.set(workspaceFolder, state);
+        this.storesPerWorkspace.set(id, state);
     }
 
-    public async clearLastHashCommit(workspaceFolder: string): Promise<void> {
-        const state = this.storesPerWorkspace.get(workspaceFolder) || {};
+    public async clearLastHashCommit(id: string): Promise<void> {
+        const state = this.storesPerWorkspace.get(id)!;
         state.lastFetchedHash = undefined;
         state.lastFetchedCommit = undefined;
-        this.storesPerWorkspace.set(workspaceFolder, state);
+        this.storesPerWorkspace.set(id, state);
     }
 
-    public getState(workspaceFolder: string): Readonly<State> | undefined {
-        return this.storesPerWorkspace.get(workspaceFolder);
+    public getState(id: string): Readonly<State> | undefined {
+        return this.storesPerWorkspace.get(id);
     }
 
     public dispose() {

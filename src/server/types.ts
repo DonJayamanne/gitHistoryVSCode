@@ -17,7 +17,7 @@ export interface IThemeService {
 }
 export const IApiRouteHandler = Symbol('IApiRouteHandler');
 
-export interface IApiRouteHandler {
+export interface IApiRouteHandler extends Disposable {
     getLogEntries(request: Request, response: Response): void;
     getBranches(request: Request, response: Response): void;
     getCommit(request: Request, response: Response): void;
@@ -26,17 +26,17 @@ export interface IApiRouteHandler {
     selectCommittedFile(request: Request, response: Response): void;
 }
 
-export type PortAndId = {
-    port: number,
-    id: string
+export type StartupInfo = {
+    port: number
 };
 
 export const IServerHost = Symbol('IServer');
 export interface IServerHost extends Disposable {
-    start(workspaceFolder: string): Promise<PortAndId>;
+    start(workspaceFolder: string): Promise<StartupInfo>;
 }
 
 export type State = {
+    workspaceFolder: string;
     pageIndex?: number;
     pageSize?: number;
     branch?: string;
@@ -48,12 +48,12 @@ export type State = {
     branchSelection?: BranchSelection
 };
 
-export const IStateStore = Symbol('IStateStore');
+export const IWorkspaceQueryStateStore = Symbol('IWorkspaceQueryStateStore');
 
-export interface IStateStore extends Disposable {
-    initialize(workspaceFolder: string, branchName: string, branchSelection: BranchSelection): Promise<void>;
-    updateEntries(workspaceFolder: string, entries: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection): Promise<void>;
-    updateLastHashCommit(workspaceFolder: string, hash: string, commit: Promise<LogEntry | undefined>): Promise<void>;
-    clearLastHashCommit(workspaceFolder: string): Promise<void>;
-    getState(workspaceFolder: string): Readonly<State> | undefined;
+export interface IWorkspaceQueryStateStore extends Disposable {
+    initialize(id: string, workspaceFolder: string, branchName: string, branchSelection: BranchSelection): Promise<void>;
+    updateEntries(id: string, entries: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection): Promise<void>;
+    updateLastHashCommit(id: string, hash: string, commit: Promise<LogEntry | undefined>): Promise<void>;
+    clearLastHashCommit(id: string): Promise<void>;
+    getState(id: string): Readonly<State> | undefined;
 }

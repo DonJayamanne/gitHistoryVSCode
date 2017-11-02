@@ -1,17 +1,18 @@
 import { inject, injectable } from 'inversify';
-import * as vscode from 'vscode';
+import { commands, ViewColumn } from 'vscode';
 import { command } from '../commands/register';
 import { IUiService } from '../common/types';
 import { previewUri } from '../constants';
-import { IServerHost } from '../server/types';
-import { IGitServiceFactory, BranchSelection } from '../types';
+import { IServerHost, IWorkspaceQueryStateStore } from '../server/types';
+import { BranchSelection, IGitServiceFactory } from '../types';
 import { IGitHistoryViewer } from './types';
 
 @injectable()
 export class GitHistory implements IGitHistoryViewer {
     constructor( @inject(IServerHost) private server: IServerHost,
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
-        @inject(IUiService) private uiService: IUiService) {
+        @inject(IUiService) private uiService: IUiService,
+        @inject(IWorkspaceQueryStateStore) private stateStore: IWorkspaceQueryStateStore) {
     }
     public dispose() {
         if (this.server) {
@@ -32,16 +33,18 @@ export class GitHistory implements IGitHistoryViewer {
         const gitService = await this.gitServiceFactory.createGitService(workspacefolder);
         const branchName = await gitService.getCurrentBranch();
         const title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
-        const portAndId = await this.server.start(workspacefolder);
+        const startupInfo = await this.server.start(workspacefolder);
+        const id = Date.now().toString();
+        await this.stateStore.initialize(id, workspacefolder, branchName, branchSelection);
         const locale = process.env.language || '';
         const queryArgs = [
-            `id=${portAndId.id}`, `port=${portAndId.port}`,
+            `id=${id}`, `port=${startupInfo.port}`,
             `branchSelection=${branchSelection}`, `locale=${encodeURIComponent(locale)}`
         ];
         if (branchSelection === BranchSelection.Current) {
             queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
         }
         const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
-        return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode.ViewColumn.One, title);
+        return commands.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
     }
 }
