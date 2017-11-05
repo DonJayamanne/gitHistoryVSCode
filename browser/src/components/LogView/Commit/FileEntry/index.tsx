@@ -1,7 +1,5 @@
 import { CommittedFile, Status } from '../../../../definitions';
 import * as React from 'react';
-import Author from '../Author';
-const GoX = require('react-icons/lib/go/x');
 
 interface FileEntryProps {
     committedFile: CommittedFile;

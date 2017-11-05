@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 // import { browserHistory, Route, Router } from 'react-router';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-import { syncHistoryWithStore } from 'react-router-redux';
+// import { syncHistoryWithStore } from 'react-router-redux';
 import * as ResultActions from './actions/results';
 // (window as any).$ = (window as any).jQuery = require('jquery');
 // import 'semantic-ui-css/semantic.min.css';

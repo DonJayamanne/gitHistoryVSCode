@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { Dispatch, Store } from 'redux';
+import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
 import { CommittedFile, LogEntriesResponse, LogEntry } from '../definitions';
 import { RootState } from '../reducers';
-import { LogEntries } from '../types';
 
 export const clearResults = createAction(Actions.CLEAR_RESULTS);
 // tslint:disable-next-line:no-any

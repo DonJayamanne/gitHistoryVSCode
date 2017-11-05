@@ -1,5 +1,4 @@
 import { handleActions } from 'redux-actions';
-import * as Actions from '../constants/actions';
 
 export type IVSCodeSettings = {
   theme?: string;

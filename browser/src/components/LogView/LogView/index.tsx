@@ -1,16 +1,11 @@
 import * as React from 'react';
-import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { RootState } from '../../../reducers';
 import * as ResultActions from '../../../actions/results';
-import Header from '../../../components/Header';
 import LogEntryList from '../LogEntryList';
-import * as style from './style.css';
-import axios from 'axios';
-import { Branch, ISettings, LogEntries, LogEntry } from '../../../definitions';
+import { LogEntries, LogEntry } from '../../../definitions';
 import * as jQuery from 'jquery';
 import BranchGraph from '../BranchGraph';
-import Scroll from 'react-scroll';
 
 type Size = { height: string, width: string };
 type LogViewProps = {

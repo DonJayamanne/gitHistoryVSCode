@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as React from 'react';
-import { Button, ButtonGroup, DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
+import { Button, ButtonGroup, DropdownButton, MenuItem } from 'react-bootstrap';
 import * as ResultActions from '../../actions/results';
 
 type HeaderProps = {

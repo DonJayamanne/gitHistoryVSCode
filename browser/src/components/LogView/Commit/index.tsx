@@ -47,7 +47,6 @@ class Commit extends React.Component<CommitProps> {
         $ref.removeClass('hidden').css('top', '');
         jQuery('#details-view').removeClass('hidden');
         const height = $ref.height();
-        const newHeight = `${height + 40}px`;
 
         jQuery('#placeHolderCommit').css('padding-top', height / 2).css('padding-bottom', (height / 2) + 10).show();
     }

@@ -2,8 +2,6 @@ import * as React from 'react';
 import { ActionedDetails } from '../../../../definitions';
 import { RootState } from '../../../../reducers/index';
 import { connect } from 'react-redux';
-// tslint:disable-next-line:no-require-imports no-var-requires
-const GoX = require('react-icons/lib/go/x');
 
 interface AuthorProps {
   result: ActionedDetails;

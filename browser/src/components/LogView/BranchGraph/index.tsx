@@ -1,6 +1,5 @@
-import { LogEntry, RefType } from '../../../definitions';
+import { LogEntry } from '../../../definitions';
 import * as React from 'react';
-import * as jQuery from 'jquery';
 import { connect } from 'react-redux';
 import { RootState } from '../../../reducers';
 

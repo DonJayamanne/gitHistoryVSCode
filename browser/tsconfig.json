@@ -18,15 +18,13 @@
 			"es7",
 			"dom"
 		],
-		"types": []
-		// ,
-		// Strict stuff
-		// "strict": true,
-		// "noFallthroughCasesInSwitch": true,
-		// "noImplicitThis": true,
-		// "noUnusedLocals": true,
-		// "noUnusedParameters": false,
-		// "suppressImplicitAnyIndexErrors": true
+		"types": [],
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": false,
+		"suppressImplicitAnyIndexErrors": true
 	},
 	"exclude": [
 		"dist",

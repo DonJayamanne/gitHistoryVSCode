@@ -1,5 +1,4 @@
 import { ISearchCriteria } from './';
-import { LogEntry, LogEntries } from '../definitions';
 import { handleActions } from 'redux-actions';
 import * as Actions from '../constants/actions';
 

@@ -1,18 +1,13 @@
-import axios from 'axios';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import Rnd from 'react-rnd';
-import { bindActionCreators, Dispatch } from 'redux';
-import { debug } from 'util';
+import { bindActionCreators } from 'redux';
 import * as ResultActions from '../../actions/results';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import Commit from '../../components/LogView/Commit';
-import LogEntryList from '../../components/LogView/LogEntryList';
 import LogView from '../../components/LogView/LogView';
-import { Branch, ISettings, LogEntries, LogEntry } from '../../definitions';
+import { ISettings } from '../../definitions';
 import { LogEntriesState, RootState } from '../../reducers';
-import * as style from './style.css';
 
 type AppProps = {
     settings: ISettings;
@@ -41,7 +36,7 @@ class App extends React.Component<AppProps, AppState> {
         this.props.getNextCommits();
     }
     render() {
-        const { children, settings } = this.props;
+        const { children } = this.props;
         return (
             <div className='appRootParent'>
                 <div className='appRoot'>

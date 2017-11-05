@@ -1,7 +1,7 @@
 import { LogEntriesResponse } from '../types';
-import { Branch, ISettings, LogEntries, LogEntry } from '../definitions';
-import { routerReducer as routing, RouteActions } from 'react-router-redux';
-import { combineReducers, Reducer } from 'redux';
+import { Branch, ISettings } from '../definitions';
+import { routerReducer as routing } from 'react-router-redux';
+import { combineReducers } from 'redux';
 import logEntries from './logEntries';
 import vscode, { IVSCodeSettings } from './vscode';
 import searchCriteria from './searchCriteria';

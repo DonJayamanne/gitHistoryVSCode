@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Element, Events, scroller, scrollSpy } from 'react-scroll';
+import { Element, Events, scrollSpy } from 'react-scroll';
 import { LogEntry } from '../../../definitions';
 import LogEntryView from '../LogEntry';
 

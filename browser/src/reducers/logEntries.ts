@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
 import * as Actions from '../constants/actions';
-import { LogEntries, LogEntry } from '../definitions';
+import { LogEntry } from '../definitions';
 import { LogEntriesResponse } from '../types';
 import { LogEntriesState } from './';
 
