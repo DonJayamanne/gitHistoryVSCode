@@ -1,7 +1,10 @@
 {
     "compilerOptions": {
         "strict": true,
-        "lib": ["dom", "es6"],
+        "lib": [
+            "dom",
+            "es6"
+        ],
         "module": "commonjs",
         "moduleResolution": "node",
         "outDir": "out",
@@ -9,7 +12,6 @@
         "target": "es6",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
@@ -21,6 +23,9 @@
     },
     "exclude": [
         "node_modules",
+        "./node_modules",
+        "./node_modules/@types",
+        "/node_modules/@types/**/*",
         ".vscode-test",
         "browser",
         "browser/src/**/*"

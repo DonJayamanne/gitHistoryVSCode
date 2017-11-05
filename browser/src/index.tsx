@@ -2,13 +2,14 @@ import * as querystring from 'query-string';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { browserHistory, Route, Router } from 'react-router';
+// import { browserHistory, Route, Router } from 'react-router';
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { syncHistoryWithStore } from 'react-router-redux';
 import * as ResultActions from './actions/results';
 // (window as any).$ = (window as any).jQuery = require('jquery');
 // import 'semantic-ui-css/semantic.min.css';
 import App from './containers/App';
-import { ISettings, LogEntry } from './definitions';
+import { ISettings } from './definitions';
 import configureStore from './store';
 import { BranchSelection } from './types';
 
@@ -30,12 +31,13 @@ catch (ex) { }
 
 const locale = (query.locale || '').toString();
 const store = configureStore({ settings: defaultSettings, searchCriteria: {}, graph: {}, vscode: { theme: query.theme as any, locale } });
-const history = syncHistoryWithStore(browserHistory, store);
+// const history = syncHistoryWithStore(browserHistory, store);
 
 ReactDOM.render(
     <div>
         <Provider store={store}>
-            <Router history={history}>
+            {/* <Router history={history}> */}
+            <Router>
                 <Route path='/' component={App}>
                 </Route>
             </Router>

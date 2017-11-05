@@ -5,7 +5,6 @@
 // ${fileDirname}: the current opened file's dirname
 // ${fileExtname}: the current opened file's extension
 // ${cwd}: the current working directory of the spawned process
-
 // A task runner that calls a custom npm script that compiles the extension.
 {
     "version": "2.0.0",
@@ -15,7 +14,8 @@
         "focus": false,
         "panel": "shared"
     },
-    "tasks": [{
+    "tasks": [
+        {
             "label": "compile",
             "type": "npm",
             "script": "compile",
@@ -56,38 +56,52 @@
             "script": "watchReact",
             "group": "build",
             "isBackground": true,
-            "problemMatcher": [{
-                "fileLocation": "relative",
-                "pattern": [{
-                        "regexp": "ERROR in \\[at-loader\\] ([^:]*):(\\d+):(\\d+)",
-                        "file": 1,
-                        "line": 2,
-                        "column": 3
-                    },
-                    {
-                        "regexp": "TS(.*)",
-                        "message": 1
-                    }
-                ]
-            }]
+            "problemMatcher": [
+                {
+                    "fileLocation": "relative",
+                    "pattern": [
+                        {
+                            "regexp": "ERROR in \\[at-loader\\] ([^:]*):(\\d+):(\\d+)",
+                            "file": 1,
+                            "line": 2,
+                            "column": 3
+                        },
+                        {
+                            "regexp": "TS(.*)",
+                            "message": 1
+                        }
+                    ]
+                }
+            ]
         },
         {
             "type": "npm",
             "script": "buildReact",
-            "problemMatcher": [{
-                "fileLocation": "relative",
-                "pattern": [{
-                        "regexp": "ERROR in \\[at-loader\\] ([^:]*):(\\d+):(\\d+)",
-                        "file": 1,
-                        "line": 2,
-                        "column": 3
-                    },
-                    {
-                        "regexp": "TS(.*)",
-                        "message": 1
-                    }
-                ]
-            }]
+            "problemMatcher": [
+                {
+                    "fileLocation": "relative",
+                    "pattern": [
+                        {
+                            "regexp": "ERROR in \\[at-loader\\] ([^:]*):(\\d+):(\\d+)",
+                            "file": 1,
+                            "line": 2,
+                            "column": 3
+                        },
+                        {
+                            "regexp": "TS(.*)",
+                            "message": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "lint-staged",
+            "problemMatcher": {
+                "base": "$tslint5",
+                "fileLocation": "relative"
+            }
         }
     ]
 }
