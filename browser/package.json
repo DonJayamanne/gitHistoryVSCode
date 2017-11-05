@@ -1,0 +1,9 @@
+{
+  "name": "browser",
+  "version": "0.0.0",
+  "scripts": {
+    "tests": "npm test",
+    "build": "cd .. && npx webpack -p --progress --colors",
+    "watch": "cd .. && npx webpack --progress --colors --watch"
+  }
+}
