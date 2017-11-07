@@ -39,11 +39,13 @@
 		"views": {
 			"explorer": [{
 					"id": "commitViewProvider",
-					"name": "Commits"
+					"name": "Commits",
+					"when": "config.gitHistory.commit.showExplorer == true"
 				},
 				{
 					"id": "compareViewProvider",
-					"name": "Compare Commits"
+					"name": "Compare Commits",
+					"when": "config.gitHistory.compare.showExplorer == true"
 				}
 			]
 		},
@@ -178,6 +180,16 @@
 					"type": "string",
 					"default": "Debug",
 					"description": "Log Level [Debug|Info|Error]"
+				},
+				"gitHistory.commit.showExplorer": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show or hide the Commit Explorer"
+				},
+				"gitHistory.compare.showExplorer": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show or hide the Compare Explorer"
 				}
 			}
 		}
