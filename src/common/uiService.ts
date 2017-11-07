@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { CancellationTokenSource, QuickPickItem, window, workspace, WorkspaceFolder } from 'vscode';
-import { BranchSelection, CommittedFile, Status, Hash } from '../types';
+import { BranchSelection, CommittedFile, Status } from '../types';
 import { IUiService } from './types';
 
 const allBranches = 'All branches';
