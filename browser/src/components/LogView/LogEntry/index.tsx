@@ -12,7 +12,7 @@ const GoClippy = require('react-icons/lib/go/clippy');
 // tslint:disable-next-line:no-require-imports no-var-requires
 const GoGitCommit = require('react-icons/lib/go/git-commit');
 // tslint:disable-next-line:no-require-imports no-var-requires
-const GoGitPullRequest = require('react-icons/lib/go/git-pull-request');
+// const GoGitPullRequest = require('react-icons/lib/go/git-pull-request');
 
 type ResultListPropsSentToComponent = {
     logEntry: LogEntry;
@@ -54,14 +54,7 @@ function LogEntry(props: ResultListProps) {
                         </div>
                     </CopyToClipboard>
                     <div className='cherry-pick-button'>
-                        <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick into branch'><span aria-label='Cherry pick into branch' />
-                            <a role='button' href='javascript:void(0);' onClick={() => props.onCherryPick(props.logEntry)}>
-                                <GoGitPullRequest></GoGitPullRequest>
-                            </a>
-                        </span>
-                    </div>
-                    <div className='cherry-pick-button'>
-                        <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Compare'><span aria-label='Compare' />
+                        <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'><span aria-label='Cherry pick, Compare, etc' />
                             <a role='button' href='javascript:void(0);' onClick={() => props.onClick(props.logEntry)}>
                                 <GoGitCommit></GoGitCommit>
                             </a>

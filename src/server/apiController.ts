@@ -18,7 +18,7 @@ export class ApiController implements IApiRouteHandler {
         this.app.get('/branches', this.getBranches);
         this.app.get('/log/:hash', this.getCommit);
         this.app.post('/log/clearSelection', this.clearSelectedCommit);
-        this.app.post('/log/:hash/doSomething', this.doSomethingWithCommit);
+        this.app.post('/log/:hash', this.doSomethingWithCommit);
         this.app.post('/log/:hash/committedFile', this.selectCommittedFile);
         this.app.post('/log/:hash/cherryPick', this.cherryPickCommit);
     }
@@ -149,11 +149,15 @@ export class ApiController implements IApiRouteHandler {
         response.send('');
     }
     public doSomethingWithCommit = (request: Request, response: Response) => {
-        // const id: string = decodeURIComponent(request.query.id);
-        // const hash: string = request.params.hash;
         response.send('');
+        const id: string = decodeURIComponent(request.query.id);
+        const hash: string = request.params.hash;
+        const workspaceFolder = this.getWorkspace(id);
+        const currentState = this.stateStore.getState(id)!;
+        commands.executeCommand('git.commit.doSomething', workspaceFolder, currentState.branch, hash);
     }
     public selectCommittedFile = (request: Request, response: Response) => {
+        response.send('');
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
         // tslint:disable-next-line:prefer-type-cast
