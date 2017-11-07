@@ -44,6 +44,11 @@ export const notifyIsFetchingCommit = createAction(Actions.IS_FETCHING_COMMIT);
 //     return `/log` + (queryArgs.length === 0 ? '' : `?${queryArgs.join('&')}`);
 //   }
 
+function getQueryUrl(store: RootState, baseUrl: string, args: string[] = []): string {
+    const id = store.settings.id || '';
+    const queryArgs = args.concat([`id=${encodeURIComponent(id)}`]);
+    return `${baseUrl}?${queryArgs.join('&')}`;
+}
 export const getPreviousCommits = () => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
@@ -52,27 +57,45 @@ export const getPreviousCommits = () => {
         return fetchCommits(dispatch, state, pageIndex);
     };
 };
-export const actionACommit = (logEntry: LogEntry) => () => {
-    return axios.post(`/log/${logEntry.hash.full}`, logEntry.hash.full);
+export const actionACommit = (logEntry: LogEntry) => {
+    // tslint:disable-next-line:no-any
+    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const url = getQueryUrl(state, `/log/${logEntry.hash.full}`);
+        return axios.post(url, logEntry.hash.full);
+    };
 };
-export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => () => {
-    return notifyCommittedFileSelected(logEntry, committedFile);
+export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => {
+    // tslint:disable-next-line:no-any
+    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const url = getQueryUrl(state, `/log/${logEntry.hash.full}/committedFile`);
+        await axios.post(url, committedFile)
+            .catch(err => {
+                // tslint:disable-next-line:no-debugger
+                debugger;
+                console.error('Result failed');
+                console.error(err);
+            });
+    };
 };
-
-function notifyCommittedFileSelected(logEntry: LogEntry, committedFile: CommittedFile) {
-    return axios.post(`/log/${logEntry.hash.full}/committedFile`, committedFile)
-        .catch(err => {
-            // tslint:disable-next-line:no-debugger
-            debugger;
-            console.error('Result failed');
-            console.error(err);
-        });
-}
-export const cherryPickCommit = (logEntry: LogEntry) => () => {
-    return axios.post(`/log/${logEntry.hash.full}/cherryPick`, logEntry.hash.full);
+export const cherryPickCommit = (logEntry: LogEntry) => {
+    // tslint:disable-next-line:no-any
+    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const url = getQueryUrl(state, `/log/${logEntry.hash.full}/cherryPick`);
+        await axios.post(url, logEntry.hash.full);
+    };
 };
 export const closeCommitView = () => {
-    selectCommit();
+    // tslint:disable-next-line:no-any
+    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const url = getQueryUrl(state, '/log/clearSelection');
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
+        await axios.get(url);
+        await dispatch(clearCommitSelection());
+    };
 };
 export const selectCommit = (hash?: string) => {
     // tslint:disable-next-line:no-any
@@ -81,8 +104,9 @@ export const selectCommit = (hash?: string) => {
         if (hash) {
             await fetchCommit(dispatch, state, hash);
         } else {
+            const url = getQueryUrl(state, '/log/clearSelection');
             // tslint:disable-next-line:no-backbone-get-set-outside-model
-            await axios.get('/log/clearSelection');
+            await axios.get(url);
             await dispatch(clearCommitSelection());
         }
     };
@@ -102,7 +126,14 @@ export const getCommits = (id?: string) => {
         return fetchCommits(dispatch, state);
     };
 };
-
+function fixDates(logEntry: LogEntry) {
+    if (logEntry.author && typeof logEntry.author.date === 'string') {
+        logEntry.author.date = new Date(logEntry.author.date);
+    }
+    if (logEntry.committer && typeof logEntry.committer.date === 'string') {
+        logEntry.committer.date = new Date(logEntry.committer.date);
+    }
+}
 // tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
     pageSize = pageSize || store.logEntries.pageSize;
@@ -124,6 +155,9 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     dispatch(notifyIsLoading());
     return axios.get(`/log?${queryParts.join('&')}`)
         .then((result: { data: LogEntriesResponse }) => {
+            if (Array.isArray(result.data.items)) {
+                result.data.items.forEach(fixDates);
+            }
             dispatch(addResults(result.data));
         })
         .catch(err => {
@@ -139,6 +173,9 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
     const id = store.settings.id || '';
     return axios.get(`/log/${hash}?id=${encodeURIComponent(id)}`)
         .then(result => {
+            if (result.data) {
+                fixDates(result.data);
+            }
             dispatch(updateCommit(result.data));
         })
         .catch(err => {

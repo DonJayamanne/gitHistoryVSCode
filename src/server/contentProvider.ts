@@ -25,7 +25,6 @@ export class ContentProvider implements TextDocumentContentProvider {
                     <script type="text/javascript">
                         function start(){
                             // We need a unique value so html is reloaded
-                            console.log('reloaded results window at time ${timeNow}ms');
                             var color = '';
                             var fontFamily = '';
                             var fontSize = '';

@@ -101,6 +101,7 @@ export enum Status {
     TypeChanged
 }
 export const IGitService = Symbol('IGitService');
+export const IOutputChannel = Symbol('IOutputChannel');
 
 export interface IGitService {
     getGitRoot(): Promise<string>;
@@ -110,6 +111,7 @@ export interface IGitService {
     getObjectHash(object: string): Promise<string>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
     getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri): Promise<LogEntries>;
+    getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
     getCommitFile(hash: string, file: FsUri | string): Promise<FsUri>;

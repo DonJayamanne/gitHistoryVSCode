@@ -1,20 +1,24 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { ActionedDetails } from '../../../../definitions';
 import { RootState } from '../../../../reducers/index';
-import { connect } from 'react-redux';
 
 interface AuthorProps {
-  result: ActionedDetails;
-  locale: string;
+    result: ActionedDetails;
+    locale: string;
 }
 
+// tslint:disable-next-line:function-name
 function Author(props: AuthorProps) {
-  return (<div className='commit-author'>
-    <span className='name hint--right hint--rounded hint--bounce' aria-label={props.result.email}>{props.result.name}</span>
-    <span className='timestamp'> on x{props.locale}y {props.result.date!}</span>
-  </div>);
+    return (<div className='commit-author'>
+        <span className='name hint--right hint--rounded hint--bounce' aria-label={props.result.email}>{props.result.name}</span>
+        <span className='timestamp'> on {formatDateTime(props.result.date)}</span>
+    </div>);
 }
 
+function formatDateTime(date?: Date) {
+    return date ? date.toLocaleDateString() : '';
+}
 // function formatDate(date: Date) {
 //   const lang = process.env.language;
 //   const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -22,10 +26,10 @@ function Author(props: AuthorProps) {
 // }
 
 function mapStateToProps(state: RootState, wrapper: { result: ActionedDetails }) {
-  return {
-    result: wrapper.result,
-    locale: state.vscode.locale
-  };
+    return {
+        result: wrapper.result,
+        locale: state.vscode.locale
+    };
 }
 
 // function mapDispatchToProps(dispatch) {
@@ -42,5 +46,5 @@ function mapStateToProps(state: RootState, wrapper: { result: ActionedDetails })
 // }
 
 export default connect(
-  mapStateToProps
+    mapStateToProps
 )(Author);

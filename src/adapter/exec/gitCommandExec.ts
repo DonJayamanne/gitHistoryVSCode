@@ -25,8 +25,8 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         out.on('data', data => content += data);
 
         return new Promise<string>((resolve, reject) => {
-            out.on('end', () => resolve(content));
-            out.on('error', reject);
+            gitShow.on('close', () => resolve(content));
+            gitShow.on('error', reject);
         });
     }
 }

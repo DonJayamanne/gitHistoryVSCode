@@ -5,7 +5,7 @@ import 'reflect-metadata';
 import * as tmp from 'tmp';
 import { Uri } from 'vscode';
 import { IServiceContainer } from '../../ioc/types';
-import { Branch, CommittedFile, IGitService, LogEntries, LogEntry } from '../../types';
+import { Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, PAGE_SIZE, STATS_SEPARATOR } from './constants';
@@ -214,14 +214,14 @@ export class Git implements IGitService {
 
     public async getCommitFile(hash: string, file: Uri | string): Promise<Uri> {
         const gitRootPath = await this.getGitRoot();
+        const filePath = typeof file === 'string' ? file : file.fsPath.toString();
+        const relativeFilePath = path.relative(gitRootPath, filePath);
         return new Promise<Uri>((resolve, reject) => {
-            tmp.tmpName((err: Error, tmpPath: string) => {
+            tmp.file({ postfix: path.extname(filePath) }, (err: Error, tmpPath: string) => {
                 if (err) {
                     return reject(err);
                 }
-                const filePath = typeof file === 'string' ? file : file.fsPath.toString();
-                const relativeFilePath = path.relative(gitRootPath, filePath);
-                this.exec('show', `${hash}:${relativeFilePath}`, '>', tmpPath)
+                this.execInShell('show', `${hash}:${relativeFilePath}`, '>', tmpPath)
                     .then(() => resolve(Uri.file(tmpPath)))
                     .catch(reject);
             });
@@ -251,5 +251,18 @@ export class Git implements IGitService {
         const namestatEntries = bothEntries.map(items => items.namestat);
         const fileStatParser = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
         return fileStatParser.parse(gitRepoPath, numstatEntries, namestatEntries);
+    }
+    public async getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash> {
+        const gitRootPath = await this.getGitRoot();
+        const relativeFilePath = path.relative(gitRootPath, file.fsPath);
+        const args = this.gitArgsService.getPreviousCommitHashForFileArgs(hash, relativeFilePath);
+
+        const output = await this.exec(...args);
+        const hashes = output.split('-');
+
+        return {
+            short: hashes[1]!,
+            full: hashes[0]!
+        };
     }
 }

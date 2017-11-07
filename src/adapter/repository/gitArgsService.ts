@@ -27,13 +27,16 @@ export class GitArgsService implements IGitArgsService {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
     }
     public getRefsContainingCommitArgs(hash: string): string[] {
-        return ['git', 'branch', '--all', '--contains', hash];
+        return ['branch', '--all', '--contains', hash];
     }
     public getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[] {
-        return ['git', 'diff', '--numstat', '--summary', hash1, hash2];
+        return ['diff', '--numstat', '--summary', hash1, hash2];
     }
     public getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[] {
-        return ['git', 'diff', '--name-status', '--summary', hash1, hash2];
+        return ['diff', '--name-status', '--summary', hash1, hash2];
+    }
+    public getPreviousCommitHashForFileArgs(hash: string, file: string): string[] {
+        return ['log', '--format=%H-%h', `${hash}^1`, '-n', '1', '--', file];
     }
 
     public getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', relativeFilePath?: string): GitLogArgs {
@@ -41,10 +44,10 @@ export class GitArgsService implements IGitArgsService {
         const currentBranch = branch.trim() === '*';
         const specificBranch = !allBranches && !currentBranch;
 
-        const logArgs = ['log', LOG_FORMAT];
-        const fileStatArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
+        const logArgs = ['log', '--full-history', LOG_FORMAT];
+        const fileStatArgs = ['log', '--full-history', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
         // TODO: Don't we need %n instead of %h
-        const counterArgs = ['log', `--format=${LOG_ENTRY_SEPARATOR}%h`];
+        const counterArgs = ['log', '--full-history', `--format=${LOG_ENTRY_SEPARATOR}%h`];
 
         if (searchText && searchText.length > 0) {
             searchText.split(' ')

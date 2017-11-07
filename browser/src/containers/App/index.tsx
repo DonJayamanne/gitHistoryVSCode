@@ -17,25 +17,19 @@ type AppProps = {
     getNextCommits: typeof ResultActions.getNextCommits;
 } & typeof ResultActions;
 
+// tslint:disable-next-line:no-empty-interface
 interface AppState {
-    /* empty */
 }
 
 class App extends React.Component<AppProps, AppState> {
+    // tslint:disable-next-line:no-any
     constructor(props?: AppProps, context?: any) {
         super(props, context);
     }
-    componentWillMount() {
+    // tslint:disable-next-line:no-empty
+    public componentWillMount() {
     }
-
-    private goBack() {
-        this.props.getPreviousCommits();
-    }
-    private goForward() {
-        // this.props.fetchData(this.props.logEntries.pageIndex + 1, this.props.logEntries.pageSize);
-        this.props.getNextCommits();
-    }
-    render() {
+    public render() {
         const { children } = this.props;
         return (
             <div className='appRootParent'>
@@ -46,13 +40,20 @@ class App extends React.Component<AppProps, AppState> {
                     <Footer
                         canGoBack={this.props.logEntries.pageIndex > 0}
                         canGoForward={(this.props.logEntries.pageIndex + 1) * 100 < this.props.logEntries.count}
-                        goBack={() => this.goBack()}
-                        goForward={() => this.goForward()}></Footer>
+                        goBack={this.goBack}
+                        goForward={this.goForward}></Footer>
                     {children}
                 </div >
                 {this.props.logEntries && this.props.logEntries.selected ? <Commit /> : ''}
             </div >
         );
+    }
+    private goBack = () => {
+        this.props.getPreviousCommits();
+    }
+    private goForward = () => {
+        // this.props.fetchData(this.props.logEntries.pageIndex + 1, this.props.logEntries.pageSize);
+        this.props.getNextCommits();
     }
 }
 

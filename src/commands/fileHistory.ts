@@ -1,3 +1,77 @@
+import { inject, injectable } from 'inversify';
+import * as path from 'path';
+import { commands, Uri, ViewColumn, window, workspace } from 'vscode';
+import { command } from '../commands/register';
+import { IUiService } from '../common/types';
+import { IServerHost } from '../server/types';
+import { CommittedFile, IGitServiceFactory } from '../types';
+import { IGitFileHistoryCommandHandler } from './types';
+
+@injectable()
+export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandler {
+    constructor( @inject(IServerHost) private server: IServerHost,
+        @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
+        @inject(IUiService) private uiService: IUiService
+        // @inject(IWorkspaceQueryStateStore) private stateStore: IWorkspaceQueryStateStore
+    ) {
+    }
+    public dispose() {
+        if (this.server) {
+            this.server.dispose();
+        }
+    }
+
+    @command('git.commit.file.select', IGitFileHistoryCommandHandler)
+    public async onFileSelected(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+        const commandName = await this.uiService.selectFileCommitCommandAction(commitedFile);
+        if (!commandName) {
+            return;
+        }
+        await commands.executeCommand(commandName, workspaceFolder, branch, hash, commitedFile);
+    }
+
+    @command('git.commit.file.viewFileContents', IGitFileHistoryCommandHandler)
+    public async onViewFile(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+        const gitService = this.gitServiceFactory.createGitService(workspaceFolder);
+        const tmpFile = await gitService.getCommitFile(hash, commitedFile.uri);
+        const doc = await workspace.openTextDocument(tmpFile as Uri);
+        await window.showTextDocument(doc, ViewColumn.Two, false);
+    }
+
+    @command('git.commit.file.compareAgainstWorkspace', IGitFileHistoryCommandHandler)
+    public async onCompareFileWithWorkspace(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+        const gitService = this.gitServiceFactory.createGitService(workspaceFolder);
+        const logEntry = await gitService.getCommit(hash);
+        const tmpFile = await gitService.getCommitFile(hash, commitedFile.uri);
+        const fileName = path.basename(commitedFile.uri.fsPath);
+        const title = `${fileName} (${logEntry!.hash.short}) ↔ ${fileName} (workspace)`;
+        await commands.executeCommand('vscode.diff', tmpFile as Uri, commitedFile.uri, title);
+    }
+
+    @command('git.commit.file.compareAgainstPrevious', IGitFileHistoryCommandHandler)
+    public async onCompareFileWithPrevious(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+        const gitService = this.gitServiceFactory.createGitService(workspaceFolder);
+        const logEntry = await gitService.getCommit(hash);
+        const tmpFile = await gitService.getCommitFile(hash, commitedFile.uri);
+        const previousCommit = await gitService.getPreviousCommitHashForFile(hash, commitedFile.uri);
+        const previousFile = commitedFile.oldUri ? commitedFile.oldUri : commitedFile.uri;
+        const previousTmpFile = await gitService.getCommitFile(previousCommit.full, previousFile);
+        const title = `${path.basename(commitedFile.uri.fsPath)} (${logEntry!.hash.short}) ↔ ${path.basename(previousFile.fsPath)} (${previousCommit.short})`;
+        await commands.executeCommand('vscode.diff', tmpFile as Uri, previousTmpFile, title);
+    }
+
+    // @command('git.commit.file.viewChangeLog', IGitFileHistoryCommandHandler)
+    // public async onViewFileHistoryChangeLog(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+    //     const gitService = await this.gitServiceFactory.createGitService(workspaceFolder);
+    //     const branchName = await gitService.getCurrentBranch();
+    //     const command = await this.uiFileHistoryPicker.selectCommandAction(gitService, branchName, hash, commitedFile);
+    //     if (!command) {
+    //         return;
+    //     }
+    //     await commands.executeCommand(workspaceFolder, branch, hash, commitedFile);
+    // }
+}
+
 // import * as fs from 'fs';
 // import { decode as htmlDecode } from 'he';
 // import * as path from 'path';

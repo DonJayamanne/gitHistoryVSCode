@@ -1,10 +1,16 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": ".",
+			"name": "Root"
 		},
 		{
-			"path": "browser"
+			"path": "browser",
+			"name": "browser"
+		},
+		{
+			"path": "src",
+			"name": "server"
 		}
 	],
 	"settings": {

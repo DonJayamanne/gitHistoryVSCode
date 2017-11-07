@@ -2,8 +2,8 @@ import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
-import { Uri } from 'vscode';
-import { CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, BranchSelection } from '../types';
+import { commands, Uri } from 'vscode';
+import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -151,13 +151,15 @@ export class ApiController implements IApiRouteHandler {
     public doSomethingWithCommit = (request: Request, response: Response) => {
         // const id: string = decodeURIComponent(request.query.id);
         // const hash: string = request.params.hash;
-
         response.send('');
     }
     public selectCommittedFile = (request: Request, response: Response) => {
+        const id: string = decodeURIComponent(request.query.id);
+        const hash: string = request.params.hash;
         // tslint:disable-next-line:prefer-type-cast
         const committedFile = request.body as CommittedFile;
-        // tslint:disable-next-line:no-console
-        console.log(committedFile);
+        const workspaceFolder = this.getWorkspace(id);
+        const currentState = this.stateStore.getState(id)!;
+        commands.executeCommand('git.commit.file.select', workspaceFolder, currentState.branch, hash, committedFile);
     }
 }

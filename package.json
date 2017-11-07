@@ -190,8 +190,12 @@
         },
         "gitHistory.logLevel": {
           "type": "string",
-          "default": "Debug",
-          "description": "Log Level [Debug|Info|Error]"
+          "default": "None",
+          "enum": [
+            "None",
+            "Info"
+          ],
+          "description": "Log Level (None or Debug)"
         }
       }
     }
