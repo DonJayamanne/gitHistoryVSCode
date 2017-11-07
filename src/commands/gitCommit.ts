@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { command } from '../commands/register';
+import { IUiService } from '../common/types';
 import { IServerHost } from '../server/types';
 import { IGitServiceFactory } from '../types';
 import { ICommitViewer } from '../viewers/types';
 import { IGitCommitCommandHandler } from './types';
-import { IUiService } from '../common/types';
 
 @injectable()
 export class GitCommitCommandHandler implements IGitCommitCommandHandler {
