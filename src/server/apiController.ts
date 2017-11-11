@@ -3,6 +3,8 @@ import { injectable } from 'inversify';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { commands, Uri } from 'vscode';
+import { IFileStatParser } from '../adapter/parsers/types';
+import { IServiceContainer } from '../ioc/types';
 import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
@@ -12,17 +14,27 @@ import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 export class ApiController implements IApiRouteHandler {
     constructor(private app: Express,
         private gitServiceFactory: IGitServiceFactory,
+        private serviceContainer: IServiceContainer,
         private stateStore: IWorkspaceQueryStateStore) {
 
-        this.app.get('/log', this.getLogEntries);
-        this.app.get('/branches', this.getBranches);
-        this.app.get('/log/:hash', this.getCommit);
-        this.app.post('/log/clearSelection', this.clearSelectedCommit);
-        this.app.post('/log/:hash', this.doSomethingWithCommit);
-        this.app.post('/log/:hash/committedFile', this.selectCommittedFile);
-        this.app.post('/log/:hash/cherryPick', this.cherryPickCommit);
+        this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
+        this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
+        this.app.get('/log/:hash', this.handleRequest(this.getCommit.bind(this)));
+        this.app.post('/log/clearSelection', this.handleRequest(this.clearSelectedCommit.bind(this)));
+        this.app.post('/log/:hash', this.handleRequest(this.doSomethingWithCommit.bind(this)));
+        this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
+        this.app.post('/log/:hash/cherryPick', this.handleRequest(this.cherryPickCommit.bind(this)));
     }
-
+    // tslint:disable-next-line:no-any
+    private handleRequest = (handler: (request: Request, response: Response) => void) => {
+        return async (request: Request, response: Response) => {
+            try {
+                await handler(request, response);
+            } catch (err) {
+                response.status(500).send(err);
+            }
+        };
+    }
     private getWorkspace(id: string) {
         return this.stateStore.getState(id)!.workspaceFolder;
     }
@@ -112,7 +124,10 @@ export class ApiController implements IApiRouteHandler {
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
     }
-    public getCommit = (request: Request, response: Response) => {
+    public getCommit = async (request: Request, response: Response) => {
+        const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
+        // tslint:disable-next-line:no-console
+        console.log(fileStatParserFactory);
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
 
@@ -129,9 +144,11 @@ export class ApiController implements IApiRouteHandler {
 
         commitPromise
             .then(data => response.send(data))
-            .catch(err => response.status(500).send(err));
+            .catch(err => {
+                response.status(500).send(err);
+            });
     }
-    public cherryPickCommit = (request: Request, response: Response) => {
+    public cherryPickCommit = async (request: Request, response: Response) => {
         // const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
         // tslint:disable-next-line:no-console
@@ -148,15 +165,16 @@ export class ApiController implements IApiRouteHandler {
         await this.stateStore.clearLastHashCommit(workspaceFolder);
         response.send('');
     }
-    public doSomethingWithCommit = (request: Request, response: Response) => {
+    public doSomethingWithCommit = async (request: Request, response: Response) => {
         response.send('');
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         commands.executeCommand('git.commit.doSomething', workspaceFolder, currentState.branch, hash);
+        const x = '';
     }
-    public selectCommittedFile = (request: Request, response: Response) => {
+    public selectCommittedFile = async (request: Request, response: Response) => {
         response.send('');
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
@@ -165,5 +183,6 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         commands.executeCommand('git.commit.file.select', workspaceFolder, currentState.branch, hash, committedFile);
+        const x = '';
     }
 }

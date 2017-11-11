@@ -48,6 +48,8 @@ export class Git implements IGitService {
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
+        // tslint:disable-next-line:no-console
+        console.log('');
     }
 
     public async  getGitRoot(): Promise<string> {
@@ -226,6 +228,12 @@ export class Git implements IGitService {
                     .catch(reject);
             });
         });
+    }
+    public async getCommitFileContent(hash: string, file: Uri | string): Promise<string> {
+        const gitRootPath = await this.getGitRoot();
+        const filePath = typeof file === 'string' ? file : file.fsPath.toString();
+        const relativeFilePath = path.relative(gitRootPath, filePath);
+        return await this.execInShell('show', `${hash}:${relativeFilePath}`);
     }
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
         const gitRepoPath = await this.getGitRoot();

@@ -1,5 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { EOL } from 'os';
+// tslint:disable-next-line:no-import-side-effect
+import 'reflect-metadata';
 import { IServiceContainer } from '../../../ioc/types';
 import { CommitInfo, CommittedFile, LogEntry } from '../../../types';
 import { Helpers } from '../../helpers';
@@ -18,7 +20,10 @@ export class LogParser implements ILogParser {
             const filesWithNumStat = logItems.slice(statsSeparatorIndex).join(EOL).split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
             const filesWithModeChanges = nameStatEntry.split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
             const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
-            return fileStatParserFactory.parse(gitRepoPath, filesWithNumStat, filesWithModeChanges);
+            const x = fileStatParserFactory.parse(gitRepoPath, filesWithNumStat, filesWithModeChanges);
+            const fileStatParserFactory2 = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
+            const y = fileStatParserFactory2.parse(gitRepoPath, filesWithNumStat, filesWithModeChanges);
+            return x;
         }
         else {
             return [];

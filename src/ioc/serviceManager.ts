@@ -5,10 +5,10 @@ export class ServiceManager implements IServiceManager {
     // tslint:disable-next-line:no-any
     public add<T>(serviceIdentifier: string | symbol | Newable<T> | Abstract<T>, constructor: new (...args: any[]) => T, name?: string | number | symbol | undefined): void {
         if (name) {
-            this.container.bind<T>(serviceIdentifier).to(constructor).whenTargetNamed(name);
+            this.container.bind<T>(serviceIdentifier).to(constructor).inSingletonScope().whenTargetNamed(name);
         }
         else {
-            this.container.bind<T>(serviceIdentifier).to(constructor);
+            this.container.bind<T>(serviceIdentifier).to(constructor).inSingletonScope();
         }
     }
     // tslint:disable-next-line:no-any
@@ -17,7 +17,7 @@ export class ServiceManager implements IServiceManager {
             this.container.bind<T>(serviceIdentifier).to(constructor).inSingletonScope().whenTargetNamed(name);
         }
         else {
-            this.container.bind<T>(serviceIdentifier).to(constructor);
+            this.container.bind<T>(serviceIdentifier).to(constructor).inSingletonScope();
         }
     }
     public get<T>(serviceIdentifier: string | symbol | Newable<T> | Abstract<T>, name?: string | number | symbol | undefined): T {

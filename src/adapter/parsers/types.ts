@@ -4,7 +4,7 @@ export const IRefsParser = Symbol('IRefsParser');
 export interface IRefsParser {
     parse(refsContent: string): Ref[];
 }
-export const IFileStatParser = Symbol('IFileStatParser');
+export const IFileStatParser = 'IFileStatParser'; // Symbol('IFileStatParser');
 
 export interface IFileStatParser {
     parse(gitRootPath: string, filesWithNumStat: string[], filesWithStats: string[]): CommittedFile[];

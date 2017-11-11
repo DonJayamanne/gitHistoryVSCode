@@ -1,6 +1,7 @@
-import { Container, interfaces } from 'inversify';
+import { Container, injectable, interfaces } from 'inversify';
 import { Abstract, IServiceContainer, Newable } from './types';
 
+@injectable()
 export class ServiceContainer implements IServiceContainer {
     constructor(private container: Container) { }
     public get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T {

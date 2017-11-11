@@ -3,6 +3,7 @@
 import 'reflect-metadata';
 import { IServiceManager } from '../../ioc/types';
 import { ActionDetailsParser } from './actionDetails/parser';
+import { FileStatParser } from './fileStat/parser';
 import { FileStatStatusParser } from './fileStatStatus/parser';
 import { LogParser } from './log/parser';
 import { RefsParser } from './refs/parser';
@@ -10,8 +11,7 @@ import { HeadRefParser } from './refs/parsers/headRefParser';
 import { RemoteHeadParser } from './refs/parsers/remoteHeadParser';
 import { TagRefParser } from './refs/parsers/tagRefParser';
 import { IRefParser } from './refs/types';
-import { IActionDetailsParser, IFileStatStatusParser, ILogParser, IRefsParser, IFileStatParser } from './types';
-import { FileStatParser } from './fileStat/parser';
+import { IActionDetailsParser, IFileStatParser, IFileStatStatusParser, ILogParser, IRefsParser } from './types';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IRefParser>(IRefParser, HeadRefParser);

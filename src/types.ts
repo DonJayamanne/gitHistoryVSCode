@@ -115,6 +115,7 @@ export interface IGitService {
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
     getCommitFile(hash: string, file: FsUri | string): Promise<FsUri>;
+    getCommitFileContent(hash: string, file: FsUri | string): Promise<string>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
 }
 

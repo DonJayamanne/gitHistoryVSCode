@@ -17,7 +17,7 @@ function Author(props: AuthorProps) {
 }
 
 function formatDateTime(date?: Date) {
-    return date ? date.toLocaleDateString() : '';
+    return (date && typeof date.toLocaleDateString === 'function') ? date.toLocaleDateString() : '';
 }
 // function formatDate(date: Date) {
 //   const lang = process.env.language;

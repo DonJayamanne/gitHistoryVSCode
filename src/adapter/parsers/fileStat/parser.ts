@@ -1,4 +1,4 @@
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import * as path from 'path';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
@@ -25,7 +25,7 @@ export class FileStatParser implements IFileStatParser {
 
         // Another exampe is as follows, where a tab is used as a separator
         // src/vs/workbench/services/extensions/node/ipcRemoteCom.ts       src/vs/workbench/services/extensions/node/rpcProtocol.ts
-        
+
         const diffSeparator = [' => ', '\t'].reduce<string | undefined>((separator, item) => {
             if (typeof separator === 'string') {
                 return separator;

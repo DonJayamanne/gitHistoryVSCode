@@ -6,9 +6,10 @@ import * as express from 'express';
 import * as http from 'http';
 import { decorate, inject, injectable } from 'inversify';
 import * as path from 'path';
+import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IServerHost, IWorkspaceQueryStateStore, IThemeService, StartupInfo } from './types';
+import { IServerHost, IThemeService, IWorkspaceQueryStateStore, StartupInfo } from './types';
 
 // inversify requires inherited classes to be decorated with @injectable()
 // This is a workaround forat that requirement
@@ -20,6 +21,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     private httpServer?: http.Server;
     constructor( @inject(IThemeService) private themeService: IThemeService,
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IWorkspaceQueryStateStore) private stateStore: IWorkspaceQueryStateStore) {
         super();
     }
@@ -65,7 +67,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
         });
 
         return this.startPromise = new Promise<StartupInfo>((resolve, reject) => {
-            this.apiController = new ApiController(this.app!, this.gitServiceFactory, this.stateStore);
+            this.apiController = new ApiController(this.app!, this.gitServiceFactory, this.serviceContainer, this.stateStore);
             this.httpServer!.listen(0, () => {
                 this.port = this.httpServer!.address().port;
                 resolve({ port: this.port });
