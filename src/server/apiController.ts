@@ -166,7 +166,7 @@ export class ApiController implements IApiRouteHandler {
         response.send('');
     }
     public doSomethingWithCommit = async (request: Request, response: Response) => {
-        response.send('');
+        response.status(200).send('');
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
         const workspaceFolder = this.getWorkspace(id);
@@ -174,7 +174,7 @@ export class ApiController implements IApiRouteHandler {
         commands.executeCommand('git.commit.doSomething', workspaceFolder, currentState.branch, hash);
     }
     public selectCommittedFile = async (request: Request, response: Response) => {
-        response.send('');
+        response.status(200).send('');
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
         // tslint:disable-next-line:prefer-type-cast

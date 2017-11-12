@@ -1,326 +1,328 @@
 {
-	"name": "githistory",
-	"displayName": "Git History (git log)",
-	"description": "View git log, file or line History",
-	"version": "0.2.3",
-	"publisher": "donjayamanne",
-	"author": {
-		"name": "Don Jayamanne",
-		"email": "don.jayamanne@yahoo.com"
-	},
-	"license": "MIT",
-	"homepage": "https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/README.md",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/DonJayamanne/gitHistoryVSCode"
-	},
-	"icon": "images/icon.png",
-	"bugs": {
-		"url": "https://github.com/DonJayamanne/gitHistoryVSCode/issues"
-	},
-	"galleryBanner": {
-		"color": "#0000FF",
-		"theme": "dark"
-	},
-	"engines": {
-		"vscode": "^1.15.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:git.viewFileHistory",
-		"onCommand:git.viewLineHistory",
-		"onCommand:git.viewHistory",
-		"onCommand:git.searchHistory"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"views": {
-			"explorer": [
-				{
-					"id": "commitViewProvider",
-					"name": "Commits"
-				},
-				{
-					"id": "compareViewProvider",
-					"name": "Compare Commits"
-				}
-			]
-		},
-		"commands": [
-			{
-				"command": "git.viewFileHistory",
-				"title": "Git: View File History"
-			},
-			{
-				"command": "git.viewLineHistory",
-				"title": "Git: View Line History"
-			},
-			{
-				"command": "git.viewHistory",
-				"title": "Git: View History (git log)",
-				"icon": {
-					"dark": "./resources/icons/dark/git.svg",
-					"light": "./resources/icons/light/git.svg"
-				}
-			},
-			{
-				"command": "git.searchHistory",
-				"title": "Git: Search History"
-			},
-			{
-				"command": "git.commit.LogEntry.ViewChangeLog",
-				"title": "View Change log"
-			},
-			{
-				"command": "git.commit.FileEntry.ViewFileContents",
-				"title": "View File Contents"
-			},
-			{
-				"command": "git.commit.FileEntry.CompareAgainstWorkspace",
-				"title": "Compare against workspace version"
-			},
-			{
-				"command": "git.commit.FileEntry.CompareAgainstPrevious",
-				"title": "Compare against previous version"
-			},
-			{
-				"command": "git.commit.compare.selectLeftCommit",
-				"title": "Select for Compare"
-			},
-			{
-				"command": "git.commit.compare.compareAgainstSelectedCommit",
-				"title": "Compare against previously selected Commit"
-			}
-		],
-		"keybindings": [
-			{
-				"command": "git.searchHistory",
-				"key": "ctrl+f3",
-				"mac": "cmd+f3"
-			}
-		],
-		"menus": {
-			"editor/title": [
-				{
-					"command": "git.viewHistory",
-					"group": "navigation"
-				}
-			],
-			"explorer/context": [
-				{
-					"command": "git.viewFileHistory",
-					"group": "git"
-				},
-				{
-					"command": "git.viewHistory",
-					"group": "git"
-				},
-				{
-					"command": "git.searchHistory",
-					"group": "git"
-				}
-			],
-			"view/item/context": [
-				{
-					"command": "git.commit.LogEntry.ViewChangeLog",
-					"when": "view == commitViewProvider && viewItem == logEntry"
-				},
-				{
-					"command": "git.commit.FileEntry.ViewFileContents",
-					"when": "view == commitViewProvider && viewItem == fileStat"
-				},
-				{
-					"command": "git.commit.FileEntry.ViewFileContents",
-					"when": "view == commitViewProvider && viewItem == fileStatA"
-				},
-				{
-					"command": "git.commit.FileEntry.ViewFileContents",
-					"when": "view == commitViewProvider && viewItem == fileStatM"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
-					"when": "view == commitViewProvider && viewItem == fileStat"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
-					"when": "view == commitViewProvider && viewItem == fileStatA"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
-					"when": "view == commitViewProvider && viewItem == fileStatM"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstPrevious",
-					"when": "view == commitViewProvider && viewItem == fileStat"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstPrevious",
-					"when": "view == commitViewProvider && viewItem == fileStatM"
-				},
-				{
-					"command": "git.commit.compare.selectLeftCommit",
-					"when": "view == commitViewProvider && viewItem == logEntry"
-				},
-				{
-					"command": "git.commit.compare.compareAgainstSelectedCommit",
-					"when": "view == commitViewProvider && viewItem == logEntry && git.commit.compare.selectedSha"
-				}
-			]
-		},
-		"configuration": {
-			"type": "object",
-			"title": "Git History configuration",
-			"properties": {
-				"gitHistory.displayLabel": {
-					"type": "string",
-					"default": "${message}",
-					"description": "Informations to display in history as label"
-				},
-				"gitHistory.displayDescription": {
-					"type": "string",
-					"default": "",
-					"description": "Informations to display in history as description"
-				},
-				"gitHistory.displayDetail": {
-					"type": "string",
-					"default": "${name} on ${date}",
-					"description": "Informations to display in history as detail"
-				},
-				"gitHistory.logLevel": {
-					"type": "string",
-					"default": "None",
-					"enum": [
-						"None",
-						"Info"
-					],
-					"description": "Log Level (None or Debug)"
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run lint && webpack -p --progress --colors && tsc -p ./",
-		"compile": "tsc --watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"lint": "tslint ./src/**/*.ts -t verbose || tslint ./test/**/*.ts -t verbose",
-		"buildReact": "webpack -p --progress --colors",
-		"watchReact": "webpack --progress --colors --watch",
-		"precommit": "node gulpfile.js",
-		"lint-staged": "node gulpfile.js"
-	},
-	"devDependencies": {
-		"@types/body-parser": "0.0.34",
-		"@types/chai": "^4.0.4",
-		"@types/classnames": "^0.0.32",
-		"@types/clipboard": "1.5.29",
-		"@types/cors": "^2.8.1",
-		"@types/express": "^4.0.36",
-		"@types/fs-extra": "^4.0.3",
-		"@types/he": "^0.5.29",
-		"@types/iconv-lite": "0.0.1",
-		"@types/jquery": "^2.0.48",
-		"@types/mocha": "^2.2.32",
-		"@types/node": "^6.0.49",
-		"@types/query-string": "^3.0.31",
-		"@types/react": "^16.0.20",
-		"@types/react-dom": "^16.0.2",
-		"@types/react-redux": "^5.0.12",
-		"@types/react-router": "^4.0.16",
-		"@types/react-router-dom": "^4.2.0",
-		"@types/react-router-redux": "^4.0.51",
-		"@types/redux-actions": "^2.2.2",
-		"@types/rx": "^2.5.33",
-		"@types/tmp": "0.0.31",
-		"@types/webpack": "^2.2.4",
-		"@types/webpack-env": "^1.13.0",
-		"awesome-typescript-loader": "^3.0.0-beta.18",
-		"axios": "^0.16.2",
-		"bootstrap": "^3.3.7",
-		"chai": "^4.1.2",
-		"classnames": "^2.2.5",
-		"copy-webpack-plugin": "^4.0.1",
-		"css-loader": "^0.26.1",
-		"extract-text-webpack-plugin": "^2.0.0-beta.5",
-		"file-loader": "^0.10.0",
-		"gulp": "^3.9.1",
-		"gulp-eslint": "^4.0.0",
-		"gulp-filter": "^5.0.1",
-		"gulp-tslint": "^8.1.2",
-		"gulp-typescript": "^3.2.3",
-		"html-loader": "^0.4.4",
-		"html-webpack-plugin": "^2.28.0",
-		"husky": "^0.14.3",
-		"ignore-loader": "^0.1.2",
-		"immutable": "^3.8.1",
-		"mocha": "^2.3.3",
-		"postcss": "^5.2.11",
-		"postcss-browser-reporter": "^0.5.0",
-		"postcss-cssnext": "^2.9.0",
-		"postcss-import": "^9.1.0",
-		"postcss-loader": "^1.2.2",
-		"postcss-reporter": "^3.0.0",
-		"postcss-url": "^5.1.2",
-		"react": "^16.0.0",
-		"react-bootstrap": "^0.31.5",
-		"react-copy-to-clipboard": "^5.0.1",
-		"react-dom": "^16.0.0",
-		"react-hot-loader": "^3.1.1",
-		"react-icons": "^2.2.7",
-		"react-json-tree": "^0.11.0",
-		"react-redux": "^5.0.6",
-		"react-rnd": "^7.1.5",
-		"react-router": "^4.2.0",
-		"react-router-dom": "^4.2.2",
-		"react-router-redux": "^4.0.8",
-		"react-scroll": "^1.6.4",
-		"react-toolbox": "^2.0.0-beta.12",
-		"redux": "^3.7.2",
-		"redux-actions": "^2.2.1",
-		"redux-thunk": "^2.2.0",
-		"semantic-ui-css": "^2.2.12",
-		"semantic-ui-react": "^0.71.4",
-		"style-loader": "^0.13.1",
-		"tslint": "^5.7.0",
-		"tslint-eslint-rules": "^4.1.1",
-		"tslint-microsoft-contrib": "^5.0.1",
-		"typescript": "^2.6.1",
-		"typescript-formatter": "^6.0.0",
-		"url-loader": "^0.5.7",
-		"vscode": "^1.1.5",
-		"webpack": "^2.2.1",
-		"webpack-dev-server": "^2.2.0",
-		"webpack-hot-middleware": "^2.16.1"
-	},
-	"dependencies": {
-		"animate.css": "^3.5.2",
-		"body-parser": "^1.17.2",
-		"clipboard": "^1.5.15",
-		"cors": "^2.8.4",
-		"ejs": "^2.5.6",
-		"express": "^4.15.3",
-		"font-awesome": "^4.7.0",
-		"fs-extra": "^4.0.2",
-		"he": "^1.1.0",
-		"hint.css": "^2.4.1",
-		"iconv-lite": "^0.4.19",
-		"inversify": "^4.3.0",
-		"inversify-binding-decorators": "^3.0.0",
-		"jquery": "^3.1.1",
-		"normalize.css": "^5.0.0",
-		"octicons": "^6.0.1",
-		"query-string": "^4.3.2",
-		"reflect-metadata": "^0.1.10",
-		"relative": "^3.0.2",
-		"shorthash": "0.0.2",
-		"tmp": "^0.0.31",
-		"uniqid": "^4.1.1",
-		"vscode-extension-telemetry": "0.0.5"
-	},
-	"__metadata": {
-		"id": "5960f38e-0bbe-4644-8f9c-9c8824e82511",
-		"publisherDisplayName": "Don Jayamanne",
-		"publisherId": "1ba8bd00-2ad1-4be0-a007-5b4b954c1ee7"
-	}
+  "name": "githistory",
+  "displayName": "Git History (git log)",
+  "description": "View git log, file or line History",
+  "version": "0.2.3",
+  "publisher": "donjayamanne",
+  "author": {
+    "name": "Don Jayamanne",
+    "email": "don.jayamanne@yahoo.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/DonJayamanne/gitHistoryVSCode/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DonJayamanne/gitHistoryVSCode"
+  },
+  "icon": "images/icon.png",
+  "bugs": {
+    "url": "https://github.com/DonJayamanne/gitHistoryVSCode/issues"
+  },
+  "galleryBanner": {
+    "color": "#0000FF",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.15.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:git.viewFileHistory",
+    "onCommand:git.viewLineHistory",
+    "onCommand:git.viewHistory",
+    "onCommand:git.searchHistory"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "commitViewProvider",
+          "name": "Commits"
+        },
+        {
+          "id": "compareViewProvider",
+          "name": "Compare Commits"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "git.viewFileHistory",
+        "title": "Git: View File History"
+      },
+      {
+        "command": "git.viewLineHistory",
+        "title": "Git: View Line History"
+      },
+      {
+        "command": "git.viewHistory",
+        "title": "Git: View History (git log)",
+        "icon": {
+          "dark": "./resources/icons/dark/git.svg",
+          "light": "./resources/icons/light/git.svg"
+        }
+      },
+      {
+        "command": "git.searchHistory",
+        "title": "Git: Search History"
+      },
+      {
+        "command": "git.commit.LogEntry.ViewChangeLog",
+        "title": "View Change log"
+      },
+      {
+        "command": "git.commit.FileEntry.ViewFileContents",
+        "title": "View File Contents"
+      },
+      {
+        "command": "git.commit.FileEntry.CompareAgainstWorkspace",
+        "title": "Compare against workspace version"
+      },
+      {
+        "command": "git.commit.FileEntry.CompareAgainstPrevious",
+        "title": "Compare against previous version"
+      },
+      {
+        "command": "git.commit.compare.selectLeftCommit",
+        "title": "Select for Compare"
+      },
+      {
+        "command": "git.commit.compare.compareAgainstSelectedCommit",
+        "title": "Compare against previously selected Commit"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "git.searchHistory",
+        "key": "ctrl+f3",
+        "mac": "cmd+f3"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "git.viewHistory",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "git.viewFileHistory",
+          "group": "git"
+        },
+        {
+          "command": "git.viewHistory",
+          "group": "git"
+        },
+        {
+          "command": "git.searchHistory",
+          "group": "git"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "git.commit.LogEntry.ViewChangeLog",
+          "when": "view == commitViewProvider && viewItem == logEntry"
+        },
+        {
+          "command": "git.commit.FileEntry.ViewFileContents",
+          "when": "view == commitViewProvider && viewItem == fileStat"
+        },
+        {
+          "command": "git.commit.FileEntry.ViewFileContents",
+          "when": "view == commitViewProvider && viewItem == fileStatA"
+        },
+        {
+          "command": "git.commit.FileEntry.ViewFileContents",
+          "when": "view == commitViewProvider && viewItem == fileStatM"
+        },
+        {
+          "command": "git.commit.FileEntry.CompareAgainstWorkspace",
+          "when": "view == commitViewProvider && viewItem == fileStat"
+        },
+        {
+          "command": "git.commit.FileEntry.CompareAgainstWorkspace",
+          "when": "view == commitViewProvider && viewItem == fileStatA"
+        },
+        {
+          "command": "git.commit.FileEntry.CompareAgainstWorkspace",
+          "when": "view == commitViewProvider && viewItem == fileStatM"
+        },
+        {
+          "command": "git.commit.FileEntry.CompareAgainstPrevious",
+          "when": "view == commitViewProvider && viewItem == fileStat"
+        },
+        {
+          "command": "git.commit.FileEntry.CompareAgainstPrevious",
+          "when": "view == commitViewProvider && viewItem == fileStatM"
+        },
+        {
+          "command": "git.commit.compare.selectLeftCommit",
+          "when": "view == commitViewProvider && viewItem == logEntry"
+        },
+        {
+          "command": "git.commit.compare.compareAgainstSelectedCommit",
+          "when": "view == commitViewProvider && viewItem == logEntry && git.commit.compare.selectedSha"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Git History configuration",
+      "properties": {
+        "gitHistory.displayLabel": {
+          "type": "string",
+          "default": "${message}",
+          "description": "Informations to display in history as label"
+        },
+        "gitHistory.displayDescription": {
+          "type": "string",
+          "default": "",
+          "description": "Informations to display in history as description"
+        },
+        "gitHistory.displayDetail": {
+          "type": "string",
+          "default": "${name} on ${date}",
+          "description": "Informations to display in history as detail"
+        },
+        "gitHistory.logLevel": {
+          "type": "string",
+          "default": "None",
+          "enum": [
+            "None",
+            "Info"
+          ],
+          "description": "Log Level (None or Debug)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run lint && webpack -p --progress --colors && tsc -p ./",
+    "compile": "tsc --watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "lint": "tslint ./src/**/*.ts -t verbose || tslint ./test/**/*.ts -t verbose",
+    "buildReact": "webpack -p --progress --colors",
+    "watchReact": "webpack --progress --colors --watch",
+    "precommit": "node gulpfile.js",
+    "lint-staged": "node gulpfile.js"
+  },
+  "devDependencies": {
+    "@types/body-parser": "0.0.34",
+    "@types/chai": "^4.0.4",
+    "@types/classnames": "^0.0.32",
+    "@types/clipboard": "1.5.29",
+    "@types/cors": "^2.8.1",
+    "@types/express": "^4.0.36",
+    "@types/fs-extra": "^4.0.3",
+    "@types/he": "^0.5.29",
+    "@types/iconv-lite": "0.0.1",
+    "@types/jquery": "^2.0.48",
+    "@types/mocha": "^2.2.32",
+    "@types/node": "^6.0.49",
+    "@types/os-locale": "^2.1.0",
+    "@types/query-string": "^3.0.31",
+    "@types/react": "^16.0.20",
+    "@types/react-dom": "^16.0.2",
+    "@types/react-redux": "^5.0.12",
+    "@types/react-router": "^4.0.16",
+    "@types/react-router-dom": "^4.2.0",
+    "@types/react-router-redux": "^4.0.51",
+    "@types/redux-actions": "^2.2.2",
+    "@types/rx": "^2.5.33",
+    "@types/tmp": "0.0.31",
+    "@types/webpack": "^2.2.4",
+    "@types/webpack-env": "^1.13.0",
+    "awesome-typescript-loader": "^3.0.0-beta.18",
+    "axios": "^0.16.2",
+    "bootstrap": "^3.3.7",
+    "chai": "^4.1.2",
+    "classnames": "^2.2.5",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.26.1",
+    "extract-text-webpack-plugin": "^2.0.0-beta.5",
+    "file-loader": "^0.10.0",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^4.0.0",
+    "gulp-filter": "^5.0.1",
+    "gulp-tslint": "^8.1.2",
+    "gulp-typescript": "^3.2.3",
+    "html-loader": "^0.4.4",
+    "html-webpack-plugin": "^2.28.0",
+    "husky": "^0.14.3",
+    "ignore-loader": "^0.1.2",
+    "immutable": "^3.8.1",
+    "mocha": "^2.3.3",
+    "postcss": "^5.2.11",
+    "postcss-browser-reporter": "^0.5.0",
+    "postcss-cssnext": "^2.9.0",
+    "postcss-import": "^9.1.0",
+    "postcss-loader": "^1.2.2",
+    "postcss-reporter": "^3.0.0",
+    "postcss-url": "^5.1.2",
+    "react": "^16.0.0",
+    "react-bootstrap": "^0.31.5",
+    "react-copy-to-clipboard": "^5.0.1",
+    "react-dom": "^16.0.0",
+    "react-hot-loader": "^3.1.1",
+    "react-icons": "^2.2.7",
+    "react-json-tree": "^0.11.0",
+    "react-redux": "^5.0.6",
+    "react-rnd": "^7.1.5",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-router-redux": "^4.0.8",
+    "react-scroll": "^1.6.4",
+    "react-toolbox": "^2.0.0-beta.12",
+    "redux": "^3.7.2",
+    "redux-actions": "^2.2.1",
+    "redux-thunk": "^2.2.0",
+    "semantic-ui-css": "^2.2.12",
+    "semantic-ui-react": "^0.71.4",
+    "style-loader": "^0.13.1",
+    "tslint": "^5.7.0",
+    "tslint-eslint-rules": "^4.1.1",
+    "tslint-microsoft-contrib": "^5.0.1",
+    "typescript": "^2.6.1",
+    "typescript-formatter": "^6.0.0",
+    "url-loader": "^0.5.7",
+    "vscode": "^1.1.5",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.2.0",
+    "webpack-hot-middleware": "^2.16.1"
+  },
+  "dependencies": {
+    "animate.css": "^3.5.2",
+    "body-parser": "^1.17.2",
+    "clipboard": "^1.5.15",
+    "cors": "^2.8.4",
+    "ejs": "^2.5.6",
+    "express": "^4.15.3",
+    "font-awesome": "^4.7.0",
+    "fs-extra": "^4.0.2",
+    "he": "^1.1.0",
+    "hint.css": "^2.4.1",
+    "iconv-lite": "^0.4.19",
+    "inversify": "^4.3.0",
+    "inversify-binding-decorators": "^3.0.0",
+    "jquery": "^3.1.1",
+    "normalize.css": "^5.0.0",
+    "octicons": "^6.0.1",
+    "os-locale": "^2.1.0",
+    "query-string": "^4.3.2",
+    "reflect-metadata": "^0.1.10",
+    "relative": "^3.0.2",
+    "shorthash": "0.0.2",
+    "tmp": "^0.0.31",
+    "uniqid": "^4.1.1",
+    "vscode-extension-telemetry": "0.0.5"
+  },
+  "__metadata": {
+    "id": "5960f38e-0bbe-4644-8f9c-9c8824e82511",
+    "publisherDisplayName": "Don Jayamanne",
+    "publisherId": "1ba8bd00-2ad1-4be0-a007-5b4b954c1ee7"
+  }
 }

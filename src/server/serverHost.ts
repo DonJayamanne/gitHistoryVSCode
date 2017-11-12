@@ -12,7 +12,7 @@ import { ApiController } from './apiController';
 import { IServerHost, IThemeService, IWorkspaceQueryStateStore, StartupInfo } from './types';
 
 // inversify requires inherited classes to be decorated with @injectable()
-// This is a workaround forat that requirement
+// This is a workaround format that requirement
 decorate(injectable(), EventEmitter);
 
 @injectable()

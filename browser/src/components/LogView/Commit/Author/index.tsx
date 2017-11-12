@@ -12,19 +12,22 @@ interface AuthorProps {
 function Author(props: AuthorProps) {
     return (<div className='commit-author'>
         <span className='name hint--right hint--rounded hint--bounce' aria-label={props.result.email}>{props.result.name}</span>
-        <span className='timestamp'> on {formatDateTime(props.result.date)}</span>
+        <span className='timestamp'> on {formatDateTime(props.locale, props.result.date)}</span>
     </div>);
 }
 
-function formatDateTime(date?: Date) {
+function formatDateTime(locale: string, date?: Date) {
     if (date && typeof date.toLocaleDateString !== 'function') {
         return '';
     }
 
-    // const lang = process.env.language;
     const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
-    return date.toLocaleString(undefined, dateOptions);
-    // ? date.toLocaleDateString() : '';
+    try {
+        locale = typeof locale === 'string' ? locale.replace('_', '-') : locale;
+        return date.toLocaleString(locale, dateOptions);
+    } catch {
+        return date.toLocaleString(undefined, dateOptions);
+    }
 }
 // function formatDate(date: Date) {
 //   const lang = process.env.language;

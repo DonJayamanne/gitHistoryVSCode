@@ -1,7 +1,6 @@
 import * as querystring from 'query-string';
 import { CancellationToken, TextDocumentContentProvider, Uri } from 'vscode';
 import { BranchSelection } from '../types';
-// import { decode as htmlDecode } from 'he';
 
 export class ContentProvider implements TextDocumentContentProvider {
     public provideTextDocumentContent(uri: Uri, token: CancellationToken): string {
@@ -13,17 +12,12 @@ export class ContentProvider implements TextDocumentContentProvider {
         const locale: string = decodeURIComponent(query.locale!.toString()) as string;
         return this.generateResultsView(port, id, branchName, branchSelection, locale);
     }
-    private provided: boolean;
-
     private generateResultsView(port: number, id: string, branchName: string, branchSelection: BranchSelection, locale: string): string {
         // Fix for issue #669 "Results Panel not Refreshing Automatically" - always include a unique time
         // so that the content returned is different. Otherwise VSCode will not refresh the document since it
         // thinks that there is nothing to be updated.
-        if (this.provided) {
-            return '<!DOCTYPE html><body>one</body></html>';
-        }
         // this.provided = true;
-        const timeNow = new Date().getTime();
+        const timeNow = ''; // new Date().getTime();
         return `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>

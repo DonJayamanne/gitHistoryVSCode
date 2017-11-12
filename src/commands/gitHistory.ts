@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import * as osLocale from 'os-locale';
 import { commands, Disposable, ViewColumn } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
 import { command } from '../commands/register';
@@ -40,12 +41,19 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             return;
         }
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        const branchName = await gitService.getCurrentBranch();
-        const title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
-        const startupInfo = await this.server.start(workspaceFolder);
+
+        const branchNamePromise = await gitService.getCurrentBranch();
+        const startupInfoPromise = await this.server.start(workspaceFolder);
+        const localePromise = await osLocale();
+
+        const values = await Promise.all([branchNamePromise, startupInfoPromise, localePromise]);
+        const branchName = values[0];
+        const startupInfo = values[1];
+        const locale = values[2];
+
         const id = Date.now().toString();
         await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).initialize(id, workspaceFolder, branchName, branchSelection);
-        const locale = process.env.language || '';
+
         const queryArgs = [
             `id=${id}`, `port=${startupInfo.port}`,
             `branchSelection=${branchSelection}`, `locale=${encodeURIComponent(locale)}`
@@ -54,6 +62,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
         }
         const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
+        const title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
         commands.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
     }
 }
