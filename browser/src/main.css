@@ -410,6 +410,8 @@ header {
 	cursor: pointer;
 	opacity: 0.8;
 	z-index: 5;
+	position: fixed;
+    right: 20px;
 }
 
 #details-view .action-btn:hover {
@@ -446,8 +448,8 @@ div.react-draggable {
 
 div.details-view-cnt {
 	bottom: 30px;
-	overflow-y: .hidden;
 	overflow-x: hidden;
+	max-height: 50vh !important;
 }
 
 #details-view .commit-subject {
@@ -459,6 +461,7 @@ div.details-view-cnt {
 #details-view .commit-body,
 #details-view .commit-notes {
 	margin: 1em 0;
+	white-space: pre;
 }
 
 #details-view .commit-body:empty,

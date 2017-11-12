@@ -108,3 +108,5 @@ function decode(buffers: Buffer[], encoding: string): string {
 //         });
 //     }
 // }
+
+// git log --name-status --full-history -M --format="%H -%nauthor %an%nauthor-date %at%nparents %P%nsummary %B%nfilename ?" -m -n1 905c713de0eaa7001e7191bf887665bcbbf3ed74

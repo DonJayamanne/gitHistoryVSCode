@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { commands, Disposable } from 'vscode';
+import { Disposable } from 'vscode';
 import { command } from '../commands/register';
 import { IUiService } from '../common/types';
 import {IServiceContainer} from '../ioc/types';
@@ -11,7 +11,7 @@ import { IGitCommitCommandHandler } from './types';
 export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     private disposables: Disposable[] = [];
     constructor(private serviceContainer: IServiceContainer) {
-        this.disposables.push(commands.registerCommand('git.commit.viewChangeLog', this.viewHistory, this));
+        // this.disposables.push(commands.registerCommand('git.commit.viewChangeLog', this.viewHistory, this));
     }
     public dispose() {
         this.disposables.forEach(disposable => disposable.dispose());

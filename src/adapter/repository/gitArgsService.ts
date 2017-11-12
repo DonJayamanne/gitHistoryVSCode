@@ -17,11 +17,14 @@ export class GitArgsService implements IGitArgsService {
     public getCommitDateArgs(hash: string) {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.CommitterDateUnixTime)}`, hash];
     }
-    public getCommitWithNumStatArgs(hash: string) {
+    public getCommitArgs(hash: string): string[] {
         return ['show', LOG_FORMAT, '--decorate=full', '--numstat', hash];
     }
+    public getCommitWithNumStatArgs(hash: string) {
+        return ['log', '--numstat', '--full-history', '--decorate=full', '-M', '--format=""', '-m', '-n1', hash];
+    }
     public getCommitNameStatusArgs(hash: string): string[] {
-        return ['show', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`, '--decorate=full', '--name-status', hash];
+        return ['log', '--name-status', '--full-history', '-M', '--format=""', '-m', '-n1', hash];
     }
     public getObjectHashArgs(object: string): string[] {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];

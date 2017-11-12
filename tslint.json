@@ -82,6 +82,15 @@
         "no-suspicious-comment": false,
         "no-useless-files": false,
         "interface-name": false,
-        "react-tsx-curly-spacing": false
+        "react-tsx-curly-spacing": false,
+        "no-unsafe-any": false,
+        "no-floating-promises": false,
+        "completed-docs": false,
+        "strict-boolean-expressions": false,
+        "await-promise": [
+            "promise",
+            "theneable"
+        ],
+        "no-void-expression": false
     }
 }

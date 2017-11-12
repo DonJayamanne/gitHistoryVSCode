@@ -11,6 +11,7 @@ export interface IGitArgsService {
     getGitRootArgs(): string[];
     getCurrentBranchArgs(): string[];
     getCommitDateArgs(hash: string): string[];
+    getCommitArgs(hash: string): string[];
     getCommitWithNumStatArgs(hash: string): string[];
     getCommitNameStatusArgs(hash: string): string[];
     getObjectHashArgs(object: string): string[];

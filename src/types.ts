@@ -109,6 +109,7 @@ export interface IGitService {
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
     getObjectHash(object: string): Promise<string>;
+    getHash(hash: string): Promise<Hash>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
     getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri): Promise<LogEntries>;
     getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;

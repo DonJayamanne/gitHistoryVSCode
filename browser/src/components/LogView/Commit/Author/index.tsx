@@ -17,7 +17,14 @@ function Author(props: AuthorProps) {
 }
 
 function formatDateTime(date?: Date) {
-    return (date && typeof date.toLocaleDateString === 'function') ? date.toLocaleDateString() : '';
+    if (date && typeof date.toLocaleDateString !== 'function') {
+        return '';
+    }
+
+    // const lang = process.env.language;
+    const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+    return date.toLocaleString(undefined, dateOptions);
+    // ? date.toLocaleDateString() : '';
 }
 // function formatDate(date: Date) {
 //   const lang = process.env.language;

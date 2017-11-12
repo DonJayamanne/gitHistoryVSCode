@@ -32,19 +32,18 @@ export class UiService implements IUiService {
         const folder: WorkspaceFolder | undefined = await (window as any).showWorkspaceFolderPick({ placeHolder: 'Select a workspace' });
         return folder ? folder.uri.fsPath : undefined;
     }
-    public async selectFileCommitCommandAction(commitedFile: CommittedFile): Promise<string | undefined> {
+    public async selectFileCommitCommandAction(committedFile: CommittedFile): Promise<string | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
 
         const items = [
-            { label: 'View change log', command: 'git.commit.viewChangeLog', description: '' },
             { label: 'View file contents', command: 'git.commit.file.viewFileContents', description: '' },
             { label: 'Compare against workspace file', command: 'git.commit.file.compareAgainstWorkspace', description: '' }
         ];
 
-        if (commitedFile.status !== Status.Added) {
+        if (committedFile.status !== Status.Added) {
             items.push({ label: 'Compare against previous version', command: 'git.commit.file.compareAgainstPrevious', description: '' });
         }
 

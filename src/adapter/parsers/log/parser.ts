@@ -1,5 +1,4 @@
 import { inject, injectable } from 'inversify';
-import { EOL } from 'os';
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { IServiceContainer } from '../../../ioc/types';
@@ -14,16 +13,12 @@ export class LogParser implements ILogParser {
         @inject(IActionDetailsParser) private actionDetailsParser: IActionDetailsParser) {
 
     }
-    private parserCommittedFiles(gitRepoPath: string, logItems: string[], statsSeparator: string, nameStatEntry?: string | undefined): CommittedFile[] {
-        if (nameStatEntry && nameStatEntry.length > 0) {
-            const statsSeparatorIndex = logItems.indexOf(statsSeparator) + 1;
-            const filesWithNumStat = logItems.slice(statsSeparatorIndex).join(EOL).split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
-            const filesWithModeChanges = nameStatEntry.split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
+    private parserCommittedFiles(gitRepoPath: string, filesWithNumStat?: string, filesWithNameStatus?: string): CommittedFile[] {
+        if (filesWithNumStat && filesWithNumStat.length > 0) {
+            const numStatFiles = filesWithNumStat.split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
+            const nameStatusFiles = filesWithNameStatus!.split(/\r?\n/g).map(entry => entry.trim()).filter(entry => entry.length > 0);
             const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
-            const x = fileStatParserFactory.parse(gitRepoPath, filesWithNumStat, filesWithModeChanges);
-            const fileStatParserFactory2 = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
-            const y = fileStatParserFactory2.parse(gitRepoPath, filesWithNumStat, filesWithModeChanges);
-            return x;
+            return fileStatParserFactory.parse(gitRepoPath, numStatFiles, nameStatusFiles);
         }
         else {
             return [];
@@ -49,13 +44,13 @@ export class LogParser implements ILogParser {
         const dateTime = this.getCommitInfo(logItems, logFormatArgs, CommitInfo.CommitterDateUnixTime);
         return this.actionDetailsParser.parse(name, email, dateTime);
     }
-    public parse(gitRepoPath: string, summaryEntry: string, itemEntrySeparator: string, statsSeparator: string, logFormatArgs: string[], nameStatEntry?: string | undefined): LogEntry {
+    public parse(gitRepoPath: string, summaryEntry: string, itemEntrySeparator: string, logFormatArgs: string[], filesWithNumStat?: string, filesWithNameStatus?: string): LogEntry {
         const logItems = summaryEntry.split(itemEntrySeparator);
 
         const fullParentHash = this.getCommitInfo(logItems, logFormatArgs, CommitInfo.ParentFullHash).split(' ').filter(hash => hash.trim().length > 0);
         const shortParentHash = this.getCommitInfo(logItems, logFormatArgs, CommitInfo.ParentShortHash).split(' ').filter(hash => hash.trim().length > 0);
         const parents = fullParentHash.map((hash, index) => { return { full: hash, short: shortParentHash[index] }; });
-        const committedFiles = this.parserCommittedFiles(gitRepoPath, logItems, statsSeparator, nameStatEntry);
+        const committedFiles = this.parserCommittedFiles(gitRepoPath, filesWithNumStat, filesWithNameStatus);
 
         return {
             refs: this.refsparser.parse(this.getCommitInfo(logItems, logFormatArgs, CommitInfo.RefsNames)),

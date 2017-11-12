@@ -47,7 +47,7 @@ function LogEntry(props: ResultListProps) {
                 <div className='commit-hash-container'>
                     <CopyToClipboard text={props.logEntry.hash.full}>
                         <div className='copy-button'>
-                            <span className='btnx clipboard hint--right hint--rounded hint--bounce'
+                            <span className='btnx clipboard hint--left hint--rounded hint--bounce'
                                 aria-label='Copy the full Hash'>
                                 <GoClippy></GoClippy>
                             </span>

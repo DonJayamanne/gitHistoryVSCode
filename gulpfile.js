@@ -192,7 +192,7 @@ const hygiene = exports.hygiene = (some, options) => {
 
     const typescript = result
         .pipe(filter(tslintFilter))
-        .pipe(formatting)
+        // .pipe(formatting)
         .pipe(tsl)
         .pipe(tscFilesTracker)
         .pipe(tsc());

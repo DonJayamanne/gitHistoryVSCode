@@ -8,7 +8,7 @@ import { IServiceContainer } from '../../ioc/types';
 import { Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
-import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, PAGE_SIZE, STATS_SEPARATOR } from './constants';
+import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, PAGE_SIZE } from './constants';
 import { IGitArgsService } from './types';
 
 @injectable()
@@ -134,7 +134,7 @@ export class Git implements IGitService {
                 if (entry.length === 0) {
                     return;
                 }
-                return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS);
+                return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS);
             })
             .filter(logEntry => logEntry !== undefined)
             .map(logEntry => logEntry!);
@@ -174,7 +174,14 @@ export class Git implements IGitService {
             searchText
         } as LogEntries;
     }
-
+    public async getHash(hash: string): Promise<Hash> {
+        const hashes = await this.exec('show', '--format=%H-%h', '--no-patch', hash);
+        const parts = hashes.split(/\r?\n/g).filter(item => item.length > 0)[0].split('-');
+        return {
+            full: parts[0],
+            short: parts[1]
+        };
+    }
     public async getCommitDate(hash: string): Promise<Date | undefined> {
         const args = this.gitArgsService.getCommitDateArgs(hash);
         const output = await this.exec(...args);
@@ -190,23 +197,28 @@ export class Git implements IGitService {
         return new Date(unixTime * 1000);
     }
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
+        const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const numStartArgs = this.gitArgsService.getCommitWithNumStatArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgs(hash);
 
-        const gitRootPath = await this.getGitRoot();
-        const output = await this.exec(...numStartArgs);
+        const gitRootPathPromise = await this.getGitRoot();
+        const commitOutputPromise = await this.exec(...commitArgs);
+        const filesWithNumStatPromise = await this.execInShell(...numStartArgs);
+        const filesWithNameStatusPromise = await this.execInShell(...nameStatusArgs);
 
-        // Run another git history, but get file stats instead of the changes
-        const outputWithFileModeChanges = await this.exec(...nameStatusArgs);
-        const entriesWithFileModeChanges = outputWithFileModeChanges.split(LOG_ENTRY_SEPARATOR);
+        const values = await Promise.all([gitRootPathPromise, commitOutputPromise, filesWithNumStatPromise, filesWithNameStatusPromise]);
+        const gitRootPath = values[0];
+        const commitOutput = values[1];
+        const filesWithNumStat = values[2];
+        const filesWithNameStatus = values[3];
 
-        const entries = output
+        const entries = commitOutput
             .split(LOG_ENTRY_SEPARATOR)
             .map((entry, index) => {
                 if (entry.trim().length === 0) {
                     return undefined;
                 }
-                return this.logParser.parse(gitRootPath, entry, ITEM_ENTRY_SEPARATOR, STATS_SEPARATOR, LOG_FORMAT_ARGS, entriesWithFileModeChanges[index]);
+                return this.logParser.parse(gitRootPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, filesWithNumStat, filesWithNameStatus);
             })
             .filter(entry => entry !== undefined)
             .map(entry => entry!);
@@ -266,7 +278,7 @@ export class Git implements IGitService {
         const args = this.gitArgsService.getPreviousCommitHashForFileArgs(hash, relativeFilePath);
 
         const output = await this.exec(...args);
-        const hashes = output.split('-');
+        const hashes = output.split(/\r?\n/g).filter(item => item.length > 0)[0].split('-');
 
         return {
             short: hashes[1]!,

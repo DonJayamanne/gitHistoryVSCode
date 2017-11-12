@@ -2,7 +2,7 @@ import { interfaces } from 'inversify';
 import { commands, Disposable, window } from 'vscode';
 import { createDeferred } from '../common/helpers';
 import { Deferred } from '../common/promiseHelper';
-// import { getServiceContainer } from '../ioc/index';
+import { getServiceContainer } from '../ioc/index';
 
 // tslint:disable-next-line:no-any
 type CommandHandler = (...args: any[]) => any;
@@ -39,26 +39,26 @@ export class CommandRegister implements Disposable {
 export function command(commandName: string, serviceIdentifier: interfaces.ServiceIdentifier<any>) {
     // tslint:disable-next-line:no-function-expression no-any
     return function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<CommandHandler>) {
-        // CommandRegister.initialized.then(() => {
-        //     // tslint:disable-next-line:no-function-expression
-        //     CommandRegister.register(commandName, async function () {
-        //         try {
-        //             // hack hack (but this preserves context)
-        //             const container = getServiceContainer();
-        //             const newTarget = container.get(serviceIdentifier) as { propertyKey: Function };
-        //             const value = newTarget[propertyKey].call(newTarget, ...Array.from(arguments));
-        //             // const value = descriptor.value!.call(target, ...Array.from(arguments));
-        //             // If its a promise await the value
-        //             if (value && value.then && value.catch) {
-        //                 await value;
-        //             }
-        //         }
-        //         catch (reason) {
-        //             console.error(`Failed to execute the command ${commandName}`, reason);
-        //             window.showErrorMessage(`Failed to execute '${commandName}'. ${reason}`);
-        //         }
-        //     });
-        // });
+        CommandRegister.initialized.then(() => {
+            // tslint:disable-next-line:no-function-expression
+            CommandRegister.register(commandName, async function () {
+                try {
+                    // hack hack (but this preserves context)
+                    const container = getServiceContainer();
+                    const newTarget = container.get(serviceIdentifier) as { propertyKey: Function };
+                    const value = newTarget[propertyKey].call(newTarget, ...Array.from(arguments));
+                    // const value = descriptor.value!.call(target, ...Array.from(arguments));
+                    // If its a promise await the value
+                    if (value && value.then && value.catch) {
+                        await value;
+                    }
+                }
+                catch (reason) {
+                    console.error(`Failed to execute the command ${commandName}`, reason);
+                    window.showErrorMessage(`Failed to execute '${commandName}'. ${reason}`);
+                }
+            });
+        });
         return descriptor;
     };
 }

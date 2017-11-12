@@ -1,12 +1,13 @@
 import { Container } from 'inversify';
-import * as vscode from 'vscode';
 import { OutputChannel } from 'vscode';
+import * as vscode from 'vscode';
 import { registerTypes as registerParserTypes } from './adapter/parsers/serviceRegistry';
 import { registerTypes as registerRepositoryTypes } from './adapter/repository/serviceRegistry';
 import { registerTypes as registerAdapterTypes } from './adapter/serviceRegistry';
 import { GitFileHistoryCommandHandler } from './commands/fileHistory';
 import { GitCommitCommandHandler } from './commands/gitCommit';
 import { GitHistoryCommandHandler } from './commands/gitHistory';
+import { CommandRegister } from './commands/register';
 // import * as fileHistory from './commands/fileHistory';
 // import * as lineHistory from './commands/lineHistory';
 // import { CommandRegister } from './commands/register';
@@ -72,7 +73,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     let disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, new ContentProvider());
     context.subscriptions.push(disposable);
 
-    disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistoryFileViewerSchema, new CommitFileViewerProvider());
+    disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistoryFileViewerSchema, new CommitFileViewerProvider(serviceContainer));
     context.subscriptions.push(disposable);
 
     // fileHistory.activate(context);
@@ -83,11 +84,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     // commitComparer.activate(context, logViewer.getGitRepoPath);
 
     // setTimeout(() => {
-    // CommandRegister.initialize();
-    // context.subscriptions.push(serviceContainer.get<IGitHistoryCommandHandler>(IGitHistoryCommandHandler));
-    // context.subscriptions.push(serviceContainer.get<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler));
-    // context.subscriptions.push(serviceContainer.get<IGitCommitCommandHandler>(IGitCommitCommandHandler));
-    // context.subscriptions.push(new CommandRegister());
+    CommandRegister.initialize();
+    context.subscriptions.push(serviceContainer.get<IGitHistoryCommandHandler>(IGitHistoryCommandHandler));
+    context.subscriptions.push(serviceContainer.get<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler));
+    context.subscriptions.push(serviceContainer.get<IGitCommitCommandHandler>(IGitCommitCommandHandler));
+    context.subscriptions.push(new CommandRegister());
 
     // }, 1000);
 }

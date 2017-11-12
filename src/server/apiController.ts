@@ -58,7 +58,7 @@ export class ApiController implements IApiRouteHandler {
         let promise: Promise<LogEntries>;
         const currentState = this.stateStore.getState(id);
 
-        const branchesMatch = currentState && (typeof currentState.branch === 'string' && typeof branch === 'string' && currentState.branch === branch);
+        const branchesMatch = currentState && (currentState.branch === branch);
         const noBranchDefinedByClient = !currentState;
         if (searchText === undefined && pageIndex === undefined && pageSize === undefined &&
             filePath === undefined && file === undefined &&
@@ -172,7 +172,6 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         commands.executeCommand('git.commit.doSomething', workspaceFolder, currentState.branch, hash);
-        const x = '';
     }
     public selectCommittedFile = async (request: Request, response: Response) => {
         response.send('');
@@ -183,6 +182,5 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         commands.executeCommand('git.commit.file.select', workspaceFolder, currentState.branch, hash, committedFile);
-        const x = '';
     }
 }
