@@ -29,3 +29,9 @@ export const IGitBranchFromCommitCommandHandler = Symbol('IGitBranchFromCommitCo
 export interface IGitBranchFromCommitCommandHandler extends Disposable {
 
 }
+
+export const IGitCompareCommandHandler = Symbol('IGitCompareCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitCompareCommandHandler extends Disposable {
+
+}

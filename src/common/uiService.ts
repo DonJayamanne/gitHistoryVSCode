@@ -1,6 +1,9 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { CancellationTokenSource, QuickPickItem, window, workspace, WorkspaceFolder } from 'vscode';
-import { BranchSelection, CommittedFile, Status } from '../types';
+import { LogEntry } from '../../browser/src/definitions';
+import { command } from '../commands/register';
+import { IServiceContainer } from '../ioc/types';
+import { BranchSelection, CommittedFile, IGitServiceFactory, Status } from '../types';
 import { IUiService } from './types';
 
 const allBranches = 'All branches';
@@ -9,6 +12,9 @@ const currentBranch = 'Current branch';
 @injectable()
 export class UiService implements IUiService {
     private selectionActionToken?: CancellationTokenSource;
+    private previouslySelectedCommit?: LogEntry;
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
+
     public async getBranchSelection(): Promise<BranchSelection | undefined> {
         const itemPickList: QuickPickItem[] = [];
         itemPickList.push({ label: currentBranch, description: '' });
@@ -68,9 +74,14 @@ export class UiService implements IUiService {
         const items = [
             { label: `$(git-branch) Branch from ${hash.substr(0, 8)}`, command: 'git.commit.branch', description: '' },
             { label: `$(git-pull-request) Cherry pick ${hash.substr(0, 8)} into current branch`, command: 'git.commit.cherryPick', description: '' },
-            { label: '$(git-compare) Compare with ...', command: 'git.commit.selectForComparison', description: '' },
-            { label: '$(git-compare) Compare with selected commit (xxxx)', command: 'git.commit.compareWithSelected', description: '' }
+            { label: '$(git-compare) Compare with ...', command: 'git.commit.selectForComparison', description: '' }
         ];
+
+        if (this.previouslySelectedCommit) {
+            const label = `$(git-compare) Compare with ${this.previouslySelectedCommit.hash.short}`;
+            const description = this.previouslySelectedCommit.subject;
+            items.push({ label, command: 'git.commit.compareWithSelected', description });
+        }
 
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 
@@ -80,5 +91,10 @@ export class UiService implements IUiService {
         }
 
         return selection.command;
+    }
+    @command('git.commit.selectForComparison', IUiService)
+    public async onCommitSelected(workspaceFolder: string, _branchName: string | undefined, hash: string) {
+        const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
+        this.previouslySelectedCommit = await gitService.getCommit(hash);
     }
 }
