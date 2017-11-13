@@ -20,7 +20,7 @@ import { CommandRegister } from './commands/register';
 import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler } from './commands/types';
 import { Logger } from './common/log';
 import { ILogService, IUiService } from './common/types';
-// import { OutputPanelLogger } from './common/uiLogger';
+import { OutputPanelLogger } from './common/uiLogger';
 import { UiService } from './common/uiService';
 import { gitHistoryFileViewerSchema, gitHistorySchema } from './constants';
 import { CommitViewFormatter } from './formatters/commitFormatter';
@@ -53,7 +53,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     cont.bind<IServiceContainer>(IServiceContainer).toConstantValue(serviceContainer);
 
     cont.bind<ILogService>(ILogService).to(Logger).inSingletonScope();
-    // cont.bind<ILogService>(ILogService).to(OutputPanelLogger).inSingletonScope().whenTargetNamed('Viewer');
+    cont.bind<ILogService>(ILogService).to(OutputPanelLogger).inSingletonScope(); // .whenTargetNamed('Viewer');
     cont.bind<IGitHistoryCommandHandler>(IGitHistoryCommandHandler).toConstantValue(new GitHistoryCommandHandler(serviceManager));
     cont.bind<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler).toConstantValue(new GitFileHistoryCommandHandler(serviceManager));
     cont.bind<IGitCommitCommandHandler>(IGitCommitCommandHandler).toConstantValue(new GitCommitCommandHandler(serviceManager));
