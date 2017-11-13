@@ -26,12 +26,12 @@ class DeferredImpl<T> implements IDeferred<T> {
             this._reject = rej;
         });
     }
-    public resolve(value?: T | PromiseLike<T>) {
+    public resolve(_value?: T | PromiseLike<T>) {
         this._resolve.apply(this.scope ? this.scope : this, arguments);
         this._resolved = true;
     }
     // tslint:disable-next-line:no-any
-    public reject(reason?: any) {
+    public reject(_reason?: any) {
         this._reject.apply(this.scope ? this.scope : this, arguments);
         this._rejected = true;
     }
@@ -53,7 +53,7 @@ export function createDeferred<T>(scope: any = null): IDeferred<T> {
     return new DeferredImpl<T>(scope);
 }
 
-export function createTemporaryFile(extension: string, temporaryDirectory?: string): Promise<{ filePath: string, cleanupCallback: Function }> {
+export async function createTemporaryFile(extension: string, temporaryDirectory?: string): Promise<{ filePath: string, cleanupCallback: Function }> {
     const options: { postfix: string, dir?: string } = { postfix: extension };
     if (temporaryDirectory) {
         options.dir = temporaryDirectory;

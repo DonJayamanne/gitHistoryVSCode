@@ -38,7 +38,7 @@ export class CommandRegister implements Disposable {
 // tslint:disable-next-line:no-any function-name
 export function command(commandName: string, serviceIdentifier: interfaces.ServiceIdentifier<any>) {
     // tslint:disable-next-line:no-function-expression no-any
-    return function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<CommandHandler>) {
+    return function (_target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<CommandHandler>) {
         CommandRegister.initialized.then(() => {
             // tslint:disable-next-line:no-function-expression
             CommandRegister.register(commandName, async function () {

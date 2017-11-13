@@ -56,16 +56,20 @@ export class UiService implements IUiService {
 
         return selection.command;
     }
-    public async selectCommitCommandAction(_hash: string): Promise<string | undefined> {
+    public async selectCommitCommandAction(hash: string): Promise<string | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
 
+        // const gitService = this.serviceContainer.get<IGitService>(IGitService);
+        // const currentBranchPromise = gitService.getCurrentBranch();
+
         const items = [
-            { label: 'Cherry pick', command: 'git.commit.cherryPick', description: '' },
-            { label: 'Compare with another commit', command: 'git.commit.selectForComparison', description: '' },
-            { label: 'Compare with selected commit (xxxx)', command: 'git.commit.compareWithSelected', description: '' }
+            { label: `$(git-branch) Branch from ${hash.substr(0, 8)}`, command: 'git.commit.branch', description: '' },
+            { label: `$(git-pull-request) Cherry pick ${hash.substr(0, 8)} into current branch`, command: 'git.commit.cherryPick', description: '' },
+            { label: '$(git-compare) Compare with ...', command: 'git.commit.selectForComparison', description: '' },
+            { label: '$(git-compare) Compare with selected commit (xxxx)', command: 'git.commit.compareWithSelected', description: '' }
         ];
 
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };

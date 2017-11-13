@@ -130,7 +130,7 @@ export class Git implements IGitService {
         // const entriesWithFileModeChanges = outputWithFileModeChanges.split(LOG_ENTRY_SEPARATOR);
         const items = output
             .split(LOG_ENTRY_SEPARATOR)
-            .map((entry, index) => {
+            .map(entry => {
                 if (entry.length === 0) {
                     return;
                 }
@@ -214,7 +214,7 @@ export class Git implements IGitService {
 
         const entries = commitOutput
             .split(LOG_ENTRY_SEPARATOR)
-            .map((entry, index) => {
+            .map(entry => {
                 if (entry.trim().length === 0) {
                     return undefined;
                 }
@@ -284,5 +284,13 @@ export class Git implements IGitService {
             short: hashes[1]!,
             full: hashes[0]!
         };
+    }
+
+    public async cherryPick(hash: string): Promise<void> {
+        await this.exec('cherry-pick', hash);
+    }
+
+    public async createBranch(branchName: string, hash: string): Promise<void> {
+        await this.exec('checkout', '-b', branchName, hash);
     }
 }

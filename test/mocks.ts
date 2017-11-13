@@ -5,15 +5,15 @@ import { Abstract, IServiceContainer, IServiceManager, Newable } from '../src/io
 @injectable()
 export class MockLogger implements ILogService {
     // tslint:disable-next-line:no-any
-    public log(...args: any[]): void {
+    public log(..._args: any[]): void {
         return;
     }
     // tslint:disable-next-line:no-any
-    public trace(...args: any[]): void {
+    public trace(..._args: any[]): void {
         return;
     }
     // tslint:disable-next-line:no-any
-    public error(...args: any[]): void {
+    public error(..._args: any[]): void {
         return;
     }
 }

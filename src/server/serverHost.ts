@@ -40,7 +40,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
 
     private port?: number;
     private startPromise: Promise<StartupInfo>;
-    public async start(workspaceFolder: string): Promise<StartupInfo> {
+    public async start(_workspaceFolder: string): Promise<StartupInfo> {
         if (this.startPromise) {
             return this.startPromise;
         }
@@ -62,7 +62,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
         this.app.use(express.static(path.join(node_modulesDirectory, 'normalize.css')));
         this.app.use(express.static(path.join(node_modulesDirectory, 'bootstrap', 'dist', 'css')));
         this.app.use(cors());
-        this.app.get('/', (req, res, next) => {
+        this.app.get('/', (req, res) => {
             this.rootRequestHandler(req, res);
         });
 

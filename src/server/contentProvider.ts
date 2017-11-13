@@ -3,7 +3,7 @@ import { CancellationToken, TextDocumentContentProvider, Uri } from 'vscode';
 import { BranchSelection } from '../types';
 
 export class ContentProvider implements TextDocumentContentProvider {
-    public provideTextDocumentContent(uri: Uri, token: CancellationToken): string {
+    public provideTextDocumentContent(uri: Uri, _token: CancellationToken): string {
         const query = querystring.parse(uri.query.toString())!;
         const port: number = parseInt(query.port!.toString(), 10);
         const id: string = query.id! as string;

@@ -35,9 +35,16 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         const buffers: Buffer[] = [];
         on(gitShow.stdout, 'data', (data: Buffer) => buffers.push(data));
 
+        const errBuffers: Buffer[] = [];
+        on(gitShow.stderr, 'data', (data: Buffer) => errBuffers.push(data));
+
         return new Promise<string>((resolve, reject) => {
             gitShow.once('close', () => {
-                resolve(decode(buffers, childProcOptions.encoding));
+                if (errBuffers.length > 0) {
+                    reject(decode(errBuffers, childProcOptions.encoding));
+                } else {
+                    resolve(decode(buffers, childProcOptions.encoding));
+                }
                 disposables.forEach(disposable => disposable.dispose());
             });
             gitShow.once('error', ex => {

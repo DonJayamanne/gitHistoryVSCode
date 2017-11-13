@@ -31,7 +31,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     }
 
     @command('git.commit.file.viewFileContents', IGitFileHistoryCommandHandler)
-    public async onViewFile(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+    public async onViewFile(workspaceFolder: string, _branch: string | undefined, hash: string, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
         const uri = await this.getFileUri(gitService, workspaceFolder, hash, commitedFile);
         const doc = await workspace.openTextDocument(uri);
@@ -39,7 +39,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     }
 
     @command('git.commit.file.compareAgainstWorkspace', IGitFileHistoryCommandHandler)
-    public async onCompareFileWithWorkspace(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+    public async onCompareFileWithWorkspace(workspaceFolder: string, _branch: string | undefined, hash: string, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
         const tmpFile = await gitService.getCommitFile(hash, commitedFile.uri);
         const fileName = path.basename(commitedFile.uri.fsPath);
@@ -48,7 +48,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     }
 
     @command('git.commit.file.compareAgainstPrevious', IGitFileHistoryCommandHandler)
-    public async onCompareFileWithPrevious(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+    public async onCompareFileWithPrevious(workspaceFolder: string, _branch: string | undefined, hash: string, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
 
         const hashesPromise = await gitService.getHash(hash);

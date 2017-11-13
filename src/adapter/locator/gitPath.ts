@@ -40,7 +40,7 @@ export class GitExecutableLocator implements IGitExecutableLocator {
 
 type ErrorEx = Error & { code?: number, stdout?: string, stderr?: string };
 
-function regQueryInstallPath(location: string, view: string | null) {
+async function regQueryInstallPath(location: string, view: string | null) {
     return new Promise<string>((resolve, reject) => {
         function callback(error: Error, stdout: string, stderr: string): void {
             if (error && (<ErrorEx>error).code !== 0) {
@@ -78,18 +78,18 @@ const GitLookupRegistryKeys = [
     { key: 'HKLM\\SOFTWARE\\GitForWindows', view: '32' }    // for a 32bit git installation on 64bit Windows
 ];
 
-function queryChained(locations: { key: string, view: string | null }[]): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+async function queryChained(locations: { key: string, view: string | null }[]): Promise<string> {
+    return new Promise<string>((_resolve, reject) => {
         if (locations.length === 0) {
             return reject('None of the known git Registry keys were found');
         }
 
         const location = locations[0];
         return regQueryInstallPath(location.key, location.view)
-            .catch(error => queryChained(locations.slice(1)));
+            .catch(async () => queryChained(locations.slice(1)));
     });
 }
-function getGitPathOnWindows(loggers: ILogService[]) {
+async function getGitPathOnWindows(loggers: ILogService[]) {
     try {
         const gitRegPath = queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
         loggers.forEach(logger => logger.trace(`git path: ${gitRegPath} - from registry`));

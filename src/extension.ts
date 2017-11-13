@@ -5,6 +5,8 @@ import { registerTypes as registerParserTypes } from './adapter/parsers/serviceR
 import { registerTypes as registerRepositoryTypes } from './adapter/repository/serviceRegistry';
 import { registerTypes as registerAdapterTypes } from './adapter/serviceRegistry';
 import { GitFileHistoryCommandHandler } from './commands/fileHistory';
+import { GitBranchFromCommitCommandHandler } from './commands/gitBranchFromCommit';
+import { GitCherryPickCommandHandler } from './commands/gitCherryPick';
 import { GitCommitCommandHandler } from './commands/gitCommit';
 import { GitHistoryCommandHandler } from './commands/gitHistory';
 import { CommandRegister } from './commands/register';
@@ -15,7 +17,7 @@ import { CommandRegister } from './commands/register';
 // import * as commitComparer from './commitCompare/main';
 // import * as commitViewer from './commitViewer/main';
 // import * as logViewer from './logViewer/logViewer';
-import { IGitCommitCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler } from './commands/types';
+import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler } from './commands/types';
 import { Logger } from './common/log';
 import { ILogService, IUiService } from './common/types';
 // import { OutputPanelLogger } from './common/uiLogger';
@@ -55,6 +57,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     cont.bind<IGitHistoryCommandHandler>(IGitHistoryCommandHandler).toConstantValue(new GitHistoryCommandHandler(serviceManager));
     cont.bind<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler).toConstantValue(new GitFileHistoryCommandHandler(serviceManager));
     cont.bind<IGitCommitCommandHandler>(IGitCommitCommandHandler).toConstantValue(new GitCommitCommandHandler(serviceManager));
+    cont.bind<IGitCommitCommandHandler>(IGitCherryPickCommandHandler).toConstantValue(new GitCherryPickCommandHandler(serviceManager));
+    cont.bind<IGitBranchFromCommitCommandHandler>(IGitBranchFromCommitCommandHandler).toConstantValue(new GitBranchFromCommitCommandHandler(serviceManager));
     cont.bind<ICommitViewer>(ICommitViewer).to(CommitViewer).inSingletonScope();
     cont.bind<IUiService>(IUiService).to(UiService).inSingletonScope();
     cont.bind<IThemeService>(IThemeService).to(ThemeService).inSingletonScope();
@@ -85,9 +89,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 
     // setTimeout(() => {
     CommandRegister.initialize();
-    context.subscriptions.push(serviceContainer.get<IGitHistoryCommandHandler>(IGitHistoryCommandHandler));
-    context.subscriptions.push(serviceContainer.get<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler));
-    context.subscriptions.push(serviceContainer.get<IGitCommitCommandHandler>(IGitCommitCommandHandler));
+    // context.subscriptions.push(serviceContainer.get<IGitHistoryCommandHandler>(IGitHistoryCommandHandler));
+    // context.subscriptions.push(serviceContainer.get<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler));
+    // context.subscriptions.push(serviceContainer.get<IGitCommitCommandHandler>(IGitCommitCommandHandler));
+    // context.subscriptions.push(serviceContainer.get<IGitCommitCommandHandler>(IGitCommitCommandHandler));
+    // context.subscriptions.push(serviceContainer.get<IGitBranchFromCommitCommandHandler>(IGitBranchFromCommitCommandHandler));
     context.subscriptions.push(new CommandRegister());
 
     // }, 1000);

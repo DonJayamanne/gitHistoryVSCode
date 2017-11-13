@@ -118,6 +118,8 @@ export interface IGitService {
     getCommitFile(hash: string, file: FsUri | string): Promise<FsUri>;
     getCommitFileContent(hash: string, file: FsUri | string): Promise<string>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
+    cherryPick(hash: string): Promise<void>;
+    createBranch(branchName: string, hash: string): Promise<void>;
 }
 
 export const IGitServiceFactory = Symbol('IGitServiceFactory');

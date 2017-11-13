@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
-import { Disposable } from 'vscode';
+import { commands, Disposable } from 'vscode';
 import { command } from '../commands/register';
 import { IUiService } from '../common/types';
-import {IServiceContainer} from '../ioc/types';
+import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ICommitViewer } from '../viewers/types';
 import { IGitCommitCommandHandler } from './types';
@@ -18,7 +18,7 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     }
 
     @command('git.commit.viewChangeLog', IGitCommitCommandHandler)
-    public async viewHistory(workspaceFolder: string, branchName: string | undefined, hash: string) {
+    public async viewHistory(workspaceFolder: string, _branchName: string | undefined, hash: string) {
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
         const logEntry = await gitService.getCommit(hash);
         if (!logEntry) {
@@ -35,5 +35,6 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
         }
         // tslint:disable-next-line:no-console
         console.log(commandAction);
+        commands.executeCommand(commandAction, workspaceFolder, branchName, hash);
     }
 }

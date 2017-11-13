@@ -17,3 +17,15 @@ export const IGitCommitCommandHandler = Symbol('IGitCommitCommandHandler');
 export interface IGitCommitCommandHandler extends Disposable {
 
 }
+
+export const IGitCherryPickCommandHandler = Symbol('IGitCherryPickCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitCherryPickCommandHandler extends Disposable {
+
+}
+
+export const IGitBranchFromCommitCommandHandler = Symbol('IGitBranchFromCommitCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitBranchFromCommitCommandHandler extends Disposable {
+
+}
