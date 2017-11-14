@@ -91,6 +91,7 @@
             "promise",
             "theneable"
         ],
-        "no-void-expression": false
+        "no-void-expression": false,
+        "function-name": false
     }
 }

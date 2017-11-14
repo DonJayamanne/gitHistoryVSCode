@@ -4,6 +4,7 @@ import * as path from 'path';
 import 'reflect-metadata';
 import * as tmp from 'tmp';
 import { Uri } from 'vscode';
+import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
 import { Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
@@ -52,7 +53,8 @@ export class Git implements IGitService {
         console.log('');
     }
 
-    public async  getGitRoot(): Promise<string> {
+    @cache('IGitService')
+    public async getGitRoot(): Promise<string> {
         if (this.gitRootPath) {
             return this.gitRootPath;
         }
@@ -91,8 +93,8 @@ export class Git implements IGitService {
         const branch = await this.exec(...args);
         return branch.split(/\r?\n/g)[0].trim();
     }
+    @cache('IGitService')
     public async getObjectHash(object: string): Promise<string> {
-
         // Get the hash of the given ref
         // E.g. git show --format=%H --shortstat remotes/origin/tyriar/xterm-v3
         const args = this.gitArgsService.getObjectHashArgs(object);
@@ -174,6 +176,7 @@ export class Git implements IGitService {
             searchText
         } as LogEntries;
     }
+    @cache('IGitService')
     public async getHash(hash: string): Promise<Hash> {
         const hashes = await this.exec('show', '--format=%H-%h', '--no-patch', hash);
         const parts = hashes.split(/\r?\n/g).filter(item => item.length > 0)[0].split('-');
@@ -182,6 +185,7 @@ export class Git implements IGitService {
             short: parts[1]
         };
     }
+    @cache('IGitService')
     public async getCommitDate(hash: string): Promise<Date | undefined> {
         const args = this.gitArgsService.getCommitDateArgs(hash);
         const output = await this.exec(...args);
@@ -196,6 +200,7 @@ export class Git implements IGitService {
         }
         return new Date(unixTime * 1000);
     }
+    @cache('IGitService')
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const numStartArgs = this.gitArgsService.getCommitWithNumStatArgs(hash);
@@ -226,6 +231,7 @@ export class Git implements IGitService {
         return entries.length > 0 ? entries[0] : undefined;
     }
 
+    @cache('IGitService')
     public async getCommitFile(hash: string, file: Uri | string): Promise<Uri> {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
@@ -247,6 +253,7 @@ export class Git implements IGitService {
         const relativeFilePath = path.relative(gitRootPath, filePath);
         return await this.execInShell('show', `${hash}:${relativeFilePath}`);
     }
+    @cache('IGitService')
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
         const gitRepoPath = await this.getGitRoot();
         const numStartArgs = this.gitArgsService.getDiffCommitWithNumStatArgs(hash1, hash2);
@@ -272,6 +279,7 @@ export class Git implements IGitService {
         const fileStatParser = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
         return fileStatParser.parse(gitRepoPath, numstatEntries, namestatEntries);
     }
+    @cache('IGitService')
     public async getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash> {
         const gitRootPath = await this.getGitRoot();
         const relativeFilePath = path.relative(gitRootPath, file.fsPath);

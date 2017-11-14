@@ -3,7 +3,7 @@ import { CancellationTokenSource, QuickPickItem, window, workspace, WorkspaceFol
 import { LogEntry } from '../../browser/src/definitions';
 import { command } from '../commands/register';
 import { IServiceContainer } from '../ioc/types';
-import { BranchSelection, CommittedFile, IGitServiceFactory, Status } from '../types';
+import { BranchSelection, CommittedFile, Hash, IGitServiceFactory, Status } from '../types';
 import { IUiService } from './types';
 
 const allBranches = 'All branches';
@@ -13,7 +13,7 @@ const currentBranch = 'Current branch';
 export class UiService implements IUiService {
     private selectionActionToken?: CancellationTokenSource;
     private previouslySelectedCommit?: LogEntry;
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
+    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     public async getBranchSelection(): Promise<BranchSelection | undefined> {
         const itemPickList: QuickPickItem[] = [];
@@ -45,12 +45,12 @@ export class UiService implements IUiService {
         this.selectionActionToken = new CancellationTokenSource();
 
         const items = [
-            { label: 'View file contents', command: 'git.commit.file.viewFileContents', description: '' },
-            { label: 'Compare against workspace file', command: 'git.commit.file.compareAgainstWorkspace', description: '' }
+            { label: '$(eye) View file contents', command: 'git.commit.file.viewFileContents', description: '' },
+            { label: '$(git-compare) Compare against workspace file', command: 'git.commit.file.compareAgainstWorkspace', description: '' }
         ];
 
         if (committedFile.status !== Status.Added) {
-            items.push({ label: 'Compare against previous version', command: 'git.commit.file.compareAgainstPrevious', description: '' });
+            items.push({ label: '$(git-compare) Compare against previous version', command: 'git.commit.file.compareAgainstPrevious', description: '' });
         }
 
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
@@ -62,7 +62,7 @@ export class UiService implements IUiService {
 
         return selection.command;
     }
-    public async selectCommitCommandAction(hash: string): Promise<string | undefined> {
+    public async selectCommitCommandAction(hashes: Hash): Promise<string | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
@@ -72,9 +72,9 @@ export class UiService implements IUiService {
         // const currentBranchPromise = gitService.getCurrentBranch();
 
         const items = [
-            { label: `$(git-branch) Branch from ${hash.substr(0, 8)}`, command: 'git.commit.branch', description: '' },
-            { label: `$(git-pull-request) Cherry pick ${hash.substr(0, 8)} into current branch`, command: 'git.commit.cherryPick', description: '' },
-            { label: '$(git-compare) Compare with ...', command: 'git.commit.selectForComparison', description: '' }
+            { label: `$(git-branch) Branch from ${hashes.short}`, command: 'git.commit.branch', description: '' },
+            { label: `$(git-pull-request) Cherry pick ${hashes.short} into current branch`, command: 'git.commit.cherryPick', description: '' },
+            { label: '$(git-compare) Select for comparison', command: 'git.commit.selectForComparison', description: '' }
         ];
 
         if (this.previouslySelectedCommit) {
@@ -92,6 +92,7 @@ export class UiService implements IUiService {
 
         return selection.command;
     }
+
     @command('git.commit.selectForComparison', IUiService)
     public async onCommitSelected(workspaceFolder: string, _branchName: string | undefined, hash: string) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);

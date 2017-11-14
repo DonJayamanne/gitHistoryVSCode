@@ -29,7 +29,9 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
 
     @command('git.commit.doSomething', IGitCommitCommandHandler)
     public async doSomethingWithCommit(workspaceFolder: string, branchName: string | undefined, hash: string) {
-        const commandAction = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(hash);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
+        const hashes = await gitService.getHash(hash);
+        const commandAction = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(hashes);
         if (!commandAction) {
             return;
         }

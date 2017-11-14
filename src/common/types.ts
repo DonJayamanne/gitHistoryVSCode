@@ -1,4 +1,4 @@
-import { BranchSelection, CommittedFile } from '../types';
+import { BranchSelection, CommittedFile, Hash } from '../types';
 
 export const ILogService = Symbol('ILogService');
 
@@ -17,5 +17,5 @@ export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
     getWorkspaceFolder(): Promise<string | undefined>;
     selectFileCommitCommandAction(commitedFile: CommittedFile): Promise<string | undefined>;
-    selectCommitCommandAction(hash: string): Promise<string | undefined>;
+    selectCommitCommandAction(hashes: Hash): Promise<string | undefined>;
 }
