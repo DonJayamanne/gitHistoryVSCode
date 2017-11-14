@@ -3,7 +3,7 @@ import { commands, Disposable } from 'vscode';
 import { command } from '../commands/register';
 import { IUiService } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { IGitServiceFactory } from '../types';
+import { IGitServiceFactory, LogEntry } from '../types';
 import { ICommitViewer } from '../viewers/types';
 import { IGitCommitCommandHandler } from './types';
 
@@ -28,15 +28,13 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     }
 
     @command('git.commit.doSomething', IGitCommitCommandHandler)
-    public async doSomethingWithCommit(workspaceFolder: string, branchName: string | undefined, hash: string) {
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        const hashes = await gitService.getHash(hash);
-        const commandAction = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(hashes);
+    public async doSomethingWithCommit(workspaceFolder: string, _branchName: string | undefined, logEntry: LogEntry) {
+        const commandAction = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(workspaceFolder, logEntry);
         if (!commandAction) {
             return;
         }
         // tslint:disable-next-line:no-console
         console.log(commandAction);
-        commands.executeCommand(commandAction, workspaceFolder, branchName, hash);
+        commands.executeCommand(commandAction.command, ...commandAction.args);
     }
 }

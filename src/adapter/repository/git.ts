@@ -255,29 +255,20 @@ export class Git implements IGitService {
     }
     @cache('IGitService')
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
-        const gitRepoPath = await this.getGitRoot();
         const numStartArgs = this.gitArgsService.getDiffCommitWithNumStatArgs(hash1, hash2);
         const nameStatusArgs = this.gitArgsService.getDiffCommitNameStatusArgs(hash1, hash2);
 
-        const output = await this.exec(...numStartArgs);
-        const outputWithFileModeChanges = await this.exec(...nameStatusArgs);
-        const entriesWithFileModeChanges = outputWithFileModeChanges.split(/\r?\n/g);
+        const gitRootPathPromise = this.getGitRoot();
+        const filesWithNumStatPromise = this.execInShell(...numStartArgs);
+        const filesWithNameStatusPromise = this.execInShell(...nameStatusArgs);
 
-        const bothEntries = output
-            .split(/\r?\n/g)
-            .map((entry, index) => {
-                if (entry.trim().length === 0) {
-                    return undefined;
-                }
-                return { numstat: entry, namestat: entriesWithFileModeChanges[index] };
-            })
-            .filter(entry => entry !== undefined)
-            .map(entry => entry!);
+        const values = await Promise.all([gitRootPathPromise, filesWithNumStatPromise, filesWithNameStatusPromise]);
+        const gitRootPath = values[0];
+        const filesWithNumStat = values[1];
+        const filesWithNameStatus = values[2];
 
-        const numstatEntries = bothEntries.map(items => items.numstat);
-        const namestatEntries = bothEntries.map(items => items.namestat);
         const fileStatParser = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
-        return fileStatParser.parse(gitRepoPath, numstatEntries, namestatEntries);
+        return fileStatParser.parse(gitRootPath, filesWithNumStat.split(/\r?\n/g), filesWithNameStatus.split(/\r?\n/g));
     }
     @cache('IGitService')
     public async getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash> {

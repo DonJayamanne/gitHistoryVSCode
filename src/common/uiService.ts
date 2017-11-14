@@ -1,10 +1,9 @@
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { CancellationTokenSource, QuickPickItem, window, workspace, WorkspaceFolder } from 'vscode';
 import { LogEntry } from '../../browser/src/definitions';
 import { command } from '../commands/register';
-import { IServiceContainer } from '../ioc/types';
-import { BranchSelection, CommittedFile, Hash, IGitServiceFactory, Status } from '../types';
-import { IUiService } from './types';
+import { BranchSelection, CommittedFile, Status } from '../types';
+import { ICommand, IUiService } from './types';
 
 const allBranches = 'All branches';
 const currentBranch = 'Current branch';
@@ -13,7 +12,6 @@ const currentBranch = 'Current branch';
 export class UiService implements IUiService {
     private selectionActionToken?: CancellationTokenSource;
     private previouslySelectedCommit?: LogEntry;
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     public async getBranchSelection(): Promise<BranchSelection | undefined> {
         const itemPickList: QuickPickItem[] = [];
@@ -62,7 +60,7 @@ export class UiService implements IUiService {
 
         return selection.command;
     }
-    public async selectCommitCommandAction(hashes: Hash): Promise<string | undefined> {
+    public async selectCommitCommandAction(workspaceFolder: string, logEntry: LogEntry): Promise<ICommand | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
@@ -71,16 +69,16 @@ export class UiService implements IUiService {
         // const gitService = this.serviceContainer.get<IGitService>(IGitService);
         // const currentBranchPromise = gitService.getCurrentBranch();
 
-        const items = [
-            { label: `$(git-branch) Branch from ${hashes.short}`, command: 'git.commit.branch', description: '' },
-            { label: `$(git-pull-request) Cherry pick ${hashes.short} into current branch`, command: 'git.commit.cherryPick', description: '' },
-            { label: '$(git-compare) Select for comparison', command: 'git.commit.selectForComparison', description: '' }
+        const items: (QuickPickItem & ICommand)[] = [
+            { label: `$(git-branch) Branch from ${logEntry.hash.short}`, command: 'git.commit.branch', description: '', args: [workspaceFolder, logEntry.hash] },
+            { label: `$(git-pull-request) Cherry pick ${logEntry.hash.short} into current branch`, command: 'git.commit.cherryPick', description: '', args: [workspaceFolder, logEntry.hash] },
+            { label: '$(git-compare) Select for comparison', command: 'git.commit.selectForComparison', description: '', args: [workspaceFolder, logEntry] }
         ];
 
         if (this.previouslySelectedCommit) {
             const label = `$(git-compare) Compare with ${this.previouslySelectedCommit.hash.short}`;
             const description = this.previouslySelectedCommit.subject;
-            items.push({ label, command: 'git.commit.compareWithSelected', description });
+            items.push({ label, command: 'git.commit.compareWithSelected', description, args: [workspaceFolder, this.previouslySelectedCommit, logEntry] });
         }
 
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
@@ -90,12 +88,11 @@ export class UiService implements IUiService {
             return undefined;
         }
 
-        return selection.command;
+        return { command: selection.command, args: selection.args };
     }
 
     @command('git.commit.selectForComparison', IUiService)
-    public async onCommitSelected(workspaceFolder: string, _branchName: string | undefined, hash: string) {
-        const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        this.previouslySelectedCommit = await gitService.getCommit(hash);
+    public async onCommitSelected(_workspaceFolder: string, logEntry: LogEntry) {
+        this.previouslySelectedCommit = logEntry;
     }
 }

@@ -1,4 +1,4 @@
-import { BranchSelection, CommittedFile, Hash } from '../types';
+import { BranchSelection, CommittedFile, LogEntry } from '../types';
 
 export const ILogService = Symbol('ILogService');
 
@@ -17,5 +17,11 @@ export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
     getWorkspaceFolder(): Promise<string | undefined>;
     selectFileCommitCommandAction(commitedFile: CommittedFile): Promise<string | undefined>;
-    selectCommitCommandAction(hashes: Hash): Promise<string | undefined>;
+    selectCommitCommandAction(workspaceFolder: string, logEntry: LogEntry): Promise<ICommand | undefined>;
+}
+
+export interface ICommand {
+    readonly command: string;
+    // tslint:disable-next-line:no-any
+    readonly args: any[];
 }

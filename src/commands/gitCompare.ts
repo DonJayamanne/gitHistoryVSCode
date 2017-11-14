@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
-import { Disposable, window } from 'vscode';
+import { commands, Disposable } from 'vscode';
 import { command } from '../commands/register';
 import { IServiceContainer } from '../ioc/types';
-import { IGitServiceFactory } from '../types';
+import { IGitServiceFactory, LogEntry } from '../types';
 import { IGitCompareCommandHandler } from './types';
 
 @injectable()
@@ -15,9 +15,10 @@ export class GitCompareCommandHandler implements IGitCompareCommandHandler {
         this.disposables.forEach(disposable => disposable.dispose());
     }
 
-    @command('git.commit.selectForComparisonxxx', IGitCompareCommandHandler)
-    public async onCommitSelected(workspaceFolder: string, _branchName: string | undefined, hash: string) {
+    @command('git.commit.compareWithSelected', IGitCompareCommandHandler)
+    public async onCommitSelected(workspaceFolder: string, left: LogEntry, right: LogEntry) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        // this.previouslySelectedHash = await gitService.getHash(hash);
+        const fileDiffs = await gitService.getDifferences(left.hash.full, right.hash.full);
+        commands.executeCommand('git.commit.diff.view', workspaceFolder, left, right, fileDiffs);
     }
 }

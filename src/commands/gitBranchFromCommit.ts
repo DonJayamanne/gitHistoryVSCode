@@ -16,7 +16,7 @@ export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCo
     }
 
     @command('git.commit.branch', IGitBranchFromCommitCommandHandler)
-    public async createBranchFromCommit(workspaceFolder: string, _branchName: string | undefined, hash: string) {
+    public async createBranchFromCommit(workspaceFolder: string, hash: string) {
         const msg = 'Branch name';
         const description = 'Please provide a branch name';
         const newBranchName = await window.showInputBox({ placeHolder: msg, prompt: description });

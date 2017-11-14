@@ -62,7 +62,7 @@ export const actionACommit = (logEntry: LogEntry) => {
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const url = getQueryUrl(state, `/log/${logEntry.hash.full}`);
-        return axios.post(url, logEntry.hash.full);
+        return axios.post(url, logEntry);
     };
 };
 export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => {
@@ -70,7 +70,7 @@ export const selectCommittedFile = (logEntry: LogEntry, committedFile: Committed
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const url = getQueryUrl(state, `/log/${logEntry.hash.full}/committedFile`);
-        await axios.post(url, committedFile)
+        await axios.post(url, { logEntry, committedFile })
             .catch(err => {
                 // tslint:disable-next-line:no-debugger
                 debugger;

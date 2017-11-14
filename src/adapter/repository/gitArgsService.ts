@@ -33,10 +33,10 @@ export class GitArgsService implements IGitArgsService {
         return ['branch', '--all', '--contains', hash];
     }
     public getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[] {
-        return ['diff', '--numstat', '--summary', hash1, hash2];
+        return ['diff', '--numstat', hash1, hash2];
     }
     public getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[] {
-        return ['diff', '--name-status', '--summary', hash1, hash2];
+        return ['diff', '--name-status', hash1, hash2];
     }
     public getPreviousCommitHashForFileArgs(hash: string, file: string): string[] {
         return ['log', '--format=%H-%h', `${hash}^1`, '-n', '1', '--', file];
