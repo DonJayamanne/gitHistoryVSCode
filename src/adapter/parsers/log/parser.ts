@@ -1,6 +1,4 @@
 import { inject, injectable } from 'inversify';
-// tslint:disable-next-line:no-import-side-effect
-import 'reflect-metadata';
 import { IServiceContainer } from '../../../ioc/types';
 import { CommitInfo, CommittedFile, LogEntry } from '../../../types';
 import { Helpers } from '../../helpers';

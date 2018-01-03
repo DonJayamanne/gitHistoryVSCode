@@ -1,6 +1,3 @@
-// tslint:disable-next-line:no-import-side-effect
-import 'reflect-metadata';
-
 // These are the prefixes returned by 'git log --decorate=full --format=%D'
 // These also include prefixes returned by 'git branch --all'
 // These also include prefixes returned by 'git show-ref'

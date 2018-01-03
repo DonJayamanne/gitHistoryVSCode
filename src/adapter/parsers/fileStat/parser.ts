@@ -1,7 +1,5 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
-// tslint:disable-next-line:no-import-side-effect
-import 'reflect-metadata';
 import { Uri } from 'vscode';
 import { IServiceContainer } from '../../../ioc/types';
 import { CommittedFile, Status } from '../../../types';

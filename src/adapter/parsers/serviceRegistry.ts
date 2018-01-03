@@ -1,6 +1,4 @@
 
-// tslint:disable-next-line:no-import-side-effect
-import 'reflect-metadata';
 import { IServiceManager } from '../../ioc/types';
 import { ActionDetailsParser } from './actionDetails/parser';
 import { FileStatParser } from './fileStat/parser';

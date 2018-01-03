@@ -1,7 +1,5 @@
 export * from './types';
 import { injectable, multiInject } from 'inversify';
-// tslint:disable-next-line:no-import-side-effect
-import 'reflect-metadata';
 import { ILogService } from '../../../common/types';
 import { Ref } from '../../../types';
 // import { TYPES } from '../constants';

@@ -1,7 +1,5 @@
 import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
-// tslint:disable-next-line:no-import-side-effect
-import 'reflect-metadata';
 import { commands, Uri } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
 import { IServiceContainer } from '../ioc/types';

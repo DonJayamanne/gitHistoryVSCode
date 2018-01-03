@@ -1,3 +1,8 @@
+// tslint:disable-next-line:no-any
+if ((Reflect as any).metadata === undefined) {
+    // tslint:disable-next-line:no-require-imports no-var-requires
+    require('reflect-metadata');
+}
 import { Container } from 'inversify';
 import * as vscode from 'vscode';
 import { OutputChannel } from 'vscode';
