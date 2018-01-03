@@ -1,6 +1,5 @@
 language: node
 os:
-  - osx
   - linux
 addons:
   apt:
