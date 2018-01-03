@@ -44,7 +44,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const tmpFile = await gitService.getCommitFile(hash.full, commitedFile.uri);
         const fileName = path.basename(commitedFile.uri.fsPath);
         const title = `${fileName} (Working Tree)`;
-        commands.executeCommand('vscode.diff', tmpFile as Uri, Uri.file(commitedFile.uri.fsPath), title, { viewColumn: ViewColumn.Two, preview: true });
+        commands.executeCommand('vscode.diff', tmpFile as Uri, Uri.file(commitedFile.uri.fsPath), title, { preview: true });
     }
 
     @command('git.commit.file.compareAgainstPrevious', IGitFileHistoryCommandHandler)
@@ -64,7 +64,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const previousTmpFile = await gitService.getCommitFile(previousCommit.full, previousFile);
 
         const title = this.getComparisonTitle({ file: Uri.file(commitedFile.uri.fsPath), hash: hashes }, { file: Uri.file(previousFile.fsPath), hash: previousCommit });
-        commands.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { viewColumn: ViewColumn.Two, preview: true });
+        commands.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { preview: true });
     }
     private getComparisonTitle(left: { file: Uri, hash: Hash }, right: { file: Uri, hash: Hash }) {
         const leftFileName = path.basename(left.file.fsPath);
