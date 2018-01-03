@@ -21,8 +21,7 @@ export class GitExecutableLocator implements IGitExecutableLocator {
             if (fs.existsSync(this.gitPath)) {
                 this.loggers.forEach(logger => logger.trace(`git path: ${this.gitPath} - from vscode settings`));
                 return this.gitPath;
-            }
-            else {
+            } else {
                 this.loggers.forEach(logger => logger.error(`git path: ${this.gitPath} - from vscode settings in invalid`));
             }
         }
@@ -47,8 +46,7 @@ async function regQueryInstallPath(location: string, view: string | null) {
                 (<ErrorEx>error).stdout = stdout.toString();
                 (<ErrorEx>error).stderr = stderr.toString();
                 reject(error);
-            }
-            else {
+            } else {
                 const match = stdout.toString().match(/InstallPath\s+REG_SZ\s+([^\r\n]+)\s*\r?\n/i);
                 if (match && match[1]) {
                     resolve(`${match[1]}\\bin\\git`);
@@ -94,8 +92,7 @@ async function getGitPathOnWindows(loggers: ILogService[]) {
         const gitRegPath = queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
         loggers.forEach(logger => logger.trace(`git path: ${gitRegPath} - from registry`));
         return gitRegPath;
-    }
-    catch (ex) {
+    } catch (ex) {
         loggers.forEach(logger => logger.trace('git path: falling back to PATH environment variable'));
         return 'git';
     }

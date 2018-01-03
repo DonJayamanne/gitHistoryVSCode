@@ -13,42 +13,11 @@ import { IGitArgsService } from './types';
 @injectable()
 export class Git implements IGitService {
     private gitRootPath: string;
-    private async exec(...args: string[]): Promise<string> {
-        const gitRootPath = await this.getGitRoot();
-        return await this.gitCmdExecutor.exec(gitRootPath, ...args);
-    }
-    private async execInShell(...args: string[]): Promise<string> {
-        const gitRootPath = await this.getGitRoot();
-        return await this.gitCmdExecutor.exec({ cwd: gitRootPath, shell: true }, ...args);
-    }
-    // how to check if a commit has been merged into any other branch
-    //  $ git branch --all --contains 019daf673583208aaaf8c3f18f8e12696033e3fc
-    //  remotes/origin/chrmarti/azure-account
-    //  If the output contains just one branch, then this means NO, its in the same source branch
-    // NOTE:
-    // When returning logEntry,
-    //  Check if anything has a ref of type HEAD,
-    //  If it does, this means that's the head of a particular branch
-    //  This means we don't need to draw the graph line all the way up into no where...
-    // However, if this branch has been merged, then we need to draw it all the way up (or till its merge has been found)
-    //  To do this we need to perform the step of determining if it has been merged
-    // Note: Even if we did find a merged location, this doesn't mean we shouldn't stop drawing the line
-    //  Its possible the other branch that it has been merged into is out of the current page
-    //  In this instance the grap line will have to go up (to no where)...
-
-    private async getGitRelativePath(file: Uri) {
-        const gitRoot: string = await this.getGitRoot();
-        return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
-    }
-
-    // tslint:disable-next-line:member-ordering
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         private workspaceRoot: string,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
-        // tslint:disable-next-line:no-console
-        console.log('');
     }
 
     @cache('IGitService')
@@ -60,7 +29,6 @@ export class Git implements IGitService {
         return this.gitRootPath = gitRootPath.split(/\r?\n/g)[0].trim();
     }
 
-    // tslint:disable-next-line:member-ordering
     public async getHeadHashes(): Promise<{ ref: string, hash: string }[]> {
         const fullHashArgs = ['show-ref'];
         const fullHashRefsOutput = await this.exec(...fullHashArgs);
@@ -71,7 +39,6 @@ export class Git implements IGitService {
             .filter(lineParts => lineParts.length > 1)
             .map(hashAndRef => { return { ref: hashAndRef[1], hash: hashAndRef[0] }; });
     }
-    // tslint:disable-next-line:member-ordering
     public async getBranches(): Promise<Branch[]> {
         const output = await this.exec('branch');
         return output.split(/\r?\n/g)
@@ -289,5 +256,32 @@ export class Git implements IGitService {
 
     public async createBranch(branchName: string, hash: string): Promise<void> {
         await this.exec('checkout', '-b', branchName, hash);
+    }
+    private async exec(...args: string[]): Promise<string> {
+        const gitRootPath = await this.getGitRoot();
+        return await this.gitCmdExecutor.exec(gitRootPath, ...args);
+    }
+    private async execInShell(...args: string[]): Promise<string> {
+        const gitRootPath = await this.getGitRoot();
+        return await this.gitCmdExecutor.exec({ cwd: gitRootPath, shell: true }, ...args);
+    }
+    // how to check if a commit has been merged into any other branch
+    //  $ git branch --all --contains 019daf673583208aaaf8c3f18f8e12696033e3fc
+    //  remotes/origin/chrmarti/azure-account
+    //  If the output contains just one branch, then this means NO, its in the same source branch
+    // NOTE:
+    // When returning logEntry,
+    //  Check if anything has a ref of type HEAD,
+    //  If it does, this means that's the head of a particular branch
+    //  This means we don't need to draw the graph line all the way up into no where...
+    // However, if this branch has been merged, then we need to draw it all the way up (or till its merge has been found)
+    //  To do this we need to perform the step of determining if it has been merged
+    // Note: Even if we did find a merged location, this doesn't mean we shouldn't stop drawing the line
+    //  Its possible the other branch that it has been merged into is out of the current page
+    //  In this instance the grap line will have to go up (to no where)...
+
+    private async getGitRelativePath(file: Uri) {
+        const gitRoot: string = await this.getGitRoot();
+        return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
     }
 }

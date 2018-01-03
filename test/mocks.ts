@@ -1,24 +1,7 @@
-import { Container, injectable } from 'inversify';
-import { ILogService } from '../src/common/types';
+import { Container } from 'inversify';
 import { Abstract, IServiceContainer, IServiceManager, Newable } from '../src/ioc/types';
 
-@injectable()
-export class MockLogger implements ILogService {
-    // tslint:disable-next-line:no-any
-    public log(..._args: any[]): void {
-        return;
-    }
-    // tslint:disable-next-line:no-any
-    public trace(..._args: any[]): void {
-        return;
-    }
-    // tslint:disable-next-line:no-any
-    public error(..._args: any[]): void {
-        return;
-    }
-}
-
-export class MockServiceContainer implements IServiceContainer, IServiceManager {
+export class TestServiceContainer implements IServiceContainer, IServiceManager {
     private cont: Container;
     constructor() {
         this.cont = new Container();
@@ -37,6 +20,14 @@ export class MockServiceContainer implements IServiceContainer, IServiceManager 
             this.cont.bind<T>(serviceIdentifier).to(constructor).whenTargetNamed(name);
         } else {
             this.cont.bind<T>(serviceIdentifier).to(constructor);
+        }
+    }
+    // tslint:disable-next-line:no-any
+    public addSingletonInstance<T>(serviceIdentifier: string | symbol | Newable<T> | Abstract<T>, instance: T, name?: string | number | symbol | undefined): void {
+        if (name) {
+            this.cont.bind<T>(serviceIdentifier).toConstantValue(instance).whenTargetNamed(name);
+        } else {
+            this.cont.bind<T>(serviceIdentifier).toConstantValue(instance);
         }
     }
     // tslint:disable-next-line:no-any

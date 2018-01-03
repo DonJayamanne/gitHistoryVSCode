@@ -4,7 +4,7 @@ import { CommitInfo } from '../types';
 export class Helpers {
     // tslint:disable-next-line:function-name
     public static GetLogArguments() {
-        const args = [];
+        const args: string[] = [];
         for (const item of EnumHelpers.Values<CommitInfo>(CommitInfo)) {
             if (item !== CommitInfo.NewLine) {
                 args.push(Helpers.GetCommitInfoFormatCode(item));

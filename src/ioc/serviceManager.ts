@@ -6,8 +6,7 @@ export class ServiceManager implements IServiceManager {
     public add<T>(serviceIdentifier: string | symbol | Newable<T> | Abstract<T>, constructor: new (...args: any[]) => T, name?: string | number | symbol | undefined): void {
         if (name) {
             this.container.bind<T>(serviceIdentifier).to(constructor).inSingletonScope().whenTargetNamed(name);
-        }
-        else {
+        } else {
             this.container.bind<T>(serviceIdentifier).to(constructor).inSingletonScope();
         }
     }
@@ -15,8 +14,7 @@ export class ServiceManager implements IServiceManager {
     public addSingleton<T>(serviceIdentifier: string | symbol | Newable<T> | Abstract<T>, constructor: new (...args: any[]) => T, name?: string | number | symbol | undefined): void {
         if (name) {
             this.container.bind<T>(serviceIdentifier).to(constructor).inSingletonScope().whenTargetNamed(name);
-        }
-        else {
+        } else {
             this.container.bind<T>(serviceIdentifier).to(constructor).inSingletonScope();
         }
     }

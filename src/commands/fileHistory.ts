@@ -33,7 +33,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     @command('git.commit.file.viewFileContents', IGitFileHistoryCommandHandler)
     public async onViewFile(workspaceFolder: string, _branch: string | undefined, hash: Hash, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        const uri = await this.getFileUri(gitService, workspaceFolder, hash.full, commitedFile);
+        const uri = await this.getFileUri(gitService, workspaceFolder, hash, commitedFile);
         const doc = await workspace.openTextDocument(uri);
         window.showTextDocument(doc, { viewColumn: ViewColumn.Two, preview: true });
     }
@@ -51,19 +51,17 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     public async onCompareFileWithPrevious(workspaceFolder: string, _branch: string | undefined, hash: Hash, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
 
-        const hashesPromise = await gitService.getHash(hash.full);
-        const tmpFilePromise = await gitService.getCommitFile(hash.full, commitedFile.uri);
-        const previousCommitPromise = await gitService.getPreviousCommitHashForFile(hash.full, commitedFile.uri);
+        const tmpFilePromise = gitService.getCommitFile(hash.full, commitedFile.uri);
+        const previousCommitHashPromise = gitService.getPreviousCommitHashForFile(hash.full, commitedFile.uri);
 
-        const values = await Promise.all([hashesPromise, tmpFilePromise, previousCommitPromise]);
-        const hashes = values[0];
-        const tmpFile = values[1];
-        const previousCommit = values[2];
+        const values = await Promise.all([tmpFilePromise, previousCommitHashPromise]);
+        const tmpFile = values[0];
+        const previousCommitHash = values[1];
 
         const previousFile = commitedFile.oldUri ? commitedFile.oldUri : commitedFile.uri;
-        const previousTmpFile = await gitService.getCommitFile(previousCommit.full, previousFile);
+        const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
-        const title = this.getComparisonTitle({ file: Uri.file(commitedFile.uri.fsPath), hash: hashes }, { file: Uri.file(previousFile.fsPath), hash: previousCommit });
+        const title = this.getComparisonTitle({ file: Uri.file(commitedFile.uri.fsPath), hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
         commands.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { preview: true });
     }
     private getComparisonTitle(left: { file: Uri, hash: Hash }, right: { file: Uri, hash: Hash }) {
@@ -75,15 +73,13 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             return `${leftFileName} (${left.hash.short} ↔ ${rightFileName} ${right.hash.short})`;
         }
     }
-    private async getFileUri(gitService: IGitService, workspaceFolder: string, hash: string, commitedFile: CommittedFile): Promise<Uri> {
-        const hashes = await gitService.getHash(hash);
-
+    private async getFileUri(_gitService: IGitService, workspaceFolder: string, hash: Hash, commitedFile: CommittedFile): Promise<Uri> {
         const args = [
             `workspaceFolder=${encodeURIComponent(workspaceFolder)}`,
             `hash=${hash}`,
             `fsPath=${encodeURIComponent(commitedFile.uri.fsPath)}`
         ];
         const ext = path.extname(commitedFile.relativePath);
-        return Uri.parse(`${gitHistoryFileViewerSchema}://./${commitedFile.relativePath}.${hashes.short}${ext}?${args.join('&')}`);
+        return Uri.parse(`${gitHistoryFileViewerSchema}://./${commitedFile.relativePath}.${hash.short}${ext}?${args.join('&')}`);
     }
 }

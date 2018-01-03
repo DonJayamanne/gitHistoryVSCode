@@ -1,22 +1,23 @@
 import { assert, expect } from 'chai';
 import * as path from 'path';
+import * as TypeMoq from 'typemoq';
 import { Uri } from 'vscode';
 import { FileStatParser } from '../../../../src/adapter/parsers/fileStat/parser';
 import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatStatus/parser';
 import { IFileStatStatusParser } from '../../../../src/adapter/parsers/types';
 import { ILogService } from '../../../../src/common/types';
 import { Status } from '../../../../src/types';
-import { MockLogger, MockServiceContainer } from '../../../mocks';
+import { TestServiceContainer } from '../../../mocks';
 
 // tslint:disable-next-line:max-func-body-length
 describe('Adapter Parser File Stat', () => {
     // tslint:disable-next-line:mocha-no-side-effect-code
     const gitRootPath = path.join('src', 'adapter');
     // tslint:disable-next-line:mocha-no-side-effect-code
-    const svcContainer = new MockServiceContainer();
+    const svcContainer = new TestServiceContainer();
     before(() => {
         svcContainer.add(IFileStatStatusParser, FileStatStatusParser);
-        svcContainer.add(ILogService, MockLogger);
+        svcContainer.addSingletonInstance(ILogService, TypeMoq.Mock.ofType<ILogService>().object);
     });
     it('Must return the right number of files', () => {
         // tslint:disable-next-line:no-multiline-string

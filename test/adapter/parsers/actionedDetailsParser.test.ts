@@ -13,8 +13,7 @@ describe('Adapter ActionedDetails Parser', () => {
             assert.equal(info.name, name, 'name is incorrect');
             assert.equal(info.email, email, 'email is incorrect');
             assert.equal(info.date.toLocaleDateString(), date.toLocaleDateString(), 'time is incorrect');
-        }
-        else {
+        } else {
             assert.fail(info, {}, 'Expected non empty info', '=');
         }
     });
