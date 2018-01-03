@@ -1,14 +1,14 @@
-export interface Deferred<T> {
-    resolve(value?: T | PromiseLike<T>): void;
-    // tslint:disable-next-line:no-any
-    reject(reason?: any): void;
+export interface IDeferred<T> {
     readonly promise: Promise<T>;
     readonly resolved: boolean;
     readonly rejected: boolean;
     readonly completed: boolean;
+    resolve(value?: T | PromiseLike<T>): void;
+    // tslint:disable-next-line:no-any
+    reject(reason?: any): void;
 }
 
-class DeferredImpl<T> implements Deferred<T> {
+class DeferredImpl<T> implements IDeferred<T> {
     private _resolve: (value?: T | PromiseLike<T>) => void;
     // tslint:disable-next-line:no-any
     private _reject: (reason?: any) => void;
@@ -46,6 +46,6 @@ class DeferredImpl<T> implements Deferred<T> {
     }
 }
 // tslint:disable-next-line:no-any
-export function createDeferred<T>(scope: any = null): Deferred<T> {
+export function createDeferred<T>(scope: any = null): IDeferred<T> {
     return new DeferredImpl<T>(scope);
 }

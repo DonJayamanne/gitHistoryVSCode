@@ -7,6 +7,12 @@ const CacheItemUsageFrequency: Map<string, number> = new Map<string, number>();
 
 // tslint:disable-next-line:no-stateless-class
 export class CacheRegister implements Disposable {
+    public static get<T>(key: string): T | undefined {
+        return Cache.has(key) ? Cache.get(key) : undefined;
+    }
+    public static has(key: string): boolean {
+        return Cache.has(key);
+    }
     // tslint:disable-next-line:no-any
     public static set(key: string, data: any): void {
         const counter = CacheItemUsageFrequency.has(key) ? CacheItemUsageFrequency.get(key)! : 0;
@@ -14,15 +20,6 @@ export class CacheRegister implements Disposable {
         CacheItemUsageFrequency.set(key, counter + 1);
         Cache.set(key, data);
         setTimeout(() => CacheRegister.reclaimSpace(), 1000);
-    }
-    public static get<T>(key: string): T | undefined {
-        return Cache.has(key) ? Cache.get(key) : undefined;
-    }
-    public static has(key: string): boolean {
-        return Cache.has(key);
-    }
-    public dispose() {
-        Cache.clear();
     }
     private static reclaimSpace(): void {
         if (Cache.size <= MAX_CACHE_ITEMS) {
@@ -38,6 +35,9 @@ export class CacheRegister implements Disposable {
             const key = keyWithCounters.shift()!.key;
             Cache.delete(key);
         }
+    }
+    public dispose() {
+        Cache.clear();
     }
 }
 

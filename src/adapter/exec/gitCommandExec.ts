@@ -15,6 +15,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         @multiInject(ILogService) private loggers: ILogService[]) {
     }
     public async exec(cwd: string, ...args: string[]): Promise<string>;
+    // tslint:disable-next-line:unified-signatures
     public async exec(options: { cwd: string, shell?: boolean, encoding?: string }, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:no-any
     public async exec(options: any, ...args: string[]): Promise<string> {

@@ -1,7 +1,6 @@
 import { interfaces } from 'inversify';
 import { commands, Disposable, window } from 'vscode';
-import { createDeferred } from '../common/helpers';
-import { Deferred } from '../common/promiseHelper';
+import { createDeferred, IDeferred } from '../common/promiseHelper';
 import { getServiceContainer } from '../ioc/index';
 
 // tslint:disable-next-line:no-any
@@ -9,7 +8,7 @@ type CommandHandler = (...args: any[]) => any;
 // tslint:disable-next-line:no-stateless-class
 export class CommandRegister implements Disposable {
     private static disposables: Disposable[] = [];
-    private static _deferred?: Deferred<void>;
+    private static _deferred?: IDeferred<void>;
     public static get initialized(): Promise<void> {
         if (!CommandRegister._deferred) {
             CommandRegister._deferred = createDeferred<void>();

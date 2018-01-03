@@ -91,8 +91,7 @@ export class GitArgsService implements IGitArgsService {
         // Count only the number of lines in the log
         if (this.isWindows) {
             counterArgs.push('|', 'find', '/c', '/v', '""');
-        }
-        else {
+        } else {
             counterArgs.push('|', 'wc', '-l');
         }
 
