@@ -48,12 +48,12 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     }
 
     @command('git.commit.file.compareAgainstPrevious', IGitFileHistoryCommandHandler)
-    public async onCompareFileWithPrevious(workspaceFolder: string, _branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+    public async onCompareFileWithPrevious(workspaceFolder: string, _branch: string | undefined, hash: Hash, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
 
-        const hashesPromise = await gitService.getHash(hash);
-        const tmpFilePromise = await gitService.getCommitFile(hash, commitedFile.uri);
-        const previousCommitPromise = await gitService.getPreviousCommitHashForFile(hash, commitedFile.uri);
+        const hashesPromise = await gitService.getHash(hash.full);
+        const tmpFilePromise = await gitService.getCommitFile(hash.full, commitedFile.uri);
+        const previousCommitPromise = await gitService.getPreviousCommitHashForFile(hash.full, commitedFile.uri);
 
         const values = await Promise.all([hashesPromise, tmpFilePromise, previousCommitPromise]);
         const hashes = values[0];
