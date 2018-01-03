@@ -21,10 +21,10 @@ install:
 script:
   - yarn run clean
   - yarn run vscode:prepublish
-  - if [ $TRAVIS_UPLOAD_COVERAGE == "true" && $TRAVIS_ENABLE_COVERAGE == "true" ]; then
+  - if [ $TRAVIS_ENABLE_COVERAGE == "true" ]; then
         yarn run cover:enable;
     fi
   - yarn run test --silent
-  - if [ $TRAVIS_UPLOAD_COVERAGE == "true" && $TRAVIS_ENABLE_COVERAGE == "true" ]; then
+  - if [ $TRAVIS_ENABLE_COVERAGE == "true" ]; then
         yarn run cover:upload;
     fi
