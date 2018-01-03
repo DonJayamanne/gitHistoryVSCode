@@ -12,9 +12,19 @@ before_install:
       sh -e /etc/init.d/xvfb start;
       sleep 3;
     fi
+  nvm install 8.9.1
+  nvm use 8.9.1
+  yarn global add vsce
 install:
-  - npm install
-  - npm run vscode:prepublish
-  
+  - yarn
+
 script:
-  - npm test --silent
+  - yarn run clean
+  - yarn run vscode:prepublish
+  - if [ $TRAVIS_UPLOAD_COVERAGE == "true" && $TRAVIS_ENABLE_COVERAGE == "true" ]; then
+        yarn run cover:enable;
+    fi
+  - yarn run test --silent
+  - if [ $TRAVIS_UPLOAD_COVERAGE == "true" && $TRAVIS_ENABLE_COVERAGE == "true" ]; then
+        yarn run cover:upload;
+    fi

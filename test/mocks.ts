@@ -27,8 +27,7 @@ export class MockServiceContainer implements IServiceContainer, IServiceManager 
     public add<T>(serviceIdentifier: string | symbol | Newable<T> | Abstract<T>, constructor: new (...args: any[]) => T, name?: string | number | symbol | undefined): void {
         if (name) {
             this.cont.bind<T>(serviceIdentifier).to(constructor).whenTargetNamed(name);
-        }
-        else {
+        } else {
             this.cont.bind<T>(serviceIdentifier).to(constructor);
         }
     }
@@ -36,8 +35,7 @@ export class MockServiceContainer implements IServiceContainer, IServiceManager 
     public addSingleton<T>(serviceIdentifier: string | symbol | Newable<T> | Abstract<T>, constructor: new (...args: any[]) => T, name?: string | number | symbol | undefined): void {
         if (name) {
             this.cont.bind<T>(serviceIdentifier).to(constructor).whenTargetNamed(name);
-        }
-        else {
+        } else {
             this.cont.bind<T>(serviceIdentifier).to(constructor);
         }
     }

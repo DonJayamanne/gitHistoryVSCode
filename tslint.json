@@ -4,94 +4,53 @@
         "tslint-microsoft-contrib"
     ],
     "rules": {
-        "class-name": true,
-        "comment-format": [
-            true,
-            "check-space"
-        ],
-        "indent": [
-            true,
-            "spaces",
-            4
-        ],
-        "no-duplicate-variable": true,
-        "no-eval": true,
-        "no-internal-module": true,
-        "no-trailing-whitespace": true,
-        "no-var-keyword": true,
-        "one-line": [
-            true,
-            "check-open-brace",
-            "check-whitespace"
-        ],
-        "quotemark": [
-            true,
-            "single"
-        ],
-        "semicolon": [
-            true,
-            "always"
-        ],
-        "triple-equals": [
-            true,
-            "allow-null-check"
-        ],
-        "typedef-whitespace": [
-            true,
-            {
-                "call-signature": "nospace",
-                "index-signature": "nospace",
-                "parameter": "nospace",
-                "property-declaration": "nospace",
-                "variable-declaration": "nospace"
-            }
-        ],
-        "variable-name": [
-            true,
-            "ban-keywords"
-        ],
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-separator",
-            "check-type"
-        ],
         "no-unused-expression": true,
+        "no-duplicate-variable": true,
         "no-unused-variable": true,
         "curly": true,
+        "class-name": true,
+        "semicolon": [
+            true
+        ],
+        "triple-equals": true,
         "no-relative-imports": false,
         "max-line-length": false,
         "typedef": false,
         "no-string-throw": true,
         "missing-jsdoc": false,
+        "one-line": [
+            true,
+            "check-catch",
+            "check-finally",
+            "check-else"
+        ],
         "no-parameter-properties": false,
         "no-reserved-keywords": false,
         "newline-before-return": false,
         "export-name": false,
         "align": false,
-        "no-default-export": false,
         "linebreak-style": false,
-        "import-name": false,
-        "no-non-null-assertion": false,
-        "prefer-type-cast": false,
-        "unified-signatures": false,
-        // remove this
-        "member-ordering": false,
-        "no-suspicious-comment": false,
-        "no-useless-files": false,
-        "interface-name": false,
-        "react-tsx-curly-spacing": false,
-        "no-unsafe-any": false,
-        "no-floating-promises": false,
-        "completed-docs": false,
         "strict-boolean-expressions": false,
         "await-promise": [
-            "promise",
-            "theneable"
+            true,
+            "Thenable",
+            "PromiseLike"
         ],
+        "completed-docs": false,
+        "no-unsafe-any": false,
+        "no-backbone-get-set-outside-model": false,
+        "underscore-consistent-invocation": false,
         "no-void-expression": false,
-        "function-name": false
+        "no-non-null-assertion": false,
+        "prefer-type-cast": false,
+        "promise-function-async": false,
+        "function-name": false,
+        "variable-name": false,
+        "no-import-side-effect": false,
+        "no-string-based-set-timeout": false,
+        "no-floating-promises": false,
+        "no-empty-interface": false,
+        "no-bitwise": false,
+        "eofline": true
     }
 }
