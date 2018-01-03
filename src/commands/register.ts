@@ -52,8 +52,7 @@ export function command(commandName: string, serviceIdentifier: interfaces.Servi
                     if (value && value.then && value.catch) {
                         await value;
                     }
-                }
-                catch (reason) {
+                } catch (reason) {
                     console.error(`Failed to execute the command ${commandName}`, reason);
                     window.showErrorMessage(`Failed to execute '${commandName}'. ${reason}`);
                 }

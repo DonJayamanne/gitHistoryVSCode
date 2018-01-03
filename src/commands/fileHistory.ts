@@ -5,7 +5,7 @@ import { command } from '../commands/register';
 import { IUiService } from '../common/types';
 import { gitHistoryFileViewerSchema } from '../constants';
 import { IServiceContainer } from '../ioc/types';
-import { CommittedFile, Hash, IGitService, IGitServiceFactory } from '../types';
+import { CommittedFile, Hash, IGitService, IGitServiceFactory, LogEntry } from '../types';
 import { IGitFileHistoryCommandHandler } from './types';
 
 @injectable()
@@ -22,26 +22,26 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     }
 
     @command('git.commit.file.select', IGitFileHistoryCommandHandler)
-    public async onFileSelected(workspaceFolder: string, branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+    public async onFileSelected(workspaceFolder: string, branch: string | undefined, logEntry: LogEntry, commitedFile: CommittedFile) {
         const commandName = await this.serviceContainer.get<IUiService>(IUiService).selectFileCommitCommandAction(commitedFile);
         if (!commandName) {
             return;
         }
-        commands.executeCommand(commandName, workspaceFolder, branch, hash, commitedFile);
+        commands.executeCommand(commandName, workspaceFolder, branch, logEntry.hash, commitedFile);
     }
 
     @command('git.commit.file.viewFileContents', IGitFileHistoryCommandHandler)
-    public async onViewFile(workspaceFolder: string, _branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+    public async onViewFile(workspaceFolder: string, _branch: string | undefined, hash: Hash, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        const uri = await this.getFileUri(gitService, workspaceFolder, hash, commitedFile);
+        const uri = await this.getFileUri(gitService, workspaceFolder, hash.full, commitedFile);
         const doc = await workspace.openTextDocument(uri);
         window.showTextDocument(doc, { viewColumn: ViewColumn.Two, preview: true });
     }
 
     @command('git.commit.file.compareAgainstWorkspace', IGitFileHistoryCommandHandler)
-    public async onCompareFileWithWorkspace(workspaceFolder: string, _branch: string | undefined, hash: string, commitedFile: CommittedFile) {
+    public async onCompareFileWithWorkspace(workspaceFolder: string, _branch: string | undefined, hash: Hash, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        const tmpFile = await gitService.getCommitFile(hash, commitedFile.uri);
+        const tmpFile = await gitService.getCommitFile(hash.full, commitedFile.uri);
         const fileName = path.basename(commitedFile.uri.fsPath);
         const title = `${fileName} (Working Tree)`;
         commands.executeCommand('vscode.diff', tmpFile as Uri, Uri.file(commitedFile.uri.fsPath), title, { viewColumn: ViewColumn.Two, preview: true });
