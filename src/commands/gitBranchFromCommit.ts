@@ -1,14 +1,16 @@
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { Disposable, window } from 'vscode';
 import { command } from '../commands/register';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { IGitBranchFromCommitCommandHandler } from './types';
+import { IApplicationShell } from '../application/types';
 
 @injectable()
 export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCommandHandler {
     private disposables: Disposable[] = [];
-    constructor(private serviceContainer: IServiceContainer) {
+    constructor(private serviceContainer: IServiceContainer,
+        @inject(IApplicationShell) private applicationShell: IApplicationShell) {
         // this.disposables.push(commands.registerCommand('git.commit.viewChangeLog', this.viewHistory, this));
     }
     public dispose() {
@@ -30,7 +32,7 @@ export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCo
             .catch(async err => {
                 const currentBranchName = await gitService.getCurrentBranch();
                 if (typeof err === 'string' && currentBranchName !== newBranchName) {
-                    window.showErrorMessage(err);
+                    this.applicationShell.showErrorMessage(err);
                 }
             });
     }

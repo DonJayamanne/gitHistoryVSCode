@@ -1,14 +1,16 @@
 import { exec } from 'child_process';
 import * as fs from 'fs';
-import { injectable, multiInject } from 'inversify';
+import { injectable, multiInject, inject } from 'inversify';
 import * as vscode from 'vscode';
 import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from './types';
+import { IPlatformService } from '../../platform/types';
 
 @injectable()
 export class GitExecutableLocator implements IGitExecutableLocator {
     private gitPath: string;
-    constructor( @multiInject(ILogService) private loggers: ILogService[]) {
+    constructor( @multiInject(ILogService) private loggers: ILogService[],
+        @inject(IPlatformService) private platformService: IPlatformService) {
     }
     public async getGitPath(): Promise<string> {
         if (typeof this.gitPath === 'string') {
@@ -26,7 +28,7 @@ export class GitExecutableLocator implements IGitExecutableLocator {
             }
         }
 
-        if (process.platform !== 'win32') {
+        if (!this.platformService.isWindows) {
             this.loggers.forEach(logger => logger.trace('git path: using PATH environment variable'));
             return this.gitPath = 'git';
         }

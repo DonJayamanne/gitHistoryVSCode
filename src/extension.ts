@@ -9,6 +9,7 @@ import { OutputChannel } from 'vscode';
 import { registerTypes as registerParserTypes } from './adapter/parsers/serviceRegistry';
 import { registerTypes as registerRepositoryTypes } from './adapter/repository/serviceRegistry';
 import { registerTypes as registerAdapterTypes } from './adapter/serviceRegistry';
+import { registerTypes as registerApplicationTypes } from './application/serviceRegistry';
 import { GitFileHistoryCommandHandler } from './commands/fileHistory';
 import { GitBranchFromCommitCommandHandler } from './commands/gitBranchFromCommit';
 import { GitCherryPickCommandHandler } from './commands/gitCherryPick';
@@ -36,6 +37,7 @@ import { setServiceContainer } from './ioc/index';
 import { ServiceManager } from './ioc/serviceManager';
 import { IServiceContainer } from './ioc/types';
 import { getLogChannel } from './logger';
+import { registerTypes as registerPlatformTypes } from './platform/serviceRegistry';
 import { ContentProvider } from './server/contentProvider';
 import { ServerHost } from './server/serverHost';
 import { StateStore } from './server/stateStore';
@@ -78,6 +80,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     registerParserTypes(serviceManager);
     registerRepositoryTypes(serviceManager);
     registerAdapterTypes(serviceManager);
+    registerApplicationTypes(serviceManager);
+    registerPlatformTypes(serviceManager);
 
     setServiceContainer(serviceContainer);
 

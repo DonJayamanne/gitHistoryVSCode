@@ -1,6 +1,7 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { commands, Disposable, Uri, ViewColumn, window, workspace } from 'vscode';
+import { ICommandManager } from '../application/types/commandManager';
 import { command } from '../commands/register';
 import { IUiService } from '../common/types';
 import { gitHistoryFileViewerSchema } from '../constants';
@@ -11,11 +12,12 @@ import { IGitFileHistoryCommandHandler } from './types';
 @injectable()
 export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandler {
     private disposables: Disposable[] = [];
-    constructor(private serviceContainer: IServiceContainer) {
-        // this.disposables.push(commands.registerCommand('git.commit.file.select', this.onFileSelected, this));
-        // this.disposables.push(commands.registerCommand('git.commit.file.viewFileContents', this.onViewFile, this));
-        // this.disposables.push(commands.registerCommand('git.commit.file.compareAgainstWorkspace', this.onCompareFileWithWorkspace, this));
-        // this.disposables.push(commands.registerCommand('git.commit.file.compareAgainstPrevious', this.onCompareFileWithPrevious, this));
+    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(ICommandManager) private commandManager: ICommandManager) {
+        // this.disposables.push(this.commandManager.registerCommand('git.commit.file.select', this.onFileSelected, this));
+        // this.disposables.push(this.commandManager.registerCommand('git.commit.file.viewFileContents', this.onViewFile, this));
+        // this.disposables.push(this.commandManager.registerCommand('git.commit.file.compareAgainstWorkspace', this.onCompareFileWithWorkspace, this));
+        // this.disposables.push(this.commandManager.registerCommand('git.commit.file.compareAgainstPrevious', this.onCompareFileWithPrevious, this));
     }
     public dispose() {
         this.disposables.forEach(disposable => disposable.dispose());
@@ -27,7 +29,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         if (!commandName) {
             return;
         }
-        commands.executeCommand(commandName, workspaceFolder, branch, logEntry.hash, commitedFile);
+        this.commandManager.executeCommand(commandName, workspaceFolder, branch, logEntry.hash, commitedFile);
     }
 
     @command('git.commit.file.viewFileContents', IGitFileHistoryCommandHandler)
@@ -44,7 +46,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const tmpFile = await gitService.getCommitFile(hash.full, commitedFile.uri);
         const fileName = path.basename(commitedFile.uri.fsPath);
         const title = `${fileName} (Working Tree)`;
-        commands.executeCommand('vscode.diff', tmpFile as Uri, Uri.file(commitedFile.uri.fsPath), title, { preview: true });
+        this.commandManager.executeCommand('vscode.diff', tmpFile as Uri, Uri.file(commitedFile.uri.fsPath), title, { preview: true });
     }
 
     @command('git.commit.file.compareAgainstPrevious', IGitFileHistoryCommandHandler)
@@ -62,7 +64,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
         const title = this.getComparisonTitle({ file: Uri.file(commitedFile.uri.fsPath), hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
-        commands.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { preview: true });
+        this.commandManager.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { preview: true });
     }
     private getComparisonTitle(left: { file: Uri, hash: Hash }, right: { file: Uri, hash: Hash }) {
         const leftFileName = path.basename(left.file.fsPath);
