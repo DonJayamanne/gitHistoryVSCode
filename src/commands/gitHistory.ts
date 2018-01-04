@@ -1,20 +1,20 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import * as osLocale from 'os-locale';
 import { commands, Disposable, ViewColumn } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
-import { command } from '../commands/register';
 import { IUiService } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { IServerHost, IWorkspaceQueryStateStore } from '../server/types';
 import { BranchSelection, IGitServiceFactory } from '../types';
+import { command } from './registration';
 import { IGitHistoryCommandHandler } from './types';
 
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
     private disposables: Disposable[] = [];
     private server: IServerHost;
-    constructor(private serviceContainer: IServiceContainer) {
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) {
         // this.disposables.push(commands.registerCommand('git.viewHistory', this.viewHistory, this));
     }
     public dispose() {

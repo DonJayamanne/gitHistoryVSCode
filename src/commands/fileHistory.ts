@@ -1,27 +1,18 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
-import { commands, Disposable, Uri, ViewColumn, window, workspace } from 'vscode';
+import { Uri, ViewColumn, window, workspace } from 'vscode';
 import { ICommandManager } from '../application/types/commandManager';
-import { command } from '../commands/register';
 import { IUiService } from '../common/types';
 import { gitHistoryFileViewerSchema } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { CommittedFile, Hash, IGitService, IGitServiceFactory, LogEntry } from '../types';
+import { command } from './registration';
 import { IGitFileHistoryCommandHandler } from './types';
 
 @injectable()
 export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandler {
-    private disposables: Disposable[] = [];
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommandManager) private commandManager: ICommandManager) {
-        // this.disposables.push(this.commandManager.registerCommand('git.commit.file.select', this.onFileSelected, this));
-        // this.disposables.push(this.commandManager.registerCommand('git.commit.file.viewFileContents', this.onViewFile, this));
-        // this.disposables.push(this.commandManager.registerCommand('git.commit.file.compareAgainstWorkspace', this.onCompareFileWithWorkspace, this));
-        // this.disposables.push(this.commandManager.registerCommand('git.commit.file.compareAgainstPrevious', this.onCompareFileWithPrevious, this));
-    }
-    public dispose() {
-        this.disposables.forEach(disposable => disposable.dispose());
-    }
+        @inject(ICommandManager) private commandManager: ICommandManager) { }
 
     @command('git.commit.file.select', IGitFileHistoryCommandHandler)
     public async onFileSelected(workspaceFolder: string, branch: string | undefined, logEntry: LogEntry, commitedFile: CommittedFile) {
@@ -78,7 +69,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     private async getFileUri(_gitService: IGitService, workspaceFolder: string, hash: Hash, commitedFile: CommittedFile): Promise<Uri> {
         const args = [
             `workspaceFolder=${encodeURIComponent(workspaceFolder)}`,
-            `hash=${hash}`,
+            `hash=${hash.short}`,
             `fsPath=${encodeURIComponent(commitedFile.uri.fsPath)}`
         ];
         const ext = path.extname(commitedFile.relativePath);

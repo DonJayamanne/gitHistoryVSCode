@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { CancellationTokenSource, QuickPickItem, window, workspace, WorkspaceFolder } from 'vscode';
 import { LogEntry } from '../../browser/src/definitions';
-import { command } from '../commands/register';
+import { command } from '../commands/registration';
 import { BranchSelection, CommittedFile, Status } from '../types';
 import { ICommand, IUiService } from './types';
 

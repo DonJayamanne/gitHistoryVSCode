@@ -4,19 +4,14 @@ if ((Reflect as any).metadata === undefined) {
     require('reflect-metadata');
 }
 import { Container } from 'inversify';
-import * as vscode from 'vscode';
 import { OutputChannel } from 'vscode';
+import * as vscode from 'vscode';
 import { registerTypes as registerParserTypes } from './adapter/parsers/serviceRegistry';
 import { registerTypes as registerRepositoryTypes } from './adapter/repository/serviceRegistry';
 import { registerTypes as registerAdapterTypes } from './adapter/serviceRegistry';
 import { registerTypes as registerApplicationTypes } from './application/serviceRegistry';
-import { GitFileHistoryCommandHandler } from './commands/fileHistory';
-import { GitBranchFromCommitCommandHandler } from './commands/gitBranchFromCommit';
-import { GitCherryPickCommandHandler } from './commands/gitCherryPick';
-import { GitCommitCommandHandler } from './commands/gitCommit';
-import { GitCompareCommandHandler } from './commands/gitCompare';
-import { GitHistoryCommandHandler } from './commands/gitHistory';
-import { CommandRegister } from './commands/register';
+import { IDisposableRegistry } from './application/types/disposableRegistry';
+import { registerTypes as registerCommandTypes } from './commands/serviceRegistry';
 // import * as fileHistory from './commands/fileHistory';
 // import * as lineHistory from './commands/lineHistory';
 // import { CommandRegister } from './commands/register';
@@ -24,7 +19,6 @@ import { CommandRegister } from './commands/register';
 // import * as commitComparer from './commitCompare/main';
 // import * as commitViewer from './commitViewer/main';
 // import * as logViewer from './logViewer/logViewer';
-import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCompareCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler } from './commands/types';
 import { Logger } from './common/log';
 import { ILogService, IUiService } from './common/types';
 import { OutputPanelLogger } from './common/uiLogger';
@@ -62,12 +56,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 
     cont.bind<ILogService>(ILogService).to(Logger).inSingletonScope();
     cont.bind<ILogService>(ILogService).to(OutputPanelLogger).inSingletonScope(); // .whenTargetNamed('Viewer');
-    cont.bind<IGitHistoryCommandHandler>(IGitHistoryCommandHandler).toConstantValue(new GitHistoryCommandHandler(serviceManager));
-    cont.bind<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler).toConstantValue(new GitFileHistoryCommandHandler(serviceManager));
-    cont.bind<IGitCommitCommandHandler>(IGitCommitCommandHandler).toConstantValue(new GitCommitCommandHandler(serviceManager));
-    cont.bind<IGitCommitCommandHandler>(IGitCherryPickCommandHandler).toConstantValue(new GitCherryPickCommandHandler(serviceManager));
-    cont.bind<IGitBranchFromCommitCommandHandler>(IGitBranchFromCommitCommandHandler).toConstantValue(new GitBranchFromCommitCommandHandler(serviceManager));
-    cont.bind<IGitCompareCommandHandler>(IGitCompareCommandHandler).toConstantValue(new GitCompareCommandHandler(serviceManager));
     cont.bind<ICommitViewer>(ICommitViewer).to(CommitViewer).inSingletonScope();
     cont.bind<IUiService>(IUiService).to(UiService).inSingletonScope();
     cont.bind<IThemeService>(IThemeService).to(ThemeService).inSingletonScope();
@@ -85,11 +73,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 
     setServiceContainer(serviceContainer);
 
+    // Register last.
+    registerCommandTypes(serviceManager);
+
     let disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, new ContentProvider());
     context.subscriptions.push(disposable);
 
     disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistoryFileViewerSchema, new CommitFileViewerProvider(serviceContainer));
     context.subscriptions.push(disposable);
+    context.subscriptions.push(serviceManager.get<IDisposableRegistry>(IDisposableRegistry));
 
     // fileHistory.activate(context);
     // lineHistory.activate(context);
@@ -97,15 +89,4 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     // commitViewer.activate(context, logViewer.getGitRepoPath);
     // logViewer.activate(context);
     // commitComparer.activate(context, logViewer.getGitRepoPath);
-
-    // setTimeout(() => {
-    CommandRegister.initialize();
-    // context.subscriptions.push(serviceContainer.get<IGitHistoryCommandHandler>(IGitHistoryCommandHandler));
-    // context.subscriptions.push(serviceContainer.get<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler));
-    // context.subscriptions.push(serviceContainer.get<IGitCommitCommandHandler>(IGitCommitCommandHandler));
-    // context.subscriptions.push(serviceContainer.get<IGitCommitCommandHandler>(IGitCommitCommandHandler));
-    // context.subscriptions.push(serviceContainer.get<IGitBranchFromCommitCommandHandler>(IGitBranchFromCommitCommandHandler));
-    context.subscriptions.push(new CommandRegister());
-
-    // }, 1000);
 }

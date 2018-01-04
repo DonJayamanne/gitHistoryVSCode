@@ -1,15 +1,15 @@
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { Disposable, window } from 'vscode';
-import { command } from '../commands/register';
+import { IApplicationShell } from '../application/types';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
+import { command } from './registration';
 import { IGitBranchFromCommitCommandHandler } from './types';
-import { IApplicationShell } from '../application/types';
 
 @injectable()
 export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCommandHandler {
     private disposables: Disposable[] = [];
-    constructor(private serviceContainer: IServiceContainer,
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IApplicationShell) private applicationShell: IApplicationShell) {
         // this.disposables.push(commands.registerCommand('git.commit.viewChangeLog', this.viewHistory, this));
     }

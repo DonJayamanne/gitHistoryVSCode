@@ -194,3 +194,4 @@ export interface IApplicationShell {
 }
 
 export { ICommandManager } from './types/commandManager';
+export { IDisposableRegistry } from './types/disposableRegistry';

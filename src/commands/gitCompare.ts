@@ -1,14 +1,14 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { commands, Disposable } from 'vscode';
-import { command } from '../commands/register';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory, LogEntry } from '../types';
+import { command } from './registration';
 import { IGitCompareCommandHandler } from './types';
 
 @injectable()
 export class GitCompareCommandHandler implements IGitCompareCommandHandler {
     private disposables: Disposable[] = [];
-    constructor(private serviceContainer: IServiceContainer) {
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) {
         // this.disposables.push(commands.registerCommand('git.commit.viewChangeLog', this.viewHistory, this));
     }
     public dispose() {
