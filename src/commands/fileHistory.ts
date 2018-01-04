@@ -1,34 +1,36 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
-import { Uri, ViewColumn, window, workspace } from 'vscode';
+import { Uri, ViewColumn } from 'vscode';
+import { IDocumentManager } from '../application/types';
 import { ICommandManager } from '../application/types/commandManager';
-import { IUiService } from '../common/types';
+import { ICommand, IUiService } from '../common/types';
 import { gitHistoryFileViewerSchema } from '../constants';
 import { IServiceContainer } from '../ioc/types';
-import { CommittedFile, Hash, IGitService, IGitServiceFactory, LogEntry } from '../types';
+import { CommittedFile, Hash, IGitService, IGitServiceFactory, LogEntry, Status } from '../types';
 import { command } from './registration';
-import { IGitFileHistoryCommandHandler } from './types';
+import { IFileCommitCommandBuilder, IGitFileHistoryCommandHandler } from './types';
 
 @injectable()
-export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandler {
+export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandler, IFileCommitCommandBuilder {
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommandManager) private commandManager: ICommandManager) { }
+        @inject(ICommandManager) private commandManager: ICommandManager,
+        @inject(IDocumentManager) private documentManager: IDocumentManager) { }
 
     @command('git.commit.file.select', IGitFileHistoryCommandHandler)
     public async onFileSelected(workspaceFolder: string, branch: string | undefined, logEntry: LogEntry, commitedFile: CommittedFile) {
-        const commandName = await this.serviceContainer.get<IUiService>(IUiService).selectFileCommitCommandAction(commitedFile);
-        if (!commandName) {
+        const cmd = await this.serviceContainer.get<IUiService>(IUiService).selectFileCommitCommandAction(workspaceFolder, branch, logEntry.hash, commitedFile);
+        if (!cmd) {
             return;
         }
-        this.commandManager.executeCommand(commandName, workspaceFolder, branch, logEntry.hash, commitedFile);
+        return cmd.execute();
     }
 
     @command('git.commit.file.viewFileContents', IGitFileHistoryCommandHandler)
     public async onViewFile(workspaceFolder: string, _branch: string | undefined, hash: Hash, commitedFile: CommittedFile) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
         const uri = await this.getFileUri(gitService, workspaceFolder, hash, commitedFile);
-        const doc = await workspace.openTextDocument(uri);
-        window.showTextDocument(doc, { viewColumn: ViewColumn.Two, preview: true });
+        const doc = await this.documentManager.openTextDocument(uri);
+        this.documentManager.showTextDocument(doc, { viewColumn: ViewColumn.Two, preview: true });
     }
 
     @command('git.commit.file.compareAgainstWorkspace', IGitFileHistoryCommandHandler)
@@ -56,6 +58,27 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
 
         const title = this.getComparisonTitle({ file: Uri.file(commitedFile.uri.fsPath), hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
         this.commandManager.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { preview: true });
+    }
+    public getFileCommitCommands(workspaceFolder: string, branch: string | undefined, hash: Hash, committedFile: CommittedFile): ICommand[] {
+        const commands = [{
+            label: '$(eye) View file contents',
+            description: '',
+            execute: () => this.commandManager.executeCommand('git.commit.file.viewFileContents', workspaceFolder, branch, hash, committedFile)
+        }, {
+            label: '$(git-compare) Compare against workspace file',
+            description: '',
+            execute: () => this.commandManager.executeCommand('git.commit.file.compareAgainstWorkspace', workspaceFolder, branch, hash, committedFile)
+        }];
+
+        if (committedFile.status !== Status.Added) {
+            commands.push({
+                label: '$(git-compare) Compare against previous version',
+                description: '',
+                execute: () => this.commandManager.executeCommand('git.commit.file.compareAgainstPrevious', workspaceFolder, branch, hash, committedFile)
+            });
+        }
+
+        return commands;
     }
     private getComparisonTitle(left: { file: Uri, hash: Hash }, right: { file: Uri, hash: Hash }) {
         const leftFileName = path.basename(left.file.fsPath);

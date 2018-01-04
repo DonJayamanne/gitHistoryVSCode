@@ -1,7 +1,9 @@
 import { inject, injectable } from 'inversify';
 import * as osLocale from 'os-locale';
-import { commands, Disposable, ViewColumn } from 'vscode';
+import { ViewColumn } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
+import { ICommandManager } from '../application/types';
+import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { IUiService } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
@@ -12,17 +14,10 @@ import { IGitHistoryCommandHandler } from './types';
 
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
-    private disposables: Disposable[] = [];
-    private server: IServerHost;
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) {
-        // this.disposables.push(commands.registerCommand('git.viewHistory', this.viewHistory, this));
-    }
-    public dispose() {
-        if (this.server) {
-            this.server.dispose();
-        }
-        this.disposables.forEach(disposable => disposable.dispose());
-    }
+    private server?: IServerHost;
+    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
+        @inject(ICommandManager) private commandManager: ICommandManager) { }
 
     @command('git.viewHistory', IGitHistoryCommandHandler)
     public async viewHistory(): Promise<void> {
@@ -30,7 +25,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
 
         // tslint:disable-next-line:no-console
         console.log(fileStatParserFactory);
-        this.server = this.server || this.serviceContainer.get<IServerHost>(IServerHost);
+        if (!this.server) {
+            this.server = this.serviceContainer.get<IServerHost>(IServerHost);
+            this.disposableRegistry.register(this.server);
+        }
         const uiService = this.serviceContainer.get<IUiService>(IUiService);
         const workspaceFolder = await uiService.getWorkspaceFolder();
         if (!workspaceFolder) {
@@ -43,7 +41,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
 
         const branchNamePromise = await gitService.getCurrentBranch();
-        const startupInfoPromise = await this.server.start(workspaceFolder);
+        const startupInfoPromise = await this.server!.start(workspaceFolder);
         const localePromise = await osLocale();
 
         const values = await Promise.all([branchNamePromise, startupInfoPromise, localePromise]);
@@ -63,6 +61,6 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         }
         const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
         const title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
-        commands.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
+        this.commandManager.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
     }
 }

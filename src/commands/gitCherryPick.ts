@@ -1,19 +1,16 @@
 import { inject, injectable } from 'inversify';
-import { Disposable, window } from 'vscode';
+import { IApplicationShell, ICommandManager } from '../application/types';
+import { ICommand } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { Hash, IGitServiceFactory } from '../types';
+import { Hash, IGitServiceFactory, LogEntry } from '../types';
 import { command } from './registration';
-import { IGitCherryPickCommandHandler } from './types';
+import { ICommitCommandBuilder, IGitCherryPickCommandHandler } from './types';
 
 @injectable()
-export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler {
-    private disposables: Disposable[] = [];
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) {
-        // this.disposables.push(commands.registerCommand('git.commit.viewChangeLog', this.viewHistory, this));
-    }
-    public dispose() {
-        this.disposables.forEach(disposable => disposable.dispose());
-    }
+export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler, ICommitCommandBuilder {
+    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(IApplicationShell) private applicationShell: IApplicationShell,
+        @inject(ICommandManager) private commandManager: ICommandManager) { }
 
     @command('git.commit.cherryPick', IGitCherryPickCommandHandler)
     public async cherryPickCommit(workspaceFolder: string, hash: Hash) {
@@ -21,7 +18,7 @@ export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler
         const currentBranch = await gitService.getCurrentBranch();
 
         const msg = `Cherry pick ${hash.short} into ${currentBranch}?`;
-        const yesNo = await window.showQuickPick(['Yes', 'No'], { placeHolder: msg });
+        const yesNo = await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg });
 
         if (yesNo === undefined || yesNo === 'No') {
             return;
@@ -30,8 +27,17 @@ export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler
         gitService.cherryPick(hash.full)
             .catch(err => {
                 if (typeof err === 'string') {
-                    window.showErrorMessage(err);
+                    this.applicationShell.showErrorMessage(err);
                 }
             });
+    }
+    public getCommitCommands(workspaceFolder: string, _branchName: string | undefined, logEntry: LogEntry): ICommand[] {
+        return [{
+            label: `$(git-pull-request) Cherry pick ${logEntry.hash.short} into current branch`,
+            description: '',
+            execute: () => {
+                this.commandManager.executeCommand('git.commit.cherryPick', workspaceFolder, logEntry.hash);
+            }
+        }];
     }
 }

@@ -1,6 +1,21 @@
+import { ICommand } from '../common/types';
+import { CommittedFile, Hash, LogEntry } from '../types';
+
 export const ICommandHandler = Symbol('ICommandHandler');
 
 export interface ICommandHandler {
+}
+
+export const ICommitCommandBuilder = Symbol('ICommitCommandBuilder');
+
+export interface ICommitCommandBuilder {
+    getCommitCommands(workspaceFolder: string, _branchName: string | undefined, logEntry: LogEntry): ICommand[];
+}
+
+export const IFileCommitCommandBuilder = Symbol('IFileCommitCommandBuilder');
+
+export interface IFileCommitCommandBuilder {
+    getFileCommitCommands(workspaceFolder: string, _branch: string | undefined, hash: Hash, committedFile: CommittedFile): ICommand[];
 }
 
 export const IGitHistoryCommandHandler = Symbol('IGitHistoryCommandHandler');

@@ -23,26 +23,9 @@ export class ApiController implements IApiRouteHandler {
         this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
         this.app.post('/log/:hash/cherryPick', this.handleRequest(this.cherryPickCommit.bind(this)));
     }
-    // tslint:disable-next-line:no-any
-    private handleRequest = (handler: (request: Request, response: Response) => void) => {
-        return async (request: Request, response: Response) => {
-            try {
-                await handler(request, response);
-            } catch (err) {
-                response.status(500).send(err);
-            }
-        };
-    }
-    private getWorkspace(id: string) {
-        return this.stateStore.getState(id)!.workspaceFolder;
-    }
-    private getRepository(id: string): IGitService {
-        const workspaceFolder = this.getWorkspace(id);
-        return this.gitServiceFactory.createGitService(workspaceFolder);
-    }
-    // tslint:disable-next-line:no-empty
+    // tslint:disable-next-line:no-empty member-ordering
     public dispose() { }
-    // tslint:disable-next-line:cyclomatic-complexity
+    // tslint:disable-next-line:cyclomatic-complexity member-ordering
     public getLogEntries = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
         const searchText = request.query.searchText;
@@ -89,8 +72,7 @@ export class ApiController implements IApiRouteHandler {
             currentState.entries) {
 
             promise = currentState.entries;
-        }
-        else {
+        }        else {
             promise = this.getRepository(decodeURIComponent(request.query.id))
                 .getLogEntries(pageIndex, pageSize, branch, searchText)
                 .then(data => {
@@ -134,8 +116,7 @@ export class ApiController implements IApiRouteHandler {
         // tslint:disable-next-line:possible-timing-attack
         if (currentState && currentState.lastFetchedHash === hash && currentState.lastFetchedCommit) {
             commitPromise = currentState.lastFetchedCommit;
-        }
-        else {
+        }        else {
             commitPromise = this.getRepository(id).getCommit(hash);
             this.stateStore.updateLastHashCommit(id, hash, commitPromise);
         }
@@ -179,5 +160,22 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         commands.executeCommand('git.commit.file.select', workspaceFolder, currentState.branch, body.logEntry, body.committedFile);
+    }
+    // tslint:disable-next-line:no-any
+    private handleRequest = (handler: (request: Request, response: Response) => void) => {
+        return async (request: Request, response: Response) => {
+            try {
+                await handler(request, response);
+            } catch (err) {
+                response.status(500).send(err);
+            }
+        };
+    }
+    private getWorkspace(id: string) {
+        return this.stateStore.getState(id)!.workspaceFolder;
+    }
+    private getRepository(id: string): IGitService {
+        const workspaceFolder = this.getWorkspace(id);
+        return this.gitServiceFactory.createGitService(workspaceFolder);
     }
 }

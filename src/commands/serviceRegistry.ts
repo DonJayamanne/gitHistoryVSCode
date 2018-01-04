@@ -6,15 +6,25 @@ import { GitCommitCommandHandler } from './gitCommit';
 import { GitCompareCommandHandler } from './gitCompare';
 import { GitHistoryCommandHandler } from './gitHistory';
 import { CommandHandlerManager } from './handlerManager';
-import { ICommandHandler, ICommandHandlerManager, IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCompareCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler } from './types';
+import { ICommandHandler, ICommandHandlerManager, ICommitCommandBuilder, IFileCommitCommandBuilder, IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCompareCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler } from './types';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler, GitFileHistoryCommandHandler);
+    serviceManager.addSingletonInstance<IFileCommitCommandBuilder>(IFileCommitCommandBuilder, serviceManager.get<IFileCommitCommandBuilder>(IGitFileHistoryCommandHandler));
+
     serviceManager.addSingleton<IGitBranchFromCommitCommandHandler>(IGitBranchFromCommitCommandHandler, GitBranchFromCommitCommandHandler);
+    serviceManager.addSingletonInstance<ICommitCommandBuilder>(ICommitCommandBuilder, serviceManager.get<ICommitCommandBuilder>(IGitBranchFromCommitCommandHandler));
+
     serviceManager.addSingleton<IGitHistoryCommandHandler>(IGitHistoryCommandHandler, GitHistoryCommandHandler);
+
     serviceManager.addSingleton<IGitCommitCommandHandler>(IGitCommitCommandHandler, GitCommitCommandHandler);
+    serviceManager.addSingletonInstance<ICommitCommandBuilder>(ICommitCommandBuilder, serviceManager.get<ICommitCommandBuilder>(IGitCommitCommandHandler));
+
     serviceManager.addSingleton<IGitCherryPickCommandHandler>(IGitCherryPickCommandHandler, GitCherryPickCommandHandler);
+    serviceManager.addSingletonInstance<ICommitCommandBuilder>(ICommitCommandBuilder, serviceManager.get<ICommitCommandBuilder>(IGitCherryPickCommandHandler));
+
     serviceManager.addSingleton<IGitCompareCommandHandler>(IGitCompareCommandHandler, GitCompareCommandHandler);
+    serviceManager.addSingletonInstance<ICommitCommandBuilder>(ICommitCommandBuilder, serviceManager.get<ICommitCommandBuilder>(IGitCompareCommandHandler));
 
     [IGitFileHistoryCommandHandler, IGitBranchFromCommitCommandHandler, IGitHistoryCommandHandler,
         IGitCommitCommandHandler, IGitCherryPickCommandHandler, IGitCompareCommandHandler].forEach(serviceIdentifier => {

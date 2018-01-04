@@ -1,21 +1,14 @@
 import { inject, injectable } from 'inversify';
-import { commands, Disposable } from 'vscode';
-import { IUiService } from '../common/types';
+import { ICommand, IUiService } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory, LogEntry } from '../types';
 import { ICommitViewer } from '../viewers/types';
 import { command } from './registration';
-import { IGitCommitCommandHandler } from './types';
+import { ICommitCommandBuilder, IGitCommitCommandHandler } from './types';
 
 @injectable()
-export class GitCommitCommandHandler implements IGitCommitCommandHandler {
-    private disposables: Disposable[] = [];
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) {
-        // this.disposables.push(commands.registerCommand('git.commit.viewChangeLog', this.viewHistory, this));
-    }
-    public dispose() {
-        this.disposables.forEach(disposable => disposable.dispose());
-    }
+export class GitCommitCommandHandler implements IGitCommitCommandHandler, ICommitCommandBuilder {
+    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     @command('git.commit.viewChangeLog', IGitCommitCommandHandler)
     public async viewHistory(workspaceFolder: string, _branchName: string | undefined, hash: string) {
@@ -29,12 +22,15 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
 
     @command('git.commit.doSomething', IGitCommitCommandHandler)
     public async doSomethingWithCommit(workspaceFolder: string, _branchName: string | undefined, logEntry: LogEntry) {
-        const commandAction = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(workspaceFolder, logEntry);
-        if (!commandAction) {
+        const cmd = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(workspaceFolder, logEntry);
+        if (!cmd) {
             return;
         }
         // tslint:disable-next-line:no-console
-        console.log(commandAction);
-        commands.executeCommand(commandAction.command, ...commandAction.args);
+        console.log(cmd);
+        return cmd.execute();
+    }
+    public getCommitCommands(_workspaceFolder: string, _branchName: string | undefined, _logEntry: LogEntry): ICommand[] {
+        return [];
     }
 }
