@@ -6,6 +6,7 @@ import * as express from 'express';
 import * as http from 'http';
 import { decorate, inject, injectable } from 'inversify';
 import * as path from 'path';
+import { ICommandManager } from '../application/types/commandManager';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
@@ -19,6 +20,9 @@ decorate(injectable(), EventEmitter);
 export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
     private httpServer?: http.Server;
+    private apiController: ApiController;
+    private port?: number;
+    private startPromise: Promise<StartupInfo>;
     constructor( @inject(IThemeService) private themeService: IThemeService,
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
@@ -38,8 +42,6 @@ export class ServerHost extends EventEmitter implements IServerHost {
         }
     }
 
-    private port?: number;
-    private startPromise: Promise<StartupInfo>;
     public async start(_workspaceFolder: string): Promise<StartupInfo> {
         if (this.startPromise) {
             return this.startPromise;
@@ -67,7 +69,8 @@ export class ServerHost extends EventEmitter implements IServerHost {
         });
 
         return this.startPromise = new Promise<StartupInfo>((resolve, reject) => {
-            this.apiController = new ApiController(this.app!, this.gitServiceFactory, this.serviceContainer, this.stateStore);
+            const commandManager = this.serviceContainer.get<ICommandManager>(ICommandManager);
+            this.apiController = new ApiController(this.app!, this.gitServiceFactory, this.serviceContainer, this.stateStore, commandManager);
             this.httpServer!.listen(0, () => {
                 this.port = this.httpServer!.address().port;
                 resolve({ port: this.port });
@@ -79,7 +82,6 @@ export class ServerHost extends EventEmitter implements IServerHost {
             });
         });
     }
-    private apiController: ApiController;
     public rootRequestHandler(req: Request, res: Response) {
         const theme: string = req.query.theme;
         const backgroundColor: string = req.query.backgroundColor;

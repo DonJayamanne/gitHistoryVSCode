@@ -25,6 +25,9 @@ export abstract class BaseCommand<T> implements ICommand<T> {
     protected setLabel(value: string) {
         this._label = value;
     }
+    protected setName(value: string) {
+        this._name = value;
+    }
     protected setDescription(value: string) {
         this._label = value;
     }

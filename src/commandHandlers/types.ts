@@ -8,7 +8,7 @@ export interface ICommandHandler {
 export const IGitHistoryCommandHandler = Symbol('IGitHistoryCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitHistoryCommandHandler extends ICommandHandler {
-
+    viewHistory(): Promise<void>;
 }
 
 export const IGitFileHistoryCommandHandler = Symbol('IGitFileHistoryCommandHandler');
