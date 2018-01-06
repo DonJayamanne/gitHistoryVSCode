@@ -20,7 +20,7 @@ export class FileCommitCommandFactory implements IFileCommitCommandFactory {
             new SelectFileForComparison(fileCommit, this.fileCompareHandler)
         ];
 
-        if (!this.fileCompareHandler.selectedCommit) {
+        if (this.fileCompareHandler.selectedCommit) {
             commands.push(new CompareFileCommand(fileCommit, this.fileCompareHandler, this.fileCompareHandler.selectedCommit!));
         }
 

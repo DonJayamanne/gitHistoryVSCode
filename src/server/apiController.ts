@@ -5,6 +5,7 @@ import { IFileStatParser } from '../adapter/parsers/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
+import { CommitDetails } from '../common/types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
 
@@ -72,7 +73,7 @@ export class ApiController implements IApiRouteHandler {
             currentState.entries) {
 
             promise = currentState.entries;
-        }        else {
+        } else {
             promise = this.getRepository(decodeURIComponent(request.query.id))
                 .getLogEntries(pageIndex, pageSize, branch, searchText)
                 .then(data => {
@@ -116,7 +117,7 @@ export class ApiController implements IApiRouteHandler {
         // tslint:disable-next-line:possible-timing-attack
         if (currentState && currentState.lastFetchedHash === hash && currentState.lastFetchedCommit) {
             commitPromise = currentState.lastFetchedCommit;
-        }        else {
+        } else {
             commitPromise = this.getRepository(id).getCommit(hash);
             this.stateStore.updateLastHashCommit(id, hash, commitPromise);
         }
@@ -150,7 +151,7 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         const logEntry = request.body as LogEntry;
-        commands.executeCommand('git.commit.doSomething', workspaceFolder, currentState.branch, logEntry);
+        commands.executeCommand('git.commit.doSomething', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
     }
     public selectCommittedFile = async (request: Request, response: Response) => {
         response.status(200).send('');
