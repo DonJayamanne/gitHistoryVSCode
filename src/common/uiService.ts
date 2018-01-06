@@ -6,7 +6,7 @@ import { IApplicationShell } from '../application/types';
 import { ICommitCommandBuilder, IFileCommitCommandBuilder } from '../commands/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection, CommittedFile, Hash } from '../types';
-import { ICommand, IUiService } from './types';
+import { ICommand, IUiService, Context } from './types';
 const allBranches = 'All branches';
 const currentBranch = 'Current branch';
 
@@ -39,25 +39,25 @@ export class UiService implements IUiService {
         const folder: WorkspaceFolder | undefined = await (window as any).showWorkspaceFolderPick({ placeHolder: 'Select a workspace' });
         return folder ? folder.uri.fsPath : undefined;
     }
-    public async selectFileCommitCommandAction(workspaceFolder: string, branch: string | undefined, hash: Hash, committedFile: CommittedFile): Promise<ICommand | undefined> {
+    public async selectFileCommitCommandAction(context: Context): Promise<ICommand | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
         const commands = this.serviceContainer.getAll<IFileCommitCommandBuilder>(IFileCommitCommandBuilder)
-            .map(builder => builder.getFileCommitCommands(workspaceFolder, branch, hash, committedFile));
+            .map(builder => builder.getFileCommitCommands(context));
 
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 
         return this.application.showQuickPick(_.flatten(commands), options);
     }
-    public async selectCommitCommandAction(workspaceFolder: string, logEntry: LogEntry): Promise<ICommand | undefined> {
+    public async selectCommitCommandAction(context: Context): Promise<ICommand | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
         const commands = this.serviceContainer.getAll<ICommitCommandBuilder>(ICommitCommandBuilder)
-            .map(builder => builder.getCommitCommands(workspaceFolder, undefined, logEntry));
+            .map(builder => builder.getCommitCommands(context));
 
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 

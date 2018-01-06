@@ -16,11 +16,20 @@ export const IUiService = Symbol('IUiService');
 export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
     getWorkspaceFolder(): Promise<string | undefined>;
-    selectFileCommitCommandAction(workspaceFolder: string, branch: string | undefined, hash: Hash, committedFile: CommittedFile): Promise<ICommand | undefined>;
-    selectCommitCommandAction(workspaceFolder: string, logEntry: LogEntry): Promise<ICommand | undefined>;
+    selectFileCommitCommandAction(context: Context): Promise<ICommand | undefined>;
+    selectCommitCommandAction(context: Context): Promise<ICommand | undefined>;
 }
 
+export type Context = {
+    workspaceFolder: string;
+    branch: string;
+    hash: Hash;
+    committedFile?: CommittedFile;
+    logEntry?: LogEntry;
+};
+
 export interface ICommand {
+    data: Context;
     /**
      * A human readable string which is rendered prominent.
      */
