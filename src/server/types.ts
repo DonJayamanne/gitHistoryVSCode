@@ -21,7 +21,6 @@ export interface IApiRouteHandler extends Disposable {
     getLogEntries(request: Request, response: Response): void;
     getBranches(request: Request, response: Response): void;
     getCommit(request: Request, response: Response): void;
-    cherryPickCommit(request: Request, response: Response): void;
     doSomethingWithCommit(request: Request, response: Response): void;
     selectCommittedFile(request: Request, response: Response): void;
 }

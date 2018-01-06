@@ -79,21 +79,13 @@ export const selectCommittedFile = (logEntry: LogEntry, committedFile: Committed
             });
     };
 };
-export const cherryPickCommit = (logEntry: LogEntry) => {
-    // tslint:disable-next-line:no-any
-    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
-        const state = getState();
-        const url = getQueryUrl(state, `/log/${logEntry.hash.full}/cherryPick`);
-        await axios.post(url, logEntry.hash.full);
-    };
-};
 export const closeCommitView = () => {
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const url = getQueryUrl(state, '/log/clearSelection');
         // tslint:disable-next-line:no-backbone-get-set-outside-model
-        await axios.get(url);
+        await axios.post(url);
         await dispatch(clearCommitSelection());
     };
 };

@@ -50,7 +50,6 @@ function mapStateToProps(state: RootState, wrapper: { result: ActionedDetails })
 //     setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
 //     commitsRendered: () => dispatch(ResultActions.commitsRendered()),
 //     onViewCommit: (hash: string) => dispatch(ResultActions.viewCommit(hash)),
-//     onCherryPick: (logEntry: LogEntry) => dispatch(ResultActions.cherryPickCommit(logEntry)),
 //     actionACommit: (logEntry: LogEntry) => dispatch(ResultActions.actionACommit(logEntry))
 //   };
 // }

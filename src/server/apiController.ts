@@ -1,7 +1,8 @@
 import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
-import { commands, Uri } from 'vscode';
+import { Uri } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
+import { ICommandManager } from '../application/types/commandManager';
 import { CommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
@@ -14,7 +15,8 @@ export class ApiController implements IApiRouteHandler {
     constructor(private app: Express,
         private gitServiceFactory: IGitServiceFactory,
         private serviceContainer: IServiceContainer,
-        private stateStore: IWorkspaceQueryStateStore) {
+        private stateStore: IWorkspaceQueryStateStore,
+        private commandManager: ICommandManager) {
 
         this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
         this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
@@ -22,7 +24,6 @@ export class ApiController implements IApiRouteHandler {
         this.app.post('/log/clearSelection', this.handleRequest(this.clearSelectedCommit.bind(this)));
         this.app.post('/log/:hash', this.handleRequest(this.doSomethingWithCommit.bind(this)));
         this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
-        this.app.post('/log/:hash/cherryPick', this.handleRequest(this.cherryPickCommit.bind(this)));
     }
     // tslint:disable-next-line:no-empty member-ordering
     public dispose() { }
@@ -128,21 +129,10 @@ export class ApiController implements IApiRouteHandler {
                 response.status(500).send(err);
             });
     }
-    public cherryPickCommit = async (request: Request, response: Response) => {
-        // const id: string = decodeURIComponent(request.query.id);
-        const hash: string = request.params.hash;
-        // tslint:disable-next-line:no-console
-        console.log(hash);
-        response.send('');
-        // this.repository.getCommit(request.params.hash)
-        //     .then(data => response.send(data))
-        //     .catch(err => response.status(500).send(err));
-    }
     public clearSelectedCommit = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
 
-        const workspaceFolder = this.getWorkspace(id);
-        await this.stateStore.clearLastHashCommit(workspaceFolder);
+        await this.stateStore.clearLastHashCommit(id);
         response.send('');
     }
     public doSomethingWithCommit = async (request: Request, response: Response) => {
@@ -151,7 +141,7 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         const logEntry = request.body as LogEntry;
-        commands.executeCommand('git.commit.doSomething', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
+        this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
     }
     public selectCommittedFile = async (request: Request, response: Response) => {
         response.status(200).send('');
@@ -160,7 +150,7 @@ export class ApiController implements IApiRouteHandler {
         const body = request.body as { logEntry: LogEntry, committedFile: CommittedFile };
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
-        commands.executeCommand('git.commit.file.select', workspaceFolder, currentState.branch, body.logEntry, body.committedFile);
+        this.commandManager.executeCommand('git.commit.file.select', workspaceFolder, currentState.branch, body.logEntry, body.committedFile);
     }
     // tslint:disable-next-line:no-any
     private handleRequest = (handler: (request: Request, response: Response) => void) => {

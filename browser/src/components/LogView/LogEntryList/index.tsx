@@ -7,7 +7,6 @@ interface ResultProps {
     logEntries: LogEntry[];
     onViewCommit(entry: LogEntry): void;
     onClick(entry: LogEntry): void;
-    onCherryPick(entry: LogEntry): void;
 }
 
 export default class LogEntryList extends React.Component<ResultProps> {
@@ -58,7 +57,6 @@ export default class LogEntryList extends React.Component<ResultProps> {
                     key={entry.hash.full}
                     logEntry={entry}
                     onViewCommit={this.props.onViewCommit}
-                    onCherryPick={this.props.onCherryPick}
                     onClick={this.props.onClick} />
             </Element>
         );

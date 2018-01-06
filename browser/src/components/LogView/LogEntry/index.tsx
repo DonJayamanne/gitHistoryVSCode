@@ -18,7 +18,6 @@ type ResultListPropsSentToComponent = {
     logEntry: LogEntry;
     onViewCommit(entry: LogEntry): void;
     onClick(entry: LogEntry): void;
-    onCherryPick(entry: LogEntry): void;
 };
 
 type ResultListProps = ResultListPropsSentToComponent & {

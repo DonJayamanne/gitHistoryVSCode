@@ -14,7 +14,6 @@ type LogViewProps = {
     setHeight: typeof ResultActions.logEntryHeightCalculated;
     commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
-    onCherryPick: typeof ResultActions.cherryPickCommit;
     actionACommit: typeof ResultActions.actionACommit;
 };
 
@@ -62,7 +61,6 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
             <div className='log-view' id='scrollCnt' ref={(ref) => this.ref = ref}>
                 <BranchGraph ></BranchGraph>
                 <LogEntryList logEntries={this.props.logEntries.items}
-                    onCherryPick={this.onCherryPickCommit}
                     onClick={this.onClick}
                     onViewCommit={this.onViewCommit}></LogEntryList>
             </div>
@@ -74,9 +72,6 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     }
     public onClick = (entry: LogEntry) => {
         this.props.actionACommit(entry);
-    }
-    public onCherryPickCommit = (entry: LogEntry) => {
-        this.props.onCherryPick(entry);
     }
 }
 function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) {
@@ -101,7 +96,6 @@ function mapDispatchToProps(dispatch) {
         setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
         commitsRendered: () => dispatch(ResultActions.commitsRendered()),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
-        onCherryPick: (logEntry: LogEntry) => dispatch(ResultActions.cherryPickCommit(logEntry)),
         actionACommit: (logEntry: LogEntry) => dispatch(ResultActions.actionACommit(logEntry))
     };
 }
