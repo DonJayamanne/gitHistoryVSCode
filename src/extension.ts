@@ -11,7 +11,7 @@ import { registerTypes as registerRepositoryTypes } from './adapter/repository/s
 import { registerTypes as registerAdapterTypes } from './adapter/serviceRegistry';
 import { registerTypes as registerApplicationTypes } from './application/serviceRegistry';
 import { IDisposableRegistry } from './application/types/disposableRegistry';
-import { registerTypes as registerCommandTypes } from './commands/serviceRegistry';
+import { registerTypes as registerCommandTypes } from './commandHandlers/serviceRegistry';
 // import * as fileHistory from './commands/fileHistory';
 // import * as lineHistory from './commands/lineHistory';
 // import { CommandRegister } from './commands/register';

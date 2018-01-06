@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { CancellationTokenSource, QuickPickItem, workspace, WorkspaceFolder } from 'vscode';
 import { LogEntry } from '../../browser/src/definitions';
 import { IApplicationShell } from '../application/types';
-import { ICommitCommandBuilder, IFileCommitCommandBuilder } from '../commands/types';
+import { ICommitCommandBuilder, IFileCommitCommandBuilder } from '../commandHandlers/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection, CommittedFile, Hash } from '../types';
 import { ICommand, IUiService } from './types';
