@@ -1,9 +1,13 @@
 import { ICommand } from '../common/types';
 
 export abstract class BaseCommand<T> implements ICommand<T> {
+    private _name: string;
     private _label: string;
     private _description: string;
     private _detail?: string;
+    public get name() {
+        return this._name;
+    }
     public get label() {
         return this._label;
     }

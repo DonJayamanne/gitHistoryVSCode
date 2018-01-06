@@ -1,14 +1,14 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { Uri, ViewColumn } from 'vscode';
-import { IDocumentManager } from '../application/types';
-import { ICommandManager } from '../application/types/commandManager';
-import { FileCommitDetails, IUiService } from '../common/types';
-import { gitHistoryFileViewerSchema } from '../constants';
-import { IServiceContainer } from '../ioc/types';
-import { Hash, IGitService, IGitServiceFactory } from '../types';
-import { command } from './registration';
-import { IGitFileHistoryCommandHandler } from './types';
+import { IDocumentManager } from '../../application/types';
+import { ICommandManager } from '../../application/types/commandManager';
+import { FileCommitDetails, IUiService } from '../../common/types';
+import { gitHistoryFileViewerSchema } from '../../constants';
+import { IServiceContainer } from '../../ioc/types';
+import { Hash, IGitService, IGitServiceFactory } from '../../types';
+import { command } from '../registration';
+import { IGitFileHistoryCommandHandler } from '../types';
 
 @injectable()
 export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandler {

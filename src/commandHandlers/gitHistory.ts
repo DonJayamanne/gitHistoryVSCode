@@ -4,7 +4,7 @@ import { ViewColumn } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
-import { IUiService, BranchDetails } from '../common/types';
+import { BranchDetails, IUiService } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { IServerHost, IWorkspaceQueryStateStore } from '../server/types';

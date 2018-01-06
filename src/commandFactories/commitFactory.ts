@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler } from '../commandHandlers/types';
+import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CherryPickCommand } from '../commands/commit/cherryPick';
 import { CreateBranchCommand } from '../commands/commit/createBranch';
 import { ViewDetailsCommand } from '../commands/commit/viewDetails';
@@ -10,7 +10,7 @@ import { ICommitCommandFactory } from './types';
 export class CommitCommandFactory implements ICommitCommandFactory {
     constructor( @inject(IGitBranchFromCommitCommandHandler) private branchCreationCommandHandler: IGitBranchFromCommitCommandHandler,
         @inject(IGitCherryPickCommandHandler) private cherryPickHandler: IGitCherryPickCommandHandler,
-        @inject(IGitCommitCommandHandler) private viewChangeLogHandler: IGitCommitCommandHandler) { }
+        @inject(IGitCommitViewDetailsCommandHandler) private viewChangeLogHandler: IGitCommitViewDetailsCommandHandler) { }
     public createCommands(commit: CommitDetails): ICommand<CommitDetails>[] {
         // tslint:disable-next-line:no-unnecessary-local-variable
         const commands: ICommand<CommitDetails>[] = [

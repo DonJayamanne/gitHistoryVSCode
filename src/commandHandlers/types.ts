@@ -1,4 +1,4 @@
-import { FileCommitDetails, CommitDetails } from '../common/types';
+import { CommitDetails, FileCommitDetails } from '../common/types';
 
 export const ICommandHandler = Symbol('ICommandHandler');
 
@@ -22,6 +22,12 @@ export interface IGitFileHistoryCommandHandler extends ICommandHandler {
 export const IGitCommitCommandHandler = Symbol('IGitCommitCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCommitCommandHandler extends ICommandHandler {
+    doSomethingWithCommit(commit: CommitDetails): Promise<void>;
+}
+
+export const IGitCommitViewDetailsCommandHandler = Symbol('IGitCommitViewDetailsCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitCommitViewDetailsCommandHandler extends ICommandHandler {
     viewDetails(commit: CommitDetails): Promise<void>;
 }
 

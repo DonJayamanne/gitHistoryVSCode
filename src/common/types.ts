@@ -20,6 +20,17 @@ export interface IUiService {
     selectCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined>;
 }
 
+export enum CallContextSource {
+    viewer = 0,
+    commandPalette = 1
+}
+
+export class CallContext<T> {
+    constructor(public readonly source: CallContextSource, public readonly data: T) {
+
+    }
+}
+
 export class BranchDetails {
     constructor(public readonly workspaceFolder: string,
         public readonly branch: string) { }
@@ -31,6 +42,7 @@ export class CommitDetails extends BranchDetails {
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class FileCommitDetails extends CommitDetails {
     constructor(workspaceFolder: string, branch: string, logEntry: LogEntry, public readonly committedFile: Readonly<CommittedFile>) {
         super(workspaceFolder, branch, logEntry);
@@ -38,6 +50,10 @@ export class FileCommitDetails extends CommitDetails {
 }
 
 export interface ICommand<T> {
+    /**
+     * Command name.
+     */
+    name: string;
     data: T;
     /**
      * A human readable string which is rendered prominent.

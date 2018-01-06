@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { IApplicationShell } from '../application/types';
-import { CommitDetails } from '../common/types';
-import { IServiceContainer } from '../ioc/types';
-import { IGitServiceFactory } from '../types';
-import { IGitBranchFromCommitCommandHandler } from './types';
+import { IApplicationShell } from '../../application/types';
+import { CommitDetails } from '../../common/types';
+import { IServiceContainer } from '../../ioc/types';
+import { IGitServiceFactory } from '../../types';
+import { IGitBranchFromCommitCommandHandler } from '../types';
 
 @injectable()
 export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCommandHandler {

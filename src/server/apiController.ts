@@ -2,10 +2,10 @@ import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
 import { commands, Uri } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
+import { CommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
-import { CommitDetails } from '../common/types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
 
