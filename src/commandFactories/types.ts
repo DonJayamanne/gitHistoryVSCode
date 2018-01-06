@@ -1,19 +1,19 @@
-import { BranchData, CommitData, FileCommitData, ICommand } from '../common/types';
+import { BranchDetails, CommitDetails, FileCommitDetails, ICommand } from '../common/types';
 
 export const IFileCommitCommandFactory = Symbol('IFileCommitCommandFactory');
 
 export interface IFileCommitCommandFactory {
-    createCommands(data: FileCommitData): ICommand<FileCommitData>[];
+    createCommands(data: FileCommitDetails): ICommand<FileCommitDetails>[];
 }
 
 export const ICommitCommandFactory = Symbol('ICommitCommandFactory');
 
 export interface ICommitCommandFactory {
-    createCommands(data: CommitData): ICommand<CommitData>[];
+    createCommands(data: CommitDetails): ICommand<CommitDetails>[];
 }
 
 export const IBranchCommandFactory = Symbol('IBranchCommandFactory');
 
 export interface IBranchCommandFactory {
-    createCommands(data: BranchData): ICommand<BranchData>[];
+    createCommands(data: BranchDetails): ICommand<BranchDetails>[];
 }

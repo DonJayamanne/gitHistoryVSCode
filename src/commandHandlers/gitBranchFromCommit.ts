@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { IApplicationShell } from '../application/types';
-import { CommitData } from '../common/types';
+import { CommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { IGitBranchFromCommitCommandHandler } from './types';
@@ -10,7 +10,7 @@ export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCo
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
 
-    public async createBranchFromCommit(commit: CommitData) {
+    public async createBranchFromCommit(commit: CommitDetails) {
         const msg = 'Branch name';
         const description = 'Please provide a branch name';
         const newBranchName = await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description });

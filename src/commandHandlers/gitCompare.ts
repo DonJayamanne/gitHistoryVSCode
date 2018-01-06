@@ -1,32 +1,32 @@
 import { inject, injectable } from 'inversify';
 import { ICommandManager } from '../application/types';
-import { FileCommitData, ICommand } from '../common/types';
+import { FileCommitDetails, ICommand } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { IGitCompareCommandHandler } from './types';
 
 @injectable()
 export class GitCompareCommandHandler implements IGitCompareCommandHandler {
-    private _previouslySelectedCommit?: FileCommitData;
+    private _previouslySelectedCommit?: FileCommitDetails;
 
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommandManager) private commandManager: ICommandManager) { }
 
-    public get selectedCommit(): FileCommitData | undefined {
+    public get selectedCommit(): FileCommitDetails | undefined {
         return this._previouslySelectedCommit;
     }
 
-    public selectCommit(fileCommit: FileCommitData): void {
+    public selectCommit(fileCommit: FileCommitDetails): void {
         this._previouslySelectedCommit = fileCommit;
     }
 
-    public async compare(fileCommit: FileCommitData) {
+    public async compare(fileCommit: FileCommitDetails) {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
         const fileDiffs = await gitService.getDifferences(this.selectedCommit!.logEntry.hash.full, fileCommit.logEntry.hash.full);
         this.commandManager.executeCommand('git.commit.diff.view', this.selectedCommit!, fileCommit, fileDiffs);
     }
-    public getCommitCommands(fileCommit: FileCommitData): ICommand<FileCommitData>[] {
-        const commands: ICommand<FileCommitData>[] = [{
+    public getCommitCommands(fileCommit: FileCommitDetails): ICommand<FileCommitDetails>[] {
+        const commands: ICommand<FileCommitDetails>[] = [{
             data: fileCommit,
             label: '$(git-compare) Select for comparison',
             description: '', detail: 'blah blah',

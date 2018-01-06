@@ -5,7 +5,7 @@ import { IApplicationShell } from '../application/types';
 import { ICommitCommandFactory, IFileCommitCommandFactory } from '../commandFactories/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection } from '../types';
-import { CommitData, FileCommitData, ICommand, IUiService } from './types';
+import { CommitDetails, FileCommitDetails, ICommand, IUiService } from './types';
 const allBranches = 'All branches';
 const currentBranch = 'Current branch';
 
@@ -38,7 +38,7 @@ export class UiService implements IUiService {
         const folder: WorkspaceFolder | undefined = await (window as any).showWorkspaceFolderPick({ placeHolder: 'Select a workspace' });
         return folder ? folder.uri.fsPath : undefined;
     }
-    public async selectFileCommitCommandAction(fileCommit: FileCommitData): Promise<ICommand<FileCommitData> | undefined> {
+    public async selectFileCommitCommandAction(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
@@ -48,7 +48,7 @@ export class UiService implements IUiService {
 
         return this.application.showQuickPick(_.flatten(commands), options);
     }
-    public async selectCommitCommandAction(commit: CommitData): Promise<ICommand<CommitData> | undefined> {
+    public async selectCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }

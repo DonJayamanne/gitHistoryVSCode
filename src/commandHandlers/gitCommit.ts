@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { CommitData, ICommand, IUiService } from '../common/types';
+import { CommitDetails, ICommand, IUiService } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ICommitViewer } from '../viewers/types';
@@ -10,7 +10,7 @@ import { IGitCommitCommandHandler } from './types';
 export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
-    public async viewDetails(commit: CommitData) {
+    public async viewDetails(commit: CommitDetails) {
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
         const logEntry = await gitService.getCommit(commit.logEntry.hash.full);
         if (!logEntry) {
@@ -20,7 +20,7 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     }
 
     @command('git.commit.doSomething', IGitCommitCommandHandler)
-    public async doSomethingWithCommit(commit: CommitData) {
+    public async doSomethingWithCommit(commit: CommitDetails) {
         const cmd = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(commit);
         if (!cmd) {
             return;
@@ -29,7 +29,7 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
         console.log(cmd);
         return cmd.execute();
     }
-    public getCommitCommands(_context: CommitData): ICommand<CommitData>[] {
+    public getCommitCommands(_context: CommitDetails): ICommand<CommitDetails>[] {
         return [];
     }
 }

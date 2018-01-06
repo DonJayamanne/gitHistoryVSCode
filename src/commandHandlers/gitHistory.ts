@@ -4,7 +4,7 @@ import { ViewColumn } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
-import { IUiService, BranchData } from '../common/types';
+import { IUiService, BranchDetails } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { IServerHost, IWorkspaceQueryStateStore } from '../server/types';
@@ -20,7 +20,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         @inject(ICommandManager) private commandManager: ICommandManager) { }
 
     @command('git.viewHistory', IGitHistoryCommandHandler)
-    public async viewHistory(_context: BranchData): Promise<void> {
+    public async viewHistory(_context: BranchDetails): Promise<void> {
         const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
 
         // tslint:disable-next-line:no-console
