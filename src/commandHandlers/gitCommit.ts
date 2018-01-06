@@ -1,19 +1,19 @@
 import { inject, injectable } from 'inversify';
-import { ICommand, IUiService } from '../common/types';
+import { CommitContext, ICommand, IUiService } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { IGitServiceFactory, LogEntry } from '../types';
+import { IGitServiceFactory } from '../types';
 import { ICommitViewer } from '../viewers/types';
 import { command } from './registration';
-import { ICommitCommandBuilder, IGitCommitCommandHandler } from './types';
+import { IGitCommitCommandHandler } from './types';
 
 @injectable()
-export class GitCommitCommandHandler implements IGitCommitCommandHandler, ICommitCommandBuilder {
+export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     @command('git.commit.viewChangeLog', IGitCommitCommandHandler)
-    public async viewHistory(workspaceFolder: string, _branchName: string | undefined, hash: string) {
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        const logEntry = await gitService.getCommit(hash);
+    public async viewHistory(context: CommitContext) {
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(context.workspaceFolder);
+        const logEntry = await gitService.getCommit(context.logEntry.hash.full);
         if (!logEntry) {
             return;
         }
@@ -21,8 +21,8 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler, ICommi
     }
 
     @command('git.commit.doSomething', IGitCommitCommandHandler)
-    public async doSomethingWithCommit(workspaceFolder: string, _branchName: string | undefined, logEntry: LogEntry) {
-        const cmd = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(workspaceFolder, logEntry);
+    public async doSomethingWithCommit(context: CommitContext) {
+        const cmd = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(context);
         if (!cmd) {
             return;
         }
@@ -30,7 +30,7 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler, ICommi
         console.log(cmd);
         return cmd.execute();
     }
-    public getCommitCommands(_workspaceFolder: string, _branchName: string | undefined, _logEntry: LogEntry): ICommand[] {
+    public getCommitCommands(_context: CommitContext): ICommand<CommitContext>[] {
         return [];
     }
 }

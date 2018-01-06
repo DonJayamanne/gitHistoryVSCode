@@ -1,12 +1,11 @@
 import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
 import { CancellationTokenSource, QuickPickItem, workspace, WorkspaceFolder } from 'vscode';
-import { LogEntry } from '../../browser/src/definitions';
 import { IApplicationShell } from '../application/types';
-import { ICommitCommandBuilder, IFileCommitCommandBuilder } from '../commandHandlers/types';
+import { ICommitCommandFactory, IFileCommitCommandFactory } from '../commandFactories/types';
 import { IServiceContainer } from '../ioc/types';
-import { BranchSelection, CommittedFile, Hash } from '../types';
-import { ICommand, IUiService, Context } from './types';
+import { BranchSelection } from '../types';
+import { CommitContext, FileCommitContext, ICommand, IUiService } from './types';
 const allBranches = 'All branches';
 const currentBranch = 'Current branch';
 
@@ -39,26 +38,22 @@ export class UiService implements IUiService {
         const folder: WorkspaceFolder | undefined = await (window as any).showWorkspaceFolderPick({ placeHolder: 'Select a workspace' });
         return folder ? folder.uri.fsPath : undefined;
     }
-    public async selectFileCommitCommandAction(context: Context): Promise<ICommand | undefined> {
+    public async selectFileCommitCommandAction(context: FileCommitContext): Promise<ICommand<FileCommitContext> | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
-        const commands = this.serviceContainer.getAll<IFileCommitCommandBuilder>(IFileCommitCommandBuilder)
-            .map(builder => builder.getFileCommitCommands(context));
-
+        const commands = this.serviceContainer.get<IFileCommitCommandFactory>(IFileCommitCommandFactory).createCommands(context);
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 
         return this.application.showQuickPick(_.flatten(commands), options);
     }
-    public async selectCommitCommandAction(context: Context): Promise<ICommand | undefined> {
+    public async selectCommitCommandAction(context: CommitContext): Promise<ICommand<CommitContext> | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
-        const commands = this.serviceContainer.getAll<ICommitCommandBuilder>(ICommitCommandBuilder)
-            .map(builder => builder.getCommitCommands(context));
-
+        const commands = this.serviceContainer.get<ICommitCommandFactory>(ICommitCommandFactory).createCommands(context);
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 
         return this.application.showQuickPick(_.flatten(commands), options);

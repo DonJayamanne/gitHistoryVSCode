@@ -11,6 +11,7 @@ import { registerTypes as registerRepositoryTypes } from './adapter/repository/s
 import { registerTypes as registerAdapterTypes } from './adapter/serviceRegistry';
 import { registerTypes as registerApplicationTypes } from './application/serviceRegistry';
 import { IDisposableRegistry } from './application/types/disposableRegistry';
+import { registerTypes as registerCommandFactoryTypes } from './commandFactories/serviceRegistry';
 import { registerTypes as registerCommandTypes } from './commandHandlers/serviceRegistry';
 // import * as fileHistory from './commands/fileHistory';
 // import * as lineHistory from './commands/lineHistory';
@@ -70,6 +71,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     registerAdapterTypes(serviceManager);
     registerApplicationTypes(serviceManager);
     registerPlatformTypes(serviceManager);
+    registerCommandFactoryTypes(serviceManager);
 
     setServiceContainer(serviceContainer);
 

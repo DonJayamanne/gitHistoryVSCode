@@ -1,4 +1,4 @@
-import { BranchSelection, CommittedFile, Hash, LogEntry } from '../types';
+import { BranchSelection, CommittedFile, LogEntry } from '../types';
 
 export const ILogService = Symbol('ILogService');
 
@@ -16,20 +16,29 @@ export const IUiService = Symbol('IUiService');
 export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
     getWorkspaceFolder(): Promise<string | undefined>;
-    selectFileCommitCommandAction(context: Context): Promise<ICommand | undefined>;
-    selectCommitCommandAction(context: Context): Promise<ICommand | undefined>;
+    selectFileCommitCommandAction(context: FileCommitContext): Promise<ICommand<FileCommitContext> | undefined>;
+    selectCommitCommandAction(context: CommitContext): Promise<ICommand<CommitContext> | undefined>;
 }
 
-export type Context = {
-    workspaceFolder: string;
-    branch: string;
-    hash: Hash;
-    committedFile?: CommittedFile;
-    logEntry?: LogEntry;
-};
+export class BranchContext {
+    constructor(public readonly workspaceFolder: string,
+        public readonly branch: string) { }
+}
 
-export interface ICommand {
-    data: Context;
+export class CommitContext extends BranchContext {
+    constructor(workspaceFolder: string, branch: string, public readonly logEntry: Readonly<LogEntry>) {
+        super(workspaceFolder, branch);
+    }
+}
+
+export class FileCommitContext extends CommitContext {
+    constructor(workspaceFolder: string, branch: string, logEntry: LogEntry, public readonly committedFile: Readonly<CommittedFile>) {
+        super(workspaceFolder, branch, logEntry);
+    }
+}
+
+export interface ICommand<T> {
+    data: T;
     /**
      * A human readable string which is rendered prominent.
      */
