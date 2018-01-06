@@ -3,7 +3,7 @@ import { injectable } from 'inversify';
 import { Uri } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
 import { ICommandManager } from '../application/types/commandManager';
-import { CommitDetails } from '../common/types';
+import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
@@ -146,11 +146,10 @@ export class ApiController implements IApiRouteHandler {
     public selectCommittedFile = async (request: Request, response: Response) => {
         response.status(200).send('');
         const id: string = decodeURIComponent(request.query.id);
-        // tslint:disable-next-line:prefer-type-cast
         const body = request.body as { logEntry: LogEntry, committedFile: CommittedFile };
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
-        this.commandManager.executeCommand('git.commit.file.select', workspaceFolder, currentState.branch, body.logEntry, body.committedFile);
+        this.commandManager.executeCommand('git.commit.file.select', new FileCommitDetails(workspaceFolder, currentState.branch!, body.logEntry, body.committedFile));
     }
     // tslint:disable-next-line:no-any
     private handleRequest = (handler: (request: Request, response: Response) => void) => {
