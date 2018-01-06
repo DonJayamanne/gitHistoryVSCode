@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { CommitContext, ICommand, IUiService } from '../common/types';
+import { CommitData, ICommand, IUiService } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ICommitViewer } from '../viewers/types';
@@ -10,10 +10,9 @@ import { IGitCommitCommandHandler } from './types';
 export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
-    @command('git.commit.viewChangeLog', IGitCommitCommandHandler)
-    public async viewHistory(context: CommitContext) {
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(context.workspaceFolder);
-        const logEntry = await gitService.getCommit(context.logEntry.hash.full);
+    public async viewDetails(commit: CommitData) {
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
+        const logEntry = await gitService.getCommit(commit.logEntry.hash.full);
         if (!logEntry) {
             return;
         }
@@ -21,8 +20,8 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     }
 
     @command('git.commit.doSomething', IGitCommitCommandHandler)
-    public async doSomethingWithCommit(context: CommitContext) {
-        const cmd = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(context);
+    public async doSomethingWithCommit(commit: CommitData) {
+        const cmd = await this.serviceContainer.get<IUiService>(IUiService).selectCommitCommandAction(commit);
         if (!cmd) {
             return;
         }
@@ -30,7 +29,7 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
         console.log(cmd);
         return cmd.execute();
     }
-    public getCommitCommands(_context: CommitContext): ICommand<CommitContext>[] {
+    public getCommitCommands(_context: CommitData): ICommand<CommitData>[] {
         return [];
     }
 }

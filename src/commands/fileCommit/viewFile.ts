@@ -1,10 +1,10 @@
 import { IGitFileHistoryCommandHandler } from '../../commandHandlers/types';
-import { FileCommitContext } from '../../common/types';
+import { FileCommitData } from '../../common/types';
 import { BaseFileCommitCommand } from '../baseFileCommitCommand';
 
 export class ViewFileCommand extends BaseFileCommitCommand {
-    constructor(context: FileCommitContext, private handler: IGitFileHistoryCommandHandler) {
-        super(context);
+    constructor(fileCommit: FileCommitData, private handler: IGitFileHistoryCommandHandler) {
+        super(fileCommit);
         this.setLabel('$(eye) View file contents');
     }
     public execute() {

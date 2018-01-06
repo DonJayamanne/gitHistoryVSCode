@@ -16,22 +16,22 @@ export const IUiService = Symbol('IUiService');
 export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
     getWorkspaceFolder(): Promise<string | undefined>;
-    selectFileCommitCommandAction(context: FileCommitContext): Promise<ICommand<FileCommitContext> | undefined>;
-    selectCommitCommandAction(context: CommitContext): Promise<ICommand<CommitContext> | undefined>;
+    selectFileCommitCommandAction(fileCommit: FileCommitData): Promise<ICommand<FileCommitData> | undefined>;
+    selectCommitCommandAction(commit: CommitData): Promise<ICommand<CommitData> | undefined>;
 }
 
-export class BranchContext {
+export class BranchData {
     constructor(public readonly workspaceFolder: string,
         public readonly branch: string) { }
 }
 
-export class CommitContext extends BranchContext {
+export class CommitData extends BranchData {
     constructor(workspaceFolder: string, branch: string, public readonly logEntry: Readonly<LogEntry>) {
         super(workspaceFolder, branch);
     }
 }
 
-export class FileCommitContext extends CommitContext {
+export class FileCommitData extends CommitData {
     constructor(workspaceFolder: string, branch: string, logEntry: LogEntry, public readonly committedFile: Readonly<CommittedFile>) {
         super(workspaceFolder, branch, logEntry);
     }

@@ -5,23 +5,23 @@ import { CompareFileWithPreviousCommand } from '../commands/fileCommit/compareFi
 import { CompareFileWithWorkspaceCommand } from '../commands/fileCommit/compareFileWithWorkspace';
 import { SelectFileForComparison } from '../commands/fileCommit/selectFileForComparison';
 import { ViewFileCommand } from '../commands/fileCommit/viewFile';
-import { FileCommitContext, ICommand } from '../common/types';
+import { FileCommitData, ICommand } from '../common/types';
 import { IFileCommitCommandFactory } from './types';
 
 @injectable()
 export class FileCommitCommandFactory implements IFileCommitCommandFactory {
     constructor( @inject(IGitFileHistoryCommandHandler) private fileHistoryCommandHandler: IGitFileHistoryCommandHandler,
         @inject(IGitCompareCommandHandler) private fileCompareHandler: IGitCompareCommandHandler) { }
-    public createCommands(context: FileCommitContext): ICommand<FileCommitContext>[] {
-        const commands: ICommand<FileCommitContext>[] = [
-            new ViewFileCommand(context, this.fileHistoryCommandHandler),
-            new CompareFileWithWorkspaceCommand(context, this.fileHistoryCommandHandler),
-            new CompareFileWithPreviousCommand(context, this.fileHistoryCommandHandler),
-            new SelectFileForComparison(context, this.fileCompareHandler)
+    public createCommands(fileCommit: FileCommitData): ICommand<FileCommitData>[] {
+        const commands: ICommand<FileCommitData>[] = [
+            new ViewFileCommand(fileCommit, this.fileHistoryCommandHandler),
+            new CompareFileWithWorkspaceCommand(fileCommit, this.fileHistoryCommandHandler),
+            new CompareFileWithPreviousCommand(fileCommit, this.fileHistoryCommandHandler),
+            new SelectFileForComparison(fileCommit, this.fileCompareHandler)
         ];
 
         if (!this.fileCompareHandler.selectedCommit) {
-            commands.push(new CompareFileCommand(context, this.fileCompareHandler, this.fileCompareHandler.selectedCommit!));
+            commands.push(new CompareFileCommand(fileCommit, this.fileCompareHandler, this.fileCompareHandler.selectedCommit!));
         }
 
         return commands;

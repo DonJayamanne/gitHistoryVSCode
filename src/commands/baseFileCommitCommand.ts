@@ -1,8 +1,8 @@
-import { FileCommitContext } from '../common/types';
+import { FileCommitData } from '../common/types';
 import { BaseCommand } from './baseCommand';
 
-export abstract class BaseFileCommitCommand extends BaseCommand<FileCommitContext> {
-    constructor(data: FileCommitContext) {
+export abstract class BaseFileCommitCommand extends BaseCommand<FileCommitData> {
+    constructor(data: FileCommitData) {
         super(data);
     }
     public abstract execute();

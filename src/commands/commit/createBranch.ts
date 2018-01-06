@@ -1,11 +1,11 @@
 import { IGitBranchFromCommitCommandHandler } from '../../commandHandlers/types';
-import { CommitContext } from '../../common/types';
+import { CommitData } from '../../common/types';
 import { BaseCommitCommand } from '../baseCommitCommand';
 
 export class CreateBranchCommand extends BaseCommitCommand {
-    constructor(context: CommitContext, private handler: IGitBranchFromCommitCommandHandler) {
-        super(context);
-        this.setLabel(`$(git-branch) Branch from ${context.logEntry.hash.short}`);
+    constructor(commit: CommitData, private handler: IGitBranchFromCommitCommandHandler) {
+        super(commit);
+        this.setLabel(`$(git-branch) Branch from ${commit.logEntry.hash.short}`);
 
     }
     public execute() {
