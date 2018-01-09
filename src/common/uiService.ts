@@ -1,5 +1,4 @@
 import { inject, injectable } from 'inversify';
-import * as _ from 'lodash';
 import { CancellationTokenSource, QuickPickItem, workspace, WorkspaceFolder } from 'vscode';
 import { IApplicationShell } from '../application/types';
 import { ICommitCommandFactory, IFileCommitCommandFactory } from '../commandFactories/types';
@@ -43,19 +42,19 @@ export class UiService implements IUiService {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
-        const commands = this.serviceContainer.get<IFileCommitCommandFactory>(IFileCommitCommandFactory).createCommands(fileCommit);
+        const commands = await this.serviceContainer.get<IFileCommitCommandFactory>(IFileCommitCommandFactory).createCommands(fileCommit);
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 
-        return this.application.showQuickPick(_.flatten(commands), options);
+        return this.application.showQuickPick(commands, options);
     }
     public async selectCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
-        const commands = this.serviceContainer.get<ICommitCommandFactory>(ICommitCommandFactory).createCommands(commit);
+        const commands = await this.serviceContainer.get<ICommitCommandFactory>(ICommitCommandFactory).createCommands(commit);
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 
-        return this.application.showQuickPick(_.flatten(commands), options);
+        return this.application.showQuickPick(commands, options);
     }
 }

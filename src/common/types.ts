@@ -1,3 +1,4 @@
+import { Command } from 'vscode';
 import { BranchSelection, CommittedFile, LogEntry } from '../types';
 
 export const ILogService = Symbol('ILogService');
@@ -49,14 +50,10 @@ export class FileCommitDetails extends CommitDetails {
     }
 }
 
-export interface ICommand<T> {
-    /**
-     * Command name.
-     */
-    name: string;
+export interface ICommand<T> extends Command {
     data: T;
     /**
-     * A human readable string which is rendered prominent.
+     * Title of the command, like `save`.
      */
     label: string;
     /**
@@ -68,7 +65,7 @@ export interface ICommand<T> {
      */
     detail?: string;
     // tslint:disable-next-line:prefer-method-signature
-    preExecute?: () => boolean | Promise<boolean>;
+    preExecute(): boolean | Promise<boolean>;
     // tslint:disable-next-line:no-any
     execute(): void | Promise<any> | Thenable<any>;
 }

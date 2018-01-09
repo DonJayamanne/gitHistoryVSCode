@@ -5,7 +5,7 @@ import { BaseCommitCommand } from '../baseCommitCommand';
 export class CreateBranchCommand extends BaseCommitCommand {
     constructor(commit: CommitDetails, private handler: IGitBranchFromCommitCommandHandler) {
         super(commit);
-        this.setLabel(`$(git-branch) Branch from ${commit.logEntry.hash.short}`);
+        this.setTitle(`$(git-branch) Branch from ${commit.logEntry.hash.short}`);
 
     }
     public execute() {

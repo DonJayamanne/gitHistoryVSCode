@@ -1,18 +1,63 @@
-export type Node = {
+import * as path from 'path';
+import { Uri } from 'vscode';
+import { CommitDetails, FileCommitDetails } from '../common/types';
+import { CommittedFile } from '../types';
+import { DirectoryTreeItem, FileTreeItem } from './treeNodes';
+import { INode } from './types';
+
+export interface INode<T> {
     /**
      * A human readable string which is rendered prominent.
      */
-    label: string;
-    /**
-     * A human readable string which is rendered less prominent.
-     */
-    description: string;
-    /**
-     * A human readable string which is rendered less prominent.
-     */
-    detail?: string;
-    // tslint:disable-next-line:prefer-method-signature
-    preExecute?: () => boolean | Promise<boolean>;
-    // tslint:disable-next-line:no-any
-    execute(): void | Promise<any> | Thenable<any>;
-};
+    readonly label: string;
+    readonly resource: Uri;
+    readonly data?: T;
+    readonly children: INode<T>[];
+}
+
+export abstract class AbstractCommitNode<T> implements INode<T> {
+    public children: AbstractCommitNode<T>[] = [];
+    private _label: string;
+    private _resource: Uri;
+    public get label() {
+        return this._label;
+    }
+    public get resource() {
+        return this._resource;
+    }
+    constructor(public readonly data: T | undefined) { }
+    protected setLabel(value: string) {
+        this._label = value;
+    }
+    protected setResoruce(value: string | Uri) {
+        this._resource = typeof value === 'string' ? Uri.file(value as string) : value as Uri;
+    }
+}
+
+export class DirectoryNode extends AbstractCommitNode<CommitDetails | FileCommitDetails> {
+    constructor(commit: CommitDetails, relativePath: string) {
+        super(commit);
+        const folderName = path.basename(relativePath);
+        this.setLabel(folderName);
+        this.setResoruce(relativePath);
+    }
+}
+
+export class FileNode extends AbstractCommitNode<FileCommitDetails> {
+    constructor(commit: FileCommitDetails) {
+        super(commit);
+        const fileName = path.basename(commit.committedFile.relativePath);
+        this.setLabel(fileName);
+        this.setResoruce(commit.committedFile.relativePath);
+    }
+}
+
+export const INodeBuilder = Symbol('INodeBuilder');
+
+export interface INodeBuilder {
+    buildTree(commit: CommitDetails): (DirectoryNode | FileNode)[];
+    buildList(commit: CommitDetails): FileNode[];
+    getTreeItem(node: DirectoryNode | FileNode): Promise<DirectoryTreeItem | FileTreeItem>;
+    createDirectoryNode(commit: CommitDetails, relativePath: string): DirectoryNode;
+    createFileNode(commit: CommitDetails, committedFile: CommittedFile): FileNode;
+}

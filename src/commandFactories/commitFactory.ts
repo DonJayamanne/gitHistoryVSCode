@@ -11,14 +11,19 @@ export class CommitCommandFactory implements ICommitCommandFactory {
     constructor( @inject(IGitBranchFromCommitCommandHandler) private branchCreationCommandHandler: IGitBranchFromCommitCommandHandler,
         @inject(IGitCherryPickCommandHandler) private cherryPickHandler: IGitCherryPickCommandHandler,
         @inject(IGitCommitViewDetailsCommandHandler) private viewChangeLogHandler: IGitCommitViewDetailsCommandHandler) { }
-    public createCommands(commit: CommitDetails): ICommand<CommitDetails>[] {
-        // tslint:disable-next-line:no-unnecessary-local-variable
+    public async createCommands(commit: CommitDetails): Promise<ICommand<CommitDetails>[]> {
         const commands: ICommand<CommitDetails>[] = [
             new CreateBranchCommand(commit, this.branchCreationCommandHandler),
             new CherryPickCommand(commit, this.cherryPickHandler),
             new ViewDetailsCommand(commit, this.viewChangeLogHandler)
         ];
 
-        return commands;
+        return (await Promise.all(commands.map(async cmd => {
+            const result = cmd.preExecute();
+            const available = typeof result === 'boolean' ? result : await result;
+            return available ? cmd : undefined;
+        })))
+            .filter(cmd => !!cmd)
+            .map(cmd => cmd!);
     }
 }

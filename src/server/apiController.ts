@@ -3,6 +3,7 @@ import { injectable } from 'inversify';
 import { Uri } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
 import { ICommandManager } from '../application/types/commandManager';
+import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
@@ -12,12 +13,14 @@ import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
 @injectable()
 export class ApiController implements IApiRouteHandler {
+    private readonly commitViewer: IGitCommitViewDetailsCommandHandler;
     constructor(private app: Express,
         private gitServiceFactory: IGitServiceFactory,
         private serviceContainer: IServiceContainer,
         private stateStore: IWorkspaceQueryStateStore,
         private commandManager: ICommandManager) {
 
+        this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
         this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
         this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
         this.app.get('/log/:hash', this.handleRequest(this.getCommit.bind(this)));
@@ -124,7 +127,12 @@ export class ApiController implements IApiRouteHandler {
         }
 
         commitPromise
-            .then(data => response.send(data))
+            .then(data => {
+                response.send(data);
+                if (data && currentState) {
+                    this.commitViewer.viewCommitTree(new CommitDetails(currentState!.workspaceFolder, currentState!.branch!, data!));
+                }
+            })
             .catch(err => {
                 response.status(500).send(err);
             });

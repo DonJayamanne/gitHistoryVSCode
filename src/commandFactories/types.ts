@@ -3,17 +3,18 @@ import { BranchDetails, CommitDetails, FileCommitDetails, ICommand } from '../co
 export const IFileCommitCommandFactory = Symbol('IFileCommitCommandFactory');
 
 export interface IFileCommitCommandFactory {
-    createCommands(data: FileCommitDetails): ICommand<FileCommitDetails>[];
+    createCommands(data: FileCommitDetails): Promise<ICommand<FileCommitDetails>[]>;
+    getDefaultFileCommand(fileCommitDetails: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined>;
 }
 
 export const ICommitCommandFactory = Symbol('ICommitCommandFactory');
 
 export interface ICommitCommandFactory {
-    createCommands(data: CommitDetails): ICommand<CommitDetails>[];
+    createCommands(data: CommitDetails): Promise<ICommand<CommitDetails>[]>;
 }
 
 export const IBranchCommandFactory = Symbol('IBranchCommandFactory');
 
 export interface IBranchCommandFactory {
-    createCommands(data: BranchDetails): ICommand<BranchDetails>[];
+    createCommands(data: BranchDetails): Promise<ICommand<BranchDetails>[]>;
 }

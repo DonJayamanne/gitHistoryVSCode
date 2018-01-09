@@ -1,8 +1,8 @@
 'use strict';
 import * as querystring from 'query-string';
 import { CancellationToken, TextDocumentContentProvider, Uri } from 'vscode';
-import { IServiceContainer } from '../ioc/types';
-import { IGitServiceFactory } from '../types';
+import { IServiceContainer } from '../../ioc/types';
+import { IGitServiceFactory } from '../../types';
 
 export class CommitFileViewerProvider implements TextDocumentContentProvider {
     constructor(private svcContainer: IServiceContainer) { }

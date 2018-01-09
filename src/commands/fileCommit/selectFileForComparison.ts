@@ -1,13 +1,15 @@
-import { IGitCompareCommandHandler } from '../../commandHandlers/types';
+import { IGitCompareFileCommandHandler } from '../../commandHandlers/types';
 import { FileCommitDetails } from '../../common/types';
 import { BaseFileCommitCommand } from '../baseFileCommitCommand';
 
 export class SelectFileForComparison extends BaseFileCommitCommand {
-    constructor(fileCommit: FileCommitDetails, private handler: IGitCompareCommandHandler) {
+    constructor(fileCommit: FileCommitDetails, private handler: IGitCompareFileCommandHandler) {
         super(fileCommit);
-        this.setLabel('$(git-compare) Select for comparison');
+        this.setTitle('$(git-compare) Select for comparison');
+        this.setCommand('git.commit.FileEntry.selectForComparison');
+        this.setCommandArguments([fileCommit]);
     }
     public execute() {
-        this.handler.selectCommit(this.data);
+        this.handler.selectFile(this.data);
     }
 }

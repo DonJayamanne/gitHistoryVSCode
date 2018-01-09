@@ -4,12 +4,13 @@ if ((Reflect as any).metadata === undefined) {
     require('reflect-metadata');
 }
 import { Container } from 'inversify';
-import { OutputChannel } from 'vscode';
 import * as vscode from 'vscode';
+import { OutputChannel } from 'vscode';
 import { registerTypes as registerParserTypes } from './adapter/parsers/serviceRegistry';
 import { registerTypes as registerRepositoryTypes } from './adapter/repository/serviceRegistry';
 import { registerTypes as registerAdapterTypes } from './adapter/serviceRegistry';
 import { registerTypes as registerApplicationTypes } from './application/serviceRegistry';
+import { ICommandManager } from './application/types/commandManager';
 import { IDisposableRegistry } from './application/types/disposableRegistry';
 import { registerTypes as registerCommandFactoryTypes } from './commandFactories/serviceRegistry';
 import { registerTypes as registerCommandTypes } from './commandHandlers/serviceRegistry';
@@ -32,6 +33,7 @@ import { setServiceContainer } from './ioc/index';
 import { ServiceManager } from './ioc/serviceManager';
 import { IServiceContainer } from './ioc/types';
 import { getLogChannel } from './logger';
+import { registerTypes as registerNodeBuilderTypes } from './nodes/serviceRegistry';
 import { registerTypes as registerPlatformTypes } from './platform/serviceRegistry';
 import { ContentProvider } from './server/contentProvider';
 import { ServerHost } from './server/serverHost';
@@ -39,9 +41,8 @@ import { StateStore } from './server/stateStore';
 import { ThemeService } from './server/themeService';
 import { IServerHost, IThemeService, IWorkspaceQueryStateStore } from './server/types';
 import { IOutputChannel } from './types';
-import { CommitFileViewerProvider } from './viewers/commitFileViewer';
-import { CommitViewer } from './viewers/commitViewer';
-import { ICommitViewer } from './viewers/types';
+import { CommitFileViewerProvider } from './viewers/file/commitFileViewer';
+import { registerTypes as registerViewerTypes } from './viewers/serviceRegistry';
 
 let cont: Container;
 let serviceManager: ServiceManager;
@@ -57,7 +58,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 
     cont.bind<ILogService>(ILogService).to(Logger).inSingletonScope();
     cont.bind<ILogService>(ILogService).to(OutputPanelLogger).inSingletonScope(); // .whenTargetNamed('Viewer');
-    cont.bind<ICommitViewer>(ICommitViewer).to(CommitViewer).inSingletonScope();
     cont.bind<IUiService>(IUiService).to(UiService).inSingletonScope();
     cont.bind<IThemeService>(IThemeService).to(ThemeService).inSingletonScope();
     cont.bind<ICommitViewFormatter>(ICommitViewFormatter).to(CommitViewFormatter).inSingletonScope();
@@ -72,6 +72,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     registerApplicationTypes(serviceManager);
     registerPlatformTypes(serviceManager);
     registerCommandFactoryTypes(serviceManager);
+    registerNodeBuilderTypes(serviceManager);
+    registerViewerTypes(serviceManager);
 
     setServiceContainer(serviceContainer);
 
@@ -84,6 +86,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistoryFileViewerSchema, new CommitFileViewerProvider(serviceContainer));
     context.subscriptions.push(disposable);
     context.subscriptions.push(serviceManager.get<IDisposableRegistry>(IDisposableRegistry));
+
+    const commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
+    commandManager.executeCommand('setContext', 'git.commitView.show', true);
 
     // fileHistory.activate(context);
     // lineHistory.activate(context);

@@ -22,8 +22,11 @@ export class CommandHandlerManager implements ICommandHandlerManager {
 
     private registerCommand(commandName: string, handlerMethodName: string, target: ICommandHandler) {
         // tslint:disable-next-line:no-any
-        const handler = target[handlerMethodName].bind(target) as (...args: any[]) => void;
-        const disposable = this.commandManager.registerCommand(commandName, handler);
+        const handler = target[handlerMethodName] as (...args: any[]) => void;
+        // tslint:disable-next-line:no-any
+        const disposable = this.commandManager.registerCommand(commandName, (...args: any[]) => {
+            handler.apply(target, args);
+        });
         this.disposableRegistry.register(disposable);
     }
 }
