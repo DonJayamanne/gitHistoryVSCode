@@ -16,8 +16,6 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     private commit: CommitDetails;
     private _onDidChangeTreeData = new EventEmitter<DirectoryNode | FileNode>();
     private _dataChangeHandler: Disposable;
-    private nodeSate: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed;
-    private collectedTreeDirectoryItems: DirectoryTreeItem[] = [];
     public get onDidChangeTreeData(): Event<DirectoryNode | FileNode> {
         return this._onDidChangeTreeData.event;
     }
@@ -29,7 +27,6 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     }
     public showCommitTree(commit: CommitDetails) {
         this.commit = commit;
-        this.collectedTreeDirectoryItems = [];
         if (this._dataChangeHandler) {
             this._dataChangeHandler.dispose();
         }
@@ -41,7 +38,6 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
         this.commandManager.executeCommand('setContext', 'git.commitView.show', true);
     }
     public showCommit(commit: CommitDetails): void {
-        this.nodeSate = TreeItemCollapsibleState.Collapsed;
         const output = this.commitFormatter.format(commit.logEntry);
         this.outputChannel.appendLine(output);
         this.outputChannel.show();
@@ -55,14 +51,12 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     public async getTreeItem(element: DirectoryNode | FileNode): Promise<TreeItem> {
         const treeItem = await this.nodeBuilder.getTreeItem(element);
         if (treeItem instanceof DirectoryTreeItem) {
-            treeItem.collapsibleState = this.nodeSate;
-            this.collectedTreeDirectoryItems.push(treeItem);
+            treeItem.collapsibleState = TreeItemCollapsibleState.Expanded;
         }
         return treeItem;
     }
     public async getChildren(element?: DirectoryNode | FileNode | undefined): Promise<(DirectoryNode | FileNode)[]> {
         if (!element) {
-            this.collectedTreeDirectoryItems = [];
             return this.getTreeNodes();
         }
         if (element! instanceof DirectoryNode) {
