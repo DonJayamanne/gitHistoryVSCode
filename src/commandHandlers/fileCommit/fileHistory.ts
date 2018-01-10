@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
-import { Uri, ViewColumn } from 'vscode';
+import { Uri } from 'vscode';
 import { IApplicationShell, IDocumentManager } from '../../application/types';
 import { ICommandManager } from '../../application/types/commandManager';
 import { FileCommitDetails, IUiService } from '../../common/types';

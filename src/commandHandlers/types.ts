@@ -53,11 +53,19 @@ export interface IGitBranchFromCommitCommandHandler extends ICommandHandler {
     createBranchFromCommit(commit: CommitDetails): void;
 }
 
-export const IGitCompareFileCommandHandler = Symbol('IGitCompareCommandHandler');
+export const IGitCompareCommandHandler = Symbol('IGitCompareCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitCompareCommandHandler extends ICommandHandler {
+    readonly selectedCommit?: CommitDetails;
+    select(fileCommit: CommitDetails): Promise<void>;
+    compare(fileCommit: CommitDetails): Promise<void>;
+}
+
+export const IGitCompareFileCommandHandler = Symbol('IGitCompareFileCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCompareFileCommandHandler extends ICommandHandler {
     readonly selectedCommit?: FileCommitDetails;
-    selectFile(fileCommit: FileCommitDetails): Promise<void>;
+    select(fileCommit: FileCommitDetails): Promise<void>;
     compare(fileCommit: FileCommitDetails): Promise<void>;
 }
 

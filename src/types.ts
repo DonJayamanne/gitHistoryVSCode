@@ -1,3 +1,5 @@
+import { CommitDetails } from "./common/types";
+
 // Do not include any VS Code types in here
 // This file will be imported by the client side code (WebPack)
 
@@ -121,6 +123,12 @@ export interface IGitService {
     cherryPick(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
 }
+
+export type CommitComparison = {
+    leftCommit: CommitDetails;
+    rightCommit: CommitDetails;
+    differences: CommittedFile[];
+};
 
 export const IGitServiceFactory = Symbol('IGitServiceFactory');
 

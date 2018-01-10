@@ -20,7 +20,7 @@ export class GitCompareFileCommitCommandHandler implements IGitCompareFileComman
     }
 
     @command('git.commit.FileEntry.selectForComparison', IGitCompareFileCommandHandler)
-    public async selectFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
+    public async select(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
         await this.commandManager.executeCommand('setContext', 'git.commit.FileEntry.selectForComparison', true);
         this._previouslySelectedCommit = fileCommit;

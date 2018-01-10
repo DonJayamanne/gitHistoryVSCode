@@ -15,6 +15,6 @@ export class SelectFileForComparison extends BaseFileCommitCommand {
         return false;
     }
     public execute() {
-        this.handler.selectFile(this.data);
+        this.handler.select(this.data);
     }
 }
