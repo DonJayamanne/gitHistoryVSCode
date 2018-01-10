@@ -19,3 +19,11 @@ export interface ICompareCommitViewer {
     showFilesView(): void;
     showFolderView(): void;
 }
+
+export const ICommitViewerFactory = Symbol('ICommitViewerFactory');
+
+export interface ICommitViewerFactory {
+    getCommitViewer(): ICommitViewer;
+    getCompareCommitViewer(): ICommitViewer;
+}
+

@@ -1,4 +1,4 @@
-import { CommitDetails } from "./common/types";
+import { CommitDetails } from './common/types';
 
 // Do not include any VS Code types in here
 // This file will be imported by the client side code (WebPack)

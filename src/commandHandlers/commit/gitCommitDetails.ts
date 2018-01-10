@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { ICommandManager } from '../../application/types/commandManager';
 import { CommitDetails } from '../../common/types';
 import { IServiceContainer } from '../../ioc/types';
-import { ICommitViewer } from '../../viewers/types';
+import { ICommitViewerFactory } from '../../viewers/types';
 import { IGitCommitViewDetailsCommandHandler } from '../types';
 
 @injectable()
@@ -12,11 +12,11 @@ export class GitCommitViewDetailsCommandHandler implements IGitCommitViewDetails
 
     public async viewDetails(commit: CommitDetails) {
         await this.commandManager.executeCommand('setContext', 'git.commit.selected', true);
-        this.serviceContainer.get<ICommitViewer>(ICommitViewer).showCommit(commit);
+        this.serviceContainer.get<ICommitViewerFactory>(ICommitViewerFactory).getCommitViewer().showCommit(commit);
     }
 
     public async viewCommitTree(commit: CommitDetails) {
         await this.commandManager.executeCommand('setContext', 'git.commit.selected', true);
-        this.serviceContainer.get<ICommitViewer>(ICommitViewer).showCommitTree(commit);
+        this.serviceContainer.get<ICommitViewerFactory>(ICommitViewerFactory).getCommitViewer().showCommitTree(commit);
     }
 }

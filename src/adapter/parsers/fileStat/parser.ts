@@ -114,6 +114,9 @@ export class FileStatParser implements IFileStatParser {
      */
     public parse(gitRootPath: string, filesWithNumStat: string[], filesWithNameStat: string[]): CommittedFile[] {
         return filesWithNameStat.map((line, index) => {
+            if (line.trim().length === 0 && filesWithNumStat.length > index && filesWithNumStat[index].trim().length === 0) {
+                return;
+            }
             const numStatParts = FileStatParser.getAdditionsAndDeletionsFromNumStatLine(filesWithNumStat[index]);
             const additions = numStatParts ? numStatParts.additions : undefined;
             const deletions = numStatParts ? numStatParts.deletions : undefined;

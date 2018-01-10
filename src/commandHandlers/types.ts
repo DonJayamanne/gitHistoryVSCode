@@ -21,11 +21,18 @@ export interface IGitFileHistoryCommandHandler extends ICommandHandler {
     compareFileWithPrevious(fileCommit: FileCommitDetails): Promise<void>;
 }
 
-export const IGitCommitViewExplorerCommandHandler = Symbol('IGitCommitViewExplorerVisibilityCommandHandler');
+export const IGitCommitViewExplorerCommandHandler = Symbol('IGitCommitViewExplorerCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCommitViewExplorerCommandHandler extends ICommandHandler {
     hideCommitView(commit: CommitDetails | undefined): Promise<void>;
     showCommitView(commit: CommitDetails | undefined): Promise<void>;
+}
+
+export const IGitCompareCommitViewExplorerCommandHandler = Symbol('IGitCompareCommitViewExplorerCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitCompareCommitViewExplorerCommandHandler extends ICommandHandler {
+    hide(): Promise<void>;
+    show(): Promise<void>;
 }
 
 export const IGitCommitCommandHandler = Symbol('IGitCommitCommandHandler');

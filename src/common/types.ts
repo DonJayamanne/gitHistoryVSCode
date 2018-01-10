@@ -1,3 +1,6 @@
+// tslint:disable-next-line:max-classes-per-file
+// tslint:disable:max-classes-per-file
+
 import { Command } from 'vscode';
 import { BranchSelection, CommittedFile, LogEntry } from '../types';
 
@@ -43,10 +46,22 @@ export class CommitDetails extends BranchDetails {
     }
 }
 
+export class CompareCommitDetails extends CommitDetails {
+    constructor(leftCommit: CommitDetails, public readonly rightCommit: CommitDetails, public readonly committedFiles: CommittedFile[]) {
+        super(leftCommit.workspaceFolder, leftCommit.branch, leftCommit.logEntry);
+    }
+}
+
 // tslint:disable-next-line:max-classes-per-file
 export class FileCommitDetails extends CommitDetails {
     constructor(workspaceFolder: string, branch: string, logEntry: LogEntry, public readonly committedFile: Readonly<CommittedFile>) {
         super(workspaceFolder, branch, logEntry);
+    }
+}
+
+export class CompareFileCommitDetails extends FileCommitDetails {
+    constructor(leftCommit: CommitDetails, public readonly rightCommit: CommitDetails, public readonly committedFile: Readonly<CommittedFile>) {
+        super(leftCommit.workspaceFolder, leftCommit.branch, leftCommit.logEntry, committedFile);
     }
 }
 

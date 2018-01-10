@@ -1,32 +1,32 @@
 import { inject, injectable } from 'inversify';
 import { ICommandManager } from '../../application/types/commandManager';
 import { CommitDetails } from '../../common/types';
-import { ICommitViewer } from '../../viewers/types';
+import { ICommitViewerFactory } from '../../viewers/types';
 import { command } from '../registration';
 import { IGitCommitViewExplorerCommandHandler } from '../types';
 
 @injectable()
 export class GitCommitViewExplorerCommandHandler implements IGitCommitViewExplorerCommandHandler {
     constructor( @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(ICommitViewer) private commitViewer: ICommitViewer) { }
+        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory) { }
 
-    @command('git.commitView.hide', IGitCommitViewExplorerCommandHandler)
+    @command('git.commit.view.hide', IGitCommitViewExplorerCommandHandler)
     public async hideCommitView(_commit: CommitDetails) {
-        await this.commandManager.executeCommand('setContext', 'git.commitView.show', false);
+        await this.commandManager.executeCommand('setContext', 'git.commit.view.show', false);
     }
 
-    @command('git.commitView.show', IGitCommitViewExplorerCommandHandler)
+    @command('git.commit.view.show', IGitCommitViewExplorerCommandHandler)
     public async showCommitView(_commit: CommitDetails) {
-        await this.commandManager.executeCommand('setContext', 'git.commitView.show', true);
+        await this.commandManager.executeCommand('setContext', 'git.commit.view.show', true);
     }
 
-    @command('git.commit.commitView.showFilesOnly', IGitCommitViewExplorerCommandHandler)
+    @command('git.commit.view.showFilesOnly', IGitCommitViewExplorerCommandHandler)
     public async showFilesView(_commit: CommitDetails) {
-        this.commitViewer.showFilesView();
+        this.commitViewerFactory.getCommitViewer().showFilesView();
     }
 
-    @command('git.commit.commitView.showFolderView', IGitCommitViewExplorerCommandHandler)
+    @command('git.commit.view.showFolderView', IGitCommitViewExplorerCommandHandler)
     public async showFolderView(_commit: CommitDetails) {
-        this.commitViewer.showFolderView();
+        this.commitViewerFactory.getCommitViewer().showFolderView();
     }
 }

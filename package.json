@@ -41,12 +41,12 @@
                 {
                     "id": "commitViewProvider",
                     "name": "Commits",
-                    "when": "!config.gitHistory.hideCommitViewExplorer && git.commitView.show && git.commit.selected"
+                    "when": "!config.gitHistory.hideCommitViewExplorer && git.commit.view.show && git.commit.selected"
                 },
                 {
-                    "id": "commitViewProviderx",
-                    "name": "Commits",
-                    "when": "config.gitHistory.showCommitViewExplorer && git.commitView.show && git.commit.selected"
+                    "id": "compareCommitViewProvider",
+                    "name": "Compare Commits",
+                    "when": "!config.gitHistory.hideCompareCommitViewExplorer && git.commit.compare.view.show && git.commit.compare.compared"
                 }
             ]
         },
@@ -56,7 +56,7 @@
                 "title": "Git: Test"
             },
             {
-                "command": "git.commitView.hide",
+                "command": "git.commit.view.hide",
                 "title": "Hide Commit View Explorer",
                 "category": "Git",
                 "icon": {
@@ -65,8 +65,21 @@
                 }
             },
             {
-                "command": "git.commitView.show",
+                "command": "git.commit.view.show",
                 "title": "Git: Show Commit View Explorer"
+            },
+            {
+                "command": "git.commit.compare.view.hide",
+                "title": "Hide Commit Comparison View Explorer",
+                "category": "Git",
+                "icon": {
+                    "dark": "resources/icons/misc/close-dark.svg",
+                    "light": "resources/icons/misc/close.svg"
+                }
+            },
+            {
+                "command": "git.commit.compare.view.show",
+                "title": "Git: Show Commit Comparison View Explorer"
             },
             {
                 "command": "git.viewFileHistory",
@@ -121,19 +134,27 @@
                 "title": "Compare against previously selected Commit"
             },
             {
-                "command": "git.commit.compare.selectLeftCommit",
-                "title": "Select for Compare"
+                "command": "git.commit.compare.selectForComparison",
+                "title": "Select for comparison"
             },
             {
-                "command": "git.commit.compare.compareAgainstSelectedCommit",
+                "command": "git.commit.compare",
                 "title": "Compare against previously selected Commit"
             },
             {
-                "command": "git.commit.commitView.showFilesOnly",
+                "command": "git.commit.compare.view.showFilesOnly",
                 "title": "Show files only"
             },
             {
-                "command": "git.commit.commitView.showFolderView",
+                "command": "git.commit.compare.view.showFolderView",
+                "title": "Show folder view"
+            },
+            {
+                "command": "git.commit.view.showFilesOnly",
+                "title": "Show files only"
+            },
+            {
+                "command": "git.commit.view.showFolderView",
                 "title": "Show folder view"
             },
             {
@@ -157,12 +178,20 @@
         "menus": {
             "commandPalette": [
                 {
-                    "command": "git.commitView.hide",
-                    "when": "git.commitView.show"
+                    "command": "git.commit.view.hide",
+                    "when": "git.commit.view.show"
                 },
                 {
-                    "command": "git.commitView.show",
-                    "when": "!git.commitView.show"
+                    "command": "git.commit.view.show",
+                    "when": "!git.commit.view.show"
+                },
+                {
+                    "command": "git.commit.compare.view.hide",
+                    "when": "git.commit.compare.view.show"
+                },
+                {
+                    "command": "git.commit.compare.view.show",
+                    "when": "!git.commit.compare.view.show"
                 }
             ],
             "editor/title": [
@@ -209,34 +238,54 @@
             ],
             "view/title": [
                 {
-                    "command": "git.commitView.hide",
+                    "command": "git.commit.compare.view.hide",
+                    "when": "view == compareCommitViewProvider",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "git.commit.compare.view.hide",
+                    "when": "view == compareCommitViewProvider",
+                    "group": "zMoreSubMenuItems"
+                },
+                {
+                    "command": "git.commit.view.hide",
                     "when": "view == commitViewProvider",
                     "group": "navigation@1"
                 },
                 {
-                    "command": "git.commitView.hide",
+                    "command": "git.commit.view.hide",
                     "when": "view == commitViewProvider",
-                    "category": "1_test"
+                    "group": "zMoreSubMenuItems"
                 },
                 {
                     "command": "git.commit.cherryPick",
                     "when": "view == commitViewProvider && git.commit.selected",
-                    "category": "1_test"
+                    "group": "zMoreSubMenuItems"
                 },
                 {
                     "command": "git.commit.createBranch",
                     "when": "view == commitViewProvider && git.commit.selected",
-                    "category": "1_test"
+                    "group": "zMoreSubMenuItems"
                 },
                 {
-                    "command": "git.commit.commitView.showFilesOnly",
+                    "command": "git.commit.view.showFilesOnly",
                     "when": "view == commitViewProvider && git.commit.selected",
-                    "category": "1_test"
+                    "group": "zMoreSubMenuItems"
                 },
                 {
-                    "command": "git.commit.commitView.showFolderView",
+                    "command": "git.commit.view.showFolderView",
                     "when": "view == commitViewProvider && git.commit.selected",
-                    "category": "1_test"
+                    "group": "zMoreSubMenuItems"
+                },
+                {
+                    "command": "git.commit.compare.view.showFilesOnly",
+                    "when": "view == compareCommitViewProvider && git.commit.compare.compared",
+                    "group": "zMoreSubMenuItems"
+                },
+                {
+                    "command": "git.commit.compare.view.showFolderView",
+                    "when": "view == compareCommitViewProvider && git.commit.compare.compared",
+                    "group": "zMoreSubMenuItems"
                 }
             ]
         },

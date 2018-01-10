@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Uri } from 'vscode';
 import { CommitDetails, FileCommitDetails } from '../common/types';
-import { CommittedFile, CommitComparison } from '../types';
+import { CommittedFile } from '../types';
 import { DirectoryTreeItem, FileTreeItem } from './treeNodes';
 import { INode } from './types';
 
@@ -52,12 +52,17 @@ export class FileNode extends AbstractCommitNode<FileCommitDetails> {
     }
 }
 
+export const INodeFactory = Symbol('INodeFactory');
+
+export interface INodeFactory {
+    createDirectoryNode(commit: CommitDetails, relativePath: string): DirectoryNode;
+    createFileNode(commit: CommitDetails, committedFile: CommittedFile): FileNode;
+}
+
 export const INodeBuilder = Symbol('INodeBuilder');
 
 export interface INodeBuilder {
-    buildTree(committedFiles: CommittedFile[]): (DirectoryNode | FileNode)[];
-    buildList(committedFiles: CommittedFile[]): FileNode[];
+    buildTree(commit: CommitDetails, committedFiles: CommittedFile[]): (DirectoryNode | FileNode)[];
+    buildList(commit: CommitDetails, committedFiles: CommittedFile[]): FileNode[];
     getTreeItem(node: DirectoryNode | FileNode): Promise<DirectoryTreeItem | FileTreeItem>;
-    createDirectoryNode(commit: CommitDetails, relativePath: string): DirectoryNode;
-    createFileNode(commit: CommitDetails, committedFile: CommittedFile): FileNode;
 }

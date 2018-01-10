@@ -1,7 +1,8 @@
 import { IServiceManager } from '../ioc/types';
-import { NodeBuilder } from './nodeBuilder';
-import { INodeBuilder } from './types';
+import { ComparisonNodeFactory, StandardNodeFactory } from './factory';
+import { INodeFactory } from './types';
 
 export function registerTypes(serviceManager: IServiceManager) {
-    serviceManager.addSingleton<INodeBuilder>(INodeBuilder, NodeBuilder);
+    serviceManager.addSingleton<INodeFactory>(INodeFactory, StandardNodeFactory, 'standard');
+    serviceManager.addSingleton<INodeFactory>(INodeFactory, ComparisonNodeFactory, 'comparison');
 }

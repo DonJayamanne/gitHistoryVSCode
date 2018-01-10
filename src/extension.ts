@@ -88,7 +88,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     context.subscriptions.push(serviceManager.get<IDisposableRegistry>(IDisposableRegistry));
 
     const commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
-    commandManager.executeCommand('setContext', 'git.commitView.show', true);
+    commandManager.executeCommand('setContext', 'git.commit.view.show', true);
 
     // fileHistory.activate(context);
     // lineHistory.activate(context);

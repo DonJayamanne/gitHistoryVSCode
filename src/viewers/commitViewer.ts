@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { Event, OutputChannel, TreeItem } from 'vscode';
+import * as path from 'path';
 import { Disposable, EventEmitter, TreeDataProvider, TreeItemCollapsibleState, window } from 'vscode';
+import { Event, OutputChannel, TreeItem } from 'vscode';
 import { ICommandManager } from '../application/types/commandManager';
-import { command } from '../commandHandlers/registration';
-import { CommitDetails } from '../common/types';
+import { CommitDetails, CompareCommitDetails } from '../common/types';
 import { ICommitViewFormatter } from '../formatters/types';
 import { DirectoryTreeItem } from '../nodes/treeNodes';
 import { DirectoryNode, FileNode, INodeBuilder } from '../nodes/types';
@@ -26,8 +26,8 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     constructor( @inject(IOutputChannel) private outputChannel: OutputChannel,
         @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,
         @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(INodeBuilder) private nodeBuilder: INodeBuilder) {
-
+        private nodeBuilder: INodeBuilder,
+        private treeId: string, private visibilityContextVariable: string) {
     }
     public showCommitTree(commit: CommitDetails) {
         this.commit = commit;
@@ -36,10 +36,10 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
         }
         if (!this.registered) {
             this.registered = true;
-            window.registerTreeDataProvider('commitViewProvider', this);
+            window.registerTreeDataProvider(this.treeId, this);
         }
         this._onDidChangeTreeData.fire();
-        this.commandManager.executeCommand('setContext', 'git.commitView.show', true);
+        this.commandManager.executeCommand('setContext', this.visibilityContextVariable, true);
     }
     public showCommit(commit: CommitDetails): void {
         const output = this.commitFormatter.format(commit.logEntry);
@@ -59,20 +59,23 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
         if (treeItem instanceof DirectoryTreeItem) {
             treeItem.collapsibleState = TreeItemCollapsibleState.Expanded;
         }
+        if (this.fileView) {
+            const fileDirectory = path.dirname(element.resource.fsPath);
+            const isEmptyPath = fileDirectory === path.sep;
+            treeItem.label = `${element.label} ${isEmptyPath ? '' : '•'} ${isEmptyPath ? '' : fileDirectory}`.trim();
+        }
         return treeItem;
     }
     public async getChildren(element?: DirectoryNode | FileNode | undefined): Promise<(DirectoryNode | FileNode)[]> {
         if (!element) {
-            return this.fileView ? this.nodeBuilder.buildList(this.commit) : this.nodeBuilder.buildTree(this.commit);
+            // tslint:disable-next-line:no-suspicious-comment
+            // TODO: HACK
+            const committedFiles = this.treeId === 'commitViewProvider' ? this.commit.logEntry.committedFiles! : (this.commit as CompareCommitDetails).committedFiles;
+            return this.fileView ? this.nodeBuilder.buildList(this.commit, committedFiles) : this.nodeBuilder.buildTree(this.commit, committedFiles);
         }
         if (element! instanceof DirectoryNode) {
             return (element as DirectoryNode).children;
         }
         return [];
-    }
-    @command('git.commit.selected', ICommitViewer)
-    public onCommitSelected(commit: CommitDetails) {
-        this.showCommit(commit);
-        this.showCommitTree(commit);
     }
 }

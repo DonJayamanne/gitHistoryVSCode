@@ -6,7 +6,7 @@ export class SelectForComparison extends BaseCommitCommand {
     constructor(commit: CommitDetails, private handler: IGitCompareCommandHandler) {
         super(commit);
         this.setTitle('$(git-compare) Select for comparison');
-        this.setCommand('git.commit.selectForComparison');
+        this.setCommand('git.commit.compare.selectForComparison');
         this.setCommandArguments([CommitDetails]);
     }
     public execute() {

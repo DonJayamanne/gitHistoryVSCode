@@ -1,8 +1,9 @@
 import { inject, injectable } from 'inversify';
 import { IApplicationShell, ICommandManager } from '../../application/types';
-import { CommitDetails } from '../../common/types';
+import { CommitDetails, CompareCommitDetails } from '../../common/types';
 import { IServiceContainer } from '../../ioc/types';
 import { IGitServiceFactory } from '../../types';
+import { ICommitViewerFactory } from '../../viewers/types';
 import { command } from '../registration';
 import { IGitCompareCommandHandler } from '../types';
 
@@ -12,15 +13,16 @@ export class GitCompareCommitCommandHandler implements IGitCompareCommandHandler
 
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommandManager) private commandManager: ICommandManager,
+        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private application: IApplicationShell) { }
 
     public get selectedCommit(): CommitDetails | undefined {
         return this._previouslySelectedCommit;
     }
 
-    @command('git.commit.selectForComparison', IGitCompareCommandHandler)
+    @command('git.commit.compare.selectForComparison', IGitCompareCommandHandler)
     public async select(commit: CommitDetails): Promise<void> {
-        await this.commandManager.executeCommand('setContext', 'git.commit.FileEntry.selectForComparison', true);
+        await this.commandManager.executeCommand('setContext', 'git.commit.compare.selectedForComparison', true);
         this._previouslySelectedCommit = commit;
     }
 
@@ -30,8 +32,11 @@ export class GitCompareCommitCommandHandler implements IGitCompareCommandHandler
             await this.application.showErrorMessage('Please select another file to compare with');
             return;
         }
+        await this.commandManager.executeCommand('setContext', 'git.commit.compare.compared', true);
+        await this.commandManager.executeCommand('setContext', 'git.commit.compare.view.show', true);
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
         const fileDiffs = await gitService.getDifferences(this.selectedCommit!.logEntry.hash.full, commit.logEntry.hash.full);
-        await this.commandManager.executeCommand('git.commit.diff.view', this.selectedCommit!, commit, fileDiffs);
+        const compareCommit = new CompareCommitDetails(this.selectedCommit, commit, fileDiffs);
+        this.commitViewerFactory.getCompareCommitViewer().showCommitTree(compareCommit);
     }
 }

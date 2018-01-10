@@ -6,7 +6,7 @@ export class HideCommitViewExplorerCommand extends BaseCommitCommand {
     constructor(commit: CommitDetails, private commandManager: ICommandManager) {
         super(commit);
         this.setTitle('Hide Commit View Explorer');
-        this.setCommand('git.commitView.hide');
+        this.setCommand('git.commit.view.hide');
     }
     public execute() {
         this.commandManager.executeCommand(this.command);

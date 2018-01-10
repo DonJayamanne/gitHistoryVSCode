@@ -1,20 +1,21 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { IFileCommitCommandFactory } from '../commandFactories/types';
-import { CommitDetails, FileCommitDetails } from '../common/types';
+import { CommitDetails } from '../common/types';
 import { IPlatformService } from '../platform/types';
 import { CommittedFile, Status } from '../types';
 import { AddedIcon, FileIcon, FolderIcon, ModifiedIcon, RemovedIcon } from './nodeIcons';
 import { DirectoryTreeItem, FileTreeItem } from './treeNodes';
-import { DirectoryNode, FileNode, INodeBuilder } from './types';
+import { DirectoryNode, FileNode, INodeBuilder, INodeFactory } from './types';
 
 @injectable()
 export class NodeBuilder implements INodeBuilder {
     constructor( @inject(IFileCommitCommandFactory) private fileCommandFactory: IFileCommitCommandFactory,
+        private nodeFactory: INodeFactory,
         @inject(IPlatformService) private platform: IPlatformService) {
     }
-    public buildTree(commit: CommitDetails): (DirectoryNode | FileNode)[] {
-        const sortedFiles = commit.logEntry.committedFiles!.sort((a, b) => a.uri.fsPath.toUpperCase() > b.uri.fsPath.toUpperCase() ? 1 : -1);
+    public buildTree(commit: CommitDetails, committedFiles: CommittedFile[]): (DirectoryNode | FileNode)[] {
+        const sortedFiles = committedFiles!.sort((a, b) => a.uri.fsPath.toUpperCase() > b.uri.fsPath.toUpperCase() ? 1 : -1);
         const commitFileDetails = new Map<string, CommittedFile>();
         sortedFiles.forEach(item => commitFileDetails.set(item.uri.fsPath, item));
 
@@ -33,7 +34,7 @@ export class NodeBuilder implements INodeBuilder {
                     return nodes.get(currentPath)!;
                 }
 
-                const folderNode = this.createDirectoryNode(commit, currentPath);
+                const folderNode = this.nodeFactory.createDirectoryNode(commit, currentPath);
                 nodes.set(currentPath, folderNode);
                 if (parent) {
                     parent!.children.push(folderNode);
@@ -44,7 +45,7 @@ export class NodeBuilder implements INodeBuilder {
                 return folderNode;
                 // tslint:disable-next-line:no-any
             }, undefined as any);
-            const fileNode = this.createFileNode(commit, file);
+            const fileNode = this.nodeFactory.createFileNode(commit, file);
             if (dirNode) {
                 dirNode!.children.push(fileNode);
             } else {
@@ -55,9 +56,8 @@ export class NodeBuilder implements INodeBuilder {
         nodes.forEach(node => node.children = this.sortNodes(node.children));
         return this.sortNodes(roots);
     }
-    public buildList(commit: CommitDetails): FileNode[] {
-        const nodes = commit.logEntry.committedFiles!
-            .map(file => this.createFileNode(commit, file));
+    public buildList(commit: CommitDetails, committedFiles: CommittedFile[]): FileNode[] {
+        const nodes = committedFiles.map(file => this.nodeFactory.createFileNode(commit, file));
         return this.sortFileNodes(nodes);
     }
     public async getTreeItem(element: DirectoryNode | FileNode): Promise<DirectoryTreeItem | FileTreeItem> {
@@ -105,12 +105,6 @@ export class NodeBuilder implements INodeBuilder {
         treeItem.contextValue = 'file';
         treeItem.command = await this.fileCommandFactory.getDefaultFileCommand(element.data!);
         return treeItem;
-    }
-    public createDirectoryNode(commit: CommitDetails, relativePath: string) {
-        return new DirectoryNode(commit, relativePath);
-    }
-    public createFileNode(commit: CommitDetails, committedFile: CommittedFile) {
-        return new FileNode(new FileCommitDetails(commit.workspaceFolder, commit.branch, commit.logEntry, committedFile));
     }
     private sortNodes(nodes: (DirectoryNode | FileNode)[]): (DirectoryNode | FileNode)[] {
         let directoryNodes = nodes

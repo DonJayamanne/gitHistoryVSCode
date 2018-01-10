@@ -3,19 +3,19 @@ import { IApplicationShell } from '../../application/types';
 import { CommitDetails } from '../../common/types';
 import { IServiceContainer } from '../../ioc/types';
 import { IGitServiceFactory } from '../../types';
-import { ICommitViewer } from '../../viewers/types';
+import { ICommitViewerFactory } from '../../viewers/types';
 import { command } from '../registration';
 import { IGitBranchFromCommitCommandHandler } from '../types';
 
 @injectable()
 export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCommandHandler {
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommitViewer) private commitViewer: ICommitViewer,
+        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
 
     @command('git.commit.createBranch', IGitBranchFromCommitCommandHandler)
     public async createBranchFromCommit(commit: CommitDetails) {
-        commit = commit ? commit : this.commitViewer.selectedCommit;
+        commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
         const msg = 'Branch name';
         const description = 'Please provide a branch name';
         const newBranchName = await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description });
