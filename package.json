@@ -89,8 +89,16 @@
                 "title": "Git: Search History"
             },
             {
-                "command": "git.commit.LogEntry.ViewChangeLog",
+                "command": "git.commit.ViewChangeLog",
                 "title": "View Change log"
+            },
+            {
+                "command": "git.commit.cherryPick",
+                "title": "Cherrypick into current branch"
+            },
+            {
+                "command": "git.commit.createBranch",
+                "title": "Create a branch from this commit"
             },
             {
                 "command": "git.commit.FileEntry.ViewFileContents",
@@ -122,13 +130,11 @@
             },
             {
                 "command": "git.commit.commitView.showFilesOnly",
-                "title": "Test",
-                "category": "1_test"
+                "title": "Show files only"
             },
             {
                 "command": "git.commit.commitView.showFolderView",
-                "title": "Test",
-                "category": "1_test"
+                "title": "Show folder view"
             },
             {
                 "command": "git.commit.commitView.hide",
@@ -194,39 +200,11 @@
                 },
                 {
                     "command": "git.commit.FileEntry.selectForComparison",
-                    "when": "view == commitViewProvider && viewItem == file"
+                    "when": "view == commitViewProvider && viewItem == file && false"
                 },
                 {
                     "command": "git.commit.FileEntry.compare",
-                    "when": "view == commitViewProvider && viewItem == file && git.commit.FileEntry.selectForComparison"
-                },
-                {
-                    "command": "git.viewHistory",
-                    "when": "viewItem == folder"
-                },
-                {
-                    "command": "git.viewHistory",
-                    "when": "viewItem == file"
-                },
-                {
-                    "command": "git.test",
-                    "when": "viewItem == folder"
-                },
-                {
-                    "command": "git.test",
-                    "when": "viewItem == file"
-                },
-                {
-                    "command": "git.commit.LogEntry.ViewChangeLog",
-                    "when": "view == commitViewProvider && viewItem == logEntry"
-                },
-                {
-                    "command": "git.commit.compare.selectLeftCommit",
-                    "when": "view == commitViewProvider && viewItem == logEntry"
-                },
-                {
-                    "command": "git.commit.compare.compareAgainstSelectedCommit",
-                    "when": "view == commitViewProvider && viewItem == logEntry && git.commit.compare.selectedSha"
+                    "when": "view == commitViewProvider && viewItem == file && git.commit.FileEntry.selectForComparison && false"
                 }
             ],
             "view/title": [
@@ -236,23 +214,28 @@
                     "group": "navigation@1"
                 },
                 {
-                    "command": "git.commit.commitView.showFilesOnly",
+                    "command": "git.commitView.hide",
                     "when": "view == commitViewProvider",
+                    "category": "1_test"
+                },
+                {
+                    "command": "git.commit.cherryPick",
+                    "when": "view == commitViewProvider && git.commit.selected",
+                    "category": "1_test"
+                },
+                {
+                    "command": "git.commit.createBranch",
+                    "when": "view == commitViewProvider && git.commit.selected",
+                    "category": "1_test"
+                },
+                {
+                    "command": "git.commit.commitView.showFilesOnly",
+                    "when": "view == commitViewProvider && git.commit.selected",
                     "category": "1_test"
                 },
                 {
                     "command": "git.commit.commitView.showFolderView",
-                    "when": "view == commitViewProvider",
-                    "category": "1_test"
-                },
-                {
-                    "command": "git.commit.commitView.hide",
-                    "when": "view == commitViewProvider",
-                    "category": "1_test"
-                },
-                {
-                    "command": "git.commit.commitView.show",
-                    "when": "view == commitViewProvider",
+                    "when": "view == commitViewProvider && git.commit.selected",
                     "category": "1_test"
                 }
             ]

@@ -71,38 +71,38 @@ export class NodeBuilder implements INodeBuilder {
         const treeItem = new DirectoryTreeItem(element as DirectoryNode);
         treeItem.iconPath = FolderIcon;
         treeItem.contextValue = 'folder';
+        if (treeItem.command) {
+            treeItem.command!.tooltip = 'sdafasfef.';
+        }
         return treeItem;
     }
     public async buildFileTreeItem(element: FileNode): Promise<FileTreeItem> {
         const treeItem = new FileTreeItem(element);
-        let fileStat = '';
+        if (treeItem.command) {
+            treeItem.command!.tooltip = 'Wow';
+        }
         switch (element.data!.committedFile.status) {
             case Status.Added: {
                 treeItem.iconPath = AddedIcon;
-                fileStat = 'A';
                 break;
             }
             case Status.Modified: {
                 treeItem.iconPath = ModifiedIcon;
-                fileStat = 'M';
                 break;
             }
             case Status.Deleted: {
                 treeItem.iconPath = RemovedIcon;
-                fileStat = 'D';
                 break;
             }
             case Status.Renamed: {
                 treeItem.iconPath = RemovedIcon;
-                fileStat = 'R';
                 break;
             }
             default: {
                 treeItem.iconPath = FileIcon;
-                fileStat = 'A';
             }
         }
-        treeItem.contextValue = `file${fileStat}`;
+        treeItem.contextValue = 'file';
         treeItem.command = await this.fileCommandFactory.getDefaultFileCommand(element.data!);
         return treeItem;
     }

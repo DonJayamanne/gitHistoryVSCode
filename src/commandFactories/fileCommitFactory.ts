@@ -25,18 +25,21 @@ export class FileCommitCommandFactory implements IFileCommitCommandFactory {
         ];
 
         return (await Promise.all(commands.map(async cmd => {
-            const result = cmd.preExecute();
-            const available = typeof result === 'boolean' ? result : await result;
-            return available ? cmd : undefined;
+            return await cmd.preExecute() ? cmd : undefined;
         })))
             .filter(cmd => !!cmd)
             .map(cmd => cmd!);
     }
-    public async getDefaultFileCommand(fileCommitDetails: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
-        const fileHistoryCommandHandler = this.serviceContainer.get<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler);
-        const command = new ViewFileCommand(fileCommitDetails, fileHistoryCommandHandler);
-        const result = command.preExecute();
-        const commandIsAvailable = typeof result === 'boolean' ? result : await result;
-        return commandIsAvailable ? command : undefined;
+    public async getDefaultFileCommand(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
+        const commands = [
+            new CompareFileWithPreviousCommand(fileCommit, this.fileHistoryCommandHandler),
+            new ViewFileCommand(fileCommit, this.fileHistoryCommandHandler)
+        ];
+        const availableCommands = (await Promise.all(commands.map(async cmd => {
+            return await cmd.preExecute() ? cmd : undefined;
+        })))
+            .filter(cmd => !!cmd)
+            .map(cmd => cmd!);
+        return availableCommands.length === 0 ? undefined : availableCommands[0];
     }
 }

@@ -10,9 +10,12 @@ export class CompareFileCommand extends BaseFileCommitCommand {
         }
         this.setCommand('git.commit.FileEntry.compare');
         this.setCommandArguments([fileCommit]);
-}
-    public preExecute(): boolean {
-        return !!this.handler.selectedCommit;
+    }
+    public async preExecute(): Promise<boolean> {
+        // tslint:disable-next-line:no-suspicious-comment
+        // TODO: Not completed
+        return false;
+        // return !!this.handler.selectedCommit;
     }
     public execute() {
         this.handler.compare(this.data);

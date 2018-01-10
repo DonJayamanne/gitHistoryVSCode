@@ -9,6 +9,11 @@ export class SelectFileForComparison extends BaseFileCommitCommand {
         this.setCommand('git.commit.FileEntry.selectForComparison');
         this.setCommandArguments([fileCommit]);
     }
+    public async preExecute(): Promise<boolean> {
+        // tslint:disable-next-line:no-suspicious-comment
+        // TODO: Not completed
+        return false;
+    }
     public execute() {
         this.handler.selectFile(this.data);
     }

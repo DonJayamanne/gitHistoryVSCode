@@ -10,7 +10,7 @@ export class CompareFileWithPreviousCommand extends BaseFileCommitCommand {
         this.setCommand('git.commit.FileEntry.CompareAgainstPrevious');
         this.setCommandArguments([fileCommit]);
     }
-    public preExecute(): boolean {
+    public async preExecute(): Promise<boolean> {
         return this.data.committedFile.status === Status.Modified;
     }
     public execute() {

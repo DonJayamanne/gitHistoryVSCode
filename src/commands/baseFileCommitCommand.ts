@@ -6,7 +6,7 @@ export abstract class BaseFileCommitCommand extends BaseCommand<FileCommitDetail
         super(data);
     }
     public abstract execute();
-    public preExecute(): boolean | Promise<boolean> {
+    public async preExecute(): Promise<boolean> {
         return true;
     }
 }

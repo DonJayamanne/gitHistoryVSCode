@@ -5,7 +5,7 @@ export default function HeadRef(props: Ref) {
     return (<div className='media-image ref'>
         <div className='commit-head-container'>
             <div className='refs'>
-                <span>{props.name}</span>
+                <span title={props.name}>{props.name}</span>
             </div>
         </div>
     </div>);

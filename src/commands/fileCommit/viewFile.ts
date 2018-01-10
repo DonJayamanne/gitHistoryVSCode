@@ -10,7 +10,7 @@ export class ViewFileCommand extends BaseFileCommitCommand {
         this.setCommand('git.commit.FileEntry.ViewFileContents');
         this.setCommandArguments([fileCommit]);
     }
-    public preExecute(): boolean {
+    public async preExecute(): Promise<boolean> {
         return this.data.committedFile!.status !== Status.Deleted;
     }
     public execute() {

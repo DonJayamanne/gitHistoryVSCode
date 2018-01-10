@@ -16,8 +16,12 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     private commit: CommitDetails;
     private _onDidChangeTreeData = new EventEmitter<DirectoryNode | FileNode>();
     private _dataChangeHandler: Disposable;
+    private fileView: boolean;
     public get onDidChangeTreeData(): Event<DirectoryNode | FileNode> {
         return this._onDidChangeTreeData.event;
+    }
+    public get selectedCommit(): Readonly<CommitDetails> {
+        return this.commit;
     }
     constructor( @inject(IOutputChannel) private outputChannel: OutputChannel,
         @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,
@@ -42,11 +46,13 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
         this.outputChannel.appendLine(output);
         this.outputChannel.show();
     }
-    public getList(): (DirectoryNode | FileNode)[] {
-        return this.nodeBuilder.buildList(this.commit);
+    public showFilesView(): void {
+        this.fileView = true;
+        this._onDidChangeTreeData.fire();
     }
-    public getTreeNodes(): (DirectoryNode | FileNode)[] {
-        return this.nodeBuilder.buildTree(this.commit);
+    public showFolderView(): void {
+        this.fileView = false;
+        this._onDidChangeTreeData.fire();
     }
     public async getTreeItem(element: DirectoryNode | FileNode): Promise<TreeItem> {
         const treeItem = await this.nodeBuilder.getTreeItem(element);
@@ -57,7 +63,7 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     }
     public async getChildren(element?: DirectoryNode | FileNode | undefined): Promise<(DirectoryNode | FileNode)[]> {
         if (!element) {
-            return this.getTreeNodes();
+            return this.fileView ? this.nodeBuilder.buildList(this.commit) : this.nodeBuilder.buildTree(this.commit);
         }
         if (element! instanceof DirectoryNode) {
             return (element as DirectoryNode).children;

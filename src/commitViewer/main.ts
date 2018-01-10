@@ -15,7 +15,7 @@
 //     vscode.commands.registerCommand('git.viewTreeView', (branch: string, hash: string) => showCommitInTreeView(branch, hash));
 //     getGitRepoPath = getGitRepoPath;
 
-//     vscode.commands.registerCommand('git.commit.LogEntry.ViewChangeLog', async (node: LogEntryNode | FileStatNode) => {
+//     vscode.commands.registerCommand('git.commit.ViewChangeLog', async (node: LogEntryNode | FileStatNode) => {
 //         const gitRepoPath = await getGitRepoPath();
 //         const data = await historyUtil.getFileHistoryBefore(gitRepoPath, node.logEntry.committedFiles![0].uri.fsPath, node.logEntry.committer!.date.toISOString());
 //         const historyItem = data.find(item => item.hash === node.logEntry.hash.full);

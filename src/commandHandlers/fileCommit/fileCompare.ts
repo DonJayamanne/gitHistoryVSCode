@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { ICommandManager, IApplicationShell } from '../../application/types';
+import { IApplicationShell, ICommandManager } from '../../application/types';
 import { FileCommitDetails } from '../../common/types';
 import { IServiceContainer } from '../../ioc/types';
 import { FileNode } from '../../nodes/types';
@@ -37,24 +37,4 @@ export class GitCompareFileCommitCommandHandler implements IGitCompareFileComman
         const fileDiffs = await gitService.getDifferences(this.selectedCommit!.logEntry.hash.full, fileCommit.logEntry.hash.full);
         await this.commandManager.executeCommand('git.commit.diff.view', this.selectedCommit!, fileCommit, fileDiffs);
     }
-    // public getCommitCommands(fileCommit: FileCommitDetails): ICommand<FileCommitDetails>[] {
-    //     const commands: ICommand<FileCommitDetails>[] = [{
-    //         data: fileCommit,
-    //         label: '$(git-compare) Select for comparison',
-    //         description: '', detail: 'blah blah',
-    //         execute: () => { this.selectCommit(fileCommit); }
-    //     }];
-
-    //     if (this.selectCommit) {
-    //         const label = `$(git-compare) Compare with ${this.selectedCommit!.logEntry.hash.short}`;
-    //         const description = this.selectedCommit!.logEntry.subject;
-    //         commands.push({
-    //             data: fileCommit,
-    //             label, description, detail: 'blah blah',
-    //             execute: () => this.compare(fileCommit)
-    //         });
-    //     }
-
-    //     return commands;
-    // }
 }

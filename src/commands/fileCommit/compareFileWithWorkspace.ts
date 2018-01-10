@@ -12,7 +12,7 @@ export class CompareFileWithWorkspaceCommand extends BaseFileCommitCommand {
         this.setCommand('git.commit.FileEntry.CompareAgainstWorkspace');
         this.setCommandArguments([fileCommit]);
     }
-    public preExecute(): Promise<boolean> {
+    public async preExecute(): Promise<boolean> {
         const localFile = path.join(this.data.workspaceFolder, this.data.committedFile.relativePath);
         const fileSystem = this.serviceContainer.get<IFileSystem>(IFileSystem);
         return fileSystem.fileExistsAsync(localFile);

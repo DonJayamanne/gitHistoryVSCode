@@ -3,14 +3,19 @@ import { IApplicationShell } from '../../application/types';
 import { CommitDetails } from '../../common/types';
 import { IServiceContainer } from '../../ioc/types';
 import { IGitServiceFactory } from '../../types';
+import { ICommitViewer } from '../../viewers/types';
+import { command } from '../registration';
 import { IGitCherryPickCommandHandler } from '../types';
 
 @injectable()
 export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler {
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(ICommitViewer) private commitViewer: ICommitViewer,
         @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
 
+    @command('git.commit.cherryPick', IGitCherryPickCommandHandler)
     public async cherryPickCommit(commit: CommitDetails) {
+        commit = commit ? commit : this.commitViewer.selectedCommit;
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
         const currentBranch = await gitService.getCurrentBranch();
 

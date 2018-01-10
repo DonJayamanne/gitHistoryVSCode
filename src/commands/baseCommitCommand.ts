@@ -6,7 +6,7 @@ export abstract class BaseCommitCommand extends BaseCommand<CommitDetails> {
         super(data);
     }
     public abstract execute();
-    public preExecute(): boolean | Promise<boolean> {
+    public async preExecute(): Promise<boolean> {
         return true;
     }
 }

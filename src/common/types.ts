@@ -65,7 +65,7 @@ export interface ICommand<T> extends Command {
      */
     detail?: string;
     // tslint:disable-next-line:prefer-method-signature
-    preExecute(): boolean | Promise<boolean>;
+    preExecute(): Promise<boolean>;
     // tslint:disable-next-line:no-any
     execute(): void | Promise<any> | Thenable<any>;
 }

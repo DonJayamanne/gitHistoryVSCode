@@ -32,7 +32,7 @@ export abstract class BaseCommand<T> implements ICommand<T> {
     }
     constructor(public readonly data: T) { }
     public abstract execute();
-    public preExecute(): boolean | Promise<boolean> {
+    public async preExecute(): Promise<boolean> {
         return true;
     }
     protected setTitle(value: string) {
