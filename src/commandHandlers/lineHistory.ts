@@ -1,3 +1,4 @@
+// tslint:disable:no-useless-files
 // import * as vscode from 'vscode';
 // import * as historyUtil from '../helpers/historyUtils';
 // // tslint:disable-next-line:ordered-imports

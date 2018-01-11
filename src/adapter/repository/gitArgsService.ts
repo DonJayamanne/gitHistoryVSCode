@@ -62,6 +62,7 @@ export class GitArgsService implements IGitArgsService {
 
         const logArgs = ['log', '--full-history', LOG_FORMAT];
         const fileStatArgs = ['log', '--full-history', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
+        // tslint:disable-next-line:no-suspicious-comment
         // TODO: Don't we need %n instead of %h
         const counterArgs = ['log', '--full-history', `--format=${LOG_ENTRY_SEPARATOR}%h`];
 

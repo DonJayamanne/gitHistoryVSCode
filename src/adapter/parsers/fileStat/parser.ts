@@ -40,8 +40,7 @@ export class FileStatParser implements IFileStatParser {
             // Change in file name within root directory (that's why we don't have paths)
             const parts = fileInfo.split(diffSeparator);
             return { original: parts[0], current: parts[1] };
-        }
-        else {
+        }        else {
             const partWithDifference = fileInfo.substring(startIndex, endIndex + 1);
             if (!partWithDifference.startsWith('{') || !partWithDifference.endsWith('}')) {
                 console.error(`Invalid entry cotaining => for ${fileInfo}`);

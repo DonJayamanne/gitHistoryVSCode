@@ -320,6 +320,7 @@
         "cover:upload": "gulp cover:upload"
     },
     "devDependencies": {
+        "@types/lodash": "^4.14.91",
         "@types/body-parser": "0.0.34",
         "@types/chai": "^4.0.4",
         "@types/classnames": "^0.0.32",
@@ -416,7 +417,6 @@
         "webpack-hot-middleware": "^2.16.1"
     },
     "dependencies": {
-        "@types/lodash": "^4.14.91",
         "animate.css": "^3.5.2",
         "body-parser": "^1.17.2",
         "clipboard": "^1.5.15",

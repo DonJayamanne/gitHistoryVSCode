@@ -1,3 +1,4 @@
+// tslint:disable:no-useless-files
 // import * as vscode from 'vscode';
 
 // export function activate(context: vscode.ExtensionContext) {
