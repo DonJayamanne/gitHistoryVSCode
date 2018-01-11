@@ -2,22 +2,24 @@ import * as vscode from 'vscode';
 
 let outInfoChannel: vscode.OutputChannel;
 let outLogChannel: vscode.OutputChannel;
+// tslint:disable-next-line:no-backbone-get-set-outside-model
 const logLevel = <string>vscode.workspace.getConfiguration('gitHistory').get('logLevel');
 
 function getInfoChannel() {
     if (outInfoChannel === undefined) {
-         outInfoChannel = vscode.window.createOutputChannel('Git History Info');
+        outInfoChannel = vscode.window.createOutputChannel('Git History Info');
     }
     return outInfoChannel;
 }
 
-function getLogChannel() {
+export function getLogChannel() {
     if (outLogChannel === undefined) {
-         outLogChannel = vscode.window.createOutputChannel('Git History Log');
+        outLogChannel = vscode.window.createOutputChannel('Git History');
     }
     return outLogChannel;
 }
 
+// tslint:disable-next-line:no-any
 export function logError(error: any) {
     getLogChannel().appendLine(`[Error-${getTimeAndms()}] ${error.toString()}`.replace(/(\r\n|\n|\r)/gm, ''));
     getLogChannel().show();
@@ -38,10 +40,11 @@ export function logDebug(message: string) {
 
 function getTimeAndms(): string {
     const time = new Date();
-    return ('0' + time.getHours()).slice(-2)   + ':' +
-    ('0' + time.getMinutes()).slice(-2) + ':' +
-    ('0' + time.getSeconds()).slice(-2) + '.' +
-    ('00' + time.getMilliseconds()).slice(-3);
+    const hours = `0${time.getHours()}`.slice(-2);
+    const minutes = `0${time.getMinutes()}`.slice(-2);
+    const seconds = `0${time.getSeconds()}`.slice(-2);
+    const milliSeconds = `00${time.getMilliseconds()}`.slice(-3);
+    return `${hours}:${minutes}:${seconds}.${milliSeconds}`;
 }
 
 export function showInfo(message: string) {

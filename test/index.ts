@@ -1,22 +1,19 @@
-// 
-// PLEASE DO NOT MODIFY / DELETE UNLESS YOU KNOW WHAT YOU ARE DOING  
-//
-// This file is providing the test runner to use when running extension tests.
-// By default the test runner in use is Mocha based.
-// 
-// You can provide your own test runner if you want to override it by exporting
-// a function run(testRoot: string, clb: (error:Error) => void) that the extension
-// host can call to run the tests. The test runner is expected to use console.log
-// to report the results back to the caller. When the tests are finished, return
-// a possible error to the callback or null if none.
+// tslint:disable-next-line:no-any
+if ((Reflect as any).metadata === undefined) {
+    // tslint:disable-next-line:no-require-imports no-var-requires
+    require('reflect-metadata');
+}
+import { MochaSetupOptions } from 'vscode/lib/testrunner';
+import * as testRunner from './testRunner';
+process.env.VSC_GITHISTORY_CI_TEST = '1';
 
-let testRunner = require('vscode/lib/testrunner');
-
-// You can directly control Mocha options by uncommenting the following lines
-// See https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically#set-options for more info
-testRunner.configure({
-    ui: 'tdd', 		// the TDD UI is being used in extension.test.ts (suite, test, etc.)
-    useColors: true // colored output from test results
-});
-
+// You can directly control Mocha options by uncommenting the following lines.
+// See https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically#set-options for more info.
+// Hack, as retries is not supported as setting in tsd.
+// tslint:disable-next-line:no-any
+const options: MochaSetupOptions = {
+    ui: 'bdd',
+    useColors: true
+};
+testRunner.configure(options, { coverageConfig: '../coverconfig.json' });
 module.exports = testRunner;

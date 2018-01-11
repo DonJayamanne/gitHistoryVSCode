@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Git Log</title>
+    <link rel='stylesheet' type='text/css' href='bootstrap.min.css' />
+    <link rel="stylesheet" href="normalize.css" >
+    <style>
+        :root {
+            --background-color: <%=backgroundColor%>;
+            --color: <%=color%>;
+            --font-family: <%=fontFamily%>;
+            --font-weight: <%=fontWeight%>;
+            --font-size: <%=fontSize%>;
+        }
+        body {
+            background-color: <%=backgroundColor%>;
+            color: <%=color%>;
+            font-family: <%=fontFamily%>;
+            font-weight: <%=fontWeight%>;
+            font-size: <%=fontSize%>;
+        }
+        html, body {
+            line-height: 1.15;
+            /* 2 */
+        }
+    </style>
+    <link rel="stylesheet" href='animate.min.css' >
+    <link rel="stylesheet" href='hint.min.css' >
+    <link rel='stylesheet' type='text/css' href='main.css' />
+    <link rel='stylesheet' type='text/css' href='octicons.min.css' />
+    
+    <%if (theme === 'vscode-light') { %>
+    <link rel="stylesheet" type="text/css" href="/color-theme-light.css"/>
+    <%} else { %>
+    <link rel="stylesheet" type="text/css" href="/color-theme-dark.css"/>
+    <% } %>
+  </head>
+    <body>
+        <div id=root></div>
+        <script type="text/javascript" src="/vendor.bundle.js"></script>
+        <script type="text/javascript" src="/bundle.js"></script>
+    </body>
+</html>
