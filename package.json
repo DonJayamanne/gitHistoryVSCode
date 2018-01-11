@@ -134,6 +134,10 @@
                 "title": "Compare against previously selected Commit"
             },
             {
+                "command": "git.commit.compare.file.compare",
+                "title": "Compare   "
+            },
+            {
                 "command": "git.commit.compare.selectForComparison",
                 "title": "Select for comparison"
             },

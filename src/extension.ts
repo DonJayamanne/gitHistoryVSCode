@@ -3,6 +3,7 @@ if ((Reflect as any).metadata === undefined) {
     // tslint:disable-next-line:no-require-imports no-var-requires
     require('reflect-metadata');
 }
+
 import { Container } from 'inversify';
 import * as vscode from 'vscode';
 import { OutputChannel } from 'vscode';
@@ -40,7 +41,7 @@ import { ServerHost } from './server/serverHost';
 import { StateStore } from './server/stateStore';
 import { ThemeService } from './server/themeService';
 import { IServerHost, IThemeService, IWorkspaceQueryStateStore } from './server/types';
-import { IOutputChannel } from './types';
+import { IGitServiceFactory, IOutputChannel } from './types';
 import { CommitFileViewerProvider } from './viewers/file/commitFileViewer';
 import { registerTypes as registerViewerTypes } from './viewers/serviceRegistry';
 
@@ -61,7 +62,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     cont.bind<IUiService>(IUiService).to(UiService).inSingletonScope();
     cont.bind<IThemeService>(IThemeService).to(ThemeService).inSingletonScope();
     cont.bind<ICommitViewFormatter>(ICommitViewFormatter).to(CommitViewFormatter).inSingletonScope();
-    cont.bind<IServerHost>(IServerHost).to(ServerHost).inSingletonScope();
+    // cont.bind<IServerHost>(IServerHost).to(ServerHost).inSingletonScope();
     cont.bind<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).to(StateStore).inSingletonScope();
     cont.bind<OutputChannel>(IOutputChannel).toConstantValue(getLogChannel());
     // cont.bind<FileStatParser>(FileStatParser).to(FileStatParser);
@@ -74,8 +75,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     registerCommandFactoryTypes(serviceManager);
     registerNodeBuilderTypes(serviceManager);
     registerViewerTypes(serviceManager);
-
     setServiceContainer(serviceContainer);
+
+    const themeService = serviceContainer.get<IThemeService>(IThemeService);
+    const gitServiceFactory = serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
+    const workspaceQuerySessionStore = serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore);
+    serviceManager.addSingletonInstance(IServerHost, new ServerHost(themeService, gitServiceFactory, serviceContainer, workspaceQuerySessionStore));
 
     // Register last.
     registerCommandTypes(serviceManager);

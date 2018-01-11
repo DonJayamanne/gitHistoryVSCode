@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Uri } from 'vscode';
 import { IApplicationShell, IDocumentManager } from '../../application/types';
 import { ICommandManager } from '../../application/types/commandManager';
-import { FileCommitDetails, IUiService } from '../../common/types';
+import { CompareFileCommitDetails, FileCommitDetails, IUiService } from '../../common/types';
 import { gitHistoryFileViewerSchema } from '../../constants';
 import { IServiceContainer } from '../../ioc/types';
 import { FileNode } from '../../nodes/types';
@@ -82,6 +82,27 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
 
         const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.logEntry.hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
         this.commandManager.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { preview: true });
+    }
+    @command('git.commit.compare.file.compare', IGitFileHistoryCommandHandler)
+    public async compareFileAcrossCommits(fileCommit: CompareFileCommitDetails): Promise<void> {
+        const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
+
+        if (fileCommit.committedFile.status === Status.Deleted) {
+            return await this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
+        }
+        if (fileCommit.committedFile.status === Status.Added) {
+            return await this.applicationShell.showErrorMessage('File cannot be compared, as this is a new file').then(() => void 0);
+        }
+
+        const leftFilePromise = gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
+        const rightFilePromise = gitService.getCommitFile(fileCommit.rightCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
+
+        const [leftFile, rightFile] = await Promise.all([leftFilePromise, rightFilePromise]);
+
+        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.logEntry.hash },
+            { file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.rightCommit.logEntry.hash });
+
+        this.commandManager.executeCommand('vscode.diff', leftFile, rightFile, title, { preview: true });
     }
     private getComparisonTitle(left: { file: Uri, hash: Hash }, right: { file: Uri, hash: Hash }) {
         const leftFileName = path.basename(left.file.fsPath);

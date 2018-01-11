@@ -60,7 +60,7 @@ export function cache(cacheKey: string) {
             if (result && result.then && result.catch) {
                 // tslint:disable-next-line:no-any
                 result.then((value: any) => {
-                    CacheRegister.set(key, value);
+                    //CacheRegister.set(key, value);
                 });
             }
 

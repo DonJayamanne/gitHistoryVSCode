@@ -1,4 +1,4 @@
-import { CommitDetails, FileCommitDetails } from '../common/types';
+import { CommitDetails, CompareFileCommitDetails, FileCommitDetails } from '../common/types';
 
 export const ICommandHandler = Symbol('ICommandHandler');
 
@@ -19,6 +19,7 @@ export interface IGitFileHistoryCommandHandler extends ICommandHandler {
     viewFile(fileCommit: FileCommitDetails): Promise<void>;
     compareFileWithWorkspace(fileCommit: FileCommitDetails): Promise<void>;
     compareFileWithPrevious(fileCommit: FileCommitDetails): Promise<void>;
+    compareFileAcrossCommits(fileCommit: CompareFileCommitDetails): Promise<void>;
 }
 
 export const IGitCommitViewExplorerCommandHandler = Symbol('IGitCommitViewExplorerCommandHandler');

@@ -20,17 +20,30 @@ export class GitArgsService implements IGitArgsService {
     public getCommitArgs(hash: string): string[] {
         return ['show', LOG_FORMAT, '--decorate=full', '--numstat', hash];
     }
+    public getCommitParentHashesArgs(hash: string): string[] {
+        return ['log', '--format=%p', '-n1', hash];
+    }
     public getCommitWithNumStatArgs(hash: string) {
-        return ['log', '--numstat', '--full-history', '--decorate=full', '-M', '--format=""', '-m', '-n1', hash];
+        // return ['log', '--numstat', '--full-history', '--decorate=full', '-M', '--format=""', '-m', '-n1', hash];
+        return ['show', '--numstat', '--format=""', '-M', hash];
     }
     public getCommitNameStatusArgs(hash: string): string[] {
-        return ['log', '--name-status', '--full-history', '-M', '--format=""', '-m', '-n1', hash];
+        // return ['show', '--name-status', '--full-history', '-M', '--format=""', '-m', '-n1', hash];
+        return ['show', '--name-status', '--format=""', '-M', hash];
+    }
+    public getCommitWithNumStatArgsForMerge(hash: string) {
+        // return ['log', '--numstat', '--full-history', '--decorate=full', '-M', '--format=""', '-m', '-n1', hash];
+        return ['show', '--numstat', '--format=""', '-M', '--first-parent', hash];
+    }
+    public getCommitNameStatusArgsForMerge(hash: string): string[] {
+        // return ['show', '--name-status', '--full-history', '-M', '--format=""', '-m', '-n1', hash];
+        return ['show', '--name-status', '--format=""', '-M', '--first-parent', hash];
     }
     public getObjectHashArgs(object: string): string[] {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
     }
     public getRefsContainingCommitArgs(hash: string): string[] {
-        return ['branch', '--all', '--contains', hash];
+        return ['branch', '--branches', '--tags', '--remotes', '--contains', hash];
     }
     public getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[] {
         return ['diff', '--numstat', hash1, hash2];
@@ -67,10 +80,11 @@ export class GitArgsService implements IGitArgsService {
         fileStatArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
         counterArgs.push('--date-order', '--decorate=full');
 
+        // Don't use `--all`, cuz that will result in stashes `ref/stash` being included included in the logs.
         if (allBranches) {
-            logArgs.push('--all');
-            fileStatArgs.push('--all');
-            counterArgs.push('--all');
+            logArgs.push('--branches', '--tags', '--remotes');
+            fileStatArgs.push('--branches', '--tags', '--remotes');
+            counterArgs.push('--branches', '--tags', '--remotes');
         }
 
         // Check if we need a specific file

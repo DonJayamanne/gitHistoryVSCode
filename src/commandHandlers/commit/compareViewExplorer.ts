@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify';
 import { ICommandManager } from '../../application/types/commandManager';
-import { CommitDetails } from '../../common/types';
 import { ICommitViewerFactory } from '../../viewers/types';
 import { command } from '../registration';
 import { IGitCompareCommitViewExplorerCommandHandler } from '../types';

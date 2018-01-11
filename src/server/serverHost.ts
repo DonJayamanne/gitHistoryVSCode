@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 import { Express, Request, Response } from 'express';
 import * as express from 'express';
 import * as http from 'http';
-import { decorate, inject, injectable } from 'inversify';
+import { inject } from 'inversify';
 import * as path from 'path';
 import { ICommandManager } from '../application/types/commandManager';
 import { IServiceContainer } from '../ioc/types';
@@ -12,11 +12,6 @@ import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
 import { IServerHost, IThemeService, IWorkspaceQueryStateStore, StartupInfo } from './types';
 
-// inversify requires inherited classes to be decorated with @injectable()
-// This is a workaround format that requirement
-decorate(injectable(), EventEmitter);
-
-@injectable()
 export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
     private httpServer?: http.Server;

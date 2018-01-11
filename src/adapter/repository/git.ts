@@ -167,9 +167,13 @@ export class Git implements IGitService {
     }
     @cache('IGitService')
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
+        const parentHashesArgs = this.gitArgsService.getCommitParentHashesArgs(hash);
+        const parentHashes = await this.exec(...parentHashesArgs);
+        const singleParent = parentHashes.trim().split(' ').filter(item => item.trim().length > 0).length === 1;
+
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
-        const numStartArgs = this.gitArgsService.getCommitWithNumStatArgs(hash);
-        const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgs(hash);
+        const numStartArgs = singleParent ? this.gitArgsService.getCommitWithNumStatArgs(hash) : this.gitArgsService.getCommitWithNumStatArgsForMerge(hash);
+        const nameStatusArgs = singleParent ? this.gitArgsService.getCommitNameStatusArgs(hash) : this.gitArgsService.getCommitNameStatusArgsForMerge(hash);
 
         const gitRootPathPromise = await this.getGitRoot();
         const commitOutputPromise = await this.exec(...commitArgs);
@@ -240,7 +244,6 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         const relativeFilePath = path.relative(gitRootPath, file.fsPath);
         const args = this.gitArgsService.getPreviousCommitHashForFileArgs(hash, relativeFilePath);
-
         const output = await this.exec(...args);
         const hashes = output.split(/\r?\n/g).filter(item => item.length > 0)[0].split('-');
 

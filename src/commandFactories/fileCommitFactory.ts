@@ -1,11 +1,12 @@
 import { inject, injectable } from 'inversify';
 import { IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler } from '../commandHandlers/types';
 import { CompareFileCommand } from '../commands/fileCommit/compareFile';
+import { CompareFileWithAcrossCommitCommand } from '../commands/fileCommit/compareFileAcrossCommits';
 import { CompareFileWithPreviousCommand } from '../commands/fileCommit/compareFileWithPrevious';
 import { CompareFileWithWorkspaceCommand } from '../commands/fileCommit/compareFileWithWorkspace';
 import { SelectFileForComparison } from '../commands/fileCommit/selectFileForComparison';
 import { ViewFileCommand } from '../commands/fileCommit/viewFile';
-import { FileCommitDetails, ICommand } from '../common/types';
+import { CompareFileCommitDetails, FileCommitDetails, ICommand } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { IFileCommitCommandFactory } from './types';
 
@@ -30,7 +31,10 @@ export class FileCommitCommandFactory implements IFileCommitCommandFactory {
             .filter(cmd => !!cmd)
             .map(cmd => cmd!);
     }
-    public async getDefaultFileCommand(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
+    public async getDefaultFileCommand(fileCommit: FileCommitDetails | CompareFileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
+        if (fileCommit instanceof CompareFileCommitDetails){
+            return new CompareFileWithAcrossCommitCommand(fileCommit, this.fileHistoryCommandHandler);
+        }
         const commands = [
             new CompareFileWithPreviousCommand(fileCommit, this.fileHistoryCommandHandler),
             new ViewFileCommand(fileCommit, this.fileHistoryCommandHandler)
