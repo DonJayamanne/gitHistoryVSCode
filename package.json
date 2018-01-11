@@ -33,7 +33,6 @@
         "onCommand:git.viewLineHistory",
         "onCommand:git.viewHistory",
         "onCommand:git.searchHistory"
-<<<<<<< HEAD
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -98,36 +97,6 @@
                     "light": "./resources/icons/light/git.svg"
                 }
             },
-=======
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"views": {
-			"explorer": [{
-					"id": "commitViewProvider",
-					"name": "Commits",
-					"when": "config.gitHistory.commit.showExplorer == true"
-				},
-				{
-					"id": "compareViewProvider",
-					"name": "Compare Commits",
-					"when": "config.gitHistory.compare.showExplorer == true"
-				}
-			]
-		},
-		"commands": [{
-				"command": "git.viewFileHistory",
-				"title": "Git: View File History"
-			},
-			{
-				"command": "git.viewLineHistory",
-				"title": "Git: View Line History"
-			},
-			{
-				"command": "git.viewHistory",
-				"title": "Git: View History (git log)"
-			},
->>>>>>> master
             {
                 "command": "git.searchHistory",
                 "title": "Git: Search History"
@@ -248,7 +217,6 @@
                     "command": "git.searchHistory",
                     "group": "git"
                 }
-<<<<<<< HEAD
             ],
             "view/item/context": [
                 {
@@ -480,122 +448,4 @@
         "publisherDisplayName": "Don Jayamanne",
         "publisherId": "1ba8bd00-2ad1-4be0-a007-5b4b954c1ee7"
     }
-=======
-			],
-			"view/item/context": [{
-					"command": "git.commit.LogEntry.ViewChangeLog",
-					"when": "view == commitViewProvider && viewItem == logEntry"
-				},
-				{
-					"command": "git.commit.FileEntry.ViewFileContents",
-					"when": "view == commitViewProvider && viewItem == fileStat"
-				},
-				{
-					"command": "git.commit.FileEntry.ViewFileContents",
-					"when": "view == commitViewProvider && viewItem == fileStatA"
-				},
-				{
-					"command": "git.commit.FileEntry.ViewFileContents",
-					"when": "view == commitViewProvider && viewItem == fileStatM"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
-					"when": "view == commitViewProvider && viewItem == fileStat"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
-					"when": "view == commitViewProvider && viewItem == fileStatA"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstWorkspace",
-					"when": "view == commitViewProvider && viewItem == fileStatM"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstPrevious",
-					"when": "view == commitViewProvider && viewItem == fileStat"
-				},
-				{
-					"command": "git.commit.FileEntry.CompareAgainstPrevious",
-					"when": "view == commitViewProvider && viewItem == fileStatM"
-				},
-				{
-					"command": "git.commit.compare.selectLeftCommit",
-					"when": "view == commitViewProvider && viewItem == logEntry"
-				},
-				{
-					"command": "git.commit.compare.compareAgainstSelectedCommit",
-					"when": "view == commitViewProvider && viewItem == logEntry && git.commit.compare.selectedSha"
-				}
-			]
-		},
-		"configuration": {
-			"type": "object",
-			"title": "Git History configuration",
-			"properties": {
-				"gitHistory.displayLabel": {
-					"type": "string",
-					"default": "${message}",
-					"description": "Informations to display in history as label"
-				},
-				"gitHistory.displayDescription": {
-					"type": "string",
-					"default": "",
-					"description": "Informations to display in history as description"
-				},
-				"gitHistory.displayDetail": {
-					"type": "string",
-					"default": "${name} on ${date}",
-					"description": "Informations to display in history as detail"
-				},
-				"gitHistory.logLevel": {
-					"type": "string",
-					"default": "Debug",
-					"description": "Log Level [Debug|Info|Error]"
-				},
-				"gitHistory.commit.showExplorer": {
-					"type": "boolean",
-					"default": true,
-					"description": "Show or hide the Commit Explorer"
-				},
-				"gitHistory.compare.showExplorer": {
-					"type": "boolean",
-					"default": true,
-					"description": "Show or hide the Compare Explorer"
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run lint && tsc -p ./",
-		"compile": "tsc --watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"lint": "tslint ./src/**/*.ts || tslint ./test/**/*.ts"
-	},
-	"devDependencies": {
-		"typescript": "^2.1.5",
-		"tslint": "^4.1.1",
-		"vscode": "^1.0.3",
-		"mocha": "^2.3.3",
-		"@types/node": "^6.0.49",
-		"@types/mocha": "^2.2.32",
-		"@types/jquery": "^2.0.34",
-		"@types/clipboard": "1.5.29",
-		"@types/he": "^0.5.29",
-		"@types/tmp": "0.0.31"
-	},
-	"dependencies": {
-		"@types/cors": "^2.8.1",
-		"@types/express": "^4.0.36",
-		"@types/socket.io": "^1.4.29",
-		"@types/socket.io-client": "^1.4.29",
-		"clipboard": "^1.5.15",
-		"cors": "^2.8.4",
-		"express": "^4.15.3",
-		"he": "^1.1.0",
-		"jquery": "^3.1.1",
-		"normalize.css": "^5.0.0",
-		"socket.io": "^2.0.3",
-		"tmp": "^0.0.31"
-	}
->>>>>>> master
 }
