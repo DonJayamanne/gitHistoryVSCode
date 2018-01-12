@@ -35,6 +35,7 @@ export class Git implements IGitService {
         const gitRoot: string = await this.getGitRoot();
         return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
     }
+    // @cache('IGitService')
     public async getHeadHashes(): Promise<{ ref: string, hash: string }[]> {
         const fullHashArgs = ['show-ref'];
         const fullHashRefsOutput = await this.exec(...fullHashArgs);
@@ -45,6 +46,10 @@ export class Git implements IGitService {
             .filter(lineParts => lineParts.length > 1)
             .map(hashAndRef => { return { ref: hashAndRef[1], hash: hashAndRef[0] }; });
     }
+
+    // tslint:disable-next-line:no-suspicious-comment
+    // TODO: We need a way of clearing this cache, if a new branch is created.
+    @cache('IGitService')
     public async getBranches(): Promise<Branch[]> {
         const output = await this.exec('branch');
         return output.split(/\r?\n/g)
@@ -59,6 +64,9 @@ export class Git implements IGitService {
                 };
             });
     }
+    // tslint:disable-next-line:no-suspicious-comment
+    // TODO: We need a way of clearing this cache, if a new branch is created.
+    @cache('IGitService')
     public async getCurrentBranch(): Promise<string> {
         const args = this.gitArgsService.getCurrentBranchArgs();
         const branch = await this.exec(...args);

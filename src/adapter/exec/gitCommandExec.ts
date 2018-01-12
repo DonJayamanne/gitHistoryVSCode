@@ -1,7 +1,6 @@
 import { spawn } from 'child_process';
 import * as iconv from 'iconv-lite';
 import { inject, injectable, multiInject } from 'inversify';
-import { EOL } from 'os';
 import { Disposable } from 'vscode';
 import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from '../locator';
@@ -43,18 +42,27 @@ export class GitCommandExecutor implements IGitCommandExecutor {
             gitShow.once('close', () => {
                 if (errBuffers.length > 0) {
                     const stdErr = decode(errBuffers, childProcOptions.encoding);
-                    this.loggers.forEach(logger => logger.log(`git ${args.join(' ')}${EOL}${stdErr}`));
+                    this.loggers.forEach(logger => {
+                        logger.log('git', ...args);
+                        logger.error(stdErr);
+                    });
                     reject(stdErr);
                 } else {
                     const stdOut = decode(buffers, childProcOptions.encoding);
-                    this.loggers.forEach(logger => logger.log(`git ${args.join(' ')}${EOL}${stdOut}`));
+                    this.loggers.forEach(logger => {
+                        logger.log('git', ...args);
+                        logger.trace(stdOut);
+                    });
                     resolve(stdOut);
                 }
                 disposables.forEach(disposable => disposable.dispose());
             });
             gitShow.once('error', ex => {
                 reject(ex);
-                this.loggers.forEach(logger => logger.log(`git ${args.join(' ')}${EOL}${ex}`));
+                this.loggers.forEach(logger => {
+                    logger.log('git', ...args);
+                    logger.error(ex);
+                });
                 disposables.forEach(disposable => disposable.dispose());
             });
         });

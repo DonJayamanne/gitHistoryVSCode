@@ -44,7 +44,7 @@ export class GitArgsService implements IGitArgsService {
     }
     public getRefsContainingCommitArgs(hash: string): string[] {
         // return ['branch', '--branches', '--tags', '--remotes', '--contains', hash];
-        return ['branch', '--all', '--tags', '--remotes', '--contains', hash];
+        return ['branch', '--all', '--contains', hash];
     }
     public getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[] {
         return ['diff', '--numstat', hash1, hash2];

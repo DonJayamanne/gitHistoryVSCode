@@ -9,6 +9,7 @@ import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { FileCommitDetails, IUiService } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
+import { FileNode } from '../nodes/types';
 import { IServerHost, IWorkspaceQueryStateStore } from '../server/types';
 import { BranchSelection, IGitServiceFactory, Status } from '../types';
 import { command } from './registration';
@@ -31,14 +32,27 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
 
     @command('git.viewFileHistory', IGitHistoryCommandHandler)
     public async viewFileHistory(info?: FileCommitDetails | Uri): Promise<void> {
-        return this.viewHistory(info);
+        let fileUri: Uri | undefined;
+        if (!info) {
+            return;
+        }
+        if (info instanceof FileCommitDetails) {
+            const committedFile = info.committedFile;
+            fileUri = committedFile.status === Status.Deleted ? Uri.file(committedFile.oldUri!.fsPath!) : Uri.file(committedFile.uri.fsPath);
+        } else if (info instanceof FileNode) {
+            const committedFile = info.data!.committedFile;
+            fileUri = committedFile.status === Status.Deleted ? Uri.file(committedFile.oldUri!.fsPath!) : Uri.file(committedFile.uri.fsPath);
+        } else if (info instanceof Uri) {
+            fileUri = info;
+        }
+        return this.viewHistory(fileUri);
     }
     @command('git.viewHistory', IGitHistoryCommandHandler)
     public async viewBranchHistory(): Promise<void> {
         return this.viewHistory();
     }
 
-    public async viewHistory(info?: FileCommitDetails | Uri): Promise<void> {
+    public async viewHistory(fileUri?: Uri): Promise<void> {
         const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
         // tslint:disable-next-line:no-console
         console.log(fileStatParserFactory);
@@ -52,14 +66,6 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             return;
         }
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
-        let fileUri: Uri | undefined;
-        if (info) {
-            if (info instanceof FileCommitDetails) {
-                fileUri = info.committedFile.status === Status.Deleted ? Uri.file(info.committedFile.oldUri!.fsPath!) : Uri.file(info.committedFile.uri.fsPath);
-            } else if (info instanceof Uri) {
-                fileUri = info;
-            }
-        }
 
         const branchNamePromise = await gitService.getCurrentBranch();
         const startupInfoPromise = await this.server!.start(workspaceFolder);

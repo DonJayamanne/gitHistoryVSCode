@@ -22,6 +22,7 @@ export class ContentProvider implements TextDocumentContentProvider {
         return `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
+                    <titleCan I give a title</title>
                     <script type="text/javascript">
                         function start(){
                             // We need a unique value so html is reloaded
