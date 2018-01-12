@@ -49,7 +49,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
 
         const [branchName, startupInfo, locale] = await Promise.all([branchNamePromise, startupInfoPromise, localePromise]);
 
-        const id = Date.now().toString();
+        const id = `${branchName}${startupInfo.port}${branchSelection}`; //Date.now().toString();
         await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).initialize(id, workspaceFolder, branchName, branchSelection);
 
         const queryArgs = [
@@ -59,7 +59,8 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         if (branchSelection === BranchSelection.Current) {
             queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
         }
-        const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
+        // const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
+        const uri = `${previewUri}?${queryArgs.join('&')}`;
         const title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
         this.commandManager.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
     }
