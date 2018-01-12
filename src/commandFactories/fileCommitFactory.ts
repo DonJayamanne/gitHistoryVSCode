@@ -1,9 +1,11 @@
 import { inject, injectable } from 'inversify';
+import { ICommandManager } from '../application/types/commandManager';
 import { IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler } from '../commandHandlers/types';
 import { CompareFileCommand } from '../commands/fileCommit/compareFile';
 import { CompareFileWithAcrossCommitCommand } from '../commands/fileCommit/compareFileAcrossCommits';
 import { CompareFileWithPreviousCommand } from '../commands/fileCommit/compareFileWithPrevious';
 import { CompareFileWithWorkspaceCommand } from '../commands/fileCommit/compareFileWithWorkspace';
+import { ViewFileHistoryCommand } from '../commands/fileCommit/fileHistory';
 import { SelectFileForComparison } from '../commands/fileCommit/selectFileForComparison';
 import { ViewFileCommand } from '../commands/fileCommit/viewFile';
 import { CompareFileCommitDetails, FileCommitDetails, ICommand } from '../common/types';
@@ -14,6 +16,7 @@ import { IFileCommitCommandFactory } from './types';
 export class FileCommitCommandFactory implements IFileCommitCommandFactory {
     constructor( @inject(IGitFileHistoryCommandHandler) private fileHistoryCommandHandler: IGitFileHistoryCommandHandler,
         @inject(IGitCompareFileCommandHandler) private fileCompareHandler: IGitCompareFileCommandHandler,
+        @inject(ICommandManager) private commandManager: ICommandManager,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     public async createCommands(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails>[]> {
@@ -22,7 +25,8 @@ export class FileCommitCommandFactory implements IFileCommitCommandFactory {
             new CompareFileWithWorkspaceCommand(fileCommit, this.fileHistoryCommandHandler, this.serviceContainer),
             new CompareFileWithPreviousCommand(fileCommit, this.fileHistoryCommandHandler),
             new SelectFileForComparison(fileCommit, this.fileCompareHandler),
-            new CompareFileCommand(fileCommit, this.fileCompareHandler)
+            new CompareFileCommand(fileCommit, this.fileCompareHandler),
+            new ViewFileHistoryCommand(fileCommit, this.commandManager)
         ];
 
         return (await Promise.all(commands.map(async cmd => {
@@ -32,7 +36,7 @@ export class FileCommitCommandFactory implements IFileCommitCommandFactory {
             .map(cmd => cmd!);
     }
     public async getDefaultFileCommand(fileCommit: FileCommitDetails | CompareFileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
-        if (fileCommit instanceof CompareFileCommitDetails){
+        if (fileCommit instanceof CompareFileCommitDetails) {
             return new CompareFileWithAcrossCommitCommand(fileCommit, this.fileHistoryCommandHandler);
         }
         const commands = [

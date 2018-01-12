@@ -15,6 +15,7 @@ type AppProps = {
     getCommits: typeof ResultActions.getCommits;
     getPreviousCommits: typeof ResultActions.getPreviousCommits;
     getNextCommits: typeof ResultActions.getNextCommits;
+    search: typeof ResultActions.search;
 } & typeof ResultActions;
 
 // tslint:disable-next-line:no-empty-interface
@@ -69,7 +70,8 @@ function mapDispatchToProps(dispatch) {
         ...bindActionCreators({ ...ResultActions }, dispatch),
         getCommits: () => dispatch(ResultActions.getCommits()),
         getNextCommits: () => dispatch(ResultActions.getNextCommits()),
-        getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits())
+        getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits()),
+        search: (text: string) => dispatch(ResultActions.search(text))
     };
 }
 

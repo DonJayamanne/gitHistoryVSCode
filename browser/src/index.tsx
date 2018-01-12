@@ -21,13 +21,13 @@ const settingsData = window.localStorage.getItem(id);
 let defaultSettings: ISettings = {};
 defaultSettings.id = (query.id || '').toString();
 defaultSettings.selectedBranchName = typeof query.branchName === 'string' ? (query.branchName as string) : undefined;
+defaultSettings.file = typeof query.file === 'string' ? (query.file as string) : undefined;
 const num = parseInt((query.branchSelection || '-1').toString(), 10);
 defaultSettings.selectedBranchType = (num === -1) ? undefined : num as BranchSelection;
 try {
     defaultSettings = settingsData ? JSON.parse(settingsData) : defaultSettings;
-}
-// tslint:disable-next-line:no-empty
-catch (ex) { }
+    // tslint:disable-next-line:no-empty
+} catch (ex) { }
 
 const locale = (query.locale || '').toString();
 const store = configureStore({ settings: defaultSettings, searchCriteria: {}, graph: {}, vscode: { theme: query.theme as any, locale } });

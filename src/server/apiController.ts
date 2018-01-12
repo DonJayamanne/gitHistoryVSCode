@@ -79,7 +79,7 @@ export class ApiController implements IApiRouteHandler {
             promise = currentState.entries;
         } else {
             promise = this.getRepository(decodeURIComponent(request.query.id))
-                .getLogEntries(pageIndex, pageSize, branch, searchText)
+                .getLogEntries(pageIndex, pageSize, branch, searchText, file)
                 .then(data => {
                     // tslint:disable-next-line:no-unnecessary-local-variable
                     const entriesResponse: LogEntriesResponse = {
@@ -102,6 +102,7 @@ export class ApiController implements IApiRouteHandler {
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
     }
+    // tslint:disable-next-line:cyclomatic-complexity
     public getBranches = (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
         this.getRepository(id)

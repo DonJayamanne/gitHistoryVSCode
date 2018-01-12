@@ -107,6 +107,7 @@ export const IOutputChannel = Symbol('IOutputChannel');
 
 export interface IGitService {
     getGitRoot(): Promise<string>;
+    getGitRelativePath(file: FsUri): Promise<string>;
     getHeadHashes(): Promise<{ ref: string, hash: string }[]>;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;

@@ -5,8 +5,8 @@ import { ICommitCommandFactory, IFileCommitCommandFactory } from '../commandFact
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection } from '../types';
 import { CommitDetails, FileCommitDetails, ICommand, IUiService } from './types';
-const allBranches = 'All branches';
-const currentBranch = 'Current branch';
+const allBranches = '$(git-branch) All branches';
+const currentBranch = '$(git-branch) Current branch';
 
 @injectable()
 export class UiService implements IUiService {

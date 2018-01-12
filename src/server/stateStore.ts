@@ -6,8 +6,11 @@ import { IWorkspaceQueryStateStore, State } from './types';
 @injectable()
 export class StateStore implements IWorkspaceQueryStateStore {
     private storesPerWorkspace = new Map<string, State>();
-    public async initialize(id: string, workspaceFolder: string, branch: string, branchSelection: BranchSelection): Promise<void> {
-        this.storesPerWorkspace.set(id, { branch, branchSelection, workspaceFolder });
+    public async initialize(id: string, workspaceFolder: string, branch: string, branchSelection: BranchSelection, searchText?: string, file?: Uri): Promise<void> {
+        if (this.storesPerWorkspace.has(id)) {
+            return;
+        }
+        this.storesPerWorkspace.set(id, { branch, branchSelection, workspaceFolder, searchText, file });
     }
 
     public async updateEntries(id: string, entries?: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection): Promise<void> {

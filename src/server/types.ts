@@ -50,7 +50,7 @@ export type State = {
 export const IWorkspaceQueryStateStore = Symbol('IWorkspaceQueryStateStore');
 
 export interface IWorkspaceQueryStateStore extends Disposable {
-    initialize(id: string, workspaceFolder: string, branchName: string, branchSelection: BranchSelection): Promise<void>;
+    initialize(id: string, workspaceFolder: string, branchName: string, branchSelection: BranchSelection, searchText?: string, file?: Uri): Promise<void>;
     updateEntries(id: string, entries: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection): Promise<void>;
     updateLastHashCommit(id: string, hash: string, commit: Promise<LogEntry | undefined>): Promise<void>;
     clearLastHashCommit(id: string): Promise<void>;

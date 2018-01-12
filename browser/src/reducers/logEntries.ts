@@ -9,11 +9,13 @@ const initialState: LogEntriesState = { count: 0, isLoading: true, isLoadingComm
 // tslint:disable-next-line:no-any
 export default handleActions<LogEntriesState, any>({
     [Actions.FETCHED_COMMITS]: (state, action: ReduxActions.Action<LogEntriesResponse>) => {
+        debugger;
         return {
             ...state,
             ...action.payload!,
             selected: action.payload ? action.payload.selected : undefined,
-            isLoading: false
+            isLoading: false,
+            searchText: action.payload ? action.payload.searchText : undefined
         };
     },
 

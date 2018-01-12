@@ -43,7 +43,8 @@ export class GitArgsService implements IGitArgsService {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
     }
     public getRefsContainingCommitArgs(hash: string): string[] {
-        return ['branch', '--branches', '--tags', '--remotes', '--contains', hash];
+        // return ['branch', '--branches', '--tags', '--remotes', '--contains', hash];
+        return ['branch', '--all', '--tags', '--remotes', '--contains', hash];
     }
     public getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[] {
         return ['diff', '--numstat', hash1, hash2];
@@ -88,20 +89,21 @@ export class GitArgsService implements IGitArgsService {
             counterArgs.push('--branches', '--tags', '--remotes');
         }
 
-        // Check if we need a specific file
-        if (relativeFilePath) {
-            logArgs.push(relativeFilePath);
-            fileStatArgs.push(relativeFilePath);
-            counterArgs.push(relativeFilePath);
-        }
-        // logArgs.push('--numstat');
-        // fileStatArgs.push('--name-status');
-
         if (specificBranch) {
             logArgs.push(branch);
             fileStatArgs.push(branch);
             counterArgs.push(branch);
         }
+
+        // Check if we need a specific file
+        if (relativeFilePath) {
+            const formattedPath = relativeFilePath.indexOf(' ') > 0 ? `"${relativeFilePath}"` : relativeFilePath;
+            logArgs.push('--follow', '--', formattedPath);
+            fileStatArgs.push('--follow', '--', formattedPath);
+            counterArgs.push('--follow', '--', formattedPath);
+        }
+        // logArgs.push('--numstat');
+        // fileStatArgs.push('--name-status');
 
         // Count only the number of lines in the log
         if (this.isWindows) {

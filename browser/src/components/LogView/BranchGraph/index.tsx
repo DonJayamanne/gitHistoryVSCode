@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../../../reducers';
 
 type BranchGrapProps = {
+    hideGraph: boolean;
     logEntries: LogEntry[];
     height?: string;
     width?: string;
@@ -278,6 +279,9 @@ class BrachGraph extends React.Component<BranchGrapProps> {
     componentWillReceiveProps(newProps: BranchGrapProps) {
     }
     componentWillUpdate(newProps: BranchGrapProps) {
+        if (newProps.hideGraph) {
+            return;
+        }
         if (Array.isArray(newProps.logEntries) && newProps.logEntries.length === 0) {
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
         }
@@ -329,8 +333,13 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 }
 
 function mapStateToProps(state: RootState): BranchGrapProps {
+    const hideGraph = ((state.searchCriteria && state.searchCriteria.searchText && state.searchCriteria.searchText.length > 0) ||
+        (state && state.settings && state.settings.file && state.settings.file.length > 0) ||
+        (state && state.logEntries && state.logEntries.searchText && state.logEntries.searchText.length > 0));
+
     return {
         logEntries: state.logEntries.items,
+        hideGraph,
         height: state.graph.height,
         width: state.graph.width,
         itemHeight: state.graph.itemHeight,

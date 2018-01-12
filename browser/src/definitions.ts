@@ -99,5 +99,6 @@ export interface ISettings {
     selectedBranchName?: string;
     pageIndex?: number;
     searchText?: string;
+    file?: string;
     id?: string;
 }

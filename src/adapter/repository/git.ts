@@ -4,7 +4,7 @@ import * as tmp from 'tmp';
 import { Uri } from 'vscode';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
-import { Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry } from '../../types';
+import { Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, PAGE_SIZE } from './constants';
@@ -28,7 +28,13 @@ export class Git implements IGitService {
         const gitRootPath = await this.gitCmdExecutor.exec(this.workspaceRoot, ...this.gitArgsService.getGitRootArgs());
         return this.gitRootPath = gitRootPath.split(/\r?\n/g)[0].trim();
     }
-
+    public async getGitRelativePath(file: Uri | FsUri) {
+        if (!path.isAbsolute(file.fsPath)) {
+            return file.fsPath;
+        }
+        const gitRoot: string = await this.getGitRoot();
+        return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
+    }
     public async getHeadHashes(): Promise<{ ref: string, hash: string }[]> {
         const fullHashArgs = ['show-ref'];
         const fullHashRefsOutput = await this.exec(...fullHashArgs);
@@ -282,9 +288,4 @@ export class Git implements IGitService {
     // Note: Even if we did find a merged location, this doesn't mean we shouldn't stop drawing the line
     //  Its possible the other branch that it has been merged into is out of the current page
     //  In this instance the grap line will have to go up (to no where)...
-
-    private async getGitRelativePath(file: Uri) {
-        const gitRoot: string = await this.getGitRoot();
-        return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
-    }
 }

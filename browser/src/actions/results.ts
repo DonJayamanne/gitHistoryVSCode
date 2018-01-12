@@ -111,6 +111,14 @@ export const getNextCommits = () => {
         return fetchCommits(dispatch, state, pageIndex);
     };
 };
+export const search = (searchText: string) => {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const pageIndex = state.logEntries.pageIndex + 1;
+        return fetchCommits(dispatch, state, pageIndex, undefined, searchText);
+    };
+};
 export const getCommits = (id?: string) => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
@@ -127,7 +135,7 @@ function fixDates(logEntry: LogEntry) {
     }
 }
 // tslint:disable-next-line:no-any
-function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
+function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string) {
     pageSize = pageSize || store.logEntries.pageSize;
     const id = store.settings.id || '';
     const queryParts = [];
@@ -138,8 +146,14 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     if (store.settings.selectedBranchName) {
         queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
     }
+    if (store.settings.file) {
+        queryParts.push(`file=${encodeURIComponent(store.settings.file)}`);
+    }
     if (store.settings.selectedBranchType) {
         queryParts.push(`branchSelection=${encodeURIComponent(store.settings.selectedBranchType.toString())}`);
+    }
+    if (searchText) {
+        queryParts.push(`searchText=${encodeURIComponent(searchText)}`);
     }
     if (pageSize) {
         queryParts.push(`pageSize=${pageSize}`);
@@ -161,6 +175,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
 }
 // tslint:disable-next-line:no-any
 function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
+    debugger;
     dispatch(notifyIsFetchingCommit());
     const id = store.settings.id || '';
     return axios.get(`/log/${hash}?id=${encodeURIComponent(id)}`)
@@ -168,6 +183,7 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
             if (result.data) {
                 fixDates(result.data);
             }
+            debugger;
             dispatch(updateCommit(result.data));
         })
         .catch(err => {

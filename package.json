@@ -91,7 +91,15 @@
             },
             {
                 "command": "git.viewHistory",
-                "title": "Git: View History (git log)",
+                "title": "Git: View History",
+                "icon": {
+                    "dark": "./resources/icons/dark/git.svg",
+                    "light": "./resources/icons/light/git.svg"
+                }
+            },
+            {
+                "command": "git.viewFileHistory",
+                "title": "Git: View File History",
                 "icon": {
                     "dark": "./resources/icons/dark/git.svg",
                     "light": "./resources/icons/light/git.svg"
@@ -208,17 +216,17 @@
                 {
                     "command": "git.viewFileHistory",
                     "group": "git"
-                },
-                {
-                    "command": "git.viewHistory",
-                    "group": "git"
-                },
-                {
-                    "command": "git.searchHistory",
-                    "group": "git"
                 }
             ],
             "view/item/context": [
+                {
+                    "command": "git.viewFileHistory",
+                    "when": "view == commitViewProvider && viewItem == file"
+                },
+                {
+                    "command": "git.viewFileHistory",
+                    "when": "view == compareCommitViewProvider && viewItem == file"
+                },
                 {
                     "command": "git.commit.FileEntry.ViewFileContents",
                     "when": "view == commitViewProvider && viewItem == file"
@@ -320,7 +328,6 @@
         "cover:upload": "gulp cover:upload"
     },
     "devDependencies": {
-        "@types/lodash": "^4.14.91",
         "@types/body-parser": "0.0.34",
         "@types/chai": "^4.0.4",
         "@types/classnames": "^0.0.32",
@@ -333,6 +340,8 @@
         "@types/iconv-lite": "0.0.1",
         "@types/istanbul": "^0.4.29",
         "@types/jquery": "^2.0.48",
+        "@types/lodash": "^4.14.91",
+        "@types/md5": "^2.1.32",
         "@types/mocha": "^2.2.32",
         "@types/node": "^6.0.49",
         "@types/os-locale": "^2.1.0",
@@ -432,6 +441,7 @@
         "inversify-binding-decorators": "^3.0.0",
         "jquery": "^3.1.1",
         "lodash": "^4.17.4",
+        "md5": "^2.2.1",
         "normalize.css": "^5.0.0",
         "octicons": "^6.0.1",
         "os-locale": "^2.1.0",

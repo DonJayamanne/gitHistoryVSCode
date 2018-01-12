@@ -1,14 +1,16 @@
 import { inject, injectable } from 'inversify';
+import * as md5 from 'md5';
 import * as osLocale from 'os-locale';
-import { ViewColumn } from 'vscode';
+import * as path from 'path';
+import { Uri, ViewColumn } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
-import { IUiService } from '../common/types';
+import { FileCommitDetails, IUiService } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { IServerHost, IWorkspaceQueryStateStore } from '../server/types';
-import { BranchSelection, IGitServiceFactory } from '../types';
+import { BranchSelection, IGitServiceFactory, Status } from '../types';
 import { command } from './registration';
 import { IGitHistoryCommandHandler } from './types';
 
@@ -26,10 +28,18 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
         @inject(ICommandManager) private commandManager: ICommandManager) { }
 
-    @command('git.viewHistory', IGitHistoryCommandHandler)
-    public async viewHistory(): Promise<void> {
-        const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
 
+    @command('git.viewFileHistory', IGitHistoryCommandHandler)
+    public async viewFileHistory(info?: FileCommitDetails | Uri): Promise<void> {
+        return this.viewHistory(info);
+    }
+    @command('git.viewHistory', IGitHistoryCommandHandler)
+    public async viewBranchHistory(): Promise<void> {
+        return this.viewHistory();
+    }
+
+    public async viewHistory(info?: FileCommitDetails | Uri): Promise<void> {
+        const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
         // tslint:disable-next-line:no-console
         console.log(fileStatParserFactory);
         const uiService = this.serviceContainer.get<IUiService>(IUiService);
@@ -42,6 +52,14 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             return;
         }
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
+        let fileUri: Uri | undefined;
+        if (info) {
+            if (info instanceof FileCommitDetails) {
+                fileUri = info.committedFile.status === Status.Deleted ? Uri.file(info.committedFile.oldUri!.fsPath!) : Uri.file(info.committedFile.uri.fsPath);
+            } else if (info instanceof Uri) {
+                fileUri = info;
+            }
+        }
 
         const branchNamePromise = await gitService.getCurrentBranch();
         const startupInfoPromise = await this.server!.start(workspaceFolder);
@@ -49,11 +67,14 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
 
         const [branchName, startupInfo, locale] = await Promise.all([branchNamePromise, startupInfoPromise, localePromise]);
 
-        const id = `${branchName}${startupInfo.port}${branchSelection}`; //Date.now().toString();
-        await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).initialize(id, workspaceFolder, branchName, branchSelection);
+        // Do not include the search string into this
+        const fullId = `${startupInfo.port}:${branchSelection}:${fileUri ? fileUri.fsPath : ''}`;
+        const id = md5(fullId); //Date.now().toString();
+        await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).initialize(id, workspaceFolder, branchName, branchSelection, '', fileUri);
 
         const queryArgs = [
             `id=${id}`, `port=${startupInfo.port}`,
+            `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
             `branchSelection=${branchSelection}`, `locale=${encodeURIComponent(locale)}`
         ];
         if (branchSelection === BranchSelection.Current) {
@@ -61,7 +82,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         }
         // const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
         const uri = `${previewUri}?${queryArgs.join('&')}`;
-        const title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
+        let title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
+        if (fileUri) {
+            title = `File History (${path.basename(fileUri.fsPath)})`;
+        }
         this.commandManager.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
     }
 }
