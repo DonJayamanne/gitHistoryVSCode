@@ -1,5 +1,4 @@
 var webpack = require('webpack');
-var webpack = require('webpack');
 var path = require('path');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -37,7 +36,8 @@ module.exports = {
         // https://github.com/Microsoft/TypeScript/issues/11677
         mainFields: ['main']
     },
-    devtool: 'source-map',
+    // devtool: 'source-map',
+    devtool: 'inline-source-map',
     module: {
         loaders: [
             // .ts, .tsx
@@ -59,7 +59,8 @@ module.exports = {
                         loader: 'css-loader',
                         query: {
                             modules: true,
-                            sourceMap: !isProduction,
+                            // sourceMap: !isProduction,
+                            sourceMap: true,
                             importLoaders: 1,
                             localIdentName: '[local]__[hash:base64:5]'
                         }

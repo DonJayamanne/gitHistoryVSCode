@@ -4,12 +4,11 @@ import { LogEntry } from '../definitions';
 import { LogEntriesResponse } from '../types';
 import { LogEntriesState } from './';
 
-const initialState: LogEntriesState = { count: 0, isLoading: true, isLoadingCommit: false, items: [], pageIndex: 0 };
+const initialState: LogEntriesState = { count: 0, isLoading: false, isLoadingCommit: false, items: [], pageIndex: 0 };
 
 // tslint:disable-next-line:no-any
 export default handleActions<LogEntriesState, any>({
     [Actions.FETCHED_COMMITS]: (state, action: ReduxActions.Action<LogEntriesResponse>) => {
-        debugger;
         return {
             ...state,
             ...action.payload!,
@@ -38,7 +37,7 @@ export default handleActions<LogEntriesState, any>({
     },
 
     [Actions.CLEAR_RESULTS]: (state, action) => {
-        return { ...state, items: [], count: 0, pageIndex: 0, isLoading: true } as LogEntriesState;
+        return { ...state, items: [], count: 0, pageIndex: 0, isLoading: false } as LogEntriesState;
     },
 
     [Actions.SELECT_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {

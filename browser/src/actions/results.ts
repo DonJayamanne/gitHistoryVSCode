@@ -54,7 +54,7 @@ export const getPreviousCommits = () => {
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const pageIndex = state.logEntries.pageIndex - 1;
-        return fetchCommits(dispatch, state, pageIndex);
+        return fetchCommits(dispatch, state, pageIndex, undefined, state.logEntries.searchText);
     };
 };
 export const actionACommit = (logEntry: LogEntry) => {
@@ -108,15 +108,14 @@ export const getNextCommits = () => {
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const pageIndex = state.logEntries.pageIndex + 1;
-        return fetchCommits(dispatch, state, pageIndex);
+        return fetchCommits(dispatch, state, pageIndex, undefined, state.logEntries.searchText);
     };
 };
 export const search = (searchText: string) => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        const pageIndex = state.logEntries.pageIndex + 1;
-        return fetchCommits(dispatch, state, pageIndex, undefined, searchText);
+        return fetchCommits(dispatch, state, 0, undefined, searchText);
     };
 };
 export const getCommits = (id?: string) => {
@@ -140,9 +139,6 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     const id = store.settings.id || '';
     const queryParts = [];
     queryParts.push(`id=${encodeURIComponent(id)}`);
-    if (typeof pageIndex === 'number') {
-        queryParts.push(`pageIndex=${pageIndex}`);
-    }
     if (store.settings.selectedBranchName) {
         queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
     }
@@ -154,6 +150,9 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     }
     if (searchText) {
         queryParts.push(`searchText=${encodeURIComponent(searchText)}`);
+    }
+    if (typeof pageIndex === 'number') {
+        queryParts.push(`pageIndex=${pageIndex}`);
     }
     if (pageSize) {
         queryParts.push(`pageSize=${pageSize}`);
@@ -175,7 +174,6 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
 }
 // tslint:disable-next-line:no-any
 function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
-    debugger;
     dispatch(notifyIsFetchingCommit());
     const id = store.settings.id || '';
     return axios.get(`/log/${hash}?id=${encodeURIComponent(id)}`)
@@ -183,7 +181,6 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
             if (result.data) {
                 fixDates(result.data);
             }
-            debugger;
             dispatch(updateCommit(result.data));
         })
         .catch(err => {
