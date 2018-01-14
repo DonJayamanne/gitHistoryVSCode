@@ -284,7 +284,6 @@ class BrachGraph extends React.Component<BranchGrapProps> {
     }
     componentWillUpdate(newProps: BranchGrapProps) {
         if (newProps.hideGraph) {
-            debugger;
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, [], true);
             return;
         }
@@ -339,7 +338,6 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 }
 
 function mapStateToProps(state: RootState): BranchGrapProps {
-    debugger;
     const hideGraph = (state && state.logEntries) && ((state.logEntries.searchText && state.logEntries.searchText.length > 0) ||
         (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0));
 
