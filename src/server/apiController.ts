@@ -33,21 +33,46 @@ export class ApiController implements IApiRouteHandler {
     // tslint:disable-next-line:cyclomatic-complexity member-ordering
     public getLogEntries = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
-        const searchText = request.query.searchText;
-        const pageIndex: number | undefined = request.query.pageIndex ? parseInt(request.query.pageIndex, 10) : undefined;
-        const branch = request.query.branch;
-        const pageSize: number | undefined = request.query.pageSize ? parseInt(request.query.pageSize, 10) : undefined;
+        const currentState = this.stateStore.getState(id);
+
+        let searchText = request.query.searchText;
+        if (currentState && currentState.searchText && typeof searchText !== 'string') {
+            searchText = currentState.searchText;
+        }
+        searchText = typeof searchText === 'string' && searchText.length === 0 ? undefined : searchText;
+
+        let pageIndex: number | undefined = request.query.pageIndex ? parseInt(request.query.pageIndex, 10) : undefined;
+        if (currentState && currentState.pageIndex && typeof pageIndex !== 'number') {
+            pageIndex = currentState.pageIndex;
+        }
+
+        let branch = request.query.branch;
+        if (currentState && currentState.branch && (typeof branch !== 'string' || branch.trim().length === 0)) {
+            branch = currentState.branch;
+        }
+
+        let pageSize: number | undefined = request.query.pageSize ? parseInt(request.query.pageSize, 10) : undefined;
+        if (currentState && currentState.pageSize && (typeof pageSize !== 'number' || pageSize === 0)) {
+            pageSize = currentState.pageSize;
+        }
+
         const filePath: string | undefined = request.query.file;
-        const file = filePath ? Uri.file(filePath) : undefined;
-        const branchSelection = request.query.pageSize ? parseInt(request.query.branchSelection, 10) as BranchSelection : undefined;
+        let file = filePath ? Uri.file(filePath) : undefined;
+        if (currentState && currentState.file && !file) {
+            file = currentState.file;
+        }
+
+        let branchSelection = request.query.pageSize ? parseInt(request.query.branchSelection, 10) as BranchSelection : undefined;
+        if (currentState && currentState.branchSelection && typeof branchSelection !== 'number') {
+            branchSelection = currentState.branchSelection;
+        }
 
         let promise: Promise<LogEntries>;
-        const currentState = this.stateStore.getState(id);
 
         const branchesMatch = currentState && (currentState.branch === branch);
         const noBranchDefinedByClient = !currentState;
         if (searchText === undefined && pageIndex === undefined && pageSize === undefined &&
-            filePath === undefined && file === undefined &&
+            file === undefined &&
             currentState && currentState.entries && (branchesMatch || noBranchDefinedByClient)) {
 
             let selected: LogEntry | undefined;
@@ -69,9 +94,9 @@ export class ApiController implements IApiRouteHandler {
                 return entriesResponse;
             });
         } else if (currentState &&
-            currentState.searchText === searchText &&
+            (currentState.searchText === (searchText || '')) &&
             currentState.pageIndex === pageIndex &&
-            currentState.branch === branch &&
+            (typeof branch === 'string' && currentState.branch === branch) &&
             currentState.pageSize === pageSize &&
             currentState.file === file &&
             currentState.entries) {

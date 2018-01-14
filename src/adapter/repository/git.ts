@@ -1,13 +1,13 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { Uri } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
 import { Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
-import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, PAGE_SIZE } from './constants';
+import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
 import { IGitArgsService } from './types';
 
 @injectable()
@@ -90,7 +90,10 @@ export class Git implements IGitService {
             // Remove the '->' from ref pointers (take first portion)
             .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
     }
-    public async getLogEntries(pageIndex: number = 0, pageSize: number = PAGE_SIZE, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
+    public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
+        if (pageSize <= 0) {
+            pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
+        }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
         const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath);
 

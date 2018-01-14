@@ -204,6 +204,10 @@
                 {
                     "command": "git.commit.compare.view.show",
                     "when": "!git.commit.compare.view.show"
+                },
+                {
+                    "command": "git.viewFileHistory",
+                    "when": "editorFocus"
                 }
             ],
             "editor/title": [
@@ -310,6 +314,12 @@
                     "default": "false",
                     "scope": "window",
                     "description": "Whether to diplay the commit explorer view"
+                },
+                "gitHistory.pageSize": {
+                    "type": "number",
+                    "default": 100,
+                    "scope": "window",
+                    "description": "Default number of items to be displayed in Git History Viewer"
                 }
             }
         }

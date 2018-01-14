@@ -49,14 +49,6 @@ function getQueryUrl(store: RootState, baseUrl: string, args: string[] = []): st
     const queryArgs = args.concat([`id=${encodeURIComponent(id)}`]);
     return `${baseUrl}?${queryArgs.join('&')}`;
 }
-export const getPreviousCommits = () => {
-    // tslint:disable-next-line:no-any
-    return (dispatch: Dispatch<any>, getState: () => RootState) => {
-        const state = getState();
-        const pageIndex = state.logEntries.pageIndex - 1;
-        return fetchCommits(dispatch, state, pageIndex, undefined, state.logEntries.searchText);
-    };
-};
 export const actionACommit = (logEntry: LogEntry) => {
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
@@ -108,7 +100,15 @@ export const getNextCommits = () => {
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const pageIndex = state.logEntries.pageIndex + 1;
-        return fetchCommits(dispatch, state, pageIndex, undefined, state.logEntries.searchText);
+        return fetchCommits(dispatch, state, pageIndex, undefined, undefined);
+    };
+};
+export const getPreviousCommits = () => {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const pageIndex = state.logEntries.pageIndex - 1;
+        return fetchCommits(dispatch, state, pageIndex, undefined, undefined);
     };
 };
 export const search = (searchText: string) => {
@@ -135,20 +135,20 @@ function fixDates(logEntry: LogEntry) {
 }
 // tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string) {
-    pageSize = pageSize || store.logEntries.pageSize;
+    // pageSize = pageSize || store.logEntries.pageSize;
     const id = store.settings.id || '';
     const queryParts = [];
     queryParts.push(`id=${encodeURIComponent(id)}`);
-    if (store.settings.selectedBranchName) {
-        queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
-    }
-    if (store.settings.file) {
-        queryParts.push(`file=${encodeURIComponent(store.settings.file)}`);
-    }
-    if (store.settings.selectedBranchType) {
-        queryParts.push(`branchSelection=${encodeURIComponent(store.settings.selectedBranchType.toString())}`);
-    }
-    if (searchText) {
+    // if (store.settings.selectedBranchName) {
+    //     queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
+    // }
+    // if (store.settings.file) {
+    //     queryParts.push(`file=${encodeURIComponent(store.settings.file)}`);
+    // }
+    // if (store.settings.selectedBranchType) {
+    //     queryParts.push(`branchSelection=${encodeURIComponent(store.settings.selectedBranchType.toString())}`);
+    // }
+    if (typeof searchText === 'string') {
         queryParts.push(`searchText=${encodeURIComponent(searchText)}`);
     }
     if (typeof pageIndex === 'number') {

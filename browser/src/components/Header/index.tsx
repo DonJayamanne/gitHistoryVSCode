@@ -1,6 +1,7 @@
 // import axios from 'axios';
 import * as React from 'react';
-import { Button, ButtonGroup, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+// import { Button, Form, FormControl, FormGroup, ButtonGroup, ButtonToolbar, DropdownButton, MenuItem, InputGroup } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import * as ResultActions from '../../actions/results';
 import { RootState } from '../../reducers/index';
@@ -38,7 +39,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         }
     }
     componentWillReceiveProps(nextProps: HeaderProps): void {
-        this.setState({ isLoading: nextProps.isLoading });
+        this.setState({ isLoading: nextProps.isLoading, searchText: nextProps.searchText });
     }
     private handleClick() {
         this.setState({ isLoading: true });
@@ -70,19 +71,41 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
 
     // tslint:disable-next-line:member-ordering
     public render() {
+        const style = { color: 'black' };
         return (<header>
-            <label>
-                Append Results
-        </label>
-            <input type="text" value={this.state.searchText} onChange={this.handleSearchChange} />
+            {/* <form>
+                <FormGroup>
+                    <InputGroup>
+                        <FormControl type="text" value={this.state.searchText} onChange={this.handleSearchChange} />
+                        <InputGroup.Button>
+                            <Button
+                                bsStyle='primary' bsSize='small'
+                                disabled={this.state.isLoading}
+                                onClick={this.onClick}>
+                                {this.state.isLoading ? 'Loading...' : 'Search'}
+                            </Button>
+                            <Button
+                                bsStyle='warning' bsSize='small'
+                                disabled={this.state.isLoading}
+                                onClick={this.onClear}>Clear</Button>
+
+                        </InputGroup.Button>
+                    </InputGroup>
+                </FormGroup>
+            </form> */}
             {/* <ButtonGroup>
                 <DropdownButton bsStyle='success' title='Dropdown'>
-                    <MenuItem key='1'>Dropdown link</MenuItem>
-                    <MenuItem key='2'>Dropdown link</MenuItem>
+                <MenuItem key='1'>Dropdown link</MenuItem>
+                <MenuItem key='2'>Dropdown link</MenuItem>
                 </DropdownButton>
                 <Button bsStyle='info'>Middle</Button>
                 <Button bsStyle='info'>Search</Button>
             </ButtonGroup> */}
+            {/* <form> */}
+            {/* <form>
+                <FormGroup>
+                    <InputGroup> */}
+            <input type="text" value={this.state.searchText} style={style} onChange={this.handleSearchChange} />
             <Button
                 bsStyle='primary' bsSize='small'
                 disabled={this.state.isLoading}
@@ -90,7 +113,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
                 {this.state.isLoading ? 'Loading...' : 'Search'}
             </Button>
             <Button
-                bsStyle='primary' bsSize='small'
+                bsStyle='warning' bsSize='small'
                 disabled={this.state.isLoading}
                 onClick={this.onClear}>Clear</Button>
         </header>);
@@ -98,11 +121,8 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
 }
 
 function mapStateToProps(state: RootState): HeaderState {
-    let searchText = (state && state.searchCriteria && state.searchCriteria.searchText) ?
-        state.searchCriteria.searchText : '';
-    if (state && state.logEntries && state.logEntries.searchText) {
-        searchText = state.logEntries.searchText;
-    }
+    const searchText = (state && state.logEntries.searchText) ?
+        state.logEntries.searchText : '';
     const isLoading = state && state.logEntries && state.logEntries.isLoading;
 
     return {

@@ -30,11 +30,15 @@ const COLORS = ['#ffab1d', '#fd8c25', '#f36e4a', '#fc6148', '#d75ab6', '#b25ade'
 // TODO: Think about appending (could be very expensive, but could be something worthwhile)
 // Appending could produce a better UX
 // Dunno, I think, cuz this way you can see where merges take place, rather than seeing a line vanish off
-function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number, logEntryHeight: number = 60.8, entries: LogEntry[]) {
+function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number, logEntryHeight: number = 60.8, entries: LogEntry[], hideGraph: boolean = false) {
     while (svg.children.length > 0) {
         svg.removeChild(svg.children[0]);
     }
-    if (entries.length === 0) {
+    if (hideGraph) {
+        for (let i = 0; i < content.children.length; i += 1) {
+            let element = content.children[i];
+            element.setAttribute('style', element.getAttribute('style') + ';padding-left:0px');
+        }
         svg.style.display = 'none';
         return;
     }
@@ -280,6 +284,8 @@ class BrachGraph extends React.Component<BranchGrapProps> {
     }
     componentWillUpdate(newProps: BranchGrapProps) {
         if (newProps.hideGraph) {
+            debugger;
+            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, [], true);
             return;
         }
         if (Array.isArray(newProps.logEntries) && newProps.logEntries.length === 0) {
@@ -333,9 +339,9 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 }
 
 function mapStateToProps(state: RootState): BranchGrapProps {
-    const hideGraph = ((state.searchCriteria && state.searchCriteria.searchText && state.searchCriteria.searchText.length > 0) ||
-        (state && state.settings && state.settings.file && state.settings.file.length > 0) ||
-        (state && state.logEntries && state.logEntries.searchText && state.logEntries.searchText.length > 0));
+    debugger;
+    const hideGraph = (state && state.logEntries) && ((state.logEntries.searchText && state.logEntries.searchText.length > 0) ||
+        (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0));
 
     return {
         logEntries: state.logEntries.items,

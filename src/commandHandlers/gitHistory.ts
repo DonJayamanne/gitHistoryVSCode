@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import * as md5 from 'md5';
 import * as osLocale from 'os-locale';
 import * as path from 'path';
-import { Uri, ViewColumn } from 'vscode';
+import { Uri, ViewColumn, window } from 'vscode';
 import { IFileStatParser } from '../adapter/parsers/types';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
@@ -11,7 +11,7 @@ import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { FileNode } from '../nodes/types';
 import { IServerHost, IWorkspaceQueryStateStore } from '../server/types';
-import { BranchSelection, IGitServiceFactory, Status } from '../types';
+import { BranchSelection, IGitServiceFactory } from '../types';
 import { command } from './registration';
 import { IGitHistoryCommandHandler } from './types';
 
@@ -33,17 +33,22 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
     @command('git.viewFileHistory', IGitHistoryCommandHandler)
     public async viewFileHistory(info?: FileCommitDetails | Uri): Promise<void> {
         let fileUri: Uri | undefined;
-        if (!info) {
-            return;
-        }
-        if (info instanceof FileCommitDetails) {
-            const committedFile = info.committedFile;
-            fileUri = committedFile.status === Status.Deleted ? Uri.file(committedFile.oldUri!.fsPath!) : Uri.file(committedFile.uri.fsPath);
-        } else if (info instanceof FileNode) {
-            const committedFile = info.data!.committedFile;
-            fileUri = committedFile.status === Status.Deleted ? Uri.file(committedFile.oldUri!.fsPath!) : Uri.file(committedFile.uri.fsPath);
-        } else if (info instanceof Uri) {
-            fileUri = info;
+        if (info) {
+            if (info instanceof FileCommitDetails) {
+                const committedFile = info.committedFile;
+                fileUri = committedFile.uri ? Uri.file(committedFile.uri!.fsPath!) : Uri.file(committedFile.oldUri!.fsPath);
+            } else if (info instanceof FileNode) {
+                const committedFile = info.data!.committedFile;
+                fileUri = committedFile.uri ? Uri.file(committedFile.uri!.fsPath!) : Uri.file(committedFile.oldUri!.fsPath);
+            } else if (info instanceof Uri) {
+                fileUri = info;
+            }
+        } else {
+            const activeTextEditor = window.activeTextEditor!;
+            if (!activeTextEditor || !activeTextEditor.document.isUntitled) {
+                return;
+            }
+            fileUri = activeTextEditor.document.uri;
         }
         return this.viewHistory(fileUri);
     }
