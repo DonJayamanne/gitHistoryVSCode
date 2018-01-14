@@ -216,7 +216,25 @@
                     "group": "navigation"
                 }
             ],
+            "editor/title/context": [
+                {
+                    "command": "git.viewFileHistory",
+                    "group": "git"
+                }
+            ],
+            "scm/resourceState/context": [
+                {
+                    "command": "git.viewFileHistory",
+                    "group": "1_git@1"
+                }
+            ],
             "explorer/context": [
+                {
+                    "command": "git.viewFileHistory",
+                    "group": "git"
+                }
+            ],
+            "editor/context": [
                 {
                     "command": "git.viewFileHistory",
                     "group": "git"

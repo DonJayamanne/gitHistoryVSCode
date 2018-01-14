@@ -43,6 +43,11 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             } else if (info instanceof Uri) {
                 fileUri = info;
             }
+            // tslint:disable-next-line:no-any
+            if ((info as any).resourceUri) {
+                // tslint:disable-next-line:no-any
+                fileUri = (info as any).resourceUri as Uri;
+            }
         } else {
             const activeTextEditor = window.activeTextEditor!;
             if (!activeTextEditor || !activeTextEditor.document.isUntitled) {
