@@ -42,9 +42,8 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
                 fileUri = committedFile.uri ? Uri.file(committedFile.uri!.fsPath!) : Uri.file(committedFile.oldUri!.fsPath);
             } else if (info instanceof Uri) {
                 fileUri = info;
-            }
-            // tslint:disable-next-line:no-any
-            if ((info as any).resourceUri) {
+                // tslint:disable-next-line:no-any
+            } else if ((info as any).resourceUri) {
                 // tslint:disable-next-line:no-any
                 fileUri = (info as any).resourceUri as Uri;
             }
