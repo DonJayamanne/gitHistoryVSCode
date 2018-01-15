@@ -7,7 +7,7 @@ import { IDocumentManager } from './types/documentManager';
 export class DocumentManager implements IDocumentManager {
     public openTextDocument(uri: Uri): Thenable<TextDocument>;
     public openTextDocument(fileName: string): Thenable<TextDocument>;
-    public openTextDocument(options?: { language?: string | undefined; content?: string | undefined; } | undefined): Thenable<TextDocument>;
+    public openTextDocument(options?: { language?: string | undefined; content?: string | undefined } | undefined): Thenable<TextDocument>;
     public openTextDocument(options?: any);
     public openTextDocument(...args: any[]) {
         return workspace.openTextDocument.call(window, ...args);

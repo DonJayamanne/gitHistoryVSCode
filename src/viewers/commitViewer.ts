@@ -23,7 +23,7 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     public get selectedCommit(): Readonly<CommitDetails> {
         return this.commit;
     }
-    constructor( @inject(IOutputChannel) private outputChannel: OutputChannel,
+    constructor(@inject(IOutputChannel) private outputChannel: OutputChannel,
         @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,
         @inject(ICommandManager) private commandManager: ICommandManager,
         private nodeBuilder: INodeBuilder,

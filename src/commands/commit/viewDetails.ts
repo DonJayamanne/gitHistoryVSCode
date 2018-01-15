@@ -5,7 +5,7 @@ import { BaseCommitCommand } from '../baseCommitCommand';
 export class ViewDetailsCommand extends BaseCommitCommand {
     constructor(commit: CommitDetails, private handler: IGitCommitViewDetailsCommandHandler) {
         super(commit);
-        this.setTitle('View Change log');
+        this.setTitle('$(eye) View Change log');
 
     }
     public execute() {

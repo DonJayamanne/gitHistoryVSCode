@@ -10,7 +10,7 @@ import { DirectoryNode, FileNode, INodeBuilder, INodeFactory } from './types';
 
 @injectable()
 export class NodeBuilder implements INodeBuilder {
-    constructor( @inject(IFileCommitCommandFactory) private fileCommandFactory: IFileCommitCommandFactory,
+    constructor(@inject(IFileCommitCommandFactory) private fileCommandFactory: IFileCommitCommandFactory,
         private nodeFactory: INodeFactory,
         @inject(IPlatformService) private platform: IPlatformService) {
     }

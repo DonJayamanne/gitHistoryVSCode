@@ -4,4 +4,5 @@ export const ICommitViewFormatter = Symbol('ICommitViewFormatter');
 
 export interface ICommitViewFormatter {
     format(logEntry: LogEntry): string;
+    formatAuthor(logEntry: LogEntry): string;
 }

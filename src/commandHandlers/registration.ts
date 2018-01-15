@@ -4,7 +4,7 @@ import { ICommandHandler } from './types';
 
 // tslint:disable-next-line:no-any
 type CommandHandler = (...args: any[]) => any;
-type CommandHandlerInfo = { commandName: string, handlerMethodName: string };
+type CommandHandlerInfo = { commandName: string; handlerMethodName: string };
 
 // tslint:disable-next-line:no-stateless-class
 export class CommandHandlerRegister implements Disposable {

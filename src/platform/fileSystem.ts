@@ -62,12 +62,12 @@ export class FileSystem implements IFileSystem {
     }
 
     public arePathsSame(path1: string, path2: string): boolean {
-        path1 = path.normalize(path1);
-        path2 = path.normalize(path2);
+        const path1ToCompare = path.normalize(path1);
+        const path2ToCompare = path.normalize(path2);
         if (this.platformService.isWindows) {
-            return path1.toUpperCase() === path2.toUpperCase();
+            return path1ToCompare.toUpperCase() === path2ToCompare.toUpperCase();
         } else {
-            return path1 === path2;
+            return path1ToCompare === path2ToCompare;
         }
     }
 }

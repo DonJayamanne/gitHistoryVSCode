@@ -12,7 +12,7 @@ export class CommitViewFormatter implements ICommitViewFormatter {
             sb.push(`sha1 : ${item.hash.full}`);
         }
         if (item.author) {
-            sb.push(`Author : ${item.author.name} <${item.author.email}>`);
+            sb.push(this.formatAuthor(item));
         }
         if (item.author && item.author.date) {
             const authorDate = item.author!.date!.toLocaleString();
@@ -36,5 +36,8 @@ export class CommitViewFormatter implements ICommitViewFormatter {
         }
 
         return sb.join(EOL);
+    }
+    public formatAuthor(logEntry: LogEntry): string {
+        return `Author : ${logEntry.author!.name} <${logEntry.author!.email}>`;
     }
 }

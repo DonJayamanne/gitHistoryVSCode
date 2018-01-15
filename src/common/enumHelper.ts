@@ -1,5 +1,5 @@
 
-// tslint:disable-next-line:no-stateless-class
+// tslint:disable-next-line:no-stateless-class no-unnecessary-class
 export class EnumHelpers {
     // tslint:disable-next-line:function-name
     public static *Values<T>(enumType: {}): IterableIterator<T> {

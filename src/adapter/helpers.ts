@@ -1,6 +1,6 @@
 import { EnumHelpers } from '../common/enumHelper';
 import { CommitInfo } from '../types';
-// tslint:disable-next-line:no-stateless-class
+// tslint:disable-next-line:no-stateless-class no-unnecessary-class
 export class Helpers {
     // tslint:disable-next-line:function-name
     public static GetLogArguments() {

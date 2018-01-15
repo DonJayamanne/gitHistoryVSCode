@@ -3,12 +3,12 @@ import { Disposable, Uri } from 'vscode';
 import { BranchSelection, LogEntries, LogEntry } from '../types';
 
 export type ThemeDetails = {
-    theme: string,
-    backgroundColor: string,
-    color: string,
-    fontFamily: string,
-    fontSize: string,
-    fontWeight?: string
+    theme: string;
+    backgroundColor: string;
+    color: string;
+    fontFamily: string;
+    fontSize: string;
+    fontWeight?: string;
 };
 export const IThemeService = Symbol('IThemeService');
 
@@ -26,7 +26,7 @@ export interface IApiRouteHandler extends Disposable {
 }
 
 export type StartupInfo = {
-    port: number
+    port: number;
 };
 
 export const IServerHost = Symbol('IServer');
@@ -44,7 +44,7 @@ export type State = {
     entries?: Promise<LogEntries>;
     lastFetchedHash?: string;
     lastFetchedCommit?: Promise<LogEntry | undefined>;
-    branchSelection?: BranchSelection
+    branchSelection?: BranchSelection;
 };
 
 export const IWorkspaceQueryStateStore = Symbol('IWorkspaceQueryStateStore');

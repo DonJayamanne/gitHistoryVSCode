@@ -180,7 +180,7 @@ export class ApiController implements IApiRouteHandler {
     public selectCommittedFile = async (request: Request, response: Response) => {
         response.status(200).send('');
         const id: string = decodeURIComponent(request.query.id);
-        const body = request.body as { logEntry: LogEntry, committedFile: CommittedFile };
+        const body = request.body as { logEntry: LogEntry; committedFile: CommittedFile };
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         this.commandManager.executeCommand('git.commit.file.select', new FileCommitDetails(workspaceFolder, currentState.branch!, body.logEntry, body.committedFile));

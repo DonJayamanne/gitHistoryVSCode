@@ -209,7 +209,8 @@ div.appRoot {
 	display: block;
 	color: white;
 	font-size: 75%;
-	padding: 0.3em;
+    padding: 0.3em;
+    white-space: nowrap;
 }
 
 .commit-remote-container .refs span,
@@ -217,7 +218,13 @@ div.appRoot {
 .commit-head-container .refs span {
     text-overflow: ellipsis;
     overflow-x: hidden;
-    display: block
+    display: inline-block;
+}
+
+.commit-remote-container .refs span:first-of-type,
+.commit-tag-container .refs span:first-of-type,
+.commit-head-container .refs span:first-of-type {
+    padding-right:0.5em;
 }
 
 .commit-hash-container .commit-hash,

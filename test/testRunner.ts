@@ -26,13 +26,13 @@ interface ITestRunnerOptions {
 
 // http://gotwarlost.github.io/istanbul/public/apidocs/files/lib_instrumenter.js.html#l478.
 type CoverState = {
-    path: string,
-    s: {},
-    b: {},
-    f: {},
-    fnMap: {},
-    statementMap: {},
-    branchMap: {}
+    path: string;
+    s: {};
+    b: {};
+    f: {};
+    fnMap: {};
+    statementMap: {};
+    branchMap: {};
 };
 
 type Instrumenter = istanbul.Instrumenter & { coverState: CoverState };
@@ -59,6 +59,7 @@ export function configure(mochaOpts: MochaSetupOptions, coverageOpts?: { coverag
 
 export function run(testsRoot: string, callback: TestCallback): void {
     // Enable source map support.
+    // tslint:disable-next-line:no-implicit-dependencies
     require('source-map-support').install();
 
     // Check whether code coverage is enabled.
@@ -120,7 +121,6 @@ class CoverageRunner {
      * Information on hooking up code coverage can be found here:
      * http://tannguyen.org/2017/04/gulp-mocha-and-istanbul/
      * http://gotwarlost.github.io/istanbul/public/apidocs/classes/HookOptions.html
-     * @memberof CoverageRunner
      */
     public setupCoverage(): void {
         const reportingDir = path.join(this.testsRoot, this.options.relativeCoverageDir);
@@ -137,6 +137,7 @@ class CoverageRunner {
         });
 
         // Create a match function - taken from the run-with-cover.js in istanbul.
+        // tslint:disable-next-line:no-implicit-dependencies
         const decache = require('decache');
         const fileMap = new Set<string>();
         srcFiles
@@ -179,7 +180,6 @@ class CoverageRunner {
 
     /**
      * Writes a coverage report. Note that as this is called in the process exit callback, all calls must be synchronous.
-     * @returns {void}
      * @memberOf CoverageRunner
      */
     public reportCoverage(): void {

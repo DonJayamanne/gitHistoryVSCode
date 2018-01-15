@@ -1,12 +1,11 @@
 import { inject, injectable } from 'inversify';
+import * as md5 from 'md5';
 import { IServiceContainer } from '../../ioc/types';
 import { IGitService, IGitServiceFactory } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { ILogParser } from '../parsers/types';
 import { Git } from './git';
 import { IGitArgsService } from './types';
-// tslint:disable-next-line:no-require-imports no-var-requires
-const shorthash = require('shorthash');
 
 @injectable()
 export class GitServiceFactory implements IGitServiceFactory {
@@ -18,7 +17,7 @@ export class GitServiceFactory implements IGitServiceFactory {
 
     }
     public createGitService(workspaceRoot: string): IGitService {
-        const id: string = shorthash.unique(workspaceRoot);
+        const id = md5(workspaceRoot);
         if (!this.gitServices.has(id)) {
             this.gitServices.set(id, new Git(this.serviceContainer, workspaceRoot, this.gitCmdExecutor, this.logParser, this.gitArgsService));
         }

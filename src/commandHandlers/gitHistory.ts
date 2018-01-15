@@ -29,7 +29,6 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
         @inject(ICommandManager) private commandManager: ICommandManager) { }
 
-
     @command('git.viewFileHistory', IGitHistoryCommandHandler)
     public async viewFileHistory(info?: FileCommitDetails | Uri): Promise<void> {
         let fileUri: Uri | undefined;

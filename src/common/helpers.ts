@@ -1,13 +1,13 @@
 // tslint:disable-next-line:no-require-imports no-var-requires
 const tmp = require('tmp');
 
-export async function createTemporaryFile(extension: string, temporaryDirectory?: string): Promise<{ filePath: string, cleanupCallback: Function }> {
-    const options: { postfix: string, dir?: string } = { postfix: extension };
+export async function createTemporaryFile(extension: string, temporaryDirectory?: string): Promise<{ filePath: string; cleanupCallback: Function }> {
+    const options: { postfix: string; dir?: string } = { postfix: extension };
     if (temporaryDirectory) {
         options.dir = temporaryDirectory;
     }
 
-    return new Promise<{ filePath: string, cleanupCallback: Function }>((resolve, reject) => {
+    return new Promise<{ filePath: string; cleanupCallback: Function }>((resolve, reject) => {
         // tslint:disable-next-line:no-any
         tmp.file(options, (err: Error, tmpFile: string, _fd: any, cleanupCallback: any) => {
             if (err) {

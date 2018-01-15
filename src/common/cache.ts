@@ -25,7 +25,7 @@ export class CacheRegister implements Disposable {
         if (Cache.size <= MAX_CACHE_ITEMS) {
             return;
         }
-        const keyWithCounters: { key: string, counter: number }[] = [];
+        const keyWithCounters: { key: string; counter: number }[] = [];
         for (const key of Cache.keys()) {
             const counter = CacheItemUsageFrequency.get(key)!;
             keyWithCounters.push({ key, counter });
