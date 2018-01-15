@@ -7,6 +7,7 @@ import Author from '../Commit/Author';
 import { gitmojify } from '../gitmojify';
 import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
+import TagRef from '../Refs/Tag';
 // tslint:disable-next-line:no-require-imports no-var-requires
 const GoClippy = require('react-icons/lib/go/clippy');
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -34,6 +35,12 @@ function renderHeadRef(refs: Ref[]) {
     return refs
         .filter(ref => ref.type === RefType.Head)
         .map(ref => (<HeadRef key={ref.name} {...ref} />));
+}
+
+function renderTagRef(refs: Ref[]) {
+    return refs
+        .filter(ref => ref.type === RefType.Tag)
+        .map(ref => (<TagRef key={ref.name} {...ref} />));
 }
 
 // tslint:disable-next-line:function-name
@@ -66,6 +73,7 @@ function LogEntry(props: ResultListProps) {
             </div>
             {renderRemoteRefs(props.logEntry.refs)}
             {renderHeadRef(props.logEntry.refs)}
+            {renderTagRef(props.logEntry.refs)}
             <div role='button' className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>
                 <a className='commit-subject-link'>{props.logEntry.subject}</a>
                 <div className='commit-subject' title={gitmojify(props.logEntry.subject)}>{gitmojify(props.logEntry.subject)}</div>

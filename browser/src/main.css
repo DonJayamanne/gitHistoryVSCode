@@ -199,7 +199,12 @@ div.appRoot {
 	background-color: #7d3d40;
 }
 
+.commit-tag-container {
+	background-color: gray;
+}
+
 .commit-remote-container .refs,
+.commit-tag-container .refs,
 .commit-head-container .refs {
 	display: block;
 	color: white;
@@ -208,6 +213,7 @@ div.appRoot {
 }
 
 .commit-remote-container .refs span,
+.commit-tag-container .refs span,
 .commit-head-container .refs span {
     text-overflow: ellipsis;
     overflow-x: hidden;
