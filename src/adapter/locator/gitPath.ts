@@ -89,9 +89,10 @@ async function queryChained(locations: { key: string, view: string | null }[]): 
 }
 async function getGitPathOnWindows(loggers: ILogService[]) {
     try {
-        const gitRegPath = await queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
-        loggers.forEach(logger => logger.trace(`git path: ${gitRegPath} - from registry`));
-        return gitRegPath;
+        return 'git';
+        // const gitRegPath = await queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
+        // loggers.forEach(logger => logger.trace(`git path: ${gitRegPath} - from registry`));
+        // return gitRegPath;
     } catch (ex) {
         loggers.forEach(logger => logger.trace('git path: falling back to PATH environment variable'));
         return 'git';
