@@ -79,19 +79,17 @@ const GitLookupRegistryKeys = [
 ];
 
 async function queryChained(locations: { key: string, view: string | null }[]): Promise<string> {
-    return new Promise<string>((_resolve, reject) => {
-        if (locations.length === 0) {
-            return reject('None of the known git Registry keys were found');
-        }
+    if (locations.length === 0) {
+        return Promise.reject('None of the known git Registry keys were found');
+    }
 
-        const location = locations[0];
-        return regQueryInstallPath(location.key, location.view)
-            .catch(async () => queryChained(locations.slice(1)));
-    });
+    const location = locations[0];
+    return regQueryInstallPath(location.key, location.view)
+        .catch(async () => queryChained(locations.slice(1)));
 }
 async function getGitPathOnWindows(loggers: ILogService[]) {
     try {
-        const gitRegPath = queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
+        const gitRegPath = await queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
         loggers.forEach(logger => logger.trace(`git path: ${gitRegPath} - from registry`));
         return gitRegPath;
     } catch (ex) {

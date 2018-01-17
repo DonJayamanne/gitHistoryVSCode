@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { CancellationTokenSource, QuickPickItem, workspace, WorkspaceFolder } from 'vscode';
+import { CancellationTokenSource, QuickPickItem, workspace, WorkspaceFolder, window } from 'vscode';
 import { IApplicationShell } from '../application/types';
 import { ICommitCommandFactory, IFileCommitCommandFactory } from '../commandFactories/types';
 import { IServiceContainer } from '../ioc/types';
@@ -34,7 +34,7 @@ export class UiService implements IUiService {
             return workspaceFolders[0].uri.fsPath;
         }
         // tslint:disable-next-line:no-any prefer-type-cast
-        const folder: WorkspaceFolder | undefined = await (window as any).showWorkspaceFolderPick({ placeHolder: 'Select a workspace' });
+        const folder: WorkspaceFolder | undefined = await window.showWorkspaceFolderPick({ placeHolder: 'Select a workspace' });
         return folder ? folder.uri.fsPath : undefined;
     }
     public async selectFileCommitCommandAction(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {

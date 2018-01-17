@@ -7,6 +7,7 @@ import { IGitExecutableLocator } from '../locator';
 import { IGitCommandExecutor } from './types';
 
 const DEFAULT_ENCODING = 'utf8';
+const isWindows = /^win/.test(process.platform);
 
 @injectable()
 export class GitCommandExecutor implements IGitCommandExecutor {
@@ -18,7 +19,8 @@ export class GitCommandExecutor implements IGitCommandExecutor {
     public async exec(options: { cwd: string, shell?: boolean, encoding?: string }, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:no-any
     public async exec(options: any, ...args: string[]): Promise<string> {
-        const gitPath = await this.gitExecLocator.getGitPath();
+        let gitPath = await this.gitExecLocator.getGitPath();
+        gitPath = isWindows ? gitPath.replace(/\\/g, '/') : gitPath;
         const childProcOptions = typeof options === 'string' ? { cwd: options, encoding: DEFAULT_ENCODING } : options;
         if (typeof childProcOptions.encoding !== 'string' || childProcOptions.encoding.length === 0) {
             childProcOptions.encoding = DEFAULT_ENCODING;
