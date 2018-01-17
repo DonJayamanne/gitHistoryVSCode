@@ -28,7 +28,8 @@ export class UiService implements IUiService {
     public async getWorkspaceFolder(): Promise<string | undefined> {
         const workspaceFolders = workspace.workspaceFolders;
         if (!Array.isArray(workspaceFolders) || workspaceFolders.length === 0) {
-            throw new Error('Please open a workspace folder');
+            window.showInformationMessage('Please open a workspace folder');
+            return;
         }
         if (workspaceFolders.length === 1) {
             return workspaceFolders[0].uri.fsPath;
