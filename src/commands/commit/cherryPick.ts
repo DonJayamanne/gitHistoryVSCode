@@ -12,10 +12,6 @@ export class CherryPickCommand extends BaseCommitCommand {
         this.setCommand('git.commit.cherryPick');
         this.setCommandArguments([commit]);
     }
-    public async preExecute(): Promise<boolean> {
-        // Disable for now, useless command.
-        return false;
-    }
     public execute() {
         this.handler.cherryPickCommit(this.data);
     }

@@ -210,7 +210,7 @@ div.appRoot {
 	color: white;
 	font-size: 75%;
     padding: 0.3em;
-    white-space: nowrap;
+    display: flex;
 }
 
 .commit-remote-container .refs span,

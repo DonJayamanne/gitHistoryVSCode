@@ -48,7 +48,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             }
         } else {
             const activeTextEditor = window.activeTextEditor!;
-            if (!activeTextEditor || !activeTextEditor.document.isUntitled) {
+            if (!activeTextEditor || activeTextEditor.document.isUntitled) {
                 return;
             }
             fileUri = activeTextEditor.document.uri;

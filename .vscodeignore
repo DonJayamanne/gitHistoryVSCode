@@ -14,3 +14,4 @@ webpack.config.js
 browser/**
 browserdist/**
 geomoji/**
+images/**.gif

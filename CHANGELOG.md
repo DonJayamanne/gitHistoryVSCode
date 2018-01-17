@@ -1,23 +1,29 @@
+## Version 0.3.0
+- Improvements to the graph
+- Ability to search from within the history viewer
+- Display history viewer when viewing history of files
+- Miscellaneous fixes
+
 ## Version 0.2.3
-- Ability to view commit information in explorer view  
-- Ability to compare commits  
-- Ability to view log of all branches [#144](https://github.com/DonJayamanne/gitHistoryVSCode/pull/144), [#93](https://github.com/DonJayamanne/gitHistoryVSCode/issues/93), [#129](https://github.com/DonJayamanne/gitHistoryVSCode/issues/129)  
+- Ability to view commit information in explorer view
+- Ability to compare commits
+- Ability to view log of all branches [#144](https://github.com/DonJayamanne/gitHistoryVSCode/pull/144), [#93](https://github.com/DonJayamanne/gitHistoryVSCode/issues/93), [#129](https://github.com/DonJayamanne/gitHistoryVSCode/issues/129)
 
 ## Version 0.2.2
-- Viewing the history by branch [#140](https://github.com/DonJayamanne/gitHistoryVSCode/pull/140)  
-- Cherry picking commits [#141](https://github.com/DonJayamanne/gitHistoryVSCode/pull/141)  
-- Handle branch names containing periods [#133](https://github.com/DonJayamanne/gitHistoryVSCode/pull/136) 
+- Viewing the history by branch [#140](https://github.com/DonJayamanne/gitHistoryVSCode/pull/140)
+- Cherry picking commits [#141](https://github.com/DonJayamanne/gitHistoryVSCode/pull/141)
+- Handle branch names containing periods [#133](https://github.com/DonJayamanne/gitHistoryVSCode/pull/136)
 
 ## Version 0.2.1
 - display ref tags in history when using "git log"
 - fixed visual feedback when SHA is copied in "git log"
-- Allow scenario where git repo root is not the vscode workspace root [#112](https://github.com/DonJayamanne/gitHistoryVSCode/pull/112)  
-- fix error when git config log.abbrevcommit=true [#132](https://github.com/DonJayamanne/gitHistoryVSCode/pull/132)  
-- added a maximize/restore button to the details-view [#118](added a maximize/restore button to the details-view)  
+- Allow scenario where git repo root is not the vscode workspace root [#112](https://github.com/DonJayamanne/gitHistoryVSCode/pull/112)
+- fix error when git config log.abbrevcommit=true [#132](https://github.com/DonJayamanne/gitHistoryVSCode/pull/132)
+- added a maximize/restore button to the details-view [#118](added a maximize/restore button to the details-view)
 
 ## Version 0.2.0
 - Move to Async programing pattern (internal)
-- Add logging and better error surfacing  - output windows 'Git History Log' 
+- Add logging and better error surfacing  - output windows 'Git History Log'
 - Add a separate output window for non logging display 'Git History Info'
 - Fix #43 #63 - error when file in not present in a commit
 - File actions pick list - only show applicable actions
@@ -28,12 +34,12 @@ e.g. don't show compare with previous if file not present in previous commit.
 
 ## Version 0.1.5
 * Fix HTML chars in filenames [#53](https://github.com/DonJayamanne/gitHistoryVSCode/pull/53)
-* Fix git log above repo root (Credit to [malytskyy](https://github.com/malytskyy)) [#77](https://github.com/DonJayamanne/gitHistoryVSCode/pull/77) 
-* Rename outChannel to 'Git History' [#83](https://github.com/DonJayamanne/gitHistoryVSCode/pull/83) 
-* Don't use incorrectly configured git.path [#78](https://github.com/DonJayamanne/gitHistoryVSCode/pull/78) and [#46](https://github.com/DonJayamanne/gitHistoryVSCode/pull/46) 
-* Add error handling for spawned processes (Credit to [SE2Dev](https://github.com/SE2Dev)) [#46](https://github.com/DonJayamanne/gitHistoryVSCode/pull/46) 
-* tmp file cleanup.  There is a lot of effort to manually cleanup when tmp does it all anyway. [#88](https://github.com/DonJayamanne/gitHistoryVSCode/pull/88) 
-* Update typescript to 2.1 and update to ES6 target (allowing async await in place of .then) [#81](https://github.com/DonJayamanne/gitHistoryVSCode/pull/81) 
+* Fix git log above repo root (Credit to [malytskyy](https://github.com/malytskyy)) [#77](https://github.com/DonJayamanne/gitHistoryVSCode/pull/77)
+* Rename outChannel to 'Git History' [#83](https://github.com/DonJayamanne/gitHistoryVSCode/pull/83)
+* Don't use incorrectly configured git.path [#78](https://github.com/DonJayamanne/gitHistoryVSCode/pull/78) and [#46](https://github.com/DonJayamanne/gitHistoryVSCode/pull/46)
+* Add error handling for spawned processes (Credit to [SE2Dev](https://github.com/SE2Dev)) [#46](https://github.com/DonJayamanne/gitHistoryVSCode/pull/46)
+* tmp file cleanup.  There is a lot of effort to manually cleanup when tmp does it all anyway. [#88](https://github.com/DonJayamanne/gitHistoryVSCode/pull/88)
+* Update typescript to 2.1 and update to ES6 target (allowing async await in place of .then) [#81](https://github.com/DonJayamanne/gitHistoryVSCode/pull/81)
 
 ## Version 0.1.4
 * Fix git log paging [#74](https://github.com/DonJayamanne/gitHistoryVSCode/pull/74)

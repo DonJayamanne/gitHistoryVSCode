@@ -1,8 +1,8 @@
 {
     "name": "githistory",
-    "displayName": "Git History (git log)",
-    "description": "View git log, file or line History",
-    "version": "0.2.3",
+    "displayName": "Git History",
+    "description": "View git log, file history, compare branches or commits",
+    "version": "0.3.0",
     "publisher": "donjayamanne",
     "author": {
         "name": "Don Jayamanne",
@@ -51,10 +51,6 @@
             ]
         },
         "commands": [
-            {
-                "command": "git.test",
-                "title": "Git: Test"
-            },
             {
                 "command": "git.commit.view.hide",
                 "title": "Hide Commit View Explorer",
@@ -204,10 +200,6 @@
                 {
                     "command": "git.commit.compare.view.show",
                     "when": "!git.commit.compare.view.show"
-                },
-                {
-                    "command": "git.viewFileHistory",
-                    "when": "editorFocus"
                 }
             ],
             "editor/title": [
@@ -456,8 +448,8 @@
     },
     "dependencies": {
         "animate.css": "^3.5.2",
-        "bootstrap": "^3.3.7",
         "body-parser": "^1.17.2",
+        "bootstrap": "^3.3.7",
         "cors": "^2.8.4",
         "ejs": "^2.5.6",
         "express": "^4.15.3",
@@ -471,7 +463,7 @@
         "octicons": "^6.0.1",
         "os-locale": "^2.1.0",
         "query-string": "^4.3.2",
-        "reflect-metadata": "^0.1.10",
+        "reflect-metadata": "^0.1.12",
         "tmp": "^0.0.31",
         "vscode": "^1.1.10",
         "vscode-extension-telemetry": "0.0.5"
