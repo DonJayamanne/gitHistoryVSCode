@@ -1,3 +1,6 @@
+## Version 0.3.1
+- Patch for windows
+
 ## Version 0.3.0
 - Improvements to the graph
 - Ability to search from within the history viewer
