@@ -87,7 +87,7 @@
             },
             {
                 "command": "git.viewHistory",
-                "title": "Git: View History",
+                "title": "Git: View History (git log)",
                 "icon": {
                     "dark": "./resources/icons/dark/git.svg",
                     "light": "./resources/icons/light/git.svg"
