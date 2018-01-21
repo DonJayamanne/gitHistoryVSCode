@@ -34,7 +34,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
         if (fileCommit.committedFile.status === Status.Deleted) {
-            return await this.applicationShell.showErrorMessage('File cannot be viewed as it was deleted').then(() => void 0);
+            return this.applicationShell.showErrorMessage('File cannot be viewed as it was deleted').then(() => void 0);
         }
         const uri = await this.getFileUri(gitService, fileCommit);
         const doc = await this.documentManager.openTextDocument(uri);
@@ -46,16 +46,16 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
         if (fileCommit.committedFile.status === Status.Deleted) {
-            return await this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
+            return this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
         }
         if (!await this.fileSystem.fileExistsAsync(fileCommit.committedFile.uri.fsPath)) {
-            return await this.applicationShell.showErrorMessage('Corresponding workspace file does not exist').then(() => void 0);
+            return this.applicationShell.showErrorMessage('Corresponding workspace file does not exist').then(() => void 0);
         }
 
         const tmpFile = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
         const fileName = path.basename(fileCommit.committedFile.uri.fsPath);
         const title = `${fileName} (Working Tree)`;
-        this.commandManager.executeCommand('vscode.diff', tmpFile as Uri, fileCommit.committedFile.uri, title, { preview: true });
+        this.commandManager.executeCommand('vscode.diff', Uri.file(tmpFile.fsPath), Uri.file(fileCommit.committedFile.uri.fsPath), title, { preview: true });
     }
 
     @command('git.commit.FileEntry.CompareAgainstPrevious', IGitFileHistoryCommandHandler)
@@ -64,10 +64,10 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
 
         if (fileCommit.committedFile.status === Status.Deleted) {
-            return await this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
+            return this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
         }
         if (fileCommit.committedFile.status === Status.Added) {
-            return await this.applicationShell.showErrorMessage('File cannot be compared with previous, as this is a new file').then(() => void 0);
+            return this.applicationShell.showErrorMessage('File cannot be compared with previous, as this is a new file').then(() => void 0);
         }
 
         const tmpFilePromise = gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
@@ -88,10 +88,10 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
 
         if (fileCommit.committedFile.status === Status.Deleted) {
-            return await this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
+            return this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
         }
         if (fileCommit.committedFile.status === Status.Added) {
-            return await this.applicationShell.showErrorMessage('File cannot be compared, as this is a new file').then(() => void 0);
+            return this.applicationShell.showErrorMessage('File cannot be compared, as this is a new file').then(() => void 0);
         }
 
         const leftFilePromise = gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
@@ -104,7 +104,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
 
         this.commandManager.executeCommand('vscode.diff', leftFile, rightFile, title, { preview: true });
     }
-    private getComparisonTitle(left: { file: Uri, hash: Hash }, right: { file: Uri, hash: Hash }) {
+    private getComparisonTitle(left: { file: Uri; hash: Hash }, right: { file: Uri; hash: Hash }) {
         const leftFileName = path.basename(left.file.fsPath);
         const rightFileName = path.basename(right.file.fsPath);
         if (leftFileName === rightFileName) {
