@@ -284,8 +284,12 @@ class BrachGraph extends React.Component<BranchGrapProps> {
     }
     componentWillUpdate(newProps: BranchGrapProps) {
         if (newProps.hideGraph) {
+            this.grahWasHidden = true;
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, [], true);
             return;
+        }
+        if (this.props.hideGraph && !newProps.hideGraph) {
+            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries || []);
         }
         if (Array.isArray(newProps.logEntries) && newProps.logEntries.length === 0) {
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
@@ -307,13 +311,15 @@ class BrachGraph extends React.Component<BranchGrapProps> {
         if (newProps.updateTick === this.props.updateTick) {
             return;
         }
-        if (this.lastDrawnDetails && newProps.logEntries.length > 0 &&
+        if (!this.grahWasHidden && this.lastDrawnDetails && newProps.logEntries.length > 0 &&
             this.lastDrawnDetails.count === newProps.logEntries.length &&
             this.lastDrawnDetails.firstHash === newProps.logEntries[0].hash.full &&
             this.lastDrawnDetails.firstHash === newProps.logEntries[0].hash.full) {
             return;
         }
 
+        // Hack (dependant components).
+        this.grahWasHidden = false;
         this.lastDrawnDetails = {
             count: newProps.logEntries.length,
             firstHash: newProps.logEntries.length > 0 ? newProps.logEntries[0].hash.full : '',
@@ -322,12 +328,14 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 
         this.svg.setAttribute('height', newProps.height);
         this.svg.setAttribute('width', newProps.width);
-        // Hack, first clear before rebuilding
+
+        // Hack, first clear before rebuilding.
         // Remember, we will need to support apending results, as opposed to clearing page
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
     }
     private lastDrawnDetails: { firstHash: string, lastHash: string, count: number };
+    private grahWasHidden: false;
     private svg: SVGSVGElement;
 
     render() {

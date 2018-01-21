@@ -305,7 +305,11 @@ div.appRoot {
 }
 
 header {
-	margin-bottom: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+header input, header button {
+    margin: 0.2em;
 }
 
 

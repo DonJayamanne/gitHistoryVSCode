@@ -66,7 +66,7 @@ export const selectCommittedFile = (logEntry: LogEntry, committedFile: Committed
             .catch(err => {
                 // tslint:disable-next-line:no-debugger
                 debugger;
-                console.error('Result failed');
+                console.error('Git History: Result failed');
                 console.error(err);
             });
     };
@@ -178,7 +178,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
         .catch(err => {
             // tslint:disable-next-line:no-debugger
             debugger;
-            console.error('Result failed');
+            console.error('Git History: Result failed');
             console.error(err);
         });
 }
@@ -196,7 +196,7 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
         .catch(err => {
             // tslint:disable-next-line:no-debugger
             debugger;
-            console.error('Result failed');
+            console.error('Git History: Result failed');
             console.error(err);
         });
 }
