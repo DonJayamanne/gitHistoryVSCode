@@ -2,7 +2,7 @@
     "name": "githistory",
     "displayName": "Git History",
     "description": "View git log, file history, compare branches or commits",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "publisher": "donjayamanne",
     "author": {
         "name": "Don Jayamanne",
@@ -31,8 +31,7 @@
     "activationEvents": [
         "onCommand:git.viewFileHistory",
         "onCommand:git.viewLineHistory",
-        "onCommand:git.viewHistory",
-        "onCommand:git.searchHistory"
+        "onCommand:git.viewHistory"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -100,10 +99,6 @@
                     "dark": "./resources/icons/dark/git.svg",
                     "light": "./resources/icons/light/git.svg"
                 }
-            },
-            {
-                "command": "git.searchHistory",
-                "title": "Git: Search History"
             },
             {
                 "command": "git.commit.ViewChangeLog",
@@ -174,13 +169,6 @@
                 "command": "git.commit.commitView.show",
                 "title": "Test",
                 "category": "1_test"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "git.searchHistory",
-                "key": "ctrl+f3",
-                "mac": "cmd+f3"
             }
         ],
         "menus": {

@@ -1,3 +1,9 @@
+## Version 0.3.3
+- Remove unused command and keybinding [#188](https://github.com/DonJayamanne/gitHistoryVSCode/issues/188)
+- Display latest commit history and ability to refresh the history view [#193](https://github.com/DonJayamanne/gitHistoryVSCode/issues/193)
+- Fix inability to view file contents and differences on Windows [#189](https://github.com/DonJayamanne/gitHistoryVSCode/issues/189), [#182](https://github.com/DonJayamanne/gitHistoryVSCode/issues/182), [#191](https://github.com/DonJayamanne/gitHistoryVSCode/issues/191)
+- Style changes and re-display commit graph when search is text is cleared [#183](https://github.com/DonJayamanne/gitHistoryVSCode/issues/183)
+
 ## Version 0.3.2
 - Display message if a workspace is not open
 
