@@ -8,6 +8,7 @@ import { CompareFileWithWorkspaceCommand } from '../commands/fileCommit/compareF
 import { ViewFileHistoryCommand } from '../commands/fileCommit/fileHistory';
 import { SelectFileForComparison } from '../commands/fileCommit/selectFileForComparison';
 import { ViewFileCommand } from '../commands/fileCommit/viewFile';
+import { ViewPreviousFileCommand } from '../commands/fileCommit/viewPreviousFile';
 import { CompareFileCommitDetails, FileCommitDetails, ICommand } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { IFileCommitCommandFactory } from './types';
@@ -36,13 +37,21 @@ export class FileCommitCommandFactory implements IFileCommitCommandFactory {
             .map(cmd => cmd!);
     }
     public async getDefaultFileCommand(fileCommit: FileCommitDetails | CompareFileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
+        const commands: ICommand<FileCommitDetails>[] = [];
+
         if (fileCommit instanceof CompareFileCommitDetails) {
-            return new CompareFileWithAcrossCommitCommand(fileCommit, this.fileHistoryCommandHandler);
+            commands.push(
+                new CompareFileWithAcrossCommitCommand(fileCommit, this.fileHistoryCommandHandler),
+                new ViewFileCommand(fileCommit, this.fileHistoryCommandHandler),
+                new ViewPreviousFileCommand(fileCommit, this.fileHistoryCommandHandler)
+            );
+        } else {
+            commands.push(
+                new CompareFileWithPreviousCommand(fileCommit, this.fileHistoryCommandHandler),
+                new ViewFileCommand(fileCommit, this.fileHistoryCommandHandler),
+                new ViewPreviousFileCommand(fileCommit, this.fileHistoryCommandHandler)
+            );
         }
-        const commands = [
-            new CompareFileWithPreviousCommand(fileCommit, this.fileHistoryCommandHandler),
-            new ViewFileCommand(fileCommit, this.fileHistoryCommandHandler)
-        ];
         const availableCommands = (await Promise.all(commands.map(async cmd => {
             return await cmd.preExecute() ? cmd : undefined;
         })))

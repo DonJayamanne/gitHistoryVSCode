@@ -228,28 +228,44 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
         const relativeFilePath = path.relative(gitRootPath, filePath);
+
         return new Promise<Uri>((resolve, reject) => {
-            tmp.file({ postfix: path.extname(filePath) }, (err: Error, tmpPath: string) => {
+            tmp.file({ postfix: path.extname(filePath) }, async (err: Error, tmpPath: string) => {
                 if (err) {
                     return reject(err);
                 }
-                // Sometimes the damn file is in use, lets create a new one everytime.
-                const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`);
-                this.execInShell('show', `${hash}:${relativeFilePath}`, '>', tmpFilePath)
-                    .then(() => resolve(Uri.file(tmpFilePath)))
-                    .catch(ex => {
-                        console.error('Git History: failed to get file contents');
-                        console.error(ex);
 
-                        // Get the file contents using `git show`
-                        this.exec('show', `${hash}:${relativeFilePath}`)
-                            .then(output => fs.writeFile(tmpFilePath, output))
-                            .then(() => resolve(Uri.file(tmpFilePath)))
-                            .catch(exAgain => {
-                                console.error('Git History: failed to get file contents (again)');
-                                console.error(exAgain);
-                            });
-                    });
+                const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`);
+
+                try {
+                    // Sometimes the damn file is in use, lets create a new one everytime.
+                    // tslint:disable-next-line:no-suspicious-comment
+                    // TODO: Add telemetry to see what OS this fails on.
+                    await this.execInShell('show', `${hash}:${relativeFilePath}`, '>', tmpFilePath);
+                    const fileContents = await fs.readFile(tmpFilePath, { encoding: 'utf8' });
+                    if (fileContents.length > 0) {
+                        return resolve(Uri.file(tmpFilePath));
+                    }
+                } catch (ex) {
+                    console.error('Git History: failed to get file contents');
+                    console.error(ex);
+                }
+
+                try {
+                    // And getting file contents on windows doesn't work. Who knows it might not work,
+                    // on other os too.
+                    // tslint:disable-next-line:no-suspicious-comment
+                    // TODO: Add telemetry to see what OS this fails on.
+                    // Get the file contents using `git show`
+                    const fileContents = await this.exec('show', `${hash}:${relativeFilePath}`);
+                    await fs.writeFile(tmpFilePath, fileContents);
+                    resolve(Uri.file(tmpFilePath));
+                } catch (ex) {
+                    console.error('Git History: failed to get file contents (again)');
+                    console.error(ex);
+
+                    reject(ex);
+                }
             });
         });
     }

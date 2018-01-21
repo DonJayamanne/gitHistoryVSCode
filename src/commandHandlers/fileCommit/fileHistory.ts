@@ -83,6 +83,24 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.logEntry.hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
         this.commandManager.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { preview: true });
     }
+    @command('git.commit.FileEntry.ViewPreviousFileContents', IGitFileHistoryCommandHandler)
+    public async viewPreviousFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
+        const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
+        const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
+
+        if (fileCommit.committedFile.status === Status.Added) {
+            return this.applicationShell.showErrorMessage('Previous version of the file cannot be opened, as this is a new file').then(() => void 0);
+        }
+
+        const previousCommitHash = await gitService.getPreviousCommitHashForFile(fileCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
+
+        const previousFile = fileCommit.committedFile!.oldUri ? fileCommit.committedFile!.oldUri! : fileCommit.committedFile!.uri;
+        const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
+
+        const doc = await this.documentManager.openTextDocument(Uri.file(previousTmpFile.fsPath));
+        this.documentManager.showTextDocument(doc, { preview: true });
+
+    }
     @command('git.commit.compare.file.compare', IGitFileHistoryCommandHandler)
     public async compareFileAcrossCommits(fileCommit: CompareFileCommitDetails): Promise<void> {
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
