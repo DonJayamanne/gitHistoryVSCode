@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { CancellationTokenSource, QuickPickItem, workspace, WorkspaceFolder, window } from 'vscode';
+import { CancellationTokenSource, QuickPickItem, window, workspace, WorkspaceFolder } from 'vscode';
 import { IApplicationShell } from '../application/types';
 import { ICommitCommandFactory, IFileCommitCommandFactory } from '../commandFactories/types';
 import { IServiceContainer } from '../ioc/types';
