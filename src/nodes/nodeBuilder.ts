@@ -78,9 +78,6 @@ export class NodeBuilder implements INodeBuilder {
     }
     public async buildFileTreeItem(element: FileNode): Promise<FileTreeItem> {
         const treeItem = new FileTreeItem(element);
-        if (treeItem.command) {
-            treeItem.command!.tooltip = 'Wow';
-        }
         switch (element.data!.committedFile.status) {
             case Status.Added: {
                 treeItem.iconPath = AddedIcon;
