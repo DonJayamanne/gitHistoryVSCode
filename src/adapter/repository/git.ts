@@ -227,25 +227,21 @@ export class Git implements IGitService {
     public async getCommitFile(hash: string, file: Uri | string): Promise<Uri> {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
-        const relativeFilePath = path.relative(gitRootPath, filePath);
+        const relativeFilePath = path.relative(gitRootPath, filePath).replace(/\\/g, '/');
 
         return new Promise<Uri>((resolve, reject) => {
             tmp.file({ postfix: path.extname(filePath) }, async (err: Error, tmpPath: string) => {
                 if (err) {
                     return reject(err);
                 }
-
-                const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`);
+                // Sometimes the damn file is in use, lets create a new one everytime.
+                const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`).replace(/\\/g, '/');
 
                 try {
-                    // Sometimes the damn file is in use, lets create a new one everytime.
                     // tslint:disable-next-line:no-suspicious-comment
                     // TODO: Add telemetry to see what OS this fails on.
                     await this.execInShell('show', `${hash}:${relativeFilePath}`, '>', tmpFilePath);
-                    const fileContents = await fs.readFile(tmpFilePath, { encoding: 'utf8' });
-                    if (fileContents.length > 0) {
-                        return resolve(Uri.file(tmpFilePath));
-                    }
+                    return resolve(Uri.file(tmpFilePath));
                 } catch (ex) {
                     console.error('Git History: failed to get file contents');
                     console.error(ex);
@@ -263,7 +259,6 @@ export class Git implements IGitService {
                 } catch (ex) {
                     console.error('Git History: failed to get file contents (again)');
                     console.error(ex);
-
                     reject(ex);
                 }
             });
