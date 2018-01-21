@@ -118,6 +118,13 @@ export const search = (searchText: string) => {
         return fetchCommits(dispatch, state, 0, undefined, searchText);
     };
 };
+export const refresh = () => {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        return fetchCommits(dispatch, state, undefined, undefined, undefined, true);
+    };
+};
 export const getCommits = (id?: string) => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
@@ -134,7 +141,7 @@ function fixDates(logEntry: LogEntry) {
     }
 }
 // tslint:disable-next-line:no-any
-function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string) {
+function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string, refreshData?: boolean) {
     // pageSize = pageSize || store.logEntries.pageSize;
     const id = store.settings.id || '';
     const queryParts = [];
@@ -150,6 +157,9 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     // }
     if (typeof searchText === 'string') {
         queryParts.push(`searchText=${encodeURIComponent(searchText)}`);
+    }
+    if (refreshData === true) {
+        queryParts.push('refresh=true');
     }
     if (typeof pageIndex === 'number') {
         queryParts.push(`pageIndex=${pageIndex}`);

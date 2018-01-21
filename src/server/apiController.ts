@@ -35,6 +35,8 @@ export class ApiController implements IApiRouteHandler {
         const id: string = decodeURIComponent(request.query.id);
         const currentState = this.stateStore.getState(id);
 
+        const refresh: boolean = request.query.refresh === 'true';
+
         let searchText = request.query.searchText;
         if (currentState && currentState.searchText && typeof searchText !== 'string') {
             searchText = currentState.searchText;
@@ -71,7 +73,7 @@ export class ApiController implements IApiRouteHandler {
 
         const branchesMatch = currentState && (currentState.branch === branch);
         const noBranchDefinedByClient = !currentState;
-        if (searchText === undefined && pageIndex === undefined && pageSize === undefined &&
+        if (!refresh && searchText === undefined && pageIndex === undefined && pageSize === undefined &&
             file === undefined &&
             currentState && currentState.entries && (branchesMatch || noBranchDefinedByClient)) {
 
@@ -93,7 +95,7 @@ export class ApiController implements IApiRouteHandler {
                 };
                 return entriesResponse;
             });
-        } else if (currentState &&
+        } else if (!refresh && currentState &&
             (currentState.searchText === (searchText || '')) &&
             currentState.pageIndex === pageIndex &&
             (typeof branch === 'string' && currentState.branch === branch) &&

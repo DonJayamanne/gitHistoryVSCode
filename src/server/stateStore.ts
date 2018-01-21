@@ -7,9 +7,6 @@ import { IWorkspaceQueryStateStore, State } from './types';
 export class StateStore implements IWorkspaceQueryStateStore {
     private storesPerWorkspace = new Map<string, State>();
     public async initialize(id: string, workspaceFolder: string, branch: string, branchSelection: BranchSelection, searchText?: string, file?: Uri): Promise<void> {
-        if (this.storesPerWorkspace.has(id)) {
-            return;
-        }
         this.storesPerWorkspace.set(id, { branch, branchSelection, workspaceFolder, searchText, file });
     }
 
