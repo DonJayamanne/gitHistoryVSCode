@@ -1,3 +1,4 @@
+import * as fs from 'fs-extra';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import * as tmp from 'tmp';
@@ -232,9 +233,23 @@ export class Git implements IGitService {
                 if (err) {
                     return reject(err);
                 }
-                this.execInShell('show', `${hash}:${relativeFilePath}`, '>', tmpPath)
-                    .then(() => resolve(Uri.file(tmpPath)))
-                    .catch(reject);
+                // Sometimes the damn file is in use, lets create a new one everytime.
+                const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`);
+                this.execInShell('show', `${hash}:${relativeFilePath}`, '>', tmpFilePath)
+                    .then(() => resolve(Uri.file(tmpFilePath)))
+                    .catch(ex => {
+                        console.error('Git History: failed to get file contents');
+                        console.error(ex);
+
+                        // Get the file contents using `git show`
+                        this.exec('show', `${hash}:${relativeFilePath}`)
+                            .then(output => fs.writeFile(tmpFilePath, output))
+                            .then(() => resolve(Uri.file(tmpFilePath)))
+                            .catch(exAgain => {
+                                console.error('Git History: failed to get file contents (again)');
+                                console.error(exAgain);
+                            });
+                    });
             });
         });
     }
@@ -242,7 +257,7 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
         const relativeFilePath = path.relative(gitRootPath, filePath);
-        return await this.execInShell('show', `${hash}:${relativeFilePath}`);
+        return this.execInShell('show', `${hash}:${relativeFilePath}`);
     }
     @cache('IGitService')
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
