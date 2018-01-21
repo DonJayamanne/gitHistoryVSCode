@@ -101,13 +101,15 @@ export class Git implements IGitService {
         const outputPromise = this.exec(...args.logArgs);
 
         // Since we're using find and wc (shell commands, we need to execute the command in a shell)
-        const countOutputPromise = this.execInShell(...args.counterArgs);
+        const countOutputPromise = this.execInShell(...args.counterArgs)
+            .then(countValue => parseInt(countValue.trim(), 10))
+            .catch(ex => {
+                console.error('Git History: Failed to get commit count');
+                console.error(ex);
+                return -1;
+            });
 
-        const values = await Promise.all([gitRootPathPromise, outputPromise, countOutputPromise]);
-        const gitRepoPath = values[0];
-        const output = values[1];
-        const countOutput = values[2];
-        const count = parseInt(countOutput.trim(), 10);
+        const [gitRepoPath, output, count] = await Promise.all([gitRootPathPromise, outputPromise, countOutputPromise]);
 
         // Run another git history, but get file stats instead of the changes
         // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);
@@ -148,6 +150,9 @@ export class Git implements IGitService {
             item.isThisLastCommitMerged = hashesOfRefs.length > 0;
         });
 
+        // tslint:disable-next-line:no-suspicious-comment
+        // TODO:Fix
+        // tslint:disable-next-line:no-object-literal-type-assertion
         return {
             items,
             count,
@@ -279,11 +284,11 @@ export class Git implements IGitService {
     }
     private async exec(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
-        return await this.gitCmdExecutor.exec(gitRootPath, ...args);
+        return this.gitCmdExecutor.exec(gitRootPath, ...args);
     }
     private async execInShell(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
-        return await this.gitCmdExecutor.exec({ cwd: gitRootPath, shell: true }, ...args);
+        return this.gitCmdExecutor.exec({ cwd: gitRootPath, shell: true }, ...args);
     }
     // how to check if a commit has been merged into any other branch
     //  $ git branch --all --contains 019daf673583208aaaf8c3f18f8e12696033e3fc

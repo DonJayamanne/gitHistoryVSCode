@@ -32,20 +32,21 @@ class App extends React.Component<AppProps, AppState> {
     }
     public render() {
         const { children } = this.props;
+        const canGoForward = this.props.logEntries.count === -1 || (this.props.logEntries.pageIndex + 1) * 100 < this.props.logEntries.count;
         return (
             <div className='appRootParent'>
                 <div className='appRoot'>
                     <Header {...this.props }></Header >
-                    <LogView logEntries={this.props.logEntries}></LogView>
+                    <LogView logEntries={ this.props.logEntries }></LogView>
                     <div id='placeHolderCommit'></div>
                     <Footer
-                        canGoBack={this.props.logEntries.pageIndex > 0}
-                        canGoForward={(this.props.logEntries.pageIndex + 1) * 100 < this.props.logEntries.count}
-                        goBack={this.goBack}
-                        goForward={this.goForward}></Footer>
-                    {children}
+                        canGoBack={ this.props.logEntries.pageIndex > 0 }
+                        canGoForward={ canGoForward }
+                        goBack={ this.goBack }
+                        goForward={ this.goForward }></Footer>
+                    { children }
                 </div >
-                {this.props.logEntries && this.props.logEntries.selected ? <Commit /> : ''}
+                 { this.props.logEntries && this.props.logEntries.selected ? <Commit /> : '' }
             </div >
         );
     }
