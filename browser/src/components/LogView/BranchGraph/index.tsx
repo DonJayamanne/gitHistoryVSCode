@@ -335,7 +335,7 @@ class BrachGraph extends React.Component<BranchGrapProps> {
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
     }
     private lastDrawnDetails: { firstHash: string, lastHash: string, count: number };
-    private grahWasHidden: false;
+    private grahWasHidden: boolean;
     private svg: SVGSVGElement;
 
     render() {
