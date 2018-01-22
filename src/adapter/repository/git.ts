@@ -93,6 +93,7 @@ export class Git implements IGitService {
     }
     public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
         if (pageSize <= 0) {
+            // tslint:disable-next-line:no-parameter-reassignment
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
@@ -101,16 +102,18 @@ export class Git implements IGitService {
         const gitRootPathPromise = this.getGitRoot();
         const outputPromise = this.exec(...args.logArgs);
 
-        // Since we're using find and wc (shell commands, we need to execute the command in a shell)
-        const countOutputPromise = this.execInShell(...args.counterArgs)
-            .then(countValue => parseInt(countValue.trim(), 10))
-            .catch(ex => {
-                console.error('Git History: Failed to get commit count');
-                console.error(ex);
-                return -1;
-            });
-
-        const [gitRepoPath, output, count] = await Promise.all([gitRootPathPromise, outputPromise, countOutputPromise]);
+        // tslint:disable-next-line:no-suspicious-comment
+        // TODO: Disabled due to performance issues https://github.com/DonJayamanne/gitHistoryVSCode/issues/195
+        // // Since we're using find and wc (shell commands, we need to execute the command in a shell)
+        // const countOutputPromise = this.execInShell(...args.counterArgs)
+        //     .then(countValue => parseInt(countValue.trim(), 10))
+        //     .catch(ex => {
+        //         console.error('Git History: Failed to get commit count');
+        //         console.error(ex);
+        //         return -1;
+        //     });
+        const count = -1;
+        const [gitRepoPath, output] = await Promise.all([gitRootPathPromise, outputPromise]);
 
         // Run another git history, but get file stats instead of the changes
         // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);

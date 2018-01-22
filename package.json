@@ -2,7 +2,7 @@
     "name": "githistory",
     "displayName": "Git History",
     "description": "View git log, file history, compare branches or commits",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "publisher": "donjayamanne",
     "author": {
         "name": "Don Jayamanne",
@@ -323,7 +323,7 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run lint && webpack -p --progress --colors && tsc -p ./",
+        "vscode:prepublish": "npm run lint && webpack -p --progress --colors",
         "compile": "tsc --watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "lint": "tslint ./src/**/*.ts -t verbose || tslint ./test/**/*.ts -t verbose",

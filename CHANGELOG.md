@@ -1,3 +1,7 @@
+## Version 0.3.4
+- Disabled calculation of total number of commits as this was slowing down viewing of history [#195](https://github.com/DonJayamanne/gitHistoryVSCode/issues/195)
+- Fix styles in comment message [#196](https://github.com/DonJayamanne/gitHistoryVSCode/issues/196)
+
 ## Version 0.3.3
 - Remove unused command and keybinding [#188](https://github.com/DonJayamanne/gitHistoryVSCode/issues/188)
 - Display latest commit history and ability to refresh the history view [#193](https://github.com/DonJayamanne/gitHistoryVSCode/issues/193)
