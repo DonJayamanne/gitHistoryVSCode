@@ -55,7 +55,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const tmpFile = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
         const fileName = path.basename(fileCommit.committedFile.uri.fsPath);
         const title = `${fileName} (Working Tree)`;
-        this.commandManager.executeCommand('vscode.diff', Uri.file(tmpFile.fsPath), Uri.file(fileCommit.committedFile.uri.fsPath), title, { preview: true });
+        this.commandManager.executeCommand('vscode.diff', Uri.file(fileCommit.committedFile.uri.fsPath), Uri.file(tmpFile.fsPath), title, { preview: true });
     }
 
     @command('git.commit.FileEntry.CompareAgainstPrevious', IGitFileHistoryCommandHandler)
@@ -81,7 +81,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
         const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.logEntry.hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
-        this.commandManager.executeCommand('vscode.diff', tmpFile, previousTmpFile, title, { preview: true });
+        this.commandManager.executeCommand('vscode.diff', previousTmpFile, tmpFile, title, { preview: true });
     }
     @command('git.commit.FileEntry.ViewPreviousFileContents', IGitFileHistoryCommandHandler)
     public async viewPreviousFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
