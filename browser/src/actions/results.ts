@@ -3,13 +3,14 @@ import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
 import { CommittedFile, LogEntriesResponse, LogEntry } from '../definitions';
-import { RootState } from '../reducers';
+import { BranchesState, RootState } from '../reducers';
 
 export const clearResults = createAction(Actions.CLEAR_RESULTS);
 // tslint:disable-next-line:no-any
 export const addResult = createAction<any>(Actions.ADD_RESULT);
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
 export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
+export const updateBranchList = createAction<BranchesState>(Actions.FETCHED_BRANCHES);
 export const clearCommitSelection = createAction(Actions.CLEAR_SELECTED_COMMIT);
 export const setAppendResults = createAction<boolean>(Actions.SET_APPEND_RESULTS);
 export const goToPreviousPage = createAction<void>(Actions.GO_TO_PREVIOUS_PAGE);
@@ -65,7 +66,6 @@ export const selectCommittedFile = (logEntry: LogEntry, committedFile: Committed
         await axios.post(url, { logEntry, committedFile })
             .catch(err => {
                 // tslint:disable-next-line:no-debugger
-                debugger;
                 console.error('Git History: Result failed');
                 console.error(err);
             });
@@ -118,6 +118,13 @@ export const search = (searchText: string) => {
         return fetchCommits(dispatch, state, 0, undefined, searchText);
     };
 };
+export const selectBranch = (branchName: string) => {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        return fetchCommits(dispatch, state, 0, undefined, '', true, branchName);
+    };
+};
 export const refresh = () => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
@@ -132,6 +139,13 @@ export const getCommits = (id?: string) => {
         return fetchCommits(dispatch, state);
     };
 };
+export const getBranches = () => {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        return fetchBranches(dispatch, state);
+    };
+};
 function fixDates(logEntry: LogEntry) {
     if (logEntry.author && typeof logEntry.author.date === 'string') {
         logEntry.author.date = new Date(logEntry.author.date);
@@ -141,14 +155,14 @@ function fixDates(logEntry: LogEntry) {
     }
 }
 // tslint:disable-next-line:no-any
-function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string, refreshData?: boolean) {
+function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string, refreshData?: boolean, branchName?: string) {
     // pageSize = pageSize || store.logEntries.pageSize;
     const id = store.settings.id || '';
     const queryParts = [];
     queryParts.push(`id=${encodeURIComponent(id)}`);
-    // if (store.settings.selectedBranchName) {
-    //     queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
-    // }
+    if (typeof branchName === 'string') {
+        queryParts.push(`branch=${encodeURIComponent(branchName)}`);
+    }
     // if (store.settings.file) {
     //     queryParts.push(`file=${encodeURIComponent(store.settings.file)}`);
     // }
@@ -177,7 +191,6 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
-            debugger;
             console.error('Git History: Result failed');
             console.error(err);
         });
@@ -195,7 +208,18 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
-            debugger;
+            console.error('Git History: Result failed');
+            console.error(err);
+        });
+}
+// tslint:disable-next-line:no-any
+function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
+    const id = store.settings.id || '';
+    return axios.get(`/branches?id=${encodeURIComponent(id)}`)
+        .then(result => {
+            dispatch(updateBranchList(result.data as string[]));
+        })
+        .catch(err => {
             console.error('Git History: Result failed');
             console.error(err);
         });

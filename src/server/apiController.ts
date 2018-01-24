@@ -49,7 +49,7 @@ export class ApiController implements IApiRouteHandler {
         }
 
         let branch = request.query.branch;
-        if (currentState && currentState.branch && (typeof branch !== 'string' || branch.trim().length === 0)) {
+        if (currentState && currentState.branch && typeof branch !== 'string') {
             branch = currentState.branch;
         }
 

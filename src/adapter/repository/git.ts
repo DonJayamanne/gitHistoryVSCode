@@ -20,6 +20,9 @@ export class Git implements IGitService {
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
     }
+    public getHashCode() {
+        return this.workspaceRoot;
+    }
 
     @cache('IGitService')
     public async getGitRoot(): Promise<string> {
@@ -36,8 +39,8 @@ export class Git implements IGitService {
         const gitRoot: string = await this.getGitRoot();
         return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
     }
-    // @cache('IGitService')
-    public async getHeadHashes(): Promise<{ ref: string, hash: string }[]> {
+    @cache('IGitService', 10 * 1000)
+    public async getHeadHashes(): Promise<{ ref: string; hash: string }[]> {
         const fullHashArgs = ['show-ref'];
         const fullHashRefsOutput = await this.exec(...fullHashArgs);
         return fullHashRefsOutput.split(/\r?\n/g)
@@ -50,7 +53,7 @@ export class Git implements IGitService {
 
     // tslint:disable-next-line:no-suspicious-comment
     // TODO: We need a way of clearing this cache, if a new branch is created.
-    @cache('IGitService')
+    @cache('IGitService', 30 * 1000)
     public async getBranches(): Promise<Branch[]> {
         const output = await this.exec('branch');
         return output.split(/\r?\n/g)
@@ -58,7 +61,7 @@ export class Git implements IGitService {
             .filter(line => line.length > 0)
             .map(line => {
                 const isCurrent = line.startsWith('*');
-                const name = isCurrent ? line.substring(1).trim() : line;
+                const name = isCurrent ? line.substring(1).trim() : line.trim();
                 return {
                     name,
                     current: isCurrent
@@ -67,7 +70,7 @@ export class Git implements IGitService {
     }
     // tslint:disable-next-line:no-suspicious-comment
     // TODO: We need a way of clearing this cache, if a new branch is created.
-    @cache('IGitService')
+    @cache('IGitService', 30 * 1000)
     public async getCurrentBranch(): Promise<string> {
         const args = this.gitArgsService.getCurrentBranchArgs();
         const branch = await this.exec(...args);

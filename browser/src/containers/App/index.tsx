@@ -36,7 +36,7 @@ class App extends React.Component<AppProps, AppState> {
         return (
             <div className='appRootParent'>
                 <div className='appRoot'>
-                    <Header {...this.props }></Header >
+                    <Header></Header >
                     <LogView logEntries={ this.props.logEntries }></LogView>
                     <div id='placeHolderCommit'></div>
                     <Footer

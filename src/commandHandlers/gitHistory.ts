@@ -66,37 +66,28 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         if (!workspaceFolder) {
             return undefined;
         }
-        const branchSelection = await uiService.getBranchSelection();
-        if (branchSelection === undefined) {
-            return;
-        }
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
 
-        const branchNamePromise = branchSelection === BranchSelection.All ? Promise.resolve('') : gitService.getCurrentBranch();
+        const branchNamePromise = gitService.getCurrentBranch();
         const startupInfoPromise = this.server!.start(workspaceFolder);
         const localePromise = osLocale();
 
         const [branchName, startupInfo, locale] = await Promise.all([branchNamePromise, startupInfoPromise, localePromise]);
 
         // Do not include the search string into this
-        const fullId = `${startupInfo.port}:${branchSelection}:${fileUri ? fileUri.fsPath : ''}`;
+        const fullId = `${startupInfo.port}:${BranchSelection.Current}:${fileUri ? fileUri.fsPath : ''}`;
         const id = md5(fullId); //Date.now().toString();
-        await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).initialize(id, workspaceFolder, branchName, branchSelection, '', fileUri);
+        await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).initialize(id, workspaceFolder, branchName, BranchSelection.Current, '', fileUri);
 
         const queryArgs = [
             `id=${id}`, `port=${startupInfo.port}`,
             `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
-            `branchSelection=${branchSelection}`, `locale=${encodeURIComponent(locale)}`
+            `branchSelection=${BranchSelection.Current}`, `locale=${encodeURIComponent(locale)}`
         ];
-        if (branchSelection === BranchSelection.Current) {
-            queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
-        }
+        queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
         // const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
         const uri = `${previewUri}?${queryArgs.join('&')}`;
-        let title = branchSelection === BranchSelection.All ? 'Git History' : `Git History (${branchName})`;
-        if (fileUri) {
-            title = `File History (${path.basename(fileUri.fsPath)})`;
-        }
+        const title = fileUri ? `File History (${path.basename(fileUri.fsPath)})` : 'Git History';
         this.commandManager.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
     }
 }
