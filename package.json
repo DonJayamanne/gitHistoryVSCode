@@ -193,13 +193,15 @@
             "editor/title": [
                 {
                     "command": "git.viewHistory",
-                    "group": "navigation"
+                    "group": "navigation",
+                    "when": "config.gitHistory.showEditorTitleMenuBarIcons"
                 }
             ],
             "editor/title/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "git"
+                    "group": "git",
+                    "when": "config.gitHistory.showEditorTitleMenuBarIcons"
                 }
             ],
             "scm/resourceState/context": [
@@ -312,6 +314,12 @@
                     "default": "false",
                     "scope": "window",
                     "description": "Whether to diplay the commit explorer view"
+                },
+                "gitHistory.showEditorTitleMenuBarIcons": {
+                    "type": "boolean",
+                    "default": true,
+                    "scope": "window",
+                    "description": "Whether to display a button in the editor title menu bar"
                 },
                 "gitHistory.pageSize": {
                     "type": "number",
