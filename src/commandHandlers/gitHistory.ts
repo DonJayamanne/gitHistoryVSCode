@@ -61,9 +61,6 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
     }
 
     public async viewHistory(fileUri?: Uri): Promise<void> {
-        const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
-        // tslint:disable-next-line:no-console
-        console.log(fileStatParserFactory);
         const uiService = this.serviceContainer.get<IUiService>(IUiService);
         const workspaceFolder = await uiService.getWorkspaceFolder();
         if (!workspaceFolder) {
@@ -75,9 +72,9 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         }
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder);
 
-        const branchNamePromise = await gitService.getCurrentBranch();
-        const startupInfoPromise = await this.server!.start(workspaceFolder);
-        const localePromise = await osLocale();
+        const branchNamePromise = branchSelection === BranchSelection.All ? Promise.resolve('') : gitService.getCurrentBranch();
+        const startupInfoPromise = this.server!.start(workspaceFolder);
+        const localePromise = osLocale();
 
         const [branchName, startupInfo, locale] = await Promise.all([branchNamePromise, startupInfoPromise, localePromise]);
 
