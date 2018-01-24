@@ -12,9 +12,11 @@ export interface LogEntriesState extends LogEntriesResponse {
     isLoading: boolean;
     isLoadingCommit: boolean;
 }
+export type BranchesState = string[];
 export interface RootState {
     vscode: IVSCodeSettings;
     logEntries?: LogEntriesState;
+    branches?: string[];
     settings?: ISettings;
     searchCriteria: ISearchCriteria;
     graph: IGraphState;

@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import * as ResultActions from '../../actions/results';
 import { RootState } from '../../reducers/index';
+import Branch from './branch';
 
 interface HeaderProps {
     isLoading?: boolean;
@@ -67,6 +68,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
                 bsStyle="info" bsSize='small'
                 disabled={this.state.isLoading}
                 onClick={this.onRefresh}>Refresh</Button>
+            <Branch></Branch>
         </header>);
     }
 }
@@ -81,7 +83,6 @@ function mapStateToProps(state: RootState): HeaderState {
         searchText
     };
 }
-
 
 function mapDispatchToProps(dispatch) {
     return {
