@@ -45,7 +45,7 @@ export class OutputPanelLogger implements ILogService {
             } else if (arg !== null && arg !== undefined && typeof arg === 'object') {
                 return JSON.stringify(arg);
             } else if (typeof arg === 'string' && arg.startsWith('--format=')) {
-                return '--format=<format>';
+                return '--pretty=one-line';
             } else {
                 return `${arg}`;
             }

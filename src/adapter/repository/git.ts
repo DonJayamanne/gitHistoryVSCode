@@ -61,7 +61,7 @@ export class Git implements IGitService {
             .filter(line => line.length > 0)
             .map(line => {
                 const isCurrent = line.startsWith('*');
-                const name = isCurrent ? line.substring(1).trim() : line;
+                const name = isCurrent ? line.substring(1).trim() : line.trim();
                 return {
                     name,
                     current: isCurrent
