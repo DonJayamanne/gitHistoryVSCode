@@ -40,7 +40,7 @@ export class FileStatParser implements IFileStatParser {
             // Change in file name within root directory (that's why we don't have paths)
             const parts = fileInfo.split(diffSeparator);
             return { original: parts[0], current: parts[1] };
-        }        else {
+        } else {
             const partWithDifference = fileInfo.substring(startIndex, endIndex + 1);
             if (!partWithDifference.startsWith('{') || !partWithDifference.endsWith('}')) {
                 console.error(`Invalid entry cotaining => for ${fileInfo}`);
@@ -74,10 +74,10 @@ export class FileStatParser implements IFileStatParser {
      * @memberof FileStatParser
      */
     private static getNewAndOldFileNameFromNumStatLine(line: string, status: Status): { original?: string, current: string } | undefined {
-        const indexOfFirstAlphabet = line.split('').findIndex((char, index) => index > 0 && (char.toUpperCase() !== char.toLocaleLowerCase()));
-        const fileName = line.substring(indexOfFirstAlphabet - 1).trim();
+        const statusParts = line.split('\t');
+        const fileName = statusParts[1].trim();
         if (status === Status.Renamed || status === Status.Copied) {
-            return FileStatParser.parseFileMovement(fileName);
+            return FileStatParser.parseFileMovement(line.substring(line.indexOf(fileName)));
         }
         return { current: fileName };
     }
@@ -90,9 +90,9 @@ export class FileStatParser implements IFileStatParser {
      * @returns {({ additions?: number, deletions?: number } | undefined)}
      * @memberof FileStatParser
      */
-    private static getAdditionsAndDeletionsFromNumStatLine(line: string): { additions?: number, deletions?: number } | undefined {
+    private static getAdditionsAndDeletionsFromNumStatLine(line: string): { additions?: number; deletions?: number; fileName: string } | undefined {
         // 0       0       src/client/common/{comms => }/socketCallbackHandler.ts
-        const numStatParts = line.split(/\s/g).map(part => part.trim()).filter(part => part.length > 0);
+        const numStatParts = line.split('\t').map(part => part.trim()).filter(part => part.length > 0);
         if (numStatParts.length < 3) {
             console.error(`Failed to identify additions and deletions for line ${line}`);
             return;
@@ -102,7 +102,7 @@ export class FileStatParser implements IFileStatParser {
         let deletions = numStatParts[1] === '-' ? undefined : parseInt(numStatParts[1], 10);
         deletions = isNaN(deletions!) ? undefined : deletions;
 
-        return { additions, deletions };
+        return { additions, deletions, fileName: numStatParts[2] };
     }
     /**
      * Parsers the file status
@@ -120,8 +120,8 @@ export class FileStatParser implements IFileStatParser {
             const additions = numStatParts ? numStatParts.additions : undefined;
             const deletions = numStatParts ? numStatParts.deletions : undefined;
 
-            const indexOfStartOfFileName = line.split('').findIndex((c, idx) => idx > 0 && (c.toUpperCase() !== c.toLocaleLowerCase()));
-            const statusCode = line.substring(0, indexOfStartOfFileName).trim();
+            const statusParts = line.split('\t');
+            const statusCode = statusParts[0].trim();
             const statusParser = this.serviceContainer.get<IFileStatStatusParser>(IFileStatStatusParser);
             if (!statusParser.canParse(statusCode)) {
                 return;
