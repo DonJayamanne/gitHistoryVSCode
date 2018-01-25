@@ -16,7 +16,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
     }
     public async exec(cwd: string, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:unified-signatures
-    public async exec(options: { cwd: string, shell?: boolean, encoding?: string }, ...args: string[]): Promise<string>;
+    public async exec(options: { cwd: string; shell?: boolean; encoding?: string }, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:no-any
     public async exec(options: any, ...args: string[]): Promise<string> {
         let gitPath = await this.gitExecLocator.getGitPath();
@@ -26,7 +26,8 @@ export class GitCommandExecutor implements IGitCommandExecutor {
             childProcOptions.encoding = DEFAULT_ENCODING;
         }
 
-        const gitShow = spawn(gitPath, args, childProcOptions);
+        const gitPathCommand = childProcOptions.shell && gitPath.indexOf(' ') > 0 ? `"${gitPath}"` : gitPath;
+        const gitShow = spawn(gitPathCommand, args, childProcOptions);
 
         const disposables: Disposable[] = [];
         const on = (ee: NodeJS.EventEmitter, name: string, fn: Function) => {
