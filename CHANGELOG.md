@@ -1,7 +1,11 @@
+## Version 0.3.6
+- Fix issue with spaces in path to git executable [#200](https://github.com/DonJayamanne/gitHistoryVSCode/issues/200)
+- Support for unicode characters [#206](https://github.com/DonJayamanne/gitHistoryVSCode/issues/206)
+
 ## Version 0.3.5
-- Added ability to select branch from within history view [#202](https://github.com/DonJayamanne/gitHistoryVSCode/pull/202)  
-- Swap the display of comparison views [#197](https://github.com/DonJayamanne/gitHistoryVSCode/issues/197)  
-- Fix parsing of file statys (causing files with numbers to be truncated) [#200](https://github.com/DonJayamanne/gitHistoryVSCode/issues/200)  
+- Added ability to select branch from within history view [#202](https://github.com/DonJayamanne/gitHistoryVSCode/pull/202)
+- Swap the display of comparison views [#197](https://github.com/DonJayamanne/gitHistoryVSCode/issues/197)
+- Fix parsing of file statys (causing files with numbers to be truncated) [#200](https://github.com/DonJayamanne/gitHistoryVSCode/issues/200)
 
 ## Version 0.3.4
 - Disabled calculation of total number of commits as this was slowing down viewing of history [#195](https://github.com/DonJayamanne/gitHistoryVSCode/issues/195)
