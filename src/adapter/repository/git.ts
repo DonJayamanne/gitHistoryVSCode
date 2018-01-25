@@ -206,8 +206,8 @@ export class Git implements IGitService {
 
         const gitRootPathPromise = await this.getGitRoot();
         const commitOutputPromise = await this.exec(...commitArgs);
-        const filesWithNumStatPromise = await this.execInShell(...numStartArgs);
-        const filesWithNameStatusPromise = await this.execInShell(...nameStatusArgs);
+        const filesWithNumStatPromise = await this.exec(...numStartArgs);
+        const filesWithNameStatusPromise = await this.exec(...nameStatusArgs);
 
         const values = await Promise.all([gitRootPathPromise, commitOutputPromise, filesWithNumStatPromise, filesWithNameStatusPromise]);
         const gitRootPath = values[0];
@@ -274,7 +274,7 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
         const relativeFilePath = path.relative(gitRootPath, filePath);
-        return this.execInShell('show', `${hash}:${relativeFilePath}`);
+        return this.exec('show', `${hash}:${relativeFilePath}`);
     }
     @cache('IGitService')
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
@@ -282,8 +282,8 @@ export class Git implements IGitService {
         const nameStatusArgs = this.gitArgsService.getDiffCommitNameStatusArgs(hash1, hash2);
 
         const gitRootPathPromise = this.getGitRoot();
-        const filesWithNumStatPromise = this.execInShell(...numStartArgs);
-        const filesWithNameStatusPromise = this.execInShell(...nameStatusArgs);
+        const filesWithNumStatPromise = this.exec(...numStartArgs);
+        const filesWithNameStatusPromise = this.exec(...nameStatusArgs);
 
         const values = await Promise.all([gitRootPathPromise, filesWithNumStatPromise, filesWithNameStatusPromise]);
         const gitRootPath = values[0];

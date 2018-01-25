@@ -217,7 +217,7 @@ function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
     const id = store.settings.id || '';
     return axios.get(`/branches?id=${encodeURIComponent(id)}`)
         .then(result => {
-            dispatch(updateBranchList(result.data as string[]));
+            dispatch(updateBranchList(result.data));
         })
         .catch(err => {
             console.error('Git History: Result failed');

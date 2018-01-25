@@ -25,19 +25,19 @@ export class GitArgsService implements IGitArgsService {
     }
     public getCommitWithNumStatArgs(hash: string) {
         // return ['log', '--numstat', '--full-history', '--decorate=full', '-M', '--format=""', '-m', '-n1', hash];
-        return ['show', '--numstat', '--format=""', '-M', hash];
+        return ['show', '--numstat', '--format=', '-M', hash];
     }
     public getCommitNameStatusArgs(hash: string): string[] {
         // return ['show', '--name-status', '--full-history', '-M', '--format=""', '-m', '-n1', hash];
-        return ['show', '--name-status', '--format=""', '-M', hash];
+        return ['show', '--name-status', '--format=', '-M', hash];
     }
     public getCommitWithNumStatArgsForMerge(hash: string) {
         // return ['log', '--numstat', '--full-history', '--decorate=full', '-M', '--format=""', '-m', '-n1', hash];
-        return ['show', '--numstat', '--format=""', '-M', '--first-parent', hash];
+        return ['show', '--numstat', '--format=', '-M', '--first-parent', hash];
     }
     public getCommitNameStatusArgsForMerge(hash: string): string[] {
         // return ['show', '--name-status', '--full-history', '-M', '--format=""', '-m', '-n1', hash];
-        return ['show', '--name-status', '--format=""', '-M', '--first-parent', hash];
+        return ['show', '--name-status', '--format=', '-M', '--first-parent', hash];
     }
     public getObjectHashArgs(object: string): string[] {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
