@@ -155,7 +155,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                         fictionalBranches = [];
                     }
                     // Generate at least 10 fictional branches, so we can lay them out neatly
-                    for (let counter = 1; counter < 11; counter++) {
+                    for (let counter = 1; counter < 50; counter++) {
                         let newOrigX = (index + 1 + counter) * xOffset;
                         let fictionalBranch = 'M ' + newOrigX + ' ' + currentY + ' L ' + newOrigX + ' ' + topMostY + ' L ' + newOrigX + ' ';
                         fictionalBranches.push({ path: fictionalBranch, x: newOrigX });
