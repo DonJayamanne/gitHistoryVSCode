@@ -18,7 +18,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     private apiController: ApiController;
     private port?: number;
     private startPromise: Promise<StartupInfo>;
-    constructor(@inject(IThemeService) private themeService: IThemeService,
+    constructor( @inject(IThemeService) private themeService: IThemeService,
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IWorkspaceQueryStateStore) private stateStore: IWorkspaceQueryStateStore) {

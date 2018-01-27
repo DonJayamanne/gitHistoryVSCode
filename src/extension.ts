@@ -6,7 +6,7 @@ if ((Reflect as any).metadata === undefined) {
 
 import { Container } from 'inversify';
 import * as vscode from 'vscode';
-import { OutputChannel } from 'vscode';
+import { Memento, OutputChannel } from 'vscode';
 import { registerTypes as registerParserTypes } from './adapter/parsers/serviceRegistry';
 import { registerTypes as registerRepositoryTypes } from './adapter/repository/serviceRegistry';
 import { registerTypes as registerAdapterTypes } from './adapter/serviceRegistry';
@@ -65,6 +65,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     // cont.bind<IServerHost>(IServerHost).to(ServerHost).inSingletonScope();
     cont.bind<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).to(StateStore).inSingletonScope();
     cont.bind<OutputChannel>(IOutputChannel).toConstantValue(getLogChannel());
+    cont.bind<Memento>('globalMementoStore').toConstantValue(context.globalState);
+    cont.bind<Memento>('workspaceMementoStore').toConstantValue(context.workspaceState);
     // cont.bind<FileStatParser>(FileStatParser).to(FileStatParser);
 
     registerParserTypes(serviceManager);

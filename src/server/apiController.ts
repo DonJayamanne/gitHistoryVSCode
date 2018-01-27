@@ -1,12 +1,12 @@
 import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
 import { Uri } from 'vscode';
-import { IFileStatParser } from '../adapter/parsers/types';
+import { IAvatarProvider } from '../adapter/avatar/types';
 import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
+import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, ActionedUser } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -27,6 +27,8 @@ export class ApiController implements IApiRouteHandler {
         this.app.post('/log/clearSelection', this.handleRequest(this.clearSelectedCommit.bind(this)));
         this.app.post('/log/:hash', this.handleRequest(this.doSomethingWithCommit.bind(this)));
         this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
+        this.app.get('/avatar', this.handleRequest(this.getAvatar.bind(this)));
+        this.app.post('/avatars', this.handleRequest(this.getAvatars.bind(this)));
     }
     // tslint:disable-next-line:no-empty member-ordering
     public dispose() { }
@@ -138,9 +140,6 @@ export class ApiController implements IApiRouteHandler {
             .catch(err => response.status(500).send(err));
     }
     public getCommit = async (request: Request, response: Response) => {
-        const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
-        // tslint:disable-next-line:no-console
-        console.log(fileStatParserFactory);
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
 
@@ -164,6 +163,48 @@ export class ApiController implements IApiRouteHandler {
             .catch(err => {
                 response.status(500).send(err);
             });
+    }
+    // tslint:disable-next-line:no-any
+    public getAvatar = async (request: Request, response: Response): Promise<any | void> => {
+        const id: string = decodeURIComponent(request.query.id);
+        const name: string = decodeURIComponent(request.query.name);
+        const email: string = decodeURIComponent(request.query.email);
+        try {
+            const originType = await this.getRepository(id).getOriginType();
+            if (!originType) {
+                return response.send();
+            }
+            const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
+            const provider = providers.find(item => item.supported(originType));
+            if (!provider) {
+                return response.send();
+            }
+            const avatar = await provider.getAvatar({ name, email });
+            response.send(avatar);
+        } catch (err) {
+            response.status(500).send(err);
+        }
+    }
+    // tslint:disable-next-line:no-any
+    public getAvatars = async (request: Request, response: Response): Promise<any | void> => {
+        const id: string = decodeURIComponent(request.query.id);
+        const users = request.body as ActionedUser[];
+        try {
+            const originType = await this.getRepository(id).getOriginType();
+            if (!originType) {
+                return response.send();
+            }
+            const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
+            const provider = providers.find(item => item.supported(originType));
+            if (!provider) {
+                return response.send();
+            }
+            // Requests could get rejected for sending too many
+            const avatars = await Promise.all(users.map(user => provider.getAvatar(user).catch(() => undefined)));
+            response.send(avatars.filter(avatar => !!avatar));
+        } catch (err) {
+            response.status(500).send(err);
+        }
     }
     public clearSelectedCommit = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);

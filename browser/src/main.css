@@ -167,6 +167,17 @@ div.appRoot {
 	text-overflow: ellipsis;
 }
 
+img.avatar {
+    height:50px;
+    width:50px
+}
+.log-entry img.avatar {
+	height:30px;
+    width:30px;
+    float:left;
+    margin-right:0.5em;
+}
+
 .commit-subject {
 	font-weight: bold;
 }

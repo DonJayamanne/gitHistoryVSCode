@@ -3,13 +3,15 @@ import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { Writable } from 'stream';
 import * as tmp from 'tmp';
-import { Uri, workspace } from 'vscode';
+import { Uri } from 'vscode';
+import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
 import { Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
+import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
 
 @injectable()
@@ -85,6 +87,20 @@ export class Git implements IGitService {
         const output = await this.exec(...args);
         return output.split(/\r?\n/g)[0].trim();
     }
+    @cache('IGitService')
+    public async getOriginType(): Promise<GitOriginType | undefined> {
+        return this.exec('remote', 'get-url', 'origin')
+            .then(url => {
+                if (url.indexOf('github')) {
+                    return GitOriginType.github;
+                } else if (url.indexOf('bitbucket')) {
+                    return GitOriginType.bitbucket;
+                } else {
+                    return undefined;
+                }
+            })
+            .catch(() => undefined);
+    }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
         const args = this.gitArgsService.getRefsContainingCommitArgs(hash);
         const entries = await this.exec(...args);
@@ -98,6 +114,7 @@ export class Git implements IGitService {
     public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
         if (pageSize <= 0) {
             // tslint:disable-next-line:no-parameter-reassignment
+            const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;

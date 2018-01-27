@@ -1,14 +1,20 @@
 
-// tslint:disable-next-line:no-stateless-class no-unnecessary-class
-export class EnumHelpers {
-    // tslint:disable-next-line:function-name
-    public static *Values<T>(enumType: {}): IterableIterator<T> {
-        // tslint:disable-next-line:no-for-in
-        for (const item in enumType) {
-            if (typeof enumType[item] === 'number') {
-                // tslint:disable-next-line:prefer-type-cast no-any
-                yield enumType[item] as any as T;
-            }
-        }
+// tslint:disable:no-unnecessary-class no-any no-stateless-class
+export class EnumEx {
+    public static getNamesAndValues<T extends number>(e: any) {
+        return EnumEx.getNames(e).map(n => ({ name: n, value: e[n] as T }));
+    }
+
+    public static getNames(e: any) {
+        // tslint:disable-next-line:quotemark
+        return EnumEx.getObjValues(e).filter(v => typeof v === "string") as string[];
+    }
+
+    public static getValues<T extends number>(e: any) {
+        return EnumEx.getObjValues(e).filter(v => typeof v === 'number') as T[];
+    }
+
+    private static getObjValues(e: any): (number | string)[] {
+        return Object.keys(e).map(k => e[k]);
     }
 }
