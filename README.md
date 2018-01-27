@@ -40,6 +40,10 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/compare.gif)
 
+## Thanks
+
+[Domenico Gemoli](https://github.com/aberonni): Ability to hide the `Git History` icon [#186](https://github.com/DonJayamanne/gitHistoryVSCode/issues/186)
+
 ## Source
 
 [GitHub](https://github.com/DonJayamanne/gitHistoryVSCode)
