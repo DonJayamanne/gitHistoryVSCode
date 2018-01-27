@@ -247,7 +247,7 @@ export class Git implements IGitService {
                     await fs.ensureDir(tmpFilePath);
                     const relativeFilePath = path.relative(gitRootPath, filePath);
                     const fsStream = fs.createWriteStream(tmpFile);
-                    await this.execBinary(fsStream, 'show', `${hash}:${relativeFilePath}`);
+                    await this.execBinary(fsStream, 'show', `${hash}:${relativeFilePath.replace(/\\/g, '/')}`);
                     fsStream.end();
                     resolve(Uri.file(tmpFile));
                 } catch (ex) {
@@ -262,7 +262,7 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
         const relativeFilePath = path.relative(gitRootPath, filePath);
-        return this.exec('show', `${hash}:${relativeFilePath}`);
+        return this.exec('show', `${hash}:${relativeFilePath.replace(/\\/g, '/')}`);
     }
     @cache('IGitService')
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
