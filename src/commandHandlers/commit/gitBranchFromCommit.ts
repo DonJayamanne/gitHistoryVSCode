@@ -14,11 +14,11 @@ export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCo
         @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
 
     @command('git.commit.createBranch', IGitBranchFromCommitCommandHandler)
-    public async createBranchFromCommit(commit: CommitDetails) {
+    public async createBranchFromCommit(commit: CommitDetails, newBranchName?: string) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
         const msg = 'Branch name';
         const description = 'Please provide a branch name';
-        const newBranchName = await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description });
+        newBranchName = (typeof newBranchName !== 'string' || newBranchName.trim().length === 0) ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description }) : newBranchName;
 
         if (typeof newBranchName !== 'string' || newBranchName.length === 0) {
             return;

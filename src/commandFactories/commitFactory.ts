@@ -1,8 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler } from '../commandHandlers/types';
+import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitRevertCommandHandler } from '../commandHandlers/types';
 import { CherryPickCommand } from '../commands/commit/cherryPick';
 import { CompareCommand } from '../commands/commit/compare';
 import { CreateBranchCommand } from '../commands/commit/createBranch';
+import { RevertCommand } from '../commands/commit/revert';
 import { SelectForComparison } from '../commands/commit/selectForComparion';
 import { ViewDetailsCommand } from '../commands/commit/viewDetails';
 import { CommitDetails, ICommand } from '../common/types';
@@ -13,6 +14,7 @@ export class CommitCommandFactory implements ICommitCommandFactory {
     constructor( @inject(IGitBranchFromCommitCommandHandler) private branchCreationCommandHandler: IGitBranchFromCommitCommandHandler,
         @inject(IGitCherryPickCommandHandler) private cherryPickHandler: IGitCherryPickCommandHandler,
         @inject(IGitCompareCommandHandler) private compareHandler: IGitCompareCommandHandler,
+        @inject(IGitRevertCommandHandler) private revertHandler: IGitRevertCommandHandler,
         @inject(IGitCommitViewDetailsCommandHandler) private viewChangeLogHandler: IGitCommitViewDetailsCommandHandler) { }
     public async createCommands(commit: CommitDetails): Promise<ICommand<CommitDetails>[]> {
         const commands: ICommand<CommitDetails>[] = [
@@ -20,6 +22,7 @@ export class CommitCommandFactory implements ICommitCommandFactory {
             new CherryPickCommand(commit, this.cherryPickHandler),
             new ViewDetailsCommand(commit, this.viewChangeLogHandler),
             new SelectForComparison(commit, this.compareHandler),
+            new RevertCommand(commit, this.revertHandler),
             new CompareCommand(commit, this.compareHandler)
         ];
 

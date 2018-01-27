@@ -299,6 +299,10 @@ export class Git implements IGitService {
         await this.exec('cherry-pick', hash);
     }
 
+    public async revertCommit(hash: string): Promise<void> {
+        await this.exec('revert', '--no-edit', hash);
+    }
+
     public async createBranch(branchName: string, hash: string): Promise<void> {
         await this.exec('checkout', '-b', branchName, hash);
     }
