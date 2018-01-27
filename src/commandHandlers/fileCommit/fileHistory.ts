@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { Uri } from 'vscode';
-import { IApplicationShell, IDocumentManager } from '../../application/types';
+import { IApplicationShell } from '../../application/types';
 import { ICommandManager } from '../../application/types/commandManager';
 import { CompareFileCommitDetails, FileCommitDetails, IUiService } from '../../common/types';
 import { gitHistoryFileViewerSchema } from '../../constants';
@@ -9,6 +9,7 @@ import { IServiceContainer } from '../../ioc/types';
 import { FileNode } from '../../nodes/types';
 import { IFileSystem } from '../../platform/types';
 import { Hash, IGitService, IGitServiceFactory, Status } from '../../types';
+import { isTextFile } from '../file/mimeTypes';
 import { command } from '../registration';
 import { IGitFileHistoryCommandHandler } from '../types';
 
@@ -17,8 +18,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommandManager) private commandManager: ICommandManager,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
-        @inject(IFileSystem) private fileSystem: IFileSystem,
-        @inject(IDocumentManager) private documentManager: IDocumentManager) { }
+        @inject(IFileSystem) private fileSystem: IFileSystem) { }
 
     @command('git.commit.file.select', IGitFileHistoryCommandHandler)
     public async doSomethingWithFile(fileCommit: FileCommitDetails) {
@@ -37,8 +37,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             return this.applicationShell.showErrorMessage('File cannot be viewed as it was deleted').then(() => void 0);
         }
         const uri = await this.getFileUri(gitService, fileCommit);
-        const doc = await this.documentManager.openTextDocument(uri);
-        this.documentManager.showTextDocument(doc, { preview: true });
+        await this.commandManager.executeCommand('git.openFileInViewer', uri, fileCommit);
     }
 
     @command('git.commit.FileEntry.CompareAgainstWorkspace', IGitFileHistoryCommandHandler)
@@ -55,7 +54,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const tmpFile = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
         const fileName = path.basename(fileCommit.committedFile.uri.fsPath);
         const title = `${fileName} (Working Tree)`;
-        this.commandManager.executeCommand('vscode.diff', Uri.file(fileCommit.committedFile.uri.fsPath), Uri.file(tmpFile.fsPath), title, { preview: true });
+        await this.commandManager.executeCommand('vscode.diff', Uri.file(fileCommit.committedFile.uri.fsPath), Uri.file(tmpFile.fsPath), title, { preview: true });
     }
 
     @command('git.commit.FileEntry.CompareAgainstPrevious', IGitFileHistoryCommandHandler)
@@ -81,7 +80,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
         const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.logEntry.hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
-        this.commandManager.executeCommand('vscode.diff', previousTmpFile, tmpFile, title, { preview: true });
+        await this.commandManager.executeCommand('vscode.diff', previousTmpFile, tmpFile, title, { preview: true });
     }
     @command('git.commit.FileEntry.ViewPreviousFileContents', IGitFileHistoryCommandHandler)
     public async viewPreviousFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
@@ -97,9 +96,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const previousFile = fileCommit.committedFile!.oldUri ? fileCommit.committedFile!.oldUri! : fileCommit.committedFile!.uri;
         const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
-        const doc = await this.documentManager.openTextDocument(Uri.file(previousTmpFile.fsPath));
-        this.documentManager.showTextDocument(doc, { preview: true });
-
+        await this.commandManager.executeCommand('git.openFileInViewer', Uri.file(previousTmpFile.fsPath));
     }
     @command('git.commit.compare.file.compare', IGitFileHistoryCommandHandler)
     public async compareFileAcrossCommits(fileCommit: CompareFileCommitDetails): Promise<void> {
@@ -120,7 +117,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.logEntry.hash },
             { file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.rightCommit.logEntry.hash });
 
-        this.commandManager.executeCommand('vscode.diff', leftFile, rightFile, title, { preview: true });
+        await this.commandManager.executeCommand('vscode.diff', leftFile, rightFile, title, { preview: true });
     }
     private getComparisonTitle(left: { file: Uri; hash: Hash }, right: { file: Uri; hash: Hash }) {
         const leftFileName = path.basename(left.file.fsPath);
@@ -131,13 +128,18 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             return `${leftFileName} (${left.hash.short} ↔ ${rightFileName} ${right.hash.short})`;
         }
     }
-    private async getFileUri(_gitService: IGitService, fileCommit: FileCommitDetails): Promise<Uri> {
-        const args = [
-            `workspaceFolder=${encodeURIComponent(fileCommit.workspaceFolder)}`,
-            `hash=${fileCommit.logEntry.hash.short}`,
-            `fsPath=${encodeURIComponent(fileCommit.committedFile!.uri.fsPath)}`
-        ];
-        const ext = path.extname(fileCommit.committedFile!.relativePath);
-        return Uri.parse(`${gitHistoryFileViewerSchema}://./${fileCommit.committedFile!.relativePath}.${fileCommit.logEntry.hash.short}${ext}?${args.join('&')}`);
+    private async getFileUri(gitService: IGitService, fileCommit: FileCommitDetails): Promise<Uri> {
+        if (isTextFile(Uri.file(fileCommit.committedFile.uri.fsPath))) {
+            const args = [
+                `workspaceFolder=${encodeURIComponent(fileCommit.workspaceFolder)}`,
+                `hash=${fileCommit.logEntry.hash.short}`,
+                `fsPath=${encodeURIComponent(fileCommit.committedFile!.uri.fsPath)}`
+            ];
+            const ext = path.extname(fileCommit.committedFile!.relativePath);
+            return Uri.parse(`${gitHistoryFileViewerSchema}://./${fileCommit.committedFile!.relativePath}.${fileCommit.logEntry.hash.short}${ext}?${args.join('&')}`);
+        } else {
+            const file = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri.fsPath);
+            return Uri.file(file.fsPath);
+        }
     }
 }
