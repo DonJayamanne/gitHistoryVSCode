@@ -53,7 +53,8 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         return new Promise<any>((resolve, reject) => {
             gitShow.once('close', () => {
                 if (errBuffers.length > 0) {
-                    const stdErr = decode(errBuffers, childProcOptions.encoding);
+                    let stdErr = decode(errBuffers, childProcOptions.encoding);
+                    stdErr = stdErr.startsWith('error: ') ? stdErr.substring('error: '.length) : stdErr;
                     this.loggers.forEach(logger => {
                         logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
                         logger.error(stdErr);

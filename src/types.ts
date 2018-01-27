@@ -130,6 +130,7 @@ export interface IGitService {
     getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
+    revertCommit(hash: string): Promise<void>;
     getCommitFile(hash: string, file: FsUri | string): Promise<FsUri>;
     getCommitFileContent(hash: string, file: FsUri | string): Promise<string>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
