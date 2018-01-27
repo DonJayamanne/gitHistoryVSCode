@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { CommittedFile, LogEntry } from '../../../definitions';
 import { RootState } from '../../../reducers';
 import Author from './Author';
+import Avatar from './Avatar';
 import { FileEntry } from './FileEntry';
 // tslint:disable-next-line:no-require-imports no-var-requires
 const GoX = require('react-icons/lib/go/x');
@@ -83,10 +84,13 @@ class Commit extends React.Component<CommitProps> {
                 <div className='detailsCnt'>
                     <div id='details-view' className='hidden' >
                         <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
-                        <h1 className='commit-subject'>{gitmojify(this.props.selectedEntry.subject)}</h1>
-                        <Author result={this.props.selectedEntry.author}></Author>
-                        <div className='commit-body'>{gitmojify(this.props.selectedEntry.body)}</div>
-                        <div className='commit-notes'>{gitmojify(this.props.selectedEntry.notes)}</div>
+                        <div className='authorAndCommitInfoContainer'>
+                            <Avatar result={this.props.selectedEntry.author}></Avatar>
+                            <h1 className='commit-subject'>{gitmojify(this.props.selectedEntry.subject)}</h1>
+                            <Author result={this.props.selectedEntry.author}></Author>
+                            <div className='commit-body'>{gitmojify(this.props.selectedEntry.body)}</div>
+                            <div className='commit-notes'>{gitmojify(this.props.selectedEntry.notes)}</div>
+                        </div>
                         {this.renderFileEntries()}
                         <ul className='committed-files'>
                         </ul>

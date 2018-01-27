@@ -1,5 +1,5 @@
 import { injectable, unmanaged } from 'inversify';
-import { IStateStoreFactory, WorkspaceStateStore } from '../../application/types/stateStore';
+import { IStateStoreFactory } from '../../application/types/stateStore';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { IServiceContainer } from '../../ioc/types';
 import { ActionedUser, Avatar } from '../../types';
@@ -17,7 +17,6 @@ export abstract class BaseAvatarProvider implements IAvatarProvider {
     }
     public async getAvatar(user: ActionedUser): Promise<Avatar | undefined> {
         const stateStoreFactory = this.serviceContainer.get<IStateStoreFactory>(IStateStoreFactory);
-        // const stateStoreFactory = this.serviceContainer.get<IStateStoreFactory>(IStateStoreFactory, WorkspaceStateStore);
         const stateStore = stateStoreFactory.createStore();
         const key = `Avatar:${user.name}:${user.email}`;
         const cachedInfo = stateStore.has(key) ? await stateStore.get<CachedAvatar>(key)! : undefined;
