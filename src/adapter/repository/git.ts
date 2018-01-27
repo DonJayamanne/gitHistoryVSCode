@@ -310,10 +310,6 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         return this.gitCmdExecutor.exec({ cwd: gitRootPath, encoding: 'binary' }, destination, ...args);
     }
-    private async execInShell(...args: string[]): Promise<string> {
-        const gitRootPath = await this.getGitRoot();
-        return this.gitCmdExecutor.exec({ cwd: gitRootPath, shell: true }, ...args);
-    }
     // how to check if a commit has been merged into any other branch
     //  $ git branch --all --contains 019daf673583208aaaf8c3f18f8e12696033e3fc
     //  remotes/origin/chrmarti/azure-account
