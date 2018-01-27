@@ -1,3 +1,8 @@
+## Version 0.3.7
+- Support viewing and comparing binary files [#215](https://github.com/DonJayamanne/gitHistoryVSCode/issues/215), [#211](https://github.com/DonJayamanne/gitHistoryVSCode/issues/211)
+- Fixes to viewing of files [#211](https://github.com/DonJayamanne/gitHistoryVSCode/issues/211)
+- Remove unwanted commands [#206](https://github.com/DonJayamanne/gitHistoryVSCode/issues/212)
+
 ## Version 0.3.6
 - Fix issue with spaces in path to git executable [#200](https://github.com/DonJayamanne/gitHistoryVSCode/issues/200)
 - Support for unicode characters [#206](https://github.com/DonJayamanne/gitHistoryVSCode/issues/206)
