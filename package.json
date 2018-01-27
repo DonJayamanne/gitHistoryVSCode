@@ -159,16 +159,6 @@
             {
                 "command": "git.commit.view.showFolderView",
                 "title": "Show folder view"
-            },
-            {
-                "command": "git.commit.commitView.hide",
-                "title": "Test",
-                "category": "1_test"
-            },
-            {
-                "command": "git.commit.commitView.show",
-                "title": "Test",
-                "category": "1_test"
             }
         ],
         "menus": {
