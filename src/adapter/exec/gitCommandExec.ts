@@ -3,6 +3,7 @@ import * as iconv from 'iconv-lite';
 import { inject, injectable, multiInject } from 'inversify';
 import { Writable } from 'stream';
 import { Disposable } from 'vscode';
+import { StopWatch } from '../../common/stopWatch';
 import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from '../locator';
 import { IGitCommandExecutor } from './types';
@@ -30,6 +31,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         const binaryOuput = childProcOptions.encoding === 'binary';
         const destination: Writable = binaryOuput ? args.shift()! : undefined;
         const gitPathCommand = childProcOptions.shell && gitPath.indexOf(' ') > 0 ? `"${gitPath}"` : gitPath;
+        const stopWatch = new StopWatch();
         const gitShow = spawn(gitPathCommand, args, childProcOptions);
         if (binaryOuput) {
             gitShow.stdout.pipe(destination);
@@ -53,14 +55,14 @@ export class GitCommandExecutor implements IGitCommandExecutor {
                 if (errBuffers.length > 0) {
                     const stdErr = decode(errBuffers, childProcOptions.encoding);
                     this.loggers.forEach(logger => {
-                        logger.log('git', ...args);
+                        logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
                         logger.error(stdErr);
                     });
                     reject(stdErr);
                 } else {
                     const stdOut = binaryOuput ? undefined : decode(buffers, childProcOptions.encoding);
                     this.loggers.forEach(logger => {
-                        logger.log('git', ...args);
+                        logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
                         logger.trace(binaryOuput ? '<binary>' : stdOut);
                     });
                     resolve(stdOut);
@@ -70,7 +72,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
             gitShow.once('error', ex => {
                 reject(ex);
                 this.loggers.forEach(logger => {
-                    logger.log('git', ...args);
+                    logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
                     logger.error(ex);
                 });
                 disposables.forEach(disposable => disposable.dispose());

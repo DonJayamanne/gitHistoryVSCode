@@ -1,11 +1,11 @@
-import { EnumHelpers } from '../common/enumHelper';
+import { EnumEx } from '../common/enumHelper';
 import { CommitInfo } from '../types';
 // tslint:disable-next-line:no-stateless-class no-unnecessary-class
 export class Helpers {
     // tslint:disable-next-line:function-name
     public static GetLogArguments() {
         const args: string[] = [];
-        for (const item of EnumHelpers.Values<CommitInfo>(CommitInfo)) {
+        for (const item of EnumEx.getValues<CommitInfo>(CommitInfo)) {
             if (item !== CommitInfo.NewLine) {
                 args.push(Helpers.GetCommitInfoFormatCode(item));
             }

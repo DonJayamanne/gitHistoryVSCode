@@ -1,3 +1,4 @@
+import { GitOriginType } from './adapter/repository/index';
 import { CommitDetails } from './common/types';
 
 // Do not include any VS Code types in here
@@ -46,7 +47,18 @@ export type CommittedFile = {
 };
 
 /////////////////////////////////////////////////////////
-export type ActionedDetails = {
+export type Avatar = {
+    name: string;
+    email: string;
+    url?: string;
+    avatarUrl?: string;
+    avatarFilePath?: FsUri;
+};
+export type ActionedUser = {
+    name: string;
+    email: string;
+};
+export type ActionedDetails = ActionedUser & {
     name: string;
     email: string;
     date: Date;
@@ -59,7 +71,7 @@ export type LogEntriesResponse = {
     branch?: string;
     searchText?: string;
     file?: FsUri;
-    branchSelection?: BranchSelection
+    branchSelection?: BranchSelection;
     selected?: LogEntry;
 };
 export type LogEntries = {
@@ -108,7 +120,7 @@ export const IOutputChannel = Symbol('IOutputChannel');
 export interface IGitService {
     getGitRoot(): Promise<string>;
     getGitRelativePath(file: FsUri): Promise<string>;
-    getHeadHashes(): Promise<{ ref: string, hash: string }[]>;
+    getHeadHashes(): Promise<{ ref: string; hash: string }[]>;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
     getObjectHash(object: string): Promise<string>;
@@ -123,6 +135,7 @@ export interface IGitService {
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
     cherryPick(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
+    getOriginType(): Promise<GitOriginType | undefined>;
 }
 
 export type CommitComparison = {

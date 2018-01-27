@@ -39,7 +39,7 @@ export class GitExecutableLocator implements IGitExecutableLocator {
     }
 }
 
-type ErrorEx = Error & { code?: number, stdout?: string, stderr?: string };
+type ErrorEx = Error & { code?: number; stdout?: string; stderr?: string };
 
 async function regQueryInstallPath(location: string, view: string | null) {
     return new Promise<string>((resolve, reject) => {
@@ -62,7 +62,7 @@ async function regQueryInstallPath(location: string, view: string | null) {
         switch (view) {
             case '64': viewArg = '/reg:64'; break;
             case '32': viewArg = '/reg:64'; break;
-            default: break;
+            default:
         }
 
         exec(`reg query ${location} ${viewArg}`, callback);

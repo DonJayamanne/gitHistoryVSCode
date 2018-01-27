@@ -1,9 +1,9 @@
 // import { FsUri } from '../../types';
 
 export type GitLogArgs = {
-    logArgs: string[],
-    fileStatArgs: string[],
-    counterArgs: string[]
+    logArgs: string[];
+    fileStatArgs: string[];
+    counterArgs: string[];
 };
 export const IGitArgsService = Symbol('IGitArgsService');
 
@@ -25,4 +25,10 @@ export interface IGitArgsService {
     getPreviousCommitHashForFileArgs(hash: string, file: string): string[];
     // getCommittedFileArgs(hash1: string, file: FsUri | string): string[];
     // getCommittedFileContentArgs(hash1: string, file: FsUri | string): string[];
+}
+
+export enum GitOriginType {
+    github = 1,
+    bitbucket = 2,
+    tfs = 3
 }
