@@ -3,7 +3,6 @@ import * as md5 from 'md5';
 import * as osLocale from 'os-locale';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
-import { IFileStatParser } from '../adapter/parsers/types';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { FileCommitDetails, IUiService } from '../common/types';

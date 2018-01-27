@@ -29,6 +29,11 @@ export interface IGitCommitViewExplorerCommandHandler extends ICommandHandler {
     showCommitView(commit: CommitDetails | undefined): Promise<void>;
 }
 
+export const IFileCommandHandler = Symbol('IFileCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IFileCommandHandler extends ICommandHandler {
+}
+
 export const IGitCompareCommitViewExplorerCommandHandler = Symbol('IGitCompareCommitViewExplorerCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCompareCommitViewExplorerCommandHandler extends ICommandHandler {

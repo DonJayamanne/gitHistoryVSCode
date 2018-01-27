@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
+import { Writable } from 'stream';
 import * as tmp from 'tmp';
 import { Uri, workspace } from 'vscode';
 import { cache } from '../../common/cache';
@@ -233,35 +234,22 @@ export class Git implements IGitService {
     public async getCommitFile(hash: string, file: Uri | string): Promise<Uri> {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
-        const relativeFilePath = path.relative(gitRootPath, filePath).replace(/\\/g, '/');
 
         return new Promise<Uri>((resolve, reject) => {
             tmp.file({ postfix: path.extname(filePath) }, async (err: Error, tmpPath: string) => {
                 if (err) {
                     return reject(err);
                 }
-                // Sometimes the damn file is in use, lets create a new one everytime.
-                const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`).replace(/\\/g, '/');
-
                 try {
-                    // tslint:disable-next-line:no-suspicious-comment
-                    // TODO: Add telemetry to see what OS this fails on.
-                    await this.execInShell('show', `${hash}:${relativeFilePath}`, '>', tmpFilePath);
-                    return resolve(Uri.file(tmpFilePath));
-                } catch (ex) {
-                    console.error('Git History: failed to get file contents');
-                    console.error(ex);
-                }
-
-                try {
-                    // And getting file contents on windows doesn't work. Who knows it might not work,
-                    // on other os too.
-                    // tslint:disable-next-line:no-suspicious-comment
-                    // TODO: Add telemetry to see what OS this fails on.
-                    // Get the file contents using `git show`
-                    const fileContents = await this.exec('show', `${hash}:${relativeFilePath}`);
-                    await fs.writeFile(tmpFilePath, fileContents);
-                    resolve(Uri.file(tmpFilePath));
+                    // Sometimes the damn file is in use, lets create a new one everytime.
+                    const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`).replace(/\\/g, '/');
+                    const tmpFile = path.join(tmpFilePath, path.basename(filePath));
+                    await fs.ensureDir(tmpFilePath);
+                    const relativeFilePath = path.relative(gitRootPath, filePath);
+                    const fsStream = fs.createWriteStream(tmpFile);
+                    await this.execBinary(fsStream, 'show', `${hash}:${relativeFilePath}`);
+                    fsStream.end();
+                    resolve(Uri.file(tmpFile));
                 } catch (ex) {
                     console.error('Git History: failed to get file contents (again)');
                     console.error(ex);
@@ -317,6 +305,10 @@ export class Git implements IGitService {
     private async exec(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
         return this.gitCmdExecutor.exec(gitRootPath, ...args);
+    }
+    private async execBinary(destination: Writable, ...args: string[]): Promise<void> {
+        const gitRootPath = await this.getGitRoot();
+        return this.gitCmdExecutor.exec({ cwd: gitRootPath, encoding: 'binary' }, destination, ...args);
     }
     private async execInShell(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
