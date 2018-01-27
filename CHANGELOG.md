@@ -1,5 +1,6 @@
 ## Version 0.3.8
 - Ability to hide the icon in the editor titlebar [#186](https://github.com/DonJayamanne/gitHistoryVSCode/issues/186)
+- File viewer fixes [#216](https://github.com/DonJayamanne/gitHistoryVSCode/issues/216)
 
 ## Version 0.3.7
 - Support viewing and comparing binary files [#215](https://github.com/DonJayamanne/gitHistoryVSCode/issues/215), [#211](https://github.com/DonJayamanne/gitHistoryVSCode/issues/211)
