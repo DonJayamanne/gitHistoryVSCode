@@ -56,16 +56,15 @@ export class GitArgsService implements IGitArgsService {
         return ['log', '--format=%H-%h', `${hash}^1`, '-n', '1', '--', file];
     }
 
-    public getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', relativeFilePath?: string): GitLogArgs {
+    public getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', relativeFilePath?: string, lineNumber?: number): GitLogArgs {
         const allBranches = branch.trim().length === 0;
         const currentBranch = branch.trim() === '*';
         const specificBranch = !allBranches && !currentBranch;
 
-        const logArgs = ['log', '--full-history', LOG_FORMAT];
-        const fileStatArgs = ['log', '--full-history', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
-        // tslint:disable-next-line:no-suspicious-comment
-        // TODO: Don't we need %n instead of %h
-        const counterArgs = ['log', '--full-history', `--format=${LOG_ENTRY_SEPARATOR}%h`];
+        const lineArgs = (typeof lineNumber === 'number' && relativeFilePath) ? [`-L${lineNumber},${lineNumber}:${relativeFilePath.replace(/\\/g, '/')}`] : [];
+        const logArgs = ['log', ...lineArgs, '--full-history', LOG_FORMAT];
+        const fileStatArgs = ['log', ...lineArgs, '--full-history', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
+        const counterArgs = ['log', ...lineArgs, '--full-history', `--format=${LOG_ENTRY_SEPARATOR}%h`];
 
         if (searchText && searchText.length > 0) {
             searchText.split(' ')
@@ -83,20 +82,20 @@ export class GitArgsService implements IGitArgsService {
         counterArgs.push('--date-order', '--decorate=full');
 
         // Don't use `--all`, cuz that will result in stashes `ref/stash` being included included in the logs.
-        if (allBranches) {
+        if (allBranches && lineArgs.length === 0) {
             logArgs.push('--branches', '--tags', '--remotes');
             fileStatArgs.push('--branches', '--tags', '--remotes');
             counterArgs.push('--branches', '--tags', '--remotes');
         }
 
-        if (specificBranch) {
+        if (specificBranch && lineArgs.length === 0) {
             logArgs.push(branch);
             fileStatArgs.push(branch);
             counterArgs.push(branch);
         }
 
         // Check if we need a specific file
-        if (relativeFilePath) {
+        if (relativeFilePath && lineArgs.length === 0) {
             const formattedPath = relativeFilePath.indexOf(' ') > 0 ? `"${relativeFilePath}"` : relativeFilePath;
             logArgs.push('--follow', '--', formattedPath);
             fileStatArgs.push('--follow', '--', formattedPath);

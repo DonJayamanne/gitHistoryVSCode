@@ -32,7 +32,7 @@ export class ApiController implements IApiRouteHandler {
     }
     // tslint:disable-next-line:no-empty member-ordering
     public dispose() { }
-    // tslint:disable-next-line:cyclomatic-complexity member-ordering
+    // tslint:disable-next-line:cyclomatic-complexity member-ordering max-func-body-length
     public getLogEntries = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
         const currentState = this.stateStore.getState(id);
@@ -48,6 +48,11 @@ export class ApiController implements IApiRouteHandler {
         let pageIndex: number | undefined = request.query.pageIndex ? parseInt(request.query.pageIndex, 10) : undefined;
         if (currentState && currentState.pageIndex && typeof pageIndex !== 'number') {
             pageIndex = currentState.pageIndex;
+        }
+
+        let lineNumber: number | undefined = request.query.lineNumber ? parseInt(request.query.lineNumber, 10) : undefined;
+        if (currentState && currentState.lineNumber && typeof lineNumber !== 'number') {
+            lineNumber = currentState.lineNumber;
         }
 
         let branch = request.query.branch;
@@ -108,7 +113,7 @@ export class ApiController implements IApiRouteHandler {
             promise = currentState.entries;
         } else {
             promise = this.getRepository(decodeURIComponent(request.query.id))
-                .getLogEntries(pageIndex, pageSize, branch, searchText, file)
+                .getLogEntries(pageIndex, pageSize, branch, searchText, file, lineNumber)
                 .then(data => {
                     // tslint:disable-next-line:no-unnecessary-local-variable
                     const entriesResponse: LogEntriesResponse = {
@@ -124,7 +129,7 @@ export class ApiController implements IApiRouteHandler {
                     return entriesResponse;
                 });
             this.stateStore.updateEntries(id, promise,
-                pageIndex, pageSize, branch, searchText, file, branchSelection);
+                pageIndex, pageSize, branch, searchText, file, branchSelection, lineNumber);
         }
 
         promise
