@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { CancellationTokenSource, QuickPickItem, window, workspace, WorkspaceFolder } from 'vscode';
+import { CancellationTokenSource, QuickPickItem, window, workspace, WorkspaceFolder, Uri } from 'vscode';
 import { IApplicationShell } from '../application/types';
 import { ICommitCommandFactory, IFileCommitCommandFactory } from '../commandFactories/types';
 import { IServiceContainer } from '../ioc/types';
@@ -25,7 +25,13 @@ export class UiService implements IUiService {
 
         return modeChoice.label === allBranches ? BranchSelection.All : BranchSelection.Current;
     }
-    public async getWorkspaceFolder(): Promise<string | undefined> {
+    public async getWorkspaceFolder(uri?: Uri): Promise<string | undefined> {
+        if (uri) {
+            const workspaceFolder = workspace.getWorkspaceFolder(uri);
+            if (workspaceFolder) {
+                return workspaceFolder.uri.fsPath;
+            }
+        }
         const workspaceFolders = workspace.workspaceFolders;
         if (!Array.isArray(workspaceFolders) || workspaceFolders.length === 0) {
             window.showInformationMessage('Please open a workspace folder');

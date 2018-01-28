@@ -1,8 +1,12 @@
 import * as querystring from 'query-string';
 import { CancellationToken, TextDocumentContentProvider, Uri } from 'vscode';
+import { ILogService } from '../common/types';
+import { IServiceContainer } from '../ioc/types';
 import { BranchSelection } from '../types';
 
 export class ContentProvider implements TextDocumentContentProvider {
+    constructor(private serviceContainer: IServiceContainer) {
+    }
     public provideTextDocumentContent(uri: Uri, _token: CancellationToken): string {
         const query = querystring.parse(uri.query.toString())!;
         const port: number = parseInt(query.port!.toString(), 10);
@@ -19,6 +23,22 @@ export class ContentProvider implements TextDocumentContentProvider {
         // thinks that there is nothing to be updated.
         // this.provided = true;
         const timeNow = ''; // new Date().getTime();
+        const queryArgs = [
+            `id=${id}`,
+            `branchName=${encodeURIComponent(branchName)}`,
+            `file=${encodeURIComponent(file)}`,
+            'theme=',
+            `branchSelection=${branchSelection}`,
+            `locale=${encodeURIComponent(locale)}`
+        ];
+
+        // tslint:disable-next-line:no-http-string
+        const uri = `http://localhost:${port}/?_&${queryArgs.join('&')}`;
+        this.serviceContainer.getAll<ILogService>(ILogService).forEach(logger => {
+            logger.log(`Server running on ${uri}`);
+        });
+
+
         return `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>

@@ -126,7 +126,7 @@ export interface IGitService {
     getObjectHash(object: string): Promise<string>;
     getHash(hash: string): Promise<Hash>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
-    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri): Promise<LogEntries>;
+    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri, lineNumber?: number): Promise<LogEntries>;
     getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
@@ -170,51 +170,3 @@ export enum CommitInfo {
     Subject,
     NewLine
 }
-
-// export interface ActionedDetails {
-//     name: string;
-//     email: string;
-//     date: Date;
-//     localisedDate: string;
-// }
-// export interface LogEntry {
-//     author: ActionedDetails;
-//     committer: ActionedDetails;
-//     parents: Hash[];
-//     hash: Hash;
-//     tree: Hash;
-//     refs: string[];
-//     remoteRefs: string[];
-//     headRef: string;
-//     subject: string;
-//     body: string;
-//     notes: string;
-//     fileStats: FileStat[];
-//     changes: [number, number, string][];
-//     tags: string[];
-//     branch: string;
-//     isHead: boolean;
-// }
-
-// export interface CherryPickEntry {
-//     branch: string;
-//     hash: string;
-// }
-
-// export interface Hash {
-//     full: string;
-//     short: string;
-// }
-
-// export enum Modification {
-//     Modified,
-//     Created,
-//     Deleted,
-//     Renamed
-// }
-// export interface FileStat {
-//     path: string;
-//     additions?: number;
-//     deletions?: number;
-//     mode: Modification;
-// }

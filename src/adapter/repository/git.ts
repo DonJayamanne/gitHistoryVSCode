@@ -111,14 +111,14 @@ export class Git implements IGitService {
             // Remove the '->' from ref pointers (take first portion)
             .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
     }
-    public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
+    public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri, lineNumber?: number): Promise<LogEntries> {
         if (pageSize <= 0) {
             // tslint:disable-next-line:no-parameter-reassignment
             const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
-        const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath);
+        const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber);
 
         const gitRootPathPromise = this.getGitRoot();
         const outputPromise = this.exec(...args.logArgs);
