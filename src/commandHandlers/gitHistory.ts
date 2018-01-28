@@ -95,9 +95,13 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             `branchSelection=${BranchSelection.Current}`, `locale=${encodeURIComponent(locale)}`
         ];
         queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
-        // const uri = `${previewUri}?_=${new Date().getTime()}&${queryArgs.join('&')}`;
         const uri = `${previewUri}?${queryArgs.join('&')}`;
-        const title = fileUri ? `File History (${path.basename(fileUri.fsPath)})` : 'Git History';
+
+        let title = fileUri ? `File History (${path.basename(fileUri.fsPath)})` : 'Git History';
+        if (fileUri && typeof lineNumber === 'number'){
+            title = `Line History (${path.basename(fileUri.fsPath)}#${lineNumber})`;
+        }
+
         this.commandManager.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
     }
 }

@@ -87,7 +87,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     // Register last.
     registerCommandTypes(serviceManager);
 
-    let disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, new ContentProvider());
+    let disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, new ContentProvider(serviceContainer));
     context.subscriptions.push(disposable);
 
     disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistoryFileViewerSchema, new CommitFileViewerProvider(serviceContainer));
