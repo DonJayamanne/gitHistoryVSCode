@@ -81,7 +81,7 @@ export class ApiController implements IApiRouteHandler {
         const branchesMatch = currentState && (currentState.branch === branch);
         const noBranchDefinedByClient = !currentState;
         if (!refresh && searchText === undefined && pageIndex === undefined && pageSize === undefined &&
-            file === undefined &&
+            (file === undefined || (currentState && currentState.file && currentState.file.fsPath === file.fsPath)) &&
             currentState && currentState.entries && (branchesMatch || noBranchDefinedByClient)) {
 
             let selected: LogEntry | undefined;
@@ -132,9 +132,12 @@ export class ApiController implements IApiRouteHandler {
                 pageIndex, pageSize, branch, searchText, file, branchSelection, lineNumber);
         }
 
-        promise
-            .then(data => response.send(data))
-            .catch(err => response.status(500).send(err));
+        try {
+            const data = await promise;
+            response.send(data);
+        } catch (err) {
+            response.status(500).send(err);
+        }
     }
     // tslint:disable-next-line:cyclomatic-complexity
     public getBranches = (request: Request, response: Response) => {
