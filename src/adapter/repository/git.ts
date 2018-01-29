@@ -7,7 +7,7 @@ import { Uri } from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
-import { Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry } from '../../types';
+import { Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry, ActionedUser } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
@@ -52,6 +52,42 @@ export class Git implements IGitService {
             .map(line => line.trim().split(' '))
             .filter(lineParts => lineParts.length > 1)
             .map(hashAndRef => { return { ref: hashAndRef[1], hash: hashAndRef[0] }; });
+    }
+
+    @cache('IGitService', 60 * 1000)
+    public async getAuthors(): Promise<ActionedUser[]> {
+        const authorArgs = this.gitArgsService.getAuthorsArgs();
+        const authors = await this.exec(...authorArgs);
+        const dict = new Set<string>();
+        return authors.split(/\r?\n/g)
+            .map(line => line.trim())
+            .filter(line => line.trim().length > 0)
+            .map(line => line.substring(line.indexOf('\t') + 1))
+            .map(line => {
+                const indexOfEmailSeparator = line.indexOf('<');
+                if (indexOfEmailSeparator === -1) {
+                    return {
+                        name: line.trim(),
+                        email: ''
+                    };
+                } else {
+                    const nameParts = line.split('<');
+                    const name = nameParts.shift()!.trim();
+                    const email = nameParts[0].substring(0, nameParts[0].length - 1).trim();
+                    return {
+                        name,
+                        email
+                    };
+                }
+            })
+            .filter(item => {
+                if (dict.has(item.name)) {
+                    return false;
+                }
+                dict.add(item.name);
+                return true;
+            })
+            .sort((a, b) => a.name > b.name ? 1 : -1);
     }
 
     // tslint:disable-next-line:no-suspicious-comment
@@ -111,14 +147,14 @@ export class Git implements IGitService {
             // Remove the '->' from ref pointers (take first portion)
             .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
     }
-    public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri, lineNumber?: number): Promise<LogEntries> {
+    public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri, lineNumber?: number, author?: string): Promise<LogEntries> {
         if (pageSize <= 0) {
             // tslint:disable-next-line:no-parameter-reassignment
             const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
-        const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber);
+        const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber, author);
 
         const gitRootPathPromise = this.getGitRoot();
         const outputPromise = this.exec(...args.logArgs);

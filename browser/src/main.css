@@ -610,3 +610,9 @@ div.details-view-cnt {
 .dropdown:hover .dropdown-content {
 	display: block;
 }
+
+.dropdown-menu {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

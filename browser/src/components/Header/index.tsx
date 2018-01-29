@@ -3,12 +3,14 @@ import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import * as ResultActions from '../../actions/results';
 import { RootState } from '../../reducers/index';
+import Author from './author';
 import Branch from './branch';
 
 interface HeaderProps {
     isLoading?: boolean;
     searchText?: string;
     search(searchText: string): void;
+    clearSearch(): void;
     refresh(): void;
 }
 
@@ -32,7 +34,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         this.setState({ isLoading: this.state.isLoading, searchText: '' });
         if (!this.state.isLoading) {
             this.setState({ isLoading: true, searchText: '' });
-            this.props.search('');
+            this.props.clearSearch();
         }
     }
     private onRefresh = () => {
@@ -60,6 +62,8 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
                 onClick={this.onSearch}>
                 {this.state.isLoading ? 'Loading...' : 'Search'}
             </Button>
+            <Branch></Branch>
+            <Author></Author>
             <Button
                 bsStyle='warning' bsSize='small'
                 disabled={this.state.isLoading}
@@ -68,7 +72,6 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
                 bsStyle="info" bsSize='small'
                 disabled={this.state.isLoading}
                 onClick={this.onRefresh}>Refresh</Button>
-            <Branch></Branch>
         </header>);
     }
 }
@@ -87,6 +90,7 @@ function mapStateToProps(state: RootState): HeaderState {
 function mapDispatchToProps(dispatch) {
     return {
         search: (text: string) => dispatch(ResultActions.search(text)),
+        clearSearch: () => dispatch(ResultActions.clearSearch()),
         refresh: () => dispatch(ResultActions.refresh())
     };
 }

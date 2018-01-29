@@ -14,7 +14,8 @@ export default handleActions<LogEntriesState, any>({
             ...action.payload!,
             selected: action.payload ? action.payload.selected : undefined,
             isLoading: false,
-            searchText: action.payload ? action.payload.searchText : undefined
+            searchText: action.payload ? action.payload.searchText : undefined,
+            author: action.payload ? action.payload.author : undefined
         };
     },
 

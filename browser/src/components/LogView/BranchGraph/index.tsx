@@ -347,7 +347,8 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 
 function mapStateToProps(state: RootState): BranchGrapProps {
     const hideGraph = (state && state.logEntries) && ((state.logEntries.searchText && state.logEntries.searchText.length > 0) ||
-        (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0));
+        (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0) ||
+        (state.logEntries.author && state.logEntries.author.length > 0));
 
     return {
         logEntries: state.logEntries.items,

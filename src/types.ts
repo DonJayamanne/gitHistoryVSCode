@@ -69,6 +69,8 @@ export type LogEntriesResponse = {
     pageIndex?: number;
     pageSize?: number;
     branch?: string;
+    lineNumber?: number;
+    author?: string;
     searchText?: string;
     file?: FsUri;
     branchSelection?: BranchSelection;
@@ -121,12 +123,13 @@ export interface IGitService {
     getGitRoot(): Promise<string>;
     getGitRelativePath(file: FsUri): Promise<string>;
     getHeadHashes(): Promise<{ ref: string; hash: string }[]>;
+    getAuthors(): Promise<ActionedUser[]>;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
     getObjectHash(object: string): Promise<string>;
     getHash(hash: string): Promise<Hash>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
-    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri, lineNumber?: number): Promise<LogEntries>;
+    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri, lineNumber?: number, author?: string): Promise<LogEntries>;
     getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
     getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;

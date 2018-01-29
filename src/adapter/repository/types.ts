@@ -9,6 +9,7 @@ export const IGitArgsService = Symbol('IGitArgsService');
 
 export interface IGitArgsService {
     getGitRootArgs(): string[];
+    getAuthorsArgs(): string[];
     getCurrentBranchArgs(): string[];
     getCommitDateArgs(hash: string): string[];
     getCommitArgs(hash: string): string[];
@@ -19,7 +20,7 @@ export interface IGitArgsService {
     getCommitNameStatusArgsForMerge(hash: string): string[];
     getObjectHashArgs(object: string): string[];
     getRefsContainingCommitArgs(hash: string): string[];
-    getLogArgs(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, relativeFilePath?: string, lineNumber?: number): GitLogArgs;
+    getLogArgs(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, relativeFilePath?: string, lineNumber?: number, author?: string): GitLogArgs;
     getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[];
     getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[];
     getPreviousCommitHashForFileArgs(hash: string, file: string): string[];
