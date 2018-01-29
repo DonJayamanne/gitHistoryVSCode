@@ -66,7 +66,6 @@ export class GitArgsService implements IGitArgsService {
 
         const authorArgs: string[] = [];
         if (author && author.length > 0) {
-            const authorArg = author.indexOf(' ') > 0 ? `"${author}"` : author;
             authorArgs.push(`--author=${author}`);
         }
 
