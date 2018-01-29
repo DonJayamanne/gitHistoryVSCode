@@ -64,7 +64,10 @@ export class ApiController implements IApiRouteHandler {
         if (currentState && currentState.pageSize && (typeof pageSize !== 'number' || pageSize === 0)) {
             pageSize = currentState.pageSize;
         }
-
+        // When getting history for a line, then always get 10 pages, cuz `git log -L` also spits out the diff, hence slow
+        if (typeof lineNumber === 'number'){
+            pageSize = 10;
+        }
         const filePath: string | undefined = request.query.file;
         let file = filePath ? Uri.file(filePath) : undefined;
         if (currentState && currentState.file && !file) {
