@@ -1,17 +1,22 @@
-# Git History (including _git log_)
+# Git History, Search and More (including _git log_)
 
-* View git log along with the graph and details.
-* View the history of a file
-* View the history of a line in a file (Git Blame).
+* View and search git log along with the graph and details.
 * View a previous copy of the file.
-* Compare branches
-* Compare commits
-* Compare files across commits
-* Github avatars
-* Cherrypicking
-* Reverting commits
-* Create branches from a commits
-* View commit information in a treeview (snapshot of all changes)
+* View and search the history
+    * View the history of one or all branches (git log)
+    * View the history of a file
+    * View the history of a line in a file (Git Blame).
+    * View the history of an author
+* Compare:
+    * Compare branches
+    * Compare commits
+    * Compare files across commits
+* Miscellaneous features:
+    * Github avatars
+    * Cherry-picking commits
+    * Reverting commits
+    * Create branches from a commits
+    * View commit information in a treeview (snapshot of all changes)
 
 Open the file to view the history, and then
 Press F1 and select/type "Git: View History", "Git: View File History" or "Git: View Line History".
