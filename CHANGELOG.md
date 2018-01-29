@@ -1,3 +1,8 @@
+## Version 0.3.9
+- Display github gravatars [#220](https://github.com/DonJayamanne/gitHistoryVSCode/pull/220)
+- Add ability to revert a commit [#221](https://github.com/DonJayamanne/gitHistoryVSCode/pull/221)
+- Restore ability to view line history [#185](https://github.com/DonJayamanne/gitHistoryVSCode/issues/185)
+
 ## Version 0.3.8
 - Ability to hide the icon in the editor titlebar [#186](https://github.com/DonJayamanne/gitHistoryVSCode/issues/186)
 - File viewer fixes [#216](https://github.com/DonJayamanne/gitHistoryVSCode/issues/216)
