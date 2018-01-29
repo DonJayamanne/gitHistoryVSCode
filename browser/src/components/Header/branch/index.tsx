@@ -45,12 +45,12 @@ export class Branch extends React.Component<BranchProps, BranchState> {
         });
 
         return (<DropdownButton
-            bsStyle='primary' 
-            bsSize='small' 
-            title={title} 
-            key={selectedBranch} 
-            onSelect={this.onSelect} 
-            id='branchSelection' 
+            bsStyle='primary'
+            bsSize='small'
+            title={title}
+            key={selectedBranch}
+            onSelect={this.onSelect}
+            id='authorSelection'
         >
             <MenuItem eventKey='[ALL]'>All branches</MenuItem>
             <MenuItem divider />

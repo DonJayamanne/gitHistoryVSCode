@@ -37,6 +37,7 @@ export interface IServerHost extends Disposable {
 export type State = {
     workspaceFolder: string;
     pageIndex?: number;
+    author?: string;
     lineNumber?: number;
     pageSize?: number;
     branch?: string;
@@ -51,8 +52,8 @@ export type State = {
 export const IWorkspaceQueryStateStore = Symbol('IWorkspaceQueryStateStore');
 
 export interface IWorkspaceQueryStateStore extends Disposable {
-    initialize(id: string, workspaceFolder: string, branchName: string, branchSelection: BranchSelection, searchText?: string, file?: Uri, lineNumber?: number): Promise<void>;
-    updateEntries(id: string, entries: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection, lineNumber?: number): Promise<void>;
+    initialize(id: string, workspaceFolder: string, branchName: string, branchSelection: BranchSelection, searchText?: string, file?: Uri, lineNumber?: number, author?: string): Promise<void>;
+    updateEntries(id: string, entries: Promise<LogEntries>, pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, branchSelection?: BranchSelection, lineNumber?: number, author?: string): Promise<void>;
     updateLastHashCommit(id: string, hash: string, commit: Promise<LogEntry | undefined>): Promise<void>;
     clearLastHashCommit(id: string): Promise<void>;
     getState(id: string): Readonly<State> | undefined;

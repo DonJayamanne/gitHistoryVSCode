@@ -48,3 +48,4 @@ ReactDOM.render(
 
 store.dispatch(ResultActions.getCommits(defaultSettings.id));
 store.dispatch(ResultActions.getBranches());
+store.dispatch(ResultActions.getAuthors());

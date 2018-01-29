@@ -46,6 +46,9 @@ export class GitArgsService implements IGitArgsService {
         // return ['branch', '--branches', '--tags', '--remotes', '--contains', hash];
         return ['branch', '--all', '--contains', hash];
     }
+    public getAuthorsArgs(): string[] {
+        return ['shortlog', '-e', '-s', '-n', 'HEAD'];
+    }
     public getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[] {
         return ['diff', '--numstat', hash1, hash2];
     }
@@ -56,15 +59,21 @@ export class GitArgsService implements IGitArgsService {
         return ['log', '--format=%H-%h', `${hash}^1`, '-n', '1', '--', file];
     }
 
-    public getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', relativeFilePath?: string, lineNumber?: number): GitLogArgs {
+    public getLogArgs(pageIndex: number = 0, pageSize: number = 100, branch: string = '', searchText: string = '', relativeFilePath?: string, lineNumber?: number, author?: string): GitLogArgs {
         const allBranches = branch.trim().length === 0;
         const currentBranch = branch.trim() === '*';
         const specificBranch = !allBranches && !currentBranch;
 
+        const authorArgs: string[] = [];
+        if (author && author.length > 0) {
+            const authorArg = author.indexOf(' ') > 0 ? `"${author}"` : author;
+            authorArgs.push(`--author=${author}`);
+        }
+
         const lineArgs = (typeof lineNumber === 'number' && relativeFilePath) ? [`-L${lineNumber},${lineNumber}:${relativeFilePath.replace(/\\/g, '/')}`] : [];
-        const logArgs = ['log', ...lineArgs, '--full-history', LOG_FORMAT];
-        const fileStatArgs = ['log', ...lineArgs, '--full-history', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
-        const counterArgs = ['log', ...lineArgs, '--full-history', `--format=${LOG_ENTRY_SEPARATOR}%h`];
+        const logArgs = ['log', ...authorArgs, ...lineArgs, '--full-history', LOG_FORMAT];
+        const fileStatArgs = ['log', ...authorArgs, ...lineArgs, '--full-history', `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`];
+        const counterArgs = ['log', ...authorArgs, ...lineArgs, '--full-history', `--format=${LOG_ENTRY_SEPARATOR}%h`];
 
         if (searchText && searchText.length > 0) {
             searchText.split(' ')
