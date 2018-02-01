@@ -29,7 +29,8 @@ export interface IGitArgsService {
 }
 
 export enum GitOriginType {
-    github = 1,
-    bitbucket = 2,
-    tfs = 3
+    any = 1,
+    github = 2,
+    bitbucket = 3,
+    tfs = 4
 }

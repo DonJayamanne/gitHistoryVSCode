@@ -127,9 +127,9 @@ export class Git implements IGitService {
     public async getOriginType(): Promise<GitOriginType | undefined> {
         return this.exec('remote', 'get-url', 'origin')
             .then(url => {
-                if (url.indexOf('github')) {
+                if (url.indexOf('github.com/') > 0) {
                     return GitOriginType.github;
-                } else if (url.indexOf('bitbucket')) {
+                } else if (url.indexOf('bitbucket') > 0) {
                     return GitOriginType.bitbucket;
                 } else {
                     return undefined;
