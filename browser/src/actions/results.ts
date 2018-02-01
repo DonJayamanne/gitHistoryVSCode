@@ -95,7 +95,14 @@ export const fetchAvatar = (user: ActionedUser) => {
 // tslint:disable-next-line:no-any
 export const fetchAvatars = async (users: ActionedUser[], dispatch: Dispatch<any>, getState: () => RootState) => {
     const state = getState();
-    const unidentifiedUsers = users.filter(a => !state.avatars.find(avatar => avatar.name === a.name && avatar.email === a.email));
+    const unidentifiedUsers = users
+        .filter(a => !state.avatars.find(avatar => avatar.name === a.name && avatar.email === a.email))
+        .reduce((accumulator, user) => {
+            if (accumulator.findIndex(item => item.email === user.email && item.name === user.name) === -1) {
+                accumulator.push(user);
+            }
+            return accumulator;
+        }, []);
     if (unidentifiedUsers.length === 0) {
         return;
     }

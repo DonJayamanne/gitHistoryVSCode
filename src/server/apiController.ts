@@ -2,6 +2,7 @@ import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
 import { Uri } from 'vscode';
 import { IAvatarProvider } from '../adapter/avatar/types';
+import { GitOriginType } from '../adapter/repository/index';
 import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
@@ -206,11 +207,14 @@ export class ApiController implements IApiRouteHandler {
             }
             const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
             const provider = providers.find(item => item.supported(originType));
-            if (!provider) {
-                return response.send();
+            if (provider) {
+                const avatar = await provider.getAvatar({ name, email });
+                response.send(avatar);
+            } else {
+                const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
+                const avatar = await genericProvider.getAvatar({ name, email });
+                return response.send(avatar);
             }
-            const avatar = await provider.getAvatar({ name, email });
-            response.send(avatar);
         } catch (err) {
             response.status(500).send(err);
         }
@@ -226,11 +230,32 @@ export class ApiController implements IApiRouteHandler {
             }
             const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
             const provider = providers.find(item => item.supported(originType));
-            if (!provider) {
-                return response.send();
-            }
+            const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
+
+            const distinctUsers = users.reduce<ActionedUser[]>((accumulator, user) => {
+                if (accumulator.findIndex(item => item.email === user.email && item.name === user.name) === -1) {
+                    accumulator.push(user);
+                }
+                return accumulator;
+            }, []);
+
             // Requests could get rejected for sending too many
-            const avatars = await Promise.all(users.map(user => provider.getAvatar(user).catch(() => undefined)));
+            const avatars = await Promise.all(distinctUsers.map(async user => {
+                if (provider) {
+                    try {
+                        const avatar = await provider.getAvatar(user);
+                        if (avatar) {
+                            return avatar;
+                        }
+                    } catch {
+                        // If we have an error, then return nothing
+                        // We don't want to return a generic avatar just because there were errors
+                        return;
+                    }
+                }
+                return genericProvider.getAvatar(user).catch(() => undefined);
+            }));
+
             response.send(avatars.filter(avatar => !!avatar));
         } catch (err) {
             response.status(500).send(err);
