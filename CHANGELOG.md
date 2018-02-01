@@ -1,3 +1,6 @@
+## Version 0.4.0
+- Fix display of random avatars [#230](https://github.com/DonJayamanne/gitHistoryVSCode/pull/230), [#229](https://github.com/DonJayamanne/gitHistoryVSCode/pull/229), [#228](https://github.com/DonJayamanne/gitHistoryVSCode/pull/228), [#227](https://github.com/DonJayamanne/gitHistoryVSCode/pull/227)
+
 ## Version 0.3.9
 - Display github gravatars [#220](https://github.com/DonJayamanne/gitHistoryVSCode/pull/220)
 - Add ability to revert a commit [#221](https://github.com/DonJayamanne/gitHistoryVSCode/pull/221)
