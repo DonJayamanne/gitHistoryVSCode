@@ -1,27 +1,28 @@
-# Git History (including _git log_)
+# Git History, Search and More (including _git log_)
 
-View git log along with the graph and details.
-View the history of a file (Git log) or the history of a line in a file (Git Blame).
-View a previous copy of the file.
-Compare a previous version with the version in the workspace or another.
-View commit log details for a selected commit.
-Cherrypicking and Compare commits/branches.
-
-## Features
-* **View Git History with graph and details (latest feature)**
-* View the details of a commit, such as author name, email, date, committer name, email, date and comments.
-* View a previous copy of the file or compare it against the local workspace version or a previous version.
-* View the changes to the active line in the editor (Git Blame).
-* Configure the information displayed in the list
-* Use keyboard shortcuts to view history of a file or line
-* Compare commits/branches
-* View commit information in a treeview (snapshot of all changes)
+* View and search git log along with the graph and details.
+* View a previous copy of the file.
+* View and search the history
+    * View the history of one or all branches (git log)
+    * View the history of a file
+    * View the history of a line in a file (Git Blame).
+    * View the history of an author
+* Compare:
+    * Compare branches
+    * Compare commits
+    * Compare files across commits
+* Miscellaneous features:
+    * Github avatars
+    * Cherry-picking commits
+    * Reverting commits
+    * Create branches from a commits
+    * View commit information in a treeview (snapshot of all changes)
 
 Open the file to view the history, and then
 Press F1 and select/type "Git: View History", "Git: View File History" or "Git: View Line History".
 
 ## Available Commands
-* **View Git History (git log) (git.viewHistory)**
+* View Git History (git log) (git.viewHistory)
 * View File History (git.viewFileHistory)
 * View Line History (git.viewLineHistory)
 
@@ -39,6 +40,10 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 ![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
 
 ![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/compare.gif)
+
+## Thanks
+
+[Domenico Gemoli](https://github.com/aberonni): Ability to hide the `Git History` icon [#186](https://github.com/DonJayamanne/gitHistoryVSCode/issues/186)
 
 ## Source
 

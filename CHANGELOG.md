@@ -1,7 +1,28 @@
+## Version 0.4.0
+- Fix display of random avatars [#230](https://github.com/DonJayamanne/gitHistoryVSCode/pull/230), [#229](https://github.com/DonJayamanne/gitHistoryVSCode/pull/229), [#228](https://github.com/DonJayamanne/gitHistoryVSCode/pull/228), [#227](https://github.com/DonJayamanne/gitHistoryVSCode/pull/227)
+
+## Version 0.3.9
+- Display github gravatars [#220](https://github.com/DonJayamanne/gitHistoryVSCode/pull/220)
+- Add ability to revert a commit [#221](https://github.com/DonJayamanne/gitHistoryVSCode/pull/221)
+- Restore ability to view line history [#185](https://github.com/DonJayamanne/gitHistoryVSCode/issues/185)
+
+## Version 0.3.8
+- Ability to hide the icon in the editor titlebar [#186](https://github.com/DonJayamanne/gitHistoryVSCode/issues/186)
+- File viewer fixes [#216](https://github.com/DonJayamanne/gitHistoryVSCode/issues/216)
+
+## Version 0.3.7
+- Support viewing and comparing binary files [#215](https://github.com/DonJayamanne/gitHistoryVSCode/issues/215), [#211](https://github.com/DonJayamanne/gitHistoryVSCode/issues/211)
+- Fixes to viewing of files [#211](https://github.com/DonJayamanne/gitHistoryVSCode/issues/211)
+- Remove unwanted commands [#206](https://github.com/DonJayamanne/gitHistoryVSCode/issues/212)
+
+## Version 0.3.6
+- Fix issue with spaces in path to git executable [#200](https://github.com/DonJayamanne/gitHistoryVSCode/issues/200)
+- Support for unicode characters [#206](https://github.com/DonJayamanne/gitHistoryVSCode/issues/206)
+
 ## Version 0.3.5
-- Added ability to select branch from within history view [#202](https://github.com/DonJayamanne/gitHistoryVSCode/pull/202)  
-- Swap the display of comparison views [#197](https://github.com/DonJayamanne/gitHistoryVSCode/issues/197)  
-- Fix parsing of file statys (causing files with numbers to be truncated) [#200](https://github.com/DonJayamanne/gitHistoryVSCode/issues/200)  
+- Added ability to select branch from within history view [#202](https://github.com/DonJayamanne/gitHistoryVSCode/pull/202)
+- Swap the display of comparison views [#197](https://github.com/DonJayamanne/gitHistoryVSCode/issues/197)
+- Fix parsing of file statys (causing files with numbers to be truncated) [#200](https://github.com/DonJayamanne/gitHistoryVSCode/issues/200)
 
 ## Version 0.3.4
 - Disabled calculation of total number of commits as this was slowing down viewing of history [#195](https://github.com/DonJayamanne/gitHistoryVSCode/issues/195)

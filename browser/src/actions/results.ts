@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
-import { CommittedFile, LogEntriesResponse, LogEntry } from '../definitions';
+import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry } from '../definitions';
 import { BranchesState, RootState } from '../reducers';
 
 export const clearResults = createAction(Actions.CLEAR_RESULTS);
@@ -17,6 +17,8 @@ export const goToPreviousPage = createAction<void>(Actions.GO_TO_PREVIOUS_PAGE);
 export const goToNextPage = createAction<void>(Actions.GO_TO_NEXT_PAGE);
 export const notifyIsLoading = createAction(Actions.IS_LOADING_COMMITS);
 export const notifyIsFetchingCommit = createAction(Actions.IS_FETCHING_COMMIT);
+export const fetchedAvatar = createAction<Avatar[]>(Actions.FETCHED_AVATARS);
+export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHORS);
 
 // function buildQueryString(settings: ISettings): string {
 //     if (!settings) {
@@ -57,6 +59,63 @@ export const actionACommit = (logEntry: LogEntry) => {
         const url = getQueryUrl(state, `/log/${logEntry.hash.full}`);
         return axios.post(url, logEntry);
     };
+};
+export const fetchAvatar = (user: ActionedUser) => {
+    // tslint:disable-next-line:no-any
+    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const url = getQueryUrl(state, '/avatar', [`name=${encodeURIComponent(user.name)}`, `email=${encodeURIComponent(user.email)}`]);
+        axios.get(url)
+            .then(result => {
+                dispatch(fetchedAvatar([result.data as Avatar]));
+            })
+            .catch(err => {
+                // tslint:disable-next-line:no-debugger
+                console.error('Git History: Avatar request failed');
+                console.error(err);
+            });
+    };
+};
+// export const fetchAvatars = (users: ActionedUser[]) => {
+//     // tslint:disable-next-line:no-any
+//     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+//         const state = getState();
+//         const url = getQueryUrl(state, '/avatar', [`name=${encodeURIComponent(user.name)}`, `email=${encodeURIComponent(user.email)}`]);
+//         axios.get(url)
+//             .then(result => {
+//                 dispatch(fetchedAvatar(result.data as Avatar));
+//             })
+//             .catch(err => {
+//                 // tslint:disable-next-line:no-debugger
+//                 console.error('Git History: Avatar request failed');
+//                 console.error(err);
+//             });
+//     };
+// };
+// tslint:disable-next-line:no-any
+export const fetchAvatars = async (users: ActionedUser[], dispatch: Dispatch<any>, getState: () => RootState) => {
+    const state = getState();
+    const unidentifiedUsers = users
+        .filter(a => !state.avatars.find(avatar => avatar.name === a.name && avatar.email === a.email))
+        .reduce((accumulator, user) => {
+            if (accumulator.findIndex(item => item.email === user.email && item.name === user.name) === -1) {
+                accumulator.push(user);
+            }
+            return accumulator;
+        }, []);
+    if (unidentifiedUsers.length === 0) {
+        return;
+    }
+    const url = getQueryUrl(state, '/avatars');
+    axios.post(url, unidentifiedUsers)
+        .then(result => {
+            dispatch(fetchedAvatar(result.data as Avatar[]));
+        })
+        .catch(err => {
+            // tslint:disable-next-line:no-debugger
+            console.error('Git History: Avatar request failed');
+            console.error(err);
+        });
 };
 export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => {
     // tslint:disable-next-line:no-any
@@ -115,7 +174,14 @@ export const search = (searchText: string) => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        return fetchCommits(dispatch, state, 0, undefined, searchText);
+        return fetchCommits(dispatch, state, 0, undefined, searchText, true, undefined, '');
+    };
+};
+export const clearSearch = () => {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        return fetchCommits(dispatch, state, 0, undefined, '', true, undefined, '');
     };
 };
 export const selectBranch = (branchName: string) => {
@@ -123,6 +189,13 @@ export const selectBranch = (branchName: string) => {
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         return fetchCommits(dispatch, state, 0, undefined, '', true, branchName);
+    };
+};
+export const selectAuthor = (authorName: string) => {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        return fetchCommits(dispatch, state, 0, undefined, undefined, true, undefined, authorName);
     };
 };
 export const refresh = () => {
@@ -146,6 +219,13 @@ export const getBranches = () => {
         return fetchBranches(dispatch, state);
     };
 };
+export const getAuthors = () => {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        return fetchAuthors(dispatch, state);
+    };
+};
 function fixDates(logEntry: LogEntry) {
     if (logEntry.author && typeof logEntry.author.date === 'string') {
         logEntry.author.date = new Date(logEntry.author.date);
@@ -155,7 +235,7 @@ function fixDates(logEntry: LogEntry) {
     }
 }
 // tslint:disable-next-line:no-any
-function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string, refreshData?: boolean, branchName?: string) {
+function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string, refreshData?: boolean, branchName?: string, author?: string) {
     // pageSize = pageSize || store.logEntries.pageSize;
     const id = store.settings.id || '';
     const queryParts = [];
@@ -178,6 +258,9 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     if (typeof pageIndex === 'number') {
         queryParts.push(`pageIndex=${pageIndex}`);
     }
+    if (typeof author === 'string') {
+        queryParts.push(`author=${author}`);
+    }
     if (pageSize) {
         queryParts.push(`pageSize=${pageSize}`);
     }
@@ -188,6 +271,9 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
                 result.data.items.forEach(fixDates);
             }
             dispatch(addResults(result.data));
+            if (result.data && Array.isArray(result.data.items) && result.data.items.length > 0) {
+                fetchAvatars(result.data.items.map(item => item.author), dispatch, () => store);
+            }
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
@@ -200,11 +286,14 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
     dispatch(notifyIsFetchingCommit());
     const id = store.settings.id || '';
     return axios.get(`/log/${hash}?id=${encodeURIComponent(id)}`)
-        .then(result => {
+        .then((result: { data: LogEntry }) => {
             if (result.data) {
                 fixDates(result.data);
             }
             dispatch(updateCommit(result.data));
+            if (result.data && result.data.author) {
+                fetchAvatars([result.data.author], dispatch, () => store);
+            }
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
@@ -221,6 +310,18 @@ function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
         })
         .catch(err => {
             console.error('Git History: Result failed');
+            console.error(err);
+        });
+}
+// tslint:disable-next-line:no-any
+function fetchAuthors(dispatch: Dispatch<any>, store: RootState) {
+    const id = store.settings.id || '';
+    return axios.get(`/authors?id=${encodeURIComponent(id)}`)
+        .then(result => {
+            dispatch(fetchedAuthors(result.data));
+        })
+        .catch(err => {
+            console.error('Git History: Fetch Authors: Result failed');
             console.error(err);
         });
 }
@@ -241,7 +342,7 @@ function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
 //     };
 // };
 
-export const logViewSizeCalculated = createAction<{ height: string, width: string }>(Actions.LOGVIEW_SIZE_CALCULATED);
+export const logViewSizeCalculated = createAction<{ height: string; width: string }>(Actions.LOGVIEW_SIZE_CALCULATED);
 export const logEntryHeightCalculated = createAction<number>(Actions.LOGENTRY_ITEM_HEIGHT_CALCULATED);
 export const commitsRendered = createAction(Actions.COMMITS_RENDERED);
 // export const doSomethingWithCommit = createAction<LogEntry>(Actions.SELECT_COMMIT);

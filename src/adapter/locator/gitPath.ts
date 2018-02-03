@@ -39,7 +39,7 @@ export class GitExecutableLocator implements IGitExecutableLocator {
     }
 }
 
-type ErrorEx = Error & { code?: number, stdout?: string, stderr?: string };
+type ErrorEx = Error & { code?: number; stdout?: string; stderr?: string };
 
 async function regQueryInstallPath(location: string, view: string | null) {
     return new Promise<string>((resolve, reject) => {
@@ -62,7 +62,7 @@ async function regQueryInstallPath(location: string, view: string | null) {
         switch (view) {
             case '64': viewArg = '/reg:64'; break;
             case '32': viewArg = '/reg:64'; break;
-            default: break;
+            default:
         }
 
         exec(`reg query ${location} ${viewArg}`, callback);
@@ -78,7 +78,7 @@ const GitLookupRegistryKeys = [
     { key: 'HKLM\\SOFTWARE\\GitForWindows', view: '32' }    // for a 32bit git installation on 64bit Windows
 ];
 
-async function queryChained(locations: { key: string, view: string | null }[]): Promise<string> {
+async function queryChained(locations: { key: string; view: string | null }[]): Promise<string> {
     if (locations.length === 0) {
         return Promise.reject('None of the known git Registry keys were found');
     }
@@ -89,10 +89,10 @@ async function queryChained(locations: { key: string, view: string | null }[]): 
 }
 async function getGitPathOnWindows(loggers: ILogService[]) {
     try {
-        return 'git';
-        // const gitRegPath = await queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
-        // loggers.forEach(logger => logger.trace(`git path: ${gitRegPath} - from registry`));
-        // return gitRegPath;
+        // return 'git';
+        const gitRegPath = await queryChained(GitLookupRegistryKeys); // for a 32bit git installation on 64bit Windows
+        loggers.forEach(logger => logger.trace(`git path: ${gitRegPath} - from registry`));
+        return gitRegPath;
     } catch (ex) {
         loggers.forEach(logger => logger.trace('git path: falling back to PATH environment variable'));
         return 'git';

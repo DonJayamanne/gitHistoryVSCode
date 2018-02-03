@@ -1,12 +1,13 @@
 import { Express, Request, Response } from 'express';
 import { injectable } from 'inversify';
 import { Uri } from 'vscode';
-import { IFileStatParser } from '../adapter/parsers/types';
+import { IAvatarProvider } from '../adapter/avatar/types';
+import { GitOriginType } from '../adapter/repository/index';
 import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
+import { ActionedUser, BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -27,10 +28,13 @@ export class ApiController implements IApiRouteHandler {
         this.app.post('/log/clearSelection', this.handleRequest(this.clearSelectedCommit.bind(this)));
         this.app.post('/log/:hash', this.handleRequest(this.doSomethingWithCommit.bind(this)));
         this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
+        this.app.get('/avatar', this.handleRequest(this.getAvatar.bind(this)));
+        this.app.post('/avatars', this.handleRequest(this.getAvatars.bind(this)));
+        this.app.get('/authors', this.handleRequest(this.getAuthors.bind(this)));
     }
     // tslint:disable-next-line:no-empty member-ordering
     public dispose() { }
-    // tslint:disable-next-line:cyclomatic-complexity member-ordering
+    // tslint:disable-next-line:cyclomatic-complexity member-ordering max-func-body-length
     public getLogEntries = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
         const currentState = this.stateStore.getState(id);
@@ -48,6 +52,16 @@ export class ApiController implements IApiRouteHandler {
             pageIndex = currentState.pageIndex;
         }
 
+        let author: string | undefined = typeof request.query.author === 'string' ? request.query.author : undefined;
+        if (currentState && currentState.author && typeof author !== 'string') {
+            author = currentState.author;
+        }
+
+        let lineNumber: number | undefined = request.query.lineNumber ? parseInt(request.query.lineNumber, 10) : undefined;
+        if (currentState && currentState.lineNumber && typeof lineNumber !== 'number') {
+            lineNumber = currentState.lineNumber;
+        }
+
         let branch = request.query.branch;
         if (currentState && currentState.branch && typeof branch !== 'string') {
             branch = currentState.branch;
@@ -57,7 +71,10 @@ export class ApiController implements IApiRouteHandler {
         if (currentState && currentState.pageSize && (typeof pageSize !== 'number' || pageSize === 0)) {
             pageSize = currentState.pageSize;
         }
-
+        // When getting history for a line, then always get 10 pages, cuz `git log -L` also spits out the diff, hence slow
+        if (typeof lineNumber === 'number') {
+            pageSize = 10;
+        }
         const filePath: string | undefined = request.query.file;
         let file = filePath ? Uri.file(filePath) : undefined;
         if (currentState && currentState.file && !file) {
@@ -74,7 +91,8 @@ export class ApiController implements IApiRouteHandler {
         const branchesMatch = currentState && (currentState.branch === branch);
         const noBranchDefinedByClient = !currentState;
         if (!refresh && searchText === undefined && pageIndex === undefined && pageSize === undefined &&
-            file === undefined &&
+            (file === undefined || (currentState && currentState.file && currentState.file.fsPath === file.fsPath)) &&
+            (author === undefined || (currentState && currentState.author === author)) &&
             currentState && currentState.entries && (branchesMatch || noBranchDefinedByClient)) {
 
             let selected: LogEntry | undefined;
@@ -86,6 +104,8 @@ export class ApiController implements IApiRouteHandler {
                 const entriesResponse: LogEntriesResponse = {
                     ...data,
                     branch: currentState.branch,
+                    author: currentState.author,
+                    lineNumber: currentState.lineNumber,
                     branchSelection: currentState.branchSelection,
                     file: currentState.file,
                     pageIndex: currentState.pageIndex,
@@ -101,17 +121,20 @@ export class ApiController implements IApiRouteHandler {
             (typeof branch === 'string' && currentState.branch === branch) &&
             currentState.pageSize === pageSize &&
             currentState.file === file &&
+            currentState.author === author &&
+            currentState.lineNumber === lineNumber &&
             currentState.entries) {
 
             promise = currentState.entries;
         } else {
             promise = this.getRepository(decodeURIComponent(request.query.id))
-                .getLogEntries(pageIndex, pageSize, branch, searchText, file)
+                .getLogEntries(pageIndex, pageSize, branch, searchText, file, lineNumber, author)
                 .then(data => {
                     // tslint:disable-next-line:no-unnecessary-local-variable
                     const entriesResponse: LogEntriesResponse = {
                         ...data,
                         branch,
+                        author,
                         branchSelection,
                         file,
                         pageIndex,
@@ -122,12 +145,15 @@ export class ApiController implements IApiRouteHandler {
                     return entriesResponse;
                 });
             this.stateStore.updateEntries(id, promise,
-                pageIndex, pageSize, branch, searchText, file, branchSelection);
+                pageIndex, pageSize, branch, searchText, file, branchSelection, lineNumber, author);
         }
 
-        promise
-            .then(data => response.send(data))
-            .catch(err => response.status(500).send(err));
+        try {
+            const data = await promise;
+            response.send(data);
+        } catch (err) {
+            response.status(500).send(err);
+        }
     }
     // tslint:disable-next-line:cyclomatic-complexity
     public getBranches = (request: Request, response: Response) => {
@@ -137,10 +163,14 @@ export class ApiController implements IApiRouteHandler {
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
     }
+    public getAuthors = (request: Request, response: Response) => {
+        const id: string = decodeURIComponent(request.query.id);
+        this.getRepository(id)
+            .getAuthors()
+            .then(data => response.send(data))
+            .catch(err => response.status(500).send(err));
+    }
     public getCommit = async (request: Request, response: Response) => {
-        const fileStatParserFactory = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
-        // tslint:disable-next-line:no-console
-        console.log(fileStatParserFactory);
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
 
@@ -164,6 +194,72 @@ export class ApiController implements IApiRouteHandler {
             .catch(err => {
                 response.status(500).send(err);
             });
+    }
+    // tslint:disable-next-line:no-any
+    public getAvatar = async (request: Request, response: Response): Promise<any | void> => {
+        const id: string = decodeURIComponent(request.query.id);
+        const name: string = decodeURIComponent(request.query.name);
+        const email: string = decodeURIComponent(request.query.email);
+        try {
+            const originType = await this.getRepository(id).getOriginType();
+            if (!originType) {
+                return response.send();
+            }
+            const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
+            const provider = providers.find(item => item.supported(originType));
+            if (provider) {
+                const avatar = await provider.getAvatar({ name, email });
+                response.send(avatar);
+            } else {
+                const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
+                const avatar = await genericProvider.getAvatar({ name, email });
+                return response.send(avatar);
+            }
+        } catch (err) {
+            response.status(500).send(err);
+        }
+    }
+    // tslint:disable-next-line:no-any
+    public getAvatars = async (request: Request, response: Response): Promise<any | void> => {
+        const id: string = decodeURIComponent(request.query.id);
+        const users = request.body as ActionedUser[];
+        try {
+            const originType = await this.getRepository(id).getOriginType();
+            if (!originType) {
+                return response.send();
+            }
+            const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
+            const provider = providers.find(item => item.supported(originType));
+            const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
+
+            const distinctUsers = users.reduce<ActionedUser[]>((accumulator, user) => {
+                if (accumulator.findIndex(item => item.email === user.email && item.name === user.name) === -1) {
+                    accumulator.push(user);
+                }
+                return accumulator;
+            }, []);
+
+            // Requests could get rejected for sending too many
+            const avatars = await Promise.all(distinctUsers.map(async user => {
+                if (provider) {
+                    try {
+                        const avatar = await provider.getAvatar(user);
+                        if (avatar) {
+                            return avatar;
+                        }
+                    } catch {
+                        // If we have an error, then return nothing
+                        // We don't want to return a generic avatar just because there were errors
+                        return;
+                    }
+                }
+                return genericProvider.getAvatar(user).catch(() => undefined);
+            }));
+
+            response.send(avatars.filter(avatar => !!avatar));
+        } catch (err) {
+            response.status(500).send(err);
+        }
     }
     public clearSelectedCommit = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);

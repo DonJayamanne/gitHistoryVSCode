@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { LogEntry, Ref, RefType } from '../../../definitions';
 import { RootState } from '../../../reducers/index';
 import Author from '../Commit/Author';
+import Avatar from '../Commit/Avatar';
 import { gitmojify } from '../gitmojify';
 import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
@@ -75,6 +76,7 @@ function LogEntry(props: ResultListProps) {
             {renderHeadRef(props.logEntry.refs)}
             {renderTagRef(props.logEntry.refs)}
             <div role='button' className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>
+                <Avatar result={props.logEntry.author}></Avatar>
                 <div className='commit-subject' title={gitmojify(props.logEntry.subject)}>{gitmojify(props.logEntry.subject)}</div>
                 <Author result={props.logEntry.author}></Author>
             </div>

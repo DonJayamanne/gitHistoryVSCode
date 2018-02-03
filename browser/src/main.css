@@ -167,6 +167,24 @@ div.appRoot {
 	text-overflow: ellipsis;
 }
 
+.log-entry img.avatar {
+	height:30px;
+    width:30px;
+    float:left;
+    margin-right:0.5em;
+}
+
+.authorAndCommitInfoContainer {
+    display:inline-block;
+    width:100%;
+}
+.authorAndCommitInfoContainer img.avatar {
+    height: 150px;
+    width: 150px;
+    float: left;
+    margin-right: 0.5em;
+}
+
 .commit-subject {
 	font-weight: bold;
 }
@@ -591,4 +609,10 @@ div.details-view-cnt {
 
 .dropdown:hover .dropdown-content {
 	display: block;
+}
+
+.dropdown-menu {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }

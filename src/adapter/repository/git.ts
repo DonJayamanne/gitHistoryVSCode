@@ -1,14 +1,17 @@
 import * as fs from 'fs-extra';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
+import { Writable } from 'stream';
 import * as tmp from 'tmp';
-import { Uri, workspace } from 'vscode';
+import { Uri } from 'vscode';
+import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
-import { Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry } from '../../types';
+import { Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry, ActionedUser } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
+import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
 
 @injectable()
@@ -51,6 +54,42 @@ export class Git implements IGitService {
             .map(hashAndRef => { return { ref: hashAndRef[1], hash: hashAndRef[0] }; });
     }
 
+    @cache('IGitService', 60 * 1000)
+    public async getAuthors(): Promise<ActionedUser[]> {
+        const authorArgs = this.gitArgsService.getAuthorsArgs();
+        const authors = await this.exec(...authorArgs);
+        const dict = new Set<string>();
+        return authors.split(/\r?\n/g)
+            .map(line => line.trim())
+            .filter(line => line.trim().length > 0)
+            .map(line => line.substring(line.indexOf('\t') + 1))
+            .map(line => {
+                const indexOfEmailSeparator = line.indexOf('<');
+                if (indexOfEmailSeparator === -1) {
+                    return {
+                        name: line.trim(),
+                        email: ''
+                    };
+                } else {
+                    const nameParts = line.split('<');
+                    const name = nameParts.shift()!.trim();
+                    const email = nameParts[0].substring(0, nameParts[0].length - 1).trim();
+                    return {
+                        name,
+                        email
+                    };
+                }
+            })
+            .filter(item => {
+                if (dict.has(item.name)) {
+                    return false;
+                }
+                dict.add(item.name);
+                return true;
+            })
+            .sort((a, b) => a.name > b.name ? 1 : -1);
+    }
+
     // tslint:disable-next-line:no-suspicious-comment
     // TODO: We need a way of clearing this cache, if a new branch is created.
     @cache('IGitService', 30 * 1000)
@@ -84,6 +123,20 @@ export class Git implements IGitService {
         const output = await this.exec(...args);
         return output.split(/\r?\n/g)[0].trim();
     }
+    @cache('IGitService')
+    public async getOriginType(): Promise<GitOriginType | undefined> {
+        return this.exec('remote', 'get-url', 'origin')
+            .then(url => {
+                if (url.indexOf('github.com/') > 0) {
+                    return GitOriginType.github;
+                } else if (url.indexOf('bitbucket') > 0) {
+                    return GitOriginType.bitbucket;
+                } else {
+                    return undefined;
+                }
+            })
+            .catch(() => undefined);
+    }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
         const args = this.gitArgsService.getRefsContainingCommitArgs(hash);
         const entries = await this.exec(...args);
@@ -94,13 +147,14 @@ export class Git implements IGitService {
             // Remove the '->' from ref pointers (take first portion)
             .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
     }
-    public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri): Promise<LogEntries> {
+    public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri, lineNumber?: number, author?: string): Promise<LogEntries> {
         if (pageSize <= 0) {
             // tslint:disable-next-line:no-parameter-reassignment
+            const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
-        const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath);
+        const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber, author);
 
         const gitRootPathPromise = this.getGitRoot();
         const outputPromise = this.exec(...args.logArgs);
@@ -206,8 +260,8 @@ export class Git implements IGitService {
 
         const gitRootPathPromise = await this.getGitRoot();
         const commitOutputPromise = await this.exec(...commitArgs);
-        const filesWithNumStatPromise = await this.execInShell(...numStartArgs);
-        const filesWithNameStatusPromise = await this.execInShell(...nameStatusArgs);
+        const filesWithNumStatPromise = await this.exec(...numStartArgs);
+        const filesWithNameStatusPromise = await this.exec(...nameStatusArgs);
 
         const values = await Promise.all([gitRootPathPromise, commitOutputPromise, filesWithNumStatPromise, filesWithNameStatusPromise]);
         const gitRootPath = values[0];
@@ -233,35 +287,22 @@ export class Git implements IGitService {
     public async getCommitFile(hash: string, file: Uri | string): Promise<Uri> {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
-        const relativeFilePath = path.relative(gitRootPath, filePath).replace(/\\/g, '/');
 
         return new Promise<Uri>((resolve, reject) => {
             tmp.file({ postfix: path.extname(filePath) }, async (err: Error, tmpPath: string) => {
                 if (err) {
                     return reject(err);
                 }
-                // Sometimes the damn file is in use, lets create a new one everytime.
-                const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`).replace(/\\/g, '/');
-
                 try {
-                    // tslint:disable-next-line:no-suspicious-comment
-                    // TODO: Add telemetry to see what OS this fails on.
-                    await this.execInShell('show', `${hash}:${relativeFilePath}`, '>', tmpFilePath);
-                    return resolve(Uri.file(tmpFilePath));
-                } catch (ex) {
-                    console.error('Git History: failed to get file contents');
-                    console.error(ex);
-                }
-
-                try {
-                    // And getting file contents on windows doesn't work. Who knows it might not work,
-                    // on other os too.
-                    // tslint:disable-next-line:no-suspicious-comment
-                    // TODO: Add telemetry to see what OS this fails on.
-                    // Get the file contents using `git show`
-                    const fileContents = await this.exec('show', `${hash}:${relativeFilePath}`);
-                    await fs.writeFile(tmpFilePath, fileContents);
-                    resolve(Uri.file(tmpFilePath));
+                    // Sometimes the damn file is in use, lets create a new one everytime.
+                    const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`).replace(/\\/g, '/');
+                    const tmpFile = path.join(tmpFilePath, path.basename(filePath));
+                    await fs.ensureDir(tmpFilePath);
+                    const relativeFilePath = path.relative(gitRootPath, filePath);
+                    const fsStream = fs.createWriteStream(tmpFile);
+                    await this.execBinary(fsStream, 'show', `${hash}:${relativeFilePath.replace(/\\/g, '/')}`);
+                    fsStream.end();
+                    resolve(Uri.file(tmpFile));
                 } catch (ex) {
                     console.error('Git History: failed to get file contents (again)');
                     console.error(ex);
@@ -274,7 +315,7 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
         const relativeFilePath = path.relative(gitRootPath, filePath);
-        return this.execInShell('show', `${hash}:${relativeFilePath}`);
+        return this.exec('show', `${hash}:${relativeFilePath.replace(/\\/g, '/')}`);
     }
     @cache('IGitService')
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
@@ -282,8 +323,8 @@ export class Git implements IGitService {
         const nameStatusArgs = this.gitArgsService.getDiffCommitNameStatusArgs(hash1, hash2);
 
         const gitRootPathPromise = this.getGitRoot();
-        const filesWithNumStatPromise = this.execInShell(...numStartArgs);
-        const filesWithNameStatusPromise = this.execInShell(...nameStatusArgs);
+        const filesWithNumStatPromise = this.exec(...numStartArgs);
+        const filesWithNameStatusPromise = this.exec(...nameStatusArgs);
 
         const values = await Promise.all([gitRootPathPromise, filesWithNumStatPromise, filesWithNameStatusPromise]);
         const gitRootPath = values[0];
@@ -311,6 +352,10 @@ export class Git implements IGitService {
         await this.exec('cherry-pick', hash);
     }
 
+    public async revertCommit(hash: string): Promise<void> {
+        await this.exec('revert', '--no-edit', hash);
+    }
+
     public async createBranch(branchName: string, hash: string): Promise<void> {
         await this.exec('checkout', '-b', branchName, hash);
     }
@@ -318,9 +363,9 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         return this.gitCmdExecutor.exec(gitRootPath, ...args);
     }
-    private async execInShell(...args: string[]): Promise<string> {
+    private async execBinary(destination: Writable, ...args: string[]): Promise<void> {
         const gitRootPath = await this.getGitRoot();
-        return this.gitCmdExecutor.exec({ cwd: gitRootPath, shell: true }, ...args);
+        return this.gitCmdExecutor.exec({ cwd: gitRootPath, encoding: 'binary' }, destination, ...args);
     }
     // how to check if a commit has been merged into any other branch
     //  $ git branch --all --contains 019daf673583208aaaf8c3f18f8e12696033e3fc

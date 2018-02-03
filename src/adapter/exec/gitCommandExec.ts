@@ -1,7 +1,9 @@
 import { spawn } from 'child_process';
 import * as iconv from 'iconv-lite';
 import { inject, injectable, multiInject } from 'inversify';
+import { Writable } from 'stream';
 import { Disposable } from 'vscode';
+import { StopWatch } from '../../common/stopWatch';
 import { ILogService } from '../../common/types';
 import { IGitExecutableLocator } from '../locator';
 import { IGitCommandExecutor } from './types';
@@ -16,18 +18,24 @@ export class GitCommandExecutor implements IGitCommandExecutor {
     }
     public async exec(cwd: string, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:unified-signatures
-    public async exec(options: { cwd: string, shell?: boolean, encoding?: string }, ...args: string[]): Promise<string>;
+    public async exec(options: { cwd: string; shell?: boolean }, ...args: string[]): Promise<string>;
+    public async exec(options: { cwd: string; encoding: 'binary' }, destination: Writable, ...args: string[]): Promise<void>;
     // tslint:disable-next-line:no-any
-    public async exec(options: any, ...args: string[]): Promise<string> {
+    public async exec(options: any, ...args: any[]): Promise<any> {
         let gitPath = await this.gitExecLocator.getGitPath();
         gitPath = isWindows ? gitPath.replace(/\\/g, '/') : gitPath;
         const childProcOptions = typeof options === 'string' ? { cwd: options, encoding: DEFAULT_ENCODING } : options;
         if (typeof childProcOptions.encoding !== 'string' || childProcOptions.encoding.length === 0) {
             childProcOptions.encoding = DEFAULT_ENCODING;
         }
-
-        const gitShow = spawn(gitPath, args, childProcOptions);
-
+        const binaryOuput = childProcOptions.encoding === 'binary';
+        const destination: Writable = binaryOuput ? args.shift()! : undefined;
+        const gitPathCommand = childProcOptions.shell && gitPath.indexOf(' ') > 0 ? `"${gitPath}"` : gitPath;
+        const stopWatch = new StopWatch();
+        const gitShow = spawn(gitPathCommand, args, childProcOptions);
+        if (binaryOuput) {
+            gitShow.stdout.pipe(destination);
+        }
         const disposables: Disposable[] = [];
         const on = (ee: NodeJS.EventEmitter, name: string, fn: Function) => {
             ee.on(name, fn);
@@ -35,25 +43,28 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         };
 
         const buffers: Buffer[] = [];
-        on(gitShow.stdout, 'data', (data: Buffer) => buffers.push(data));
-
+        if (!binaryOuput) {
+            on(gitShow.stdout, 'data', (data: Buffer) => buffers.push(data));
+        }
         const errBuffers: Buffer[] = [];
         on(gitShow.stderr, 'data', (data: Buffer) => errBuffers.push(data));
 
-        return new Promise<string>((resolve, reject) => {
+        // tslint:disable-next-line:no-any
+        return new Promise<any>((resolve, reject) => {
             gitShow.once('close', () => {
                 if (errBuffers.length > 0) {
-                    const stdErr = decode(errBuffers, childProcOptions.encoding);
+                    let stdErr = decode(errBuffers, childProcOptions.encoding);
+                    stdErr = stdErr.startsWith('error: ') ? stdErr.substring('error: '.length) : stdErr;
                     this.loggers.forEach(logger => {
-                        logger.log('git', ...args);
+                        logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
                         logger.error(stdErr);
                     });
                     reject(stdErr);
                 } else {
-                    const stdOut = decode(buffers, childProcOptions.encoding);
+                    const stdOut = binaryOuput ? undefined : decode(buffers, childProcOptions.encoding);
                     this.loggers.forEach(logger => {
-                        logger.log('git', ...args);
-                        logger.trace(stdOut);
+                        logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
+                        logger.trace(binaryOuput ? '<binary>' : stdOut);
                     });
                     resolve(stdOut);
                 }
@@ -62,7 +73,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
             gitShow.once('error', ex => {
                 reject(ex);
                 this.loggers.forEach(logger => {
-                    logger.log('git', ...args);
+                    logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
                     logger.error(ex);
                 });
                 disposables.forEach(disposable => disposable.dispose());

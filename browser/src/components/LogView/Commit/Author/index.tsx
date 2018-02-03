@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { ActionedDetails } from '../../../../definitions';
 import { RootState } from '../../../../reducers/index';
 
-interface AuthorProps {
+type AuthorProps = {
     result: ActionedDetails;
     locale: string;
-}
+};
 
 // tslint:disable-next-line:function-name
 function Author(props: AuthorProps) {

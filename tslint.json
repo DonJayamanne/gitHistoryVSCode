@@ -55,6 +55,7 @@
         "no-implicit-dependencies": false,
         "no-submodule-imports": false,
         "no-duplicate-imports": false,
-        "space-within-parens": false
+        "space-within-parens": false,
+        "no-parameter-reassignment": false
     }
 }

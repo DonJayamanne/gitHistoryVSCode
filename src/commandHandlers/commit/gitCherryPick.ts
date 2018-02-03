@@ -14,13 +14,13 @@ export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler
         @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
 
     @command('git.commit.cherryPick', IGitCherryPickCommandHandler)
-    public async cherryPickCommit(commit: CommitDetails) {
+    public async cherryPickCommit(commit: CommitDetails, showPrompt: boolean = true) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
         const currentBranch = await gitService.getCurrentBranch();
 
         const msg = `Cherry pick ${commit.logEntry.hash.short} into ${currentBranch}?`;
-        const yesNo = await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg });
+        const yesNo = showPrompt ? await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg }) : 'Yes';
 
         if (yesNo === undefined || yesNo === 'No') {
             return;

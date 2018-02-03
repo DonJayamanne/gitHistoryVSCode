@@ -155,7 +155,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                         fictionalBranches = [];
                     }
                     // Generate at least 10 fictional branches, so we can lay them out neatly
-                    for (let counter = 1; counter < 11; counter++) {
+                    for (let counter = 1; counter < 50; counter++) {
                         let newOrigX = (index + 1 + counter) * xOffset;
                         let fictionalBranch = 'M ' + newOrigX + ' ' + currentY + ' L ' + newOrigX + ' ' + topMostY + ' L ' + newOrigX + ' ';
                         fictionalBranches.push({ path: fictionalBranch, x: newOrigX });
@@ -347,7 +347,8 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 
 function mapStateToProps(state: RootState): BranchGrapProps {
     const hideGraph = (state && state.logEntries) && ((state.logEntries.searchText && state.logEntries.searchText.length > 0) ||
-        (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0));
+        (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0) ||
+        (state.logEntries.author && state.logEntries.author.length > 0));
 
     return {
         logEntries: state.logEntries.items,

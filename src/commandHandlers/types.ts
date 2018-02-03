@@ -29,6 +29,11 @@ export interface IGitCommitViewExplorerCommandHandler extends ICommandHandler {
     showCommitView(commit: CommitDetails | undefined): Promise<void>;
 }
 
+export const IFileCommandHandler = Symbol('IFileCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IFileCommandHandler extends ICommandHandler {
+}
+
 export const IGitCompareCommitViewExplorerCommandHandler = Symbol('IGitCompareCommitViewExplorerCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCompareCommitViewExplorerCommandHandler extends ICommandHandler {
@@ -53,6 +58,12 @@ export const IGitCherryPickCommandHandler = Symbol('IGitCherryPickCommandHandler
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCherryPickCommandHandler extends ICommandHandler {
     cherryPickCommit(commit: CommitDetails): Promise<void>;
+}
+
+export const IGitRevertCommandHandler = Symbol('IGitRevertCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitRevertCommandHandler extends ICommandHandler {
+    revertCommit(commit: CommitDetails, showPrompt?: boolean): Promise<void>;
 }
 
 export const IGitBranchFromCommitCommandHandler = Symbol('IGitBranchFromCommitCommandHandler');
