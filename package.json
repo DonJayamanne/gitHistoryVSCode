@@ -77,10 +77,6 @@
                 "title": "Git: Show Commit Comparison View Explorer"
             },
             {
-                "command": "git.viewFileHistory",
-                "title": "Git: View File History"
-            },
-            {
                 "command": "git.viewLineHistory",
                 "title": "Git: View Line History"
             },
