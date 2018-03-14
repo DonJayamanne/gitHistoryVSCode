@@ -153,6 +153,10 @@
                 "title": "Show folder view"
             },
             {
+                "command": "git.commit.merge",
+                "title": "Merge with this commit"
+            },
+            {
                 "command": "git.commit.view.showFilesOnly",
                 "title": "Show files only"
             },
@@ -274,6 +278,11 @@
                 },
                 {
                     "command": "git.commit.createBranch",
+                    "when": "view == commitViewProvider && git.commit.selected",
+                    "group": "zMoreSubMenuItems"
+                },
+                {
+                    "command": "git.commit.merge",
                     "when": "view == commitViewProvider && git.commit.selected",
                     "group": "zMoreSubMenuItems"
                 },

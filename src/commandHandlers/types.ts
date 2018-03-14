@@ -60,6 +60,12 @@ export interface IGitCherryPickCommandHandler extends ICommandHandler {
     cherryPickCommit(commit: CommitDetails): Promise<void>;
 }
 
+export const IGitMergeCommandHandler = Symbol('IGitMergeCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitMergeCommandHandler extends ICommandHandler {
+    merge(commit: CommitDetails): Promise<void>;
+}
+
 export const IGitRevertCommandHandler = Symbol('IGitRevertCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitRevertCommandHandler extends ICommandHandler {

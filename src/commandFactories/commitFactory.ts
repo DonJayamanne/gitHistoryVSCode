@@ -1,8 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitRevertCommandHandler } from '../commandHandlers/types';
+import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitMergeCommandHandler, IGitRevertCommandHandler } from '../commandHandlers/types';
 import { CherryPickCommand } from '../commands/commit/cherryPick';
 import { CompareCommand } from '../commands/commit/compare';
 import { CreateBranchCommand } from '../commands/commit/createBranch';
+import { MergeCommand } from '../commands/commit/merge';
 import { RevertCommand } from '../commands/commit/revert';
 import { SelectForComparison } from '../commands/commit/selectForComparion';
 import { ViewDetailsCommand } from '../commands/commit/viewDetails';
@@ -14,6 +15,7 @@ export class CommitCommandFactory implements ICommitCommandFactory {
     constructor( @inject(IGitBranchFromCommitCommandHandler) private branchCreationCommandHandler: IGitBranchFromCommitCommandHandler,
         @inject(IGitCherryPickCommandHandler) private cherryPickHandler: IGitCherryPickCommandHandler,
         @inject(IGitCompareCommandHandler) private compareHandler: IGitCompareCommandHandler,
+        @inject(IGitMergeCommandHandler) private mergeHandler: IGitMergeCommandHandler,
         @inject(IGitRevertCommandHandler) private revertHandler: IGitRevertCommandHandler,
         @inject(IGitCommitViewDetailsCommandHandler) private viewChangeLogHandler: IGitCommitViewDetailsCommandHandler) { }
     public async createCommands(commit: CommitDetails): Promise<ICommand<CommitDetails>[]> {
@@ -23,7 +25,8 @@ export class CommitCommandFactory implements ICommitCommandFactory {
             new ViewDetailsCommand(commit, this.viewChangeLogHandler),
             new SelectForComparison(commit, this.compareHandler),
             new RevertCommand(commit, this.revertHandler),
-            new CompareCommand(commit, this.compareHandler)
+            new CompareCommand(commit, this.compareHandler),
+            new MergeCommand(commit, this.mergeHandler)
         ];
 
         return (await Promise.all(commands.map(async cmd => {
