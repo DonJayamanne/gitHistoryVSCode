@@ -157,6 +157,10 @@
                 "title": "Merge with this commit"
             },
             {
+                "command": "git.commit.rebase",
+                "title": "Rebase onto this commit"
+            },
+            {
                 "command": "git.commit.view.showFilesOnly",
                 "title": "Show files only"
             },
@@ -283,6 +287,11 @@
                 },
                 {
                     "command": "git.commit.merge",
+                    "when": "view == commitViewProvider && git.commit.selected",
+                    "group": "zMoreSubMenuItems"
+                },
+                {
+                    "command": "git.commit.rebase",
                     "when": "view == commitViewProvider && git.commit.selected",
                     "group": "zMoreSubMenuItems"
                 },

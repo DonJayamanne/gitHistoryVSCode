@@ -5,43 +5,28 @@ import { IServiceContainer } from '../../ioc/types';
 import { IGitServiceFactory } from '../../types';
 import { ICommitViewerFactory } from '../../viewers/types';
 import { command } from '../registration';
-import { IGitMergeCommandHandler } from '../types';
+import { IGitRebaseCommandHandler } from '../types';
 
 @injectable()
-export class GitMergeCommandHandler implements IGitMergeCommandHandler {
+export class GitRebaseCommandHandler implements IGitRebaseCommandHandler {
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
 
-    @command('git.commit.merge', IGitMergeCommandHandler)
-    public async merge(commit: CommitDetails, showPrompt: boolean = true) {
+    @command('git.commit.rebase', IGitRebaseCommandHandler)
+    public async rebase(commit: CommitDetails, showPrompt: boolean = true) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
         const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
         const currentBranch = await gitService.getCurrentBranch();
 
-        const commitBranches = (await gitService.getRefsContainingCommit(commit.logEntry.hash.full))
-            .filter(value => value.length > 0);
-        const branchMsg = `Choose the commit/branch to merge into ${currentBranch}`;
-        const rev = await this.applicationShell.showQuickPick([commit.logEntry.hash.full, ...commitBranches], { placeHolder: branchMsg });
-
-        let type: string;
-        if (rev === undefined || rev.length === 0) {
-            return;
-        }
-        if (rev === commit.logEntry.hash.full) {
-            type = 'commit';
-        } else {
-            type = 'branch';
-        }
-
-        const msg = `Merge ${type} '${rev}' into ${currentBranch}?`;
+        const msg = `Rebase ${currentBranch} onto '${commit.logEntry.hash.short}'?`;
         const yesNo = showPrompt ? await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg }) : 'Yes';
 
         if (yesNo === undefined || yesNo === 'No') {
             return;
         }
 
-        gitService.merge(rev)
+        gitService.rebase(commit.logEntry.hash.full)
             .catch(err => {
                 if (typeof err === 'string') {
                     this.applicationShell.showErrorMessage(err);

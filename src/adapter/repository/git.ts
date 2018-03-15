@@ -362,6 +362,9 @@ export class Git implements IGitService {
     public async merge(hash: string): Promise<void> {
         await this.exec('merge', hash);
     }
+    public async rebase(hash: string): Promise<void> {
+        await this.exec('rebase', hash);
+    }
     private async exec(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
         return this.gitCmdExecutor.exec(gitRootPath, ...args);

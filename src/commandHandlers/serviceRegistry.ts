@@ -7,13 +7,14 @@ import { GitCherryPickCommandHandler } from './commit/gitCherryPick';
 import { GitCommitCommandHandler } from './commit/gitCommit';
 import { GitCommitViewDetailsCommandHandler } from './commit/gitCommitDetails';
 import { GitMergeCommandHandler } from './commit/gitMerge';
+import { GitRebaseCommandHandler } from './commit/gitRebase';
 import { GitRevertCommandHandler } from './commit/revert';
 import { FileCommandHandler } from './file/file';
 import { GitCompareFileCommitCommandHandler } from './fileCommit/fileCompare';
 import { GitFileHistoryCommandHandler } from './fileCommit/fileHistory';
 import { GitHistoryCommandHandler } from './gitHistory';
 import { CommandHandlerManager } from './handlerManager';
-import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRevertCommandHandler } from './types';
+import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from './types';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler, GitFileHistoryCommandHandler);
@@ -28,12 +29,14 @@ export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitCompareCommitViewExplorerCommandHandler>(IGitCompareCommitViewExplorerCommandHandler, GitCompareCommitViewExplorerCommandHandler);
     serviceManager.addSingleton<IFileCommandHandler>(IFileCommandHandler, FileCommandHandler);
     serviceManager.addSingleton<IGitMergeCommandHandler>(IGitMergeCommandHandler, GitMergeCommandHandler);
+    serviceManager.addSingleton<IGitRebaseCommandHandler>(IGitRebaseCommandHandler, GitRebaseCommandHandler);
     serviceManager.addSingleton<IGitRevertCommandHandler>(IGitRevertCommandHandler, GitRevertCommandHandler);
 
     [IGitFileHistoryCommandHandler, IGitBranchFromCommitCommandHandler, IGitHistoryCommandHandler,
         IGitCommitCommandHandler, IGitCherryPickCommandHandler, IGitCompareFileCommandHandler,
         IGitCommitViewExplorerCommandHandler, IGitCompareCommitViewExplorerCommandHandler,
-        IFileCommandHandler, IGitMergeCommandHandler, IGitRevertCommandHandler].forEach(serviceIdentifier => {
+        IFileCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler,
+        IGitRevertCommandHandler].forEach(serviceIdentifier => {
             const instance = serviceManager.get<ICommandHandler>(serviceIdentifier);
             serviceManager.addSingletonInstance<ICommandHandler>(ICommandHandler, instance);
         });
