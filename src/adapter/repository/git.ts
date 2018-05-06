@@ -41,7 +41,7 @@ export class Git implements IGitService {
     @cache('IGitService', 5 * 60 * 1000)
     public async getGitRoots(rootDirectory?: string): Promise<string[]> {
         // Lets not enable support for sub modules for now.
-        if (rootDirectory && (this.knownGitRoots.has(rootDirectory) || this.knownGitRoots.has(Uri.parse(rootDirectory).fsPath))) {
+        if (rootDirectory && (this.knownGitRoots.has(rootDirectory) || this.knownGitRoots.has(Uri.file(rootDirectory).fsPath))) {
             return [rootDirectory];
         }
         const rootDirectories: string[] = [];

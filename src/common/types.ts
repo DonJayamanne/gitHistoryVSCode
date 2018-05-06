@@ -19,7 +19,7 @@ export const IUiService = Symbol('IUiService');
 
 export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
-    getWorkspaceFolder(uri?: Uri): Promise<string | undefined>;
+    getWorkspaceFolder(uri?: Uri): Promise<{ workspaceFolder: string; gitRoot: string } | undefined>;
     selectFileCommitCommandAction(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined>;
     selectCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined>;
 }
