@@ -6,7 +6,7 @@ import { IActionDetailsParser, IFileStatParser, ILogParser, IRefsParser } from '
 
 @injectable()
 export class LogParser implements ILogParser {
-    constructor( @inject(IRefsParser) private refsparser: IRefsParser,
+    constructor(@inject(IRefsParser) private refsparser: IRefsParser,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IActionDetailsParser) private actionDetailsParser: IActionDetailsParser) {
 
@@ -20,6 +20,7 @@ export class LogParser implements ILogParser {
         const committedFiles = this.parserCommittedFiles(gitRepoPath, filesWithNumStat, filesWithNameStatus);
 
         return {
+            gitRoot: gitRepoPath,
             refs: this.refsparser.parse(this.getCommitInfo(logItems, logFormatArgs, CommitInfo.RefsNames)),
             author: this.getAuthorInfo(logItems, logFormatArgs),
             committer: this.getCommitterInfo(logItems, logFormatArgs),

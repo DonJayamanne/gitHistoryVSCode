@@ -9,7 +9,7 @@ export class CommitFileViewerProvider implements TextDocumentContentProvider {
 
     public async provideTextDocumentContent(uri: Uri, _token: CancellationToken): Promise<string> {
         const query = querystring.parse(uri.query) as { workspaceFolder: string; hash: string; fsPath: string };
-        const gitService = this.svcContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(query.workspaceFolder);
+        const gitService = await this.svcContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(query.workspaceFolder, Uri.parse(query.fsPath));
         return gitService.getCommitFileContent(query.hash, Uri.parse(query.fsPath));
     }
 }

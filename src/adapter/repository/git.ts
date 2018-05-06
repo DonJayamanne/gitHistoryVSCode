@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import { inject, injectable } from 'inversify';
+import * as _ from 'lodash';
 import * as path from 'path';
 import { Writable } from 'stream';
 import * as tmp from 'tmp';
@@ -16,12 +17,15 @@ import { IGitArgsService } from './types';
 
 @injectable()
 export class Git implements IGitService {
-    private gitRootPath: string;
+    private gitRootPath: string | undefined;
+    private knownGitRoots: Set<string>;
     constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
         private workspaceRoot: string,
+        private resource: Uri,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
+        this.knownGitRoots = new Set<string>();
     }
     public getHashCode() {
         return this.workspaceRoot;
@@ -32,8 +36,33 @@ export class Git implements IGitService {
         if (this.gitRootPath) {
             return this.gitRootPath;
         }
-        const gitRootPath = await this.gitCmdExecutor.exec(this.workspaceRoot, ...this.gitArgsService.getGitRootArgs());
+        const gitRootPath = await this.gitCmdExecutor.exec(this.resource.fsPath, ...this.gitArgsService.getGitRootArgs());
         return this.gitRootPath = gitRootPath.split(/\r?\n/g)[0].trim();
+    }
+    @cache('IGitService', 5 * 60 * 1000)
+    public async getGitRoots(rootDirectory?: string): Promise<string[]> {
+        // Lets not enable support for sub modules for now.
+        if (rootDirectory && (this.knownGitRoots.has(rootDirectory) || this.knownGitRoots.has(Uri.parse(rootDirectory).fsPath))) {
+            return [rootDirectory];
+        }
+        const rootDirectories: string[] = [];
+        if (rootDirectory) {
+            rootDirectories.push(rootDirectory);
+        } else {
+            const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
+            const workspaceFolders = Array.isArray(workspace.workspaceFolders) ? workspace.workspaceFolders.map(item => item.uri.fsPath) : [];
+            rootDirectories.push(...workspaceFolders);
+        }
+        if (rootDirectories.length === 0) {
+            return [];
+        }
+
+        const gitFoldersList = await Promise.all(rootDirectories.map(item => this.getGitReposInFolder(item)));
+        const gitRoots = _.uniq(_.flatten(gitFoldersList));
+        gitRoots.forEach(item => {
+            this.knownGitRoots.add(item);
+        });
+        return gitRoots;
     }
     public async getGitRelativePath(file: Uri | FsUri) {
         if (!path.isAbsolute(file.fsPath)) {
@@ -95,6 +124,7 @@ export class Git implements IGitService {
     @cache('IGitService', 30 * 1000)
     public async getBranches(): Promise<Branch[]> {
         const output = await this.exec('branch');
+        const gitRootPath = await this.getGitRoot();
         return output.split(/\r?\n/g)
             .filter(line => line.trim())
             .filter(line => line.length > 0)
@@ -102,6 +132,7 @@ export class Git implements IGitService {
                 const isCurrent = line.startsWith('*');
                 const name = isCurrent ? line.substring(1).trim() : line.trim();
                 return {
+                    gitRootPath,
                     name,
                     current: isCurrent
                 };
@@ -196,6 +227,7 @@ export class Git implements IGitService {
         const headHashMap = new Map<string, string>(headHashes.map(item => [item.ref, item.hash] as [string, string]));
 
         items.forEach(async item => {
+            item.gitRoot = gitRepoPath;
             // Check if this the very last commit of a branch
             // Just check if this is a head commit (if shows up in 'git show-ref')
             item.isLastCommit = headHashesOnly.indexOf(item.hash.full) >= 0;
@@ -377,6 +409,37 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         return this.gitCmdExecutor.exec({ cwd: gitRootPath, encoding: 'binary' }, destination, ...args);
     }
+    private async getGitReposInFolder(dir: string): Promise<string[]> {
+        return new Promise<string[]>(resolve => {
+            fs.readdir(dir, async (err, filesAndFolders) => {
+                if (err) {
+                    return resolve([]);
+                }
+                // Lets ignore folders begining with '.' (hopeufully no one will have them).
+                // Ignore python virtual environments, etc.
+                const filteredItems = filesAndFolders
+                    .filter(item => !item.startsWith('.'))
+                    .map(item => path.join(dir, item));
+                filteredItems.push(dir);
+
+                const folders = await Promise.all<string>(filteredItems.filter(async item => (await fs.stat(item)).isDirectory()));
+                const gitRootArgs = this.gitArgsService.getGitRootArgs();
+                const gitRoots = (await Promise.all(folders.map(async item => {
+                    try {
+                        const result = await this.gitCmdExecutor.exec(item, ...gitRootArgs);
+                        return path.normalize(result.split(/\r?\n/g)[0].trim());
+                    } catch {
+                        return;
+                    }
+                })))
+                    .filter(item => !!item)
+                    .map(item => item!);
+
+                resolve(gitRoots);
+            });
+        });
+    }
+
     // how to check if a commit has been merged into any other branch
     //  $ git branch --all --contains 019daf673583208aaaf8c3f18f8e12696033e3fc
     //  remotes/origin/chrmarti/azure-account
