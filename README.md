@@ -17,6 +17,7 @@
     * Reverting commits
     * Create branches from a commits
     * View commit information in a treeview (snapshot of all changes)
+    * Merge and rebase
 
 Open the file to view the history, and then
 Press F1 and select/type "Git: View History", "Git: View File History" or "Git: View Line History".
@@ -43,7 +44,7 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ## Thanks
 
-[Domenico Gemoli](https://github.com/aberonni): Ability to hide the `Git History` icon [#186](https://github.com/DonJayamanne/gitHistoryVSCode/issues/186)
+[Olivier Sechet](https://github.com/osechet): Add merge and rebase commands to history view [#247](https://github.com/DonJayamanne/gitHistoryVSCode/pull/247)
 
 ## Source
 
