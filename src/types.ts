@@ -140,6 +140,8 @@ export interface IGitService {
     cherryPick(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
     getOriginType(): Promise<GitOriginType | undefined>;
+    merge(hash: string): Promise<void>;
+    rebase(hash: string): Promise<void>;
 }
 
 export type CommitComparison = {

@@ -7,7 +7,7 @@ import { Uri } from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
-import { Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry, ActionedUser } from '../../types';
+import { ActionedUser, Branch, CommittedFile, FsUri, Hash, IGitService, LogEntries, LogEntry } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
@@ -361,6 +361,12 @@ export class Git implements IGitService {
 
     public async createBranch(branchName: string, hash: string): Promise<void> {
         await this.exec('checkout', '-b', branchName, hash);
+    }
+    public async merge(hash: string): Promise<void> {
+        await this.exec('merge', hash);
+    }
+    public async rebase(hash: string): Promise<void> {
+        await this.exec('rebase', hash);
     }
     private async exec(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
