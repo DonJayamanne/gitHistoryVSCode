@@ -464,6 +464,7 @@
         "hint.css": "^2.4.1",
         "iconv-lite": "^0.4.19",
         "inversify": "^4.3.0",
+        "lodash": "^4.17.10",
         "md5": "^2.2.1",
         "normalize.css": "^5.0.0",
         "octicons": "^6.0.1",
