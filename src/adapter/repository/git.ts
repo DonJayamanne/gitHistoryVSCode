@@ -125,17 +125,20 @@ export class Git implements IGitService {
     }
     @cache('IGitService')
     public async getOriginType(): Promise<GitOriginType | undefined> {
-        return this.exec('remote', 'get-url', 'origin')
-            .then(url => {
-                if (url.indexOf('github.com/') > 0) {
-                    return GitOriginType.github;
-                } else if (url.indexOf('bitbucket') > 0) {
-                    return GitOriginType.bitbucket;
-                } else {
-                    return undefined;
-                }
-            })
-            .catch(() => undefined);
+        try {
+            return this.exec('remote', 'get-url', 'origin')
+                .then(url => {
+                    if (url.indexOf('github.com/') > 0) {
+                        return GitOriginType.github;
+                    } else if (url.indexOf('bitbucket') > 0) {
+                        return GitOriginType.bitbucket;
+                    } else {
+                        return undefined;
+                    }
+                });
+        } catch {
+            return;
+        }
     }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
         const args = this.gitArgsService.getRefsContainingCommitArgs(hash);
