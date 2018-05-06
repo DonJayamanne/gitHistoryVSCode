@@ -1,3 +1,6 @@
+## Version 0.4.1
+- Use new VS Code API to display the Git Log (with better performance) [#265](https://github.com/DonJayamanne/gitHistoryVSCode/issues/265)
+
 ## Version 0.4.0
 - Fix display of random avatars [#230](https://github.com/DonJayamanne/gitHistoryVSCode/pull/230), [#229](https://github.com/DonJayamanne/gitHistoryVSCode/pull/229), [#228](https://github.com/DonJayamanne/gitHistoryVSCode/pull/228), [#227](https://github.com/DonJayamanne/gitHistoryVSCode/pull/227)
 
