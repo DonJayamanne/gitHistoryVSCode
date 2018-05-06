@@ -132,7 +132,7 @@ export class Git implements IGitService {
                 const isCurrent = line.startsWith('*');
                 const name = isCurrent ? line.substring(1).trim() : line.trim();
                 return {
-                    gitRootPath,
+                    gitRoot: gitRootPath,
                     name,
                     current: isCurrent
                 };

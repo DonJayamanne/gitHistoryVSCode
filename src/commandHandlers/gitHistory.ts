@@ -133,5 +133,6 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         if (selectedItem) {
             return selectedItem.gitRoot;
         }
+        return;
     }
 }
