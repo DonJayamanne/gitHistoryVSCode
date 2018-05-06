@@ -17,7 +17,7 @@ import { IGitArgsService } from './types';
 @injectable()
 export class Git implements IGitService {
     private gitRootPath: string;
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
         private workspaceRoot: string,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
@@ -145,6 +145,7 @@ export class Git implements IGitService {
         const entries = await this.exec(...args);
         return entries.split(/\r?\n/g)
             .map(line => line.trim())
+            .filter(line => line.length > 0)
             // Remove the '*' prefix from current branch
             .map(line => line.startsWith('*') ? line.substring(1) : line)
             // Remove the '->' from ref pointers (take first portion)
