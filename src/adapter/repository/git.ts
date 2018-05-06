@@ -57,7 +57,7 @@ export class Git implements IGitService {
         }
 
         const gitFoldersList = await Promise.all(rootDirectories.map(item => this.getGitReposInFolder(item)));
-        const gitRoots = gitFoldersList.reduce<string[]>((aggregate, items) => { aggregate.push(...items); return aggregate; }, [])
+        const gitRoots = gitFoldersList.reduce<string[]>((aggregate, items) => { aggregate.push(...items); return aggregate; }, []);
         gitRoots.forEach(item => this.knownGitRoots.add(item));
         return gitRoots;
     }
