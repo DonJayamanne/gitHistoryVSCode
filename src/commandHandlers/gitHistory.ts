@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import * as md5 from 'md5';
 import * as osLocale from 'os-locale';
 import * as path from 'path';
-import { Uri, ViewColumn, window } from 'vscode';
+import { Uri, window, ViewColumn } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { FileCommitDetails, IUiService } from '../common/types';
@@ -16,15 +16,15 @@ import { IGitHistoryCommandHandler } from './types';
 
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
-    private _server: IServerHost;
+    private _server?: IServerHost;
     private get server(): IServerHost {
         if (!this._server) {
             this._server = this.serviceContainer.get<IServerHost>(IServerHost);
             this.disposableRegistry.register(this._server);
         }
-        return this._server;
+        return this._server!;
     }
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
         @inject(ICommandManager) private commandManager: ICommandManager) { }
 
@@ -98,10 +98,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         const uri = `${previewUri}?${queryArgs.join('&')}`;
 
         let title = fileUri ? `File History (${path.basename(fileUri.fsPath)})` : 'Git History';
-        if (fileUri && typeof lineNumber === 'number'){
+        if (fileUri && typeof lineNumber === 'number') {
             title = `Line History (${path.basename(fileUri.fsPath)}#${lineNumber})`;
         }
 
-        this.commandManager.executeCommand('vscode.previewHtml', uri, ViewColumn.One, title);
+        this.commandManager.executeCommand('previewHtml', uri, ViewColumn.One, title);
     }
 }

@@ -37,6 +37,7 @@ import { getLogChannel } from './logger';
 import { registerTypes as registerNodeBuilderTypes } from './nodes/serviceRegistry';
 import { registerTypes as registerPlatformTypes } from './platform/serviceRegistry';
 import { ContentProvider } from './server/contentProvider';
+import { HtmlViewer } from './server/htmlViewer';
 import { ServerHost } from './server/serverHost';
 import { StateStore } from './server/stateStore';
 import { ThemeService } from './server/themeService';
@@ -62,12 +63,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     cont.bind<IUiService>(IUiService).to(UiService).inSingletonScope();
     cont.bind<IThemeService>(IThemeService).to(ThemeService).inSingletonScope();
     cont.bind<ICommitViewFormatter>(ICommitViewFormatter).to(CommitViewFormatter).inSingletonScope();
-    // cont.bind<IServerHost>(IServerHost).to(ServerHost).inSingletonScope();
     cont.bind<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).to(StateStore).inSingletonScope();
     cont.bind<OutputChannel>(IOutputChannel).toConstantValue(getLogChannel());
     cont.bind<Memento>('globalMementoStore').toConstantValue(context.globalState);
     cont.bind<Memento>('workspaceMementoStore').toConstantValue(context.workspaceState);
-    // cont.bind<FileStatParser>(FileStatParser).to(FileStatParser);
 
     registerParserTypes(serviceManager);
     registerRepositoryTypes(serviceManager);
@@ -96,11 +95,5 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 
     const commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
     commandManager.executeCommand('setContext', 'git.commit.view.show', true);
-
-    // fileHistory.activate(context);
-    // lineHistory.activate(context);
-    // searchHistory.activate(context);
-    // commitViewer.activate(context, logViewer.getGitRepoPath);
-    // logViewer.activate(context);
-    // commitComparer.activate(context, logViewer.getGitRepoPath);
+    context.subscriptions.push(new HtmlViewer(serviceContainer));
 }

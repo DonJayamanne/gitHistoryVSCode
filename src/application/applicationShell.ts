@@ -38,7 +38,7 @@ export class ApplicationShell implements IApplicationShell {
     public showQuickPick(items: string[] | Thenable<string[]>, options?: vscode.QuickPickOptions, token?: vscode.CancellationToken): Thenable<string>;
     public showQuickPick<T extends vscode.QuickPickItem>(items: T[] | Thenable<T[]>, options?: vscode.QuickPickOptions, token?: vscode.CancellationToken): Thenable<T>;
     // tslint:disable-next-line:no-any
-    public showQuickPick(items: any, options?: any, token?: any) {
+    public showQuickPick(items: any, options?: any, token?: any): Thenable<any> {
         return vscode.window.showQuickPick(items, options, token);
     }
 
