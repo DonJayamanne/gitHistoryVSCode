@@ -1,6 +1,5 @@
 import * as fs from 'fs-extra';
 import { inject, injectable } from 'inversify';
-import * as _ from 'lodash';
 import * as path from 'path';
 import { Writable } from 'stream';
 import * as tmp from 'tmp';
@@ -58,10 +57,8 @@ export class Git implements IGitService {
         }
 
         const gitFoldersList = await Promise.all(rootDirectories.map(item => this.getGitReposInFolder(item)));
-        const gitRoots = _.uniq(_.flatten(gitFoldersList));
-        gitRoots.forEach(item => {
-            this.knownGitRoots.add(item);
-        });
+        const gitRoots = gitFoldersList.reduce<string[]>((aggregate, items) => { aggregate.push(...items); return aggregate; }, [])
+        gitRoots.forEach(item => this.knownGitRoots.add(item));
         return gitRoots;
     }
     public async getGitRelativePath(file: Uri | FsUri) {
