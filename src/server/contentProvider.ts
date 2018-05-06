@@ -38,7 +38,6 @@ export class ContentProvider implements TextDocumentContentProvider {
             logger.log(`Server running on ${uri}`);
         });
 
-
         return `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
