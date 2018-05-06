@@ -18,7 +18,7 @@ export class GitServiceFactory implements IGitServiceFactory {
 
     }
     public async createGitService(workspaceRoot: string, resource: Uri | string): Promise<IGitService> {
-        const resourceUri = typeof resource === 'string' ? Uri.parse(resource) : resource;
+        const resourceUri = typeof resource === 'string' ? Uri.file(resource) : resource;
 
         const id = md5(workspaceRoot + resourceUri.fsPath);
         if (!this.gitServices.has(id)) {

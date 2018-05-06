@@ -301,6 +301,6 @@ export class ApiController implements IApiRouteHandler {
     }
     private async getRepository(id: string): Promise<IGitService> {
         const workspaceFolder = this.getWorkspace(id);
-        return this.gitServiceFactory.createGitService(workspaceFolder, Uri.parse(this.getGitRoot(id)));
+        return this.gitServiceFactory.createGitService(workspaceFolder, Uri.file(this.getGitRoot(id)));
     }
 }

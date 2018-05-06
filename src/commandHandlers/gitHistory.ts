@@ -2,8 +2,8 @@ import { inject, injectable } from 'inversify';
 import * as md5 from 'md5';
 import * as osLocale from 'os-locale';
 import * as path from 'path';
-import { QuickPickItem, Uri, ViewColumn, window } from 'vscode';
-import { IApplicationShell, ICommandManager } from '../application/types';
+import { Uri, ViewColumn, window } from 'vscode';
+import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { FileCommitDetails, IUiService } from '../common/types';
 import { previewUri } from '../constants';
@@ -72,27 +72,19 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
 
     public async viewHistory(fileUri?: Uri, lineNumber?: number): Promise<void> {
         const uiService = this.serviceContainer.get<IUiService>(IUiService);
-        const workspaceFolder = await uiService.getWorkspaceFolder(fileUri);
-        if (!workspaceFolder) {
+        const selection = await uiService.getWorkspaceFolder(fileUri);
+        if (!selection) {
             return undefined;
         }
-        let gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder, fileUri ? fileUri.fsPath : workspaceFolder);
-        const gitRoots = await gitService.getGitRoots(fileUri ? fileUri.fsPath : workspaceFolder);
-        if (gitRoots.length > 1) {
-            const selectedGitRoot = gitRoots.length === 0 ? workspaceFolder : (gitRoots.length === 1 ? gitRoots[0]! : await this.selectGitRoot(gitRoots));
-            if (!selectedGitRoot) {
-                return undefined;
-            }
-            gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder, selectedGitRoot);
-        }
-
-        const gitRootPromise = gitService.getGitRoot();
+        const workspaceFolder = selection.workspaceFolder;
+        const gitRoot = selection.gitRoot;
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder, gitRoot);
         const branchNamePromise = gitService.getCurrentBranch();
         const startupInfoPromise = this.server!.start(workspaceFolder);
         const localePromise = osLocale();
         const gitRootsUnderWorkspacePromise = gitService.getGitRoots(workspaceFolder);
 
-        const [gitRoot, branchName, startupInfo, locale, gitRootsUnderWorkspace] = await Promise.all([gitRootPromise, branchNamePromise, startupInfoPromise, localePromise, gitRootsUnderWorkspacePromise]);
+        const [branchName, startupInfo, locale, gitRootsUnderWorkspace] = await Promise.all([branchNamePromise, startupInfoPromise, localePromise, gitRootsUnderWorkspacePromise]);
 
         // Do not include the search string into this
         const fullId = `${startupInfo.port}:${BranchSelection.Current}:${fileUri ? fileUri.fsPath : ''}:${gitRoot}`;
@@ -114,25 +106,5 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         }
 
         this.commandManager.executeCommand('previewHtml', uri, ViewColumn.One, title);
-    }
-    private async selectGitRoot(gitRoots: string[]) {
-        const app = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
-        type itemType = QuickPickItem & { gitRoot: string };
-        const pickList: itemType[] = gitRoots.map(item => {
-            return {
-                label: path.basename(item),
-                detail: item,
-                gitRoot: item
-            };
-        });
-        const options = {
-            canPickMany: false, matchOnDescription: true,
-            matchOnDetail: true, placeHolder: 'Select a Git Repository'
-        };
-        const selectedItem = await app.showQuickPick(pickList, options);
-        if (selectedItem) {
-            return selectedItem.gitRoot;
-        }
-        return;
     }
 }
