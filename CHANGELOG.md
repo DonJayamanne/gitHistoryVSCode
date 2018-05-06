@@ -2,6 +2,7 @@
 - Use new VS Code API to display the Git Log (with better performance) [#265](https://github.com/DonJayamanne/gitHistoryVSCode/issues/265)
 - Remove duplicate command from `package.json` [#263](https://github.com/DonJayamanne/gitHistoryVSCode/issues/263)
 - Add exception handler when attempting to determine the `origin` remote [#253](https://github.com/DonJayamanne/gitHistoryVSCode/issues/253)
+- Ignore empty items when retrieving list of refs containing a particular commit [#248](https://github.com/DonJayamanne/gitHistoryVSCode/issues/248)
 
 ## Version 0.4.0
 - Fix display of random avatars [#230](https://github.com/DonJayamanne/gitHistoryVSCode/pull/230), [#229](https://github.com/DonJayamanne/gitHistoryVSCode/pull/229), [#228](https://github.com/DonJayamanne/gitHistoryVSCode/pull/228), [#227](https://github.com/DonJayamanne/gitHistoryVSCode/pull/227)
