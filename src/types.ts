@@ -1,3 +1,4 @@
+import { Uri } from 'vscode';
 import { GitOriginType } from './adapter/repository/index';
 import { CommitDetails } from './common/types';
 
@@ -32,6 +33,7 @@ export type Remote = {
 };
 
 export type Branch = {
+    gitRoot: string;
     name: string;
     current: boolean;
 };
@@ -81,6 +83,7 @@ export type LogEntries = {
     count: number;
 };
 export type LogEntry = {
+    gitRoot: string;
     author?: ActionedDetails;
     committer?: ActionedDetails;
     parents: Hash[];
@@ -121,6 +124,7 @@ export const IOutputChannel = Symbol('IOutputChannel');
 
 export interface IGitService {
     getGitRoot(): Promise<string>;
+    getGitRoots(rootDirectory?: string): Promise<string[]>;
     getGitRelativePath(file: FsUri): Promise<string>;
     getHeadHashes(): Promise<{ ref: string; hash: string }[]>;
     getAuthors(): Promise<ActionedUser[]>;
@@ -153,7 +157,7 @@ export type CommitComparison = {
 export const IGitServiceFactory = Symbol('IGitServiceFactory');
 
 export interface IGitServiceFactory {
-    createGitService(workspaceRoot: string): IGitService;
+    createGitService(workspaceRoot: string, resource?: Uri | string): Promise<IGitService>;
 }
 
 export enum CommitInfo {

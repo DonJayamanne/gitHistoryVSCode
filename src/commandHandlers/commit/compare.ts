@@ -11,7 +11,7 @@ import { IGitCompareCommandHandler } from '../types';
 export class GitCompareCommitCommandHandler implements IGitCompareCommandHandler {
     private _previouslySelectedCommit?: CommitDetails;
 
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommandManager) private commandManager: ICommandManager,
         @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private application: IApplicationShell) { }
@@ -34,7 +34,7 @@ export class GitCompareCommitCommandHandler implements IGitCompareCommandHandler
         }
         await this.commandManager.executeCommand('setContext', 'git.commit.compare.compared', true);
         await this.commandManager.executeCommand('setContext', 'git.commit.compare.view.show', true);
-        const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder, commit.logEntry.gitRoot);
         const fileDiffs = await gitService.getDifferences(this.selectedCommit!.logEntry.hash.full, commit.logEntry.hash.full);
         const compareCommit = new CompareCommitDetails(this.selectedCommit, commit, fileDiffs);
         this.commitViewerFactory.getCompareCommitViewer().showCommitTree(compareCommit);

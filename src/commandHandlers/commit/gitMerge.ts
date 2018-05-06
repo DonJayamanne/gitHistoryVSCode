@@ -9,14 +9,14 @@ import { IGitMergeCommandHandler } from '../types';
 
 @injectable()
 export class GitMergeCommandHandler implements IGitMergeCommandHandler {
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
 
     @command('git.commit.merge', IGitMergeCommandHandler)
     public async merge(commit: CommitDetails, showPrompt: boolean = true) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
-        const gitService = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder, commit.logEntry.gitRoot);
         const currentBranch = await gitService.getCurrentBranch();
 
         const commitBranches = (await gitService.getRefsContainingCommit(commit.logEntry.hash.full))

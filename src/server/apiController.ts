@@ -127,7 +127,7 @@ export class ApiController implements IApiRouteHandler {
 
             promise = currentState.entries;
         } else {
-            promise = this.getRepository(decodeURIComponent(request.query.id))
+            promise = (await this.getRepository(decodeURIComponent(request.query.id)))
                 .getLogEntries(pageIndex, pageSize, branch, searchText, file, lineNumber, author)
                 .then(data => {
                     // tslint:disable-next-line:no-unnecessary-local-variable
@@ -156,16 +156,16 @@ export class ApiController implements IApiRouteHandler {
         }
     }
     // tslint:disable-next-line:cyclomatic-complexity
-    public getBranches = (request: Request, response: Response) => {
+    public getBranches = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
-        this.getRepository(id)
+        (await this.getRepository(id))
             .getBranches()
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
     }
-    public getAuthors = (request: Request, response: Response) => {
+    public getAuthors = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
-        this.getRepository(id)
+        (await this.getRepository(id))
             .getAuthors()
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
@@ -180,7 +180,7 @@ export class ApiController implements IApiRouteHandler {
         if (currentState && currentState.lastFetchedHash === hash && currentState.lastFetchedCommit) {
             commitPromise = currentState.lastFetchedCommit;
         } else {
-            commitPromise = this.getRepository(id).getCommit(hash);
+            commitPromise = (await this.getRepository(id)).getCommit(hash);
             this.stateStore.updateLastHashCommit(id, hash, commitPromise);
         }
 
@@ -201,7 +201,7 @@ export class ApiController implements IApiRouteHandler {
         const name: string = decodeURIComponent(request.query.name);
         const email: string = decodeURIComponent(request.query.email);
         try {
-            const originType = await this.getRepository(id).getOriginType();
+            const originType = await (await this.getRepository(id)).getOriginType();
             if (!originType) {
                 return response.send();
             }
@@ -224,7 +224,7 @@ export class ApiController implements IApiRouteHandler {
         const id: string = decodeURIComponent(request.query.id);
         const users = request.body as ActionedUser[];
         try {
-            const originType = await this.getRepository(id).getOriginType();
+            const originType = await (await this.getRepository(id)).getOriginType();
             if (!originType) {
                 return response.send();
             }
@@ -296,8 +296,11 @@ export class ApiController implements IApiRouteHandler {
     private getWorkspace(id: string) {
         return this.stateStore.getState(id)!.workspaceFolder;
     }
-    private getRepository(id: string): IGitService {
+    private getGitRoot(id: string) {
+        return this.stateStore.getState(id)!.gitRoot;
+    }
+    private async getRepository(id: string): Promise<IGitService> {
         const workspaceFolder = this.getWorkspace(id);
-        return this.gitServiceFactory.createGitService(workspaceFolder);
+        return this.gitServiceFactory.createGitService(workspaceFolder, Uri.parse(this.getGitRoot(id)));
     }
 }
