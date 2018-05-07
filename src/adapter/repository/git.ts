@@ -159,7 +159,7 @@ export class Git implements IGitService {
     @cache('IGitService')
     public async getOriginType(): Promise<GitOriginType | undefined> {
         try {
-            return this.exec('remote', 'get-url', 'origin')
+            return await this.exec('remote', 'get-url', 'origin')
                 .then(url => {
                     if (url.indexOf('github.com/') > 0) {
                         return GitOriginType.github;
