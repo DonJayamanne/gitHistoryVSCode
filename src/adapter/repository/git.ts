@@ -165,6 +165,8 @@ export class Git implements IGitService {
                         return GitOriginType.github;
                     } else if (url.indexOf('bitbucket') > 0) {
                         return GitOriginType.bitbucket;
+                    } else if (url.indexOf('visualstudio') > 0) {
+                        return GitOriginType.vsts;
                     } else {
                         return undefined;
                     }

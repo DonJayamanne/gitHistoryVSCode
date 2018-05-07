@@ -32,5 +32,6 @@ export enum GitOriginType {
     any = 1,
     github = 2,
     bitbucket = 3,
-    tfs = 4
+    tfs = 4,
+    vsts = 5,
 }
