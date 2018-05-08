@@ -10,30 +10,29 @@ import { IAvatarProvider } from './types';
 // tslint:disable-next-line:no-require-imports no-var-requires
 const { URL } = require('url');
 
+type GithubUserSearchResponseItem = {
+    'login': string;
+    'id': number;
+    'avatar_url': string;
+    'gravatar_id': string;
+    'url': string;
+    'html_url': string;
+    'followers_url': string;
+    'following_url': string;
+    'gists_url': string;
+    'starred_url': string;
+    'subscriptions_url': string;
+    'organizations_url': string;
+    'repos_url': string;
+    'events_url': string;
+    'received_events_url': string;
+    'type': string;
+    'site_admin': boolean;
+    'score': number;
+};
 type GithubUserSearchResponse = {
     'total_count': number;
-    'items': [
-        {
-            'login': string;
-            'id': number;
-            'avatar_url': string;
-            'gravatar_id': string;
-            'url': string;
-            'html_url': string;
-            'followers_url': string;
-            'following_url': string;
-            'gists_url': string;
-            'starred_url': string;
-            'subscriptions_url': string;
-            'organizations_url': string;
-            'repos_url': string;
-            'events_url': string;
-            'received_events_url': string;
-            'type': string;
-            'site_admin': boolean;
-            'score': number;
-        }
-    ];
+    'items': GithubUserSearchResponseItem[];
 };
 type GithubUserResponse = {
     'login': string;
@@ -80,7 +79,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         }
         return proxy;
     }
-    public constructor( @inject(IServiceContainer) serviceContainer: IServiceContainer) {
+    public constructor(@inject(IServiceContainer) serviceContainer: IServiceContainer) {
         super(serviceContainer, GitOriginType.github);
 
         const stateStoreFactory = this.serviceContainer.get<IStateStoreFactory>(IStateStoreFactory);
@@ -115,7 +114,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         const proxy = this.proxy;
         const info = await axios.get(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { proxy })
             .then((result: { data: GithubUserResponse }) => {
-                if (!result.data || !result.data.name) {
+                if (!result.data || (!result.data.name && !result.data.login)) {
                     return;
                 } else {
                     return result.data;
@@ -138,7 +137,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         }
 
         // Return only if there's exactly one match
-        return matchedUsers.length === 0 ? matchedUsers[0] : undefined;
+        return matchedUsers.length === 1 ? matchedUsers[0] : undefined;
     }
     private async searchLogins(cacheKey: string, searchValue: string) {
         if (this.stateStore.has(cacheKey)) {
