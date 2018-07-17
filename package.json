@@ -431,7 +431,7 @@
         "react-toolbox": "^2.0.0-beta.12",
         "redux": "^3.7.2",
         "redux-actions": "^2.2.1",
-        "redux-thunk": "^2.2.0",
+        "redux-thunk": "2.2.0",
         "relative": "^3.0.2",
         "remap-istanbul": "^0.9.5",
         "semantic-ui-css": "^2.2.12",
