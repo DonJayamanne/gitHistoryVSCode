@@ -1,3 +1,7 @@
+## Version 0.4.2
+- Comparison fails at times [#293](https://github.com/DonJayamanne/gitHistoryVSCode/issues/293), [#291](https://github.com/DonJayamanne/gitHistoryVSCode/issues/291), [#290](https://github.com/DonJayamanne/gitHistoryVSCode/issues/290)
+- Unable to view history when `Author` name is empty [#294](https://github.com/DonJayamanne/gitHistoryVSCode/issues/294)
+
 ## Version 0.4.1
 - Use new VS Code API to display the Git Log (with better performance) [#265](https://github.com/DonJayamanne/gitHistoryVSCode/issues/265)
 - Remove duplicate command from `package.json` [#263](https://github.com/DonJayamanne/gitHistoryVSCode/issues/263)

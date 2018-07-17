@@ -42,9 +42,6 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/compare.gif)
 
-## Thanks
-
-[Olivier Sechet](https://github.com/osechet): Add merge and rebase commands to history view [#247](https://github.com/DonJayamanne/gitHistoryVSCode/pull/247)
 
 ## Source
 
