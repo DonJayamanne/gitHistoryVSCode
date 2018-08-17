@@ -13,6 +13,7 @@ import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
+import { asyncFilter } from '../../common/helpers';
 
 @injectable()
 export class Git implements IGitService {
@@ -426,7 +427,7 @@ export class Git implements IGitService {
                     .map(item => path.join(dir, item));
                 filteredItems.push(dir);
 
-                const folders = await Promise.all<string>(filteredItems.filter(async item => (await fs.stat(item)).isDirectory()));
+                const folders = await asyncFilter(filteredItems, async item => (await fs.stat(item)).isDirectory());
                 const gitRootArgs = this.gitArgsService.getGitRootArgs();
                 const gitRoots = (await Promise.all(folders.map(async item => {
                     try {

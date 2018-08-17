@@ -23,3 +23,11 @@ export function formatDate(date: Date) {
     const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
     return date.toLocaleString(lang, dateOptions);
 }
+
+export async function asyncFilter<T>(arr: T[], callback): Promise<T[]> {
+    return (
+        await Promise.all(arr.map(
+            async item => (await callback(item)) ? item : undefined)
+        )
+    ).filter(i => i !== undefined) as T[];
+}
