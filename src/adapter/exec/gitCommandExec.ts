@@ -1,6 +1,8 @@
 import { spawn } from 'child_process';
+import * as fs from 'fs-extra';
 import * as iconv from 'iconv-lite';
 import { inject, injectable, multiInject } from 'inversify';
+import * as path from 'path';
 import { Writable } from 'stream';
 import { Disposable } from 'vscode';
 import { StopWatch } from '../../common/stopWatch';
@@ -10,6 +12,25 @@ import { IGitCommandExecutor } from './types';
 
 const DEFAULT_ENCODING = 'utf8';
 const isWindows = /^win/.test(process.platform);
+
+async function getExistedDir(filePath: string): Promise<string> {
+    let currentPath = filePath;
+    try {
+        const stat = await fs.stat(currentPath);
+        if (stat.isDirectory()) {
+            return currentPath;
+        }
+    } catch (error) {
+        if (error.code !== 'ENOENT') {
+            throw error;
+        }
+    }
+
+    do {
+        currentPath = path.dirname(currentPath);
+    } while (!await fs.pathExists(currentPath));
+    return currentPath;
+}
 
 @injectable()
 export class GitCommandExecutor implements IGitCommandExecutor {
@@ -32,6 +53,11 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         const destination: Writable = binaryOuput ? args.shift()! : undefined;
         const gitPathCommand = childProcOptions.shell && gitPath.indexOf(' ') > 0 ? `"${gitPath}"` : gitPath;
         const stopWatch = new StopWatch();
+        // spawn will throw "Error: spawn xx ENOENT" if cwd is not exist
+        // and "Error: ENOTDIR" if cwd is not a directory
+        if (childProcOptions.cwd) {
+           childProcOptions.cwd = await getExistedDir(childProcOptions.cwd);
+        }
         const gitShow = spawn(gitPathCommand, args, childProcOptions);
         if (binaryOuput) {
             gitShow.stdout.pipe(destination);
