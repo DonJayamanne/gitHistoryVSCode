@@ -235,9 +235,14 @@ function fixDates(logEntry: LogEntry) {
         logEntry.committer.date = new Date(logEntry.committer.date);
     }
 }
+function isWinPath(path: string) {
+    return /^\/[a-z]:\//i.test(path);
+}
 function fixFileUri(item?: FsUri) {
     if (item && !item.fsPath && item.path) {
-        (item as any).fsPath = item.path;
+        (item as any).fsPath = isWinPath(item.path) ?
+            item.path.replace(/^\//, '').replace(/\//g, '\\') :
+            item.path;
     }
 }
 // tslint:disable-next-line:no-any
