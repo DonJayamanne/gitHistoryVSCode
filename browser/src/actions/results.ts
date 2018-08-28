@@ -276,12 +276,12 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
             if (Array.isArray(result.data.items)) {
                 result.data.items.forEach(item => {
                     fixDates(item);
-                    if (Array.isArray(item.committedFiles)) {
+                    /*if (Array.isArray(item.committedFiles)) {
                         item.committedFiles.forEach(f => {
                             fixFileUri(f.oldUri);
                             fixFileUri(f.uri);
                         });
-                    }
+                    }*/
                 });
             }
             fixFileUri(result.data.file);

@@ -142,6 +142,18 @@ export class FileStatParser implements IFileStatParser {
                 uri: Uri.file(path.join(gitRootPath, relativePath)),
                 oldUri
             };
+           
+            // uri.fsPath getter sporadically becomes a slash as prefix (E.g  "/z:/folder/subfolder").
+            // By fetching fsPath through the getter, the internal method _makeFsPath(this) immediate get called here
+            // and the fsPath is set correctly.
+            //
+            // PLEASE NOTE: While DEBUGGING the property is  always resolved correctly
+            fileInfo.uri.fsPath;
+
+            if (fileInfo.oldUri !== undefined) {
+                fileInfo.oldUri.fsPath;
+            }
+
             return fileInfo;
         })
             .filter(commitFile => commitFile !== undefined)
