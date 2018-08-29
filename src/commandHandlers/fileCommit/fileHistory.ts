@@ -4,12 +4,10 @@ import { Uri } from 'vscode';
 import { IApplicationShell } from '../../application/types';
 import { ICommandManager } from '../../application/types/commandManager';
 import { CompareFileCommitDetails, FileCommitDetails, IUiService } from '../../common/types';
-import { gitHistoryFileViewerSchema } from '../../constants';
 import { IServiceContainer } from '../../ioc/types';
 import { FileNode } from '../../nodes/types';
 import { IFileSystem } from '../../platform/types';
-import { Hash, IGitService, IGitServiceFactory, Status } from '../../types';
-import { isTextFile } from '../file/mimeTypes';
+import { Hash, IGitServiceFactory, Status } from '../../types';
 import { command } from '../registration';
 import { IGitFileHistoryCommandHandler } from '../types';
 
@@ -36,8 +34,9 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         if (fileCommit.committedFile.status === Status.Deleted) {
             return this.applicationShell.showErrorMessage('File cannot be viewed as it was deleted').then(() => void 0);
         }
-        const uri = await this.getFileUri(gitService, fileCommit);
-        await this.commandManager.executeCommand('git.openFileInViewer', uri, fileCommit);
+
+        const tmpFile = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
+        await this.commandManager.executeCommand('git.openFileInViewer', tmpFile, fileCommit);
     }
 
     @command('git.commit.FileEntry.CompareAgainstWorkspace', IGitFileHistoryCommandHandler)
@@ -126,20 +125,6 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             return `${leftFileName} (${left.hash.short} ↔ ${right.hash.short})`;
         } else {
             return `${leftFileName} (${left.hash.short} ↔ ${rightFileName} ${right.hash.short})`;
-        }
-    }
-    private async getFileUri(gitService: IGitService, fileCommit: FileCommitDetails): Promise<Uri> {
-        if (isTextFile(Uri.file(fileCommit.committedFile.uri.fsPath))) {
-            const args = [
-                `workspaceFolder=${encodeURIComponent(fileCommit.workspaceFolder)}`,
-                `hash=${fileCommit.logEntry.hash.short}`,
-                `fsPath=${encodeURIComponent(fileCommit.committedFile!.uri.fsPath)}`
-            ];
-            const ext = path.extname(fileCommit.committedFile!.relativePath);
-            return Uri.parse(`${gitHistoryFileViewerSchema}://./${fileCommit.committedFile!.relativePath}.${fileCommit.logEntry.hash.short}${ext}?${args.join('&')}`);
-        } else {
-            const file = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri.fsPath);
-            return Uri.file(file.fsPath);
         }
     }
 }
