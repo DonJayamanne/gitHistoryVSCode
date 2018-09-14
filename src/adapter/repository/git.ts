@@ -159,7 +159,12 @@ export class Git implements IGitService {
     @cache('IGitService')
     public async getOriginType(): Promise<GitOriginType | undefined> {
         try {
-            return await this.exec('remote', 'get-url', 'origin')
+            const remoteName = await this.exec('status', '-sb').then((branchDetails) => {
+                const matchResult = branchDetails.match(/.*\.\.\.(.*)\//);
+                return matchResult && matchResult[1] ? matchResult[1] : 'origin';
+            });
+
+            return await this.exec('remote', 'get-url', remoteName)
                 .then(url => {
                     if (url.indexOf('github.com/') > 0) {
                         return GitOriginType.github;
