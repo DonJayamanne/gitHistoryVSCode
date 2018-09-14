@@ -161,7 +161,7 @@ export class Git implements IGitService {
         try {
             return await this.exec('remote', 'get-url', 'origin')
                 .then(url => {
-                    if (url.indexOf('github.com/') > 0) {
+                    if (url.indexOf('github.com') > 0) {
                         return GitOriginType.github;
                     } else if (url.indexOf('bitbucket') > 0) {
                         return GitOriginType.bitbucket;
