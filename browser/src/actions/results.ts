@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
-import { FsUri } from '../../../src/types';
 import * as Actions from '../constants/resultActions';
 import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry } from '../definitions';
 import { BranchesState, RootState } from '../reducers';
@@ -235,11 +234,6 @@ function fixDates(logEntry: LogEntry) {
         logEntry.committer.date = new Date(logEntry.committer.date);
     }
 }
-function fixFileUri(item?: FsUri) {
-    if (item && !item.fsPath && item.path) {
-        (item as any).fsPath = item.path;
-    }
-}
 // tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string, refreshData?: boolean, branchName?: string, author?: string) {
     // pageSize = pageSize || store.logEntries.pageSize;
@@ -276,15 +270,15 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
             if (Array.isArray(result.data.items)) {
                 result.data.items.forEach(item => {
                     fixDates(item);
-                    if (Array.isArray(item.committedFiles)) {
+                    /*if (Array.isArray(item.committedFiles)) {
                         item.committedFiles.forEach(f => {
                             fixFileUri(f.oldUri);
                             fixFileUri(f.uri);
                         });
-                    }
+                    }*/
                 });
             }
-            fixFileUri(result.data.file);
+            //fixFileUri(result.data.file);
             dispatch(addResults(result.data));
             if (result.data && Array.isArray(result.data.items) && result.data.items.length > 0) {
                 fetchAvatars(result.data.items.map(item => item.author), dispatch, () => store);
@@ -304,12 +298,12 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
         .then((result: { data: LogEntry }) => {
             if (result.data) {
                 fixDates(result.data);
-                if (Array.isArray(result.data.committedFiles)) {
+                /*if (Array.isArray(result.data.committedFiles)) {
                     result.data.committedFiles.forEach(f => {
                         fixFileUri(f.oldUri);
                         fixFileUri(f.uri);
                     });
-                }
+                }*/
             }
             dispatch(updateCommit(result.data));
             if (result.data && result.data.author) {
