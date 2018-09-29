@@ -1,3 +1,11 @@
+## Version 0.4.3
+- Workaround on Uri.fsPath getting '/' (slash) prefix PR [#316](https://github.com/DonJayamanne/gitHistoryVSCode/pull/316)
+- fixFileUri is no more  [#316](https://github.com/DonJayamanne/gitHistoryVSCode/pull/316)
+- Fixed ViewFileContents from committed files  [#316](https://github.com/DonJayamanne/gitHistoryVSCode/pull/316)
+- Fix GitHub origin detection for SSH remotes  [#319](https://github.com/DonJayamanne/gitHistoryVSCode/pull/319)
+- Read current remote name (defaulting to origin)  [#318](https://github.com/DonJayamanne/gitHistoryVSCode/pull/318)
+- getGitReposInFolder: fix async folder filtering  [#311](https://github.com/DonJayamanne/gitHistoryVSCode/pull/311)
+
 ## Version 0.4.2
 - Comparison fails at times [#293](https://github.com/DonJayamanne/gitHistoryVSCode/issues/293), [#291](https://github.com/DonJayamanne/gitHistoryVSCode/issues/291), [#290](https://github.com/DonJayamanne/gitHistoryVSCode/issues/290)
 - Unable to view history when `Author` name is empty [#294](https://github.com/DonJayamanne/gitHistoryVSCode/issues/294)
@@ -9,7 +17,7 @@
 - Ignore empty items when retrieving list of refs containing a particular commit [#248](https://github.com/DonJayamanne/gitHistoryVSCode/issues/248)
 - Add merge and rebase commands to history view [#247](https://github.com/DonJayamanne/gitHistoryVSCode/pull/247)
 - Add support for multiple git repositories in a workspace [#233](https://github.com/DonJayamanne/gitHistoryVSCode/issues/233)
-- Add support for sub directories and multiple workspaces with git repositories [#2226](https://github.com/DonJayamanne/gitHistoryVSCode/issues/226)
+- Add support for sub directories and multiple workspaces with git repositories [#226](https://github.com/DonJayamanne/gitHistoryVSCode/issues/226)
 
 ## Version 0.4.0
 - Fix display of random avatars [#230](https://github.com/DonJayamanne/gitHistoryVSCode/pull/230), [#229](https://github.com/DonJayamanne/gitHistoryVSCode/pull/229), [#228](https://github.com/DonJayamanne/gitHistoryVSCode/pull/228), [#227](https://github.com/DonJayamanne/gitHistoryVSCode/pull/227)
