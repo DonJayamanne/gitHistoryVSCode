@@ -379,7 +379,7 @@
         "@types/redux-actions": "^2.2.2",
         "@types/rx": "^2.5.33",
         "@types/tmp": "0.0.31",
-        "@types/webpack": "^2.2.4",
+        "@types/webpack": "^3.0.0",
         "@types/webpack-env": "^1.13.0",
         "awesome-typescript-loader": "^3.0.0-beta.18",
         "chai": "^4.1.2",
