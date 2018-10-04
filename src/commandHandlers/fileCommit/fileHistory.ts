@@ -36,7 +36,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         }
 
         const tmpFile = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
-        await this.commandManager.executeCommand('git.openFileInViewer', tmpFile, fileCommit);
+        await this.commandManager.executeCommand('git.openFileInViewer', tmpFile);
     }
 
     @command('git.commit.FileEntry.CompareAgainstWorkspace', IGitFileHistoryCommandHandler)
