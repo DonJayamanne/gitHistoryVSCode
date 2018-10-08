@@ -69,7 +69,7 @@ type GithubUserResponse = {
 
 @injectable()
 export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarProvider {
-    protected readonly httpProxy: string;
+    protected readonly httpProxy: string = '';
     private readonly stateStore: IStateStore;
     private get proxy(): AxiosProxyConfig | undefined {
         let proxy: AxiosProxyConfig | undefined;

@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
-import { Disposable, EventEmitter, TreeDataProvider, TreeItemCollapsibleState, window } from 'vscode';
+import { EventEmitter, TreeDataProvider, TreeItemCollapsibleState, window } from 'vscode';
 import { Event, OutputChannel, TreeItem } from 'vscode';
 import { ICommandManager } from '../application/types/commandManager';
 import { CommitDetails, CompareCommitDetails } from '../common/types';
@@ -12,16 +12,15 @@ import { ICommitViewer } from './types';
 
 @injectable()
 export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNode | FileNode> {
-    private registered: boolean;
-    private commit: CommitDetails;
+    private registered: boolean = false;
+    private commit?: CommitDetails;
     private _onDidChangeTreeData = new EventEmitter<DirectoryNode | FileNode>();
-    private _dataChangeHandler: Disposable;
-    private fileView: boolean;
+    private fileView: boolean = false;
     public get onDidChangeTreeData(): Event<DirectoryNode | FileNode> {
         return this._onDidChangeTreeData.event;
     }
     public get selectedCommit(): Readonly<CommitDetails> {
-        return this.commit;
+        return this.commit!;
     }
     constructor(@inject(IOutputChannel) private outputChannel: OutputChannel,
         @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,
@@ -31,9 +30,7 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     }
     public showCommitTree(commit: CommitDetails) {
         this.commit = commit;
-        if (this._dataChangeHandler) {
-            this._dataChangeHandler.dispose();
-        }
+
         if (!this.registered) {
             this.registered = true;
             window.registerTreeDataProvider(this.treeId, this);
@@ -70,8 +67,8 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
         if (!element) {
             // tslint:disable-next-line:no-suspicious-comment
             // TODO: HACK
-            const committedFiles = this.treeId === 'commitViewProvider' ? this.commit.logEntry.committedFiles! : (this.commit as CompareCommitDetails).committedFiles;
-            return this.fileView ? this.nodeBuilder.buildList(this.commit, committedFiles) : this.nodeBuilder.buildTree(this.commit, committedFiles);
+            const committedFiles = this.treeId === 'commitViewProvider' ? this.commit!.logEntry.committedFiles! : (this.commit as CompareCommitDetails).committedFiles;
+            return this.fileView ? this.nodeBuilder.buildList(this.commit!, committedFiles) : this.nodeBuilder.buildTree(this.commit!, committedFiles);
         }
         if (element! instanceof DirectoryNode) {
             return (element as DirectoryNode).children;
