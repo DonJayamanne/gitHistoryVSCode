@@ -34,6 +34,8 @@ export class GitCompareCommitCommandHandler implements IGitCompareCommandHandler
         }
         await this.commandManager.executeCommand('setContext', 'git.commit.compare.compared', true);
         await this.commandManager.executeCommand('setContext', 'git.commit.compare.view.show', true);
+        // display explorer view when running compare
+        await this.commandManager.executeCommand('workbench.view.explorer');
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder, commit.logEntry.gitRoot);
         const fileDiffs = await gitService.getDifferences(this.selectedCommit!.logEntry.hash.full, commit.logEntry.hash.full);
         const compareCommit = new CompareCommitDetails(this.selectedCommit, commit, fileDiffs);
