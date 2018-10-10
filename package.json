@@ -350,7 +350,8 @@
         "clean": "gulp clean",
         "cover:enable": "gulp cover:enable",
         "cover:upload": "gulp cover:upload",
-        "test:unittests": "node ./out/test/unittests.js"
+        "test:unittests": "node ./out/test/unittests.js",
+        "test:unittestsWithResults": "mocha -r ./out/test/main out/test/**/*.test.js --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml"
     },
     "devDependencies": {
         "@types/body-parser": "0.0.34",
