@@ -4,7 +4,7 @@ import { ILogService } from './types';
 
 @injectable()
 export class Logger implements ILogService {
-    private _enabled: boolean;
+    private _enabled!: boolean;
     private disposable: Disposable;
     private get enabled(): boolean {
         return this._enabled;
@@ -29,6 +29,7 @@ export class Logger implements ILogService {
         if (!this.enabled) {
             return;
         }
+        // tslint:disable-next-line:no-console
         console.error(...args);
     }
     // tslint:disable-next-line:no-any

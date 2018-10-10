@@ -17,8 +17,8 @@ export interface INode<T> {
 
 export abstract class AbstractCommitNode<T> implements INode<T> {
     public children: AbstractCommitNode<T>[] = [];
-    private _label: string;
-    private _resource: Uri;
+    private _label!: string;
+    private _resource!: Uri;
     public get label() {
         return this._label;
     }

@@ -97,7 +97,7 @@ class CoverageRunner {
     private coverageVar: string = `$$cov_${new Date().getTime()}$$`;
     // private transformer?: Instrumenter;
     private sourceFiles: string[] = [];
-    private instrumenter: Instrumenter;
+    private instrumenter!: Instrumenter;
     // private matchFn: any = undefined;
 
     private get coverage(): { [key: string]: CoverState } {

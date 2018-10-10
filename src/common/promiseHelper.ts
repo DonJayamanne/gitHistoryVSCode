@@ -9,9 +9,9 @@ export interface IDeferred<T> {
 }
 
 class DeferredImpl<T> implements IDeferred<T> {
-    private _resolve: (value?: T | PromiseLike<T>) => void;
+    private _resolve!: (value?: T | PromiseLike<T>) => void;
     // tslint:disable-next-line:no-any
-    private _reject: (reason?: any) => void;
+    private _reject!: (reason?: any) => void;
     private _resolved: boolean = false;
     private _rejected: boolean = false;
     private _promise: Promise<T>;

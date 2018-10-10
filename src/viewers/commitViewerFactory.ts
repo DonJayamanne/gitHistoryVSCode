@@ -12,8 +12,8 @@ import { ICommitViewer, ICommitViewerFactory } from './types';
 
 @injectable()
 export class CommitViewerFactory implements ICommitViewerFactory {
-    private commitViewer: ICommitViewer;
-    private compareViewer: ICommitViewer;
+    private commitViewer!: ICommitViewer;
+    private compareViewer!: ICommitViewer;
     constructor(@inject(IOutputChannel) private outputChannel: OutputChannel,
         @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,
         @inject(ICommandManager) private commandManager: ICommandManager,
