@@ -350,8 +350,10 @@
         "clean": "gulp clean",
         "cover:enable": "gulp cover:enable",
         "cover:upload": "gulp cover:upload",
-        "test:unittests": "node ./out/test/unittests.js",
-        "test:unittestsWithResults": "mocha -r ./out/test/main out/test/**/*.test.js --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml"
+        "test:unittestsx": "node ./out/test/unittests.js",
+        "test:unittests": "mocha -r ./out/test/main out/test/**/*.test.js",
+        "test:unittestsWithResults": "nyc mocha -r ./out/test/main out/test/**/*.test.js --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml",
+        "coverage": "nyc report --reporter=cobertura --reporter=html"
     },
     "devDependencies": {
         "@types/body-parser": "0.0.34",
@@ -411,6 +413,7 @@
         "jquery": "^3.1.1",
         "mocha": "^2.3.3",
         "mocha-junit-reporter": "^1.18.0",
+        "nyc": "^13.0.1",
         "postcss": "^5.2.11",
         "postcss-browser-reporter": "^0.5.0",
         "postcss-cssnext": "^2.9.0",
