@@ -349,7 +349,8 @@
         "lint-staged": "node gulpfile.js",
         "clean": "gulp clean",
         "cover:enable": "gulp cover:enable",
-        "cover:upload": "gulp cover:upload"
+        "cover:upload": "gulp cover:upload",
+        "test:unittests": "node ./out/test/unittests.js"
     },
     "devDependencies": {
         "@types/body-parser": "0.0.34",
