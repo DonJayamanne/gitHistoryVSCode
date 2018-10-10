@@ -38,7 +38,7 @@ export function runTests(testOptions?: { grep?: string; timeout?: number }) {
     if (MOCHA_REPORTER_JUNIT === true) {
         temp_mocha = new Mocha({
             grep: undefined,
-            ui: 'tdd',
+            ui: 'bdd',
             timeout,
             reporter: MOCHA_CI_REPORTER_ID,
             reporterOptions: {

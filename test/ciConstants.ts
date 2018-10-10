@@ -12,7 +12,7 @@ export const IS_VSTS = process.env.TF_BUILD !== undefined;
 export const IS_CI_SERVER = IS_TRAVIS || IS_VSTS;
 
 // Control JUnit-style output logging for reporting purposes.
-let reportJunit: boolean = false;
+let reportJunit: boolean = true;
 if (IS_CI_SERVER && process.env.MOCHA_REPORTER_JUNIT !== undefined) {
     reportJunit = process.env.MOCHA_REPORTER_JUNIT.toLowerCase() === 'true';
 }
