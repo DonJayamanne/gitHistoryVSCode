@@ -4,6 +4,7 @@ import { GitCompareCommitCommandHandler } from './commit/compare';
 import { GitCompareCommitViewExplorerCommandHandler } from './commit/compareViewExplorer';
 import { GitBranchFromCommitCommandHandler } from './commit/gitBranchFromCommit';
 import { GitCherryPickCommandHandler } from './commit/gitCherryPick';
+import { GitCheckoutCommandHandler } from './commit/gitCheckout';
 import { GitCommitCommandHandler } from './commit/gitCommit';
 import { GitCommitViewDetailsCommandHandler } from './commit/gitCommitDetails';
 import { GitMergeCommandHandler } from './commit/gitMerge';
@@ -14,7 +15,7 @@ import { GitCompareFileCommitCommandHandler } from './fileCommit/fileCompare';
 import { GitFileHistoryCommandHandler } from './fileCommit/fileHistory';
 import { GitHistoryCommandHandler } from './gitHistory';
 import { CommandHandlerManager } from './handlerManager';
-import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from './types';
+import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitBranchFromCommitCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from './types';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler, GitFileHistoryCommandHandler);
@@ -23,6 +24,7 @@ export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitCommitCommandHandler>(IGitCommitCommandHandler, GitCommitCommandHandler);
     serviceManager.addSingleton<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler, GitCommitViewDetailsCommandHandler);
     serviceManager.addSingleton<IGitCherryPickCommandHandler>(IGitCherryPickCommandHandler, GitCherryPickCommandHandler);
+    serviceManager.addSingleton<IGitCheckoutCommandHandler>(IGitCheckoutCommandHandler, GitCheckoutCommandHandler);
     serviceManager.addSingleton<IGitCompareFileCommandHandler>(IGitCompareFileCommandHandler, GitCompareFileCommitCommandHandler);
     serviceManager.addSingleton<IGitCommitViewExplorerCommandHandler>(IGitCommitViewExplorerCommandHandler, GitCommitViewExplorerCommandHandler);
     serviceManager.addSingleton<IGitCompareCommandHandler>(IGitCompareCommandHandler, GitCompareCommitCommandHandler);

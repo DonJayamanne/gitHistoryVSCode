@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
-import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from '../commandHandlers/types';
+import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCheckoutCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from '../commandHandlers/types';
 import { CherryPickCommand } from '../commands/commit/cherryPick';
+import { CheckoutCommand } from '../commands/commit/checkout';
 import { CompareCommand } from '../commands/commit/compare';
 import { CreateBranchCommand } from '../commands/commit/createBranch';
 import { MergeCommand } from '../commands/commit/merge';
@@ -15,6 +16,7 @@ import { ICommitCommandFactory } from './types';
 export class CommitCommandFactory implements ICommitCommandFactory {
     constructor( @inject(IGitBranchFromCommitCommandHandler) private branchCreationCommandHandler: IGitBranchFromCommitCommandHandler,
         @inject(IGitCherryPickCommandHandler) private cherryPickHandler: IGitCherryPickCommandHandler,
+        @inject(IGitCheckoutCommandHandler) private checkoutHandler: IGitCheckoutCommandHandler,
         @inject(IGitCompareCommandHandler) private compareHandler: IGitCompareCommandHandler,
         @inject(IGitMergeCommandHandler) private mergeHandler: IGitMergeCommandHandler,
         @inject(IGitRebaseCommandHandler) private rebaseHandler: IGitRebaseCommandHandler,
@@ -24,6 +26,7 @@ export class CommitCommandFactory implements ICommitCommandFactory {
         const commands: ICommand<CommitDetails>[] = [
             new CreateBranchCommand(commit, this.branchCreationCommandHandler),
             new CherryPickCommand(commit, this.cherryPickHandler),
+            new CheckoutCommand(commit, this.checkoutHandler),
             new ViewDetailsCommand(commit, this.viewChangeLogHandler),
             new SelectForComparison(commit, this.compareHandler),
             new RevertCommand(commit, this.revertHandler),

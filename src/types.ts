@@ -142,6 +142,7 @@ export interface IGitService {
     getCommitFileContent(hash: string, file: FsUri | string): Promise<string>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
     cherryPick(hash: string): Promise<void>;
+    checkout(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
     getOriginType(): Promise<GitOriginType | undefined>;
     merge(hash: string): Promise<void>;
