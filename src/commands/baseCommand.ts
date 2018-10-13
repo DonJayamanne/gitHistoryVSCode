@@ -2,14 +2,14 @@ import { ICommand } from '../common/types';
 
 export abstract class BaseCommand<T> implements ICommand<T> {
     // tslint:disable-next-line:no-any no-banned-terms
-    private _arguments: any[];
+    private _arguments: any[] = [];
     // tslint:disable-next-line:no-banned-terms
     public get arguments() {
         return this._arguments;
     }
-    private _command: string;
-    private _title: string;
-    private _description: string;
+    private _command: string = '';
+    private _title: string = '';
+    private _description: string = '';
     private _detail?: string;
     private _tooltip?: string;
     public get command() {

@@ -8,12 +8,12 @@ import { IGitExecutableLocator } from './types';
 
 @injectable()
 export class GitExecutableLocator implements IGitExecutableLocator {
-    private gitPath: string;
+    private gitPath: string = '';
     constructor( @multiInject(ILogService) private loggers: ILogService[],
         @inject(IPlatformService) private platformService: IPlatformService) {
     }
     public async getGitPath(): Promise<string> {
-        if (typeof this.gitPath === 'string') {
+        if (typeof this.gitPath === 'string' && this.gitPath.length > 0) {
             return this.gitPath;
         }
 
