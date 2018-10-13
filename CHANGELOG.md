@@ -3,6 +3,7 @@
 - Updated webpack to resolve three compile errors
 - reduced some compile errors by adding default values
 - display the explorer view when using "compare commints" [#326](https://github.com/DonJayamanne/gitHistoryVSCode/issues/326)
+- Merged PR [#329](https://github.com/DonJayamanne/gitHistoryVSCode/pull/329)
 
 ## Version 0.4.3
 - Workaround on Uri.fsPath getting '/' (slash) prefix PR [#316](https://github.com/DonJayamanne/gitHistoryVSCode/pull/316)
