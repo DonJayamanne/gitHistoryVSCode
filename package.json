@@ -319,7 +319,7 @@
             "properties": {
                 "gitHistory.hideCommitViewExplorer": {
                     "type": "boolean",
-                    "default": "false",
+                    "default": false,
                     "scope": "window",
                     "description": "Whether to diplay the commit explorer view"
                 },
