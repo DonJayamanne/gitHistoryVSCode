@@ -1,11 +1,10 @@
 import { spawn } from 'child_process';
 import * as iconv from 'iconv-lite';
-import { inject, injectable, multiInject } from 'inversify';
+import { injectable, multiInject } from 'inversify';
 import { Writable } from 'stream';
-import { Disposable } from 'vscode';
+import { Disposable, extensions, Extension } from 'vscode';
 import { StopWatch } from '../../common/stopWatch';
 import { ILogService } from '../../common/types';
-import { IGitExecutableLocator } from '../locator';
 import { IGitCommandExecutor } from './types';
 
 const DEFAULT_ENCODING = 'utf8';
@@ -13,8 +12,14 @@ const isWindows = /^win/.test(process.platform);
 
 @injectable()
 export class GitCommandExecutor implements IGitCommandExecutor {
-    constructor( @inject(IGitExecutableLocator) private gitExecLocator: IGitExecutableLocator,
-        @multiInject(ILogService) private loggers: ILogService[]) {
+    private gitExtension : Extension<any> | undefined;
+    private gitApi : any;
+    private gitExecutablePath : string;
+
+    constructor(@multiInject(ILogService) private loggers: ILogService[]) {
+        this.gitExtension = extensions.getExtension('vscode.git');
+        this.gitApi = this.gitExtension!.exports.getAPI(1);
+        this.gitExecutablePath = this.gitApi.git.path;
     }
     public async exec(cwd: string, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:unified-signatures
@@ -22,7 +27,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
     public async exec(options: { cwd: string; encoding: 'binary' }, destination: Writable, ...args: string[]): Promise<void>;
     // tslint:disable-next-line:no-any
     public async exec(options: any, ...args: any[]): Promise<any> {
-        let gitPath = await this.gitExecLocator.getGitPath();
+        let gitPath = this.gitExecutablePath;
         gitPath = isWindows ? gitPath.replace(/\\/g, '/') : gitPath;
         const childProcOptions = typeof options === 'string' ? { cwd: options, encoding: DEFAULT_ENCODING } : options;
         if (typeof childProcOptions.encoding !== 'string' || childProcOptions.encoding.length === 0) {
@@ -85,62 +90,3 @@ export class GitCommandExecutor implements IGitCommandExecutor {
 function decode(buffers: Buffer[], encoding: string): string {
     return iconv.decode(Buffer.concat(buffers), encoding);
 }
-
-// import { spawn } from 'child_process';
-// import * as iconv from 'iconv-lite';
-// import { inject, injectable, multiInject } from 'inversify';
-// import { ILogService } from '../../common/types';
-// import { IGitExecutableLocator } from '../locator';
-// import { IGitCommandExecutor } from './types';
-
-// @injectable()
-// export class GitCommandExecutor implements IGitCommandExecutor {
-//     constructor( @inject(IGitExecutableLocator) private gitExecLocator: IGitExecutableLocator,
-//         @multiInject(ILogService) private loggers: ILogService[]) {
-//     }
-//     public async exec(cwd: string, ...args: string[]): Promise<string>;
-//     // tslint:disable-next-line:unified-signatures
-//     public async exec(options: { cwd: string, shell?: boolean, encoding?: string }, ...args: string[]): Promise<string>;
-//     // tslint:disable-next-line:no-any
-//     public async exec(options: any, ...args: string[]): Promise<string> {
-//         const gitPath = await this.gitExecLocator.getGitPath();
-//         const childProcOptions = typeof options === 'string' ? { cwd: options } : options;
-//         const encoding = childProcOptions.encoding || 'utf8';
-
-//         childProcOptions.encoding = encoding === 'utf8' ? 'utf8' : undefined;
-//         this.loggers.forEach(logger => logger.log(`git ${args.join(' ')}`));
-//         const gitShow = spawn(gitPath, args, childProcOptions);
-
-//         // Best to use iconv-lite
-//         // https://github.com/DonJayamanne/pythonVSCode/issues/861
-
-//         const out = gitShow.stdout;
-//         // if (childProcOptions.encoding) {
-//         //     out.setEncoding(childProcOptions.encoding);
-//         // } else {
-//         if (encoding === 'utf8') {
-//             out.setEncoding('utf8');
-//         }
-//         // }
-
-//         const buffer: (Buffer | string)[] = [];
-//         // let content: string = '';
-//         out.on('data', data => buffer.push(data));
-
-//         return new Promise<string>((resolve, reject) => {
-//             gitShow.on('close', () => {
-//                 if (encoding === 'utf8') {
-//                     resolve(buffer.join(''));
-//                 } else {
-//                     // tslint:disable-next-line:no-any
-//                     const netBuffer = Buffer.concat(buffer as any as Buffer[]);
-//                     const content = iconv.decode(netBuffer, encoding);
-//                     resolve(content);
-//                 }
-//             });
-//             gitShow.on('error', reject);
-//         });
-//     }
-// }
-
-// git log --name-status --full-history -M --format="%H -%nauthor %an%nauthor-date %at%nparents %P%nsummary %B%nfilename ?" -m -n1 905c713de0eaa7001e7191bf887665bcbbf3ed74
