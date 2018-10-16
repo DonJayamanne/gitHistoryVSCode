@@ -161,7 +161,7 @@ export class Git implements IGitService {
     public async getOriginType(): Promise<GitOriginType | undefined> {
         try {
             const remoteName = await this.exec('status', '--porcelain=v1', '-b', '--untracked-files=no').then((branchDetails) => {
-                const matchResult = branchDetails.match(/.*\.\.\.(.*)\//);
+                const matchResult = branchDetails.match(/.*\.\.\.(.*?)\//);
                 return matchResult && matchResult[1] ? matchResult[1] : 'origin';
             });
 
