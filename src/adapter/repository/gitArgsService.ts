@@ -79,9 +79,9 @@ export class GitArgsService implements IGitArgsService {
                 .map(text => text.trim())
                 .filter(text => text.length > 0)
                 .forEach(text => {
-                    logArgs.push(`--grep=${text}`);
-                    fileStatArgs.push(`--grep=${text}`);
-                    counterArgs.push(`--grep=${text}`);
+                    logArgs.push(`--grep=${text}`, '-i');
+                    fileStatArgs.push(`--grep=${text}`, '-i');
+                    counterArgs.push(`--grep=${text}`, '-i');
                 });
         }
 
