@@ -1,3 +1,6 @@
+## Version 0.4.5
+- Make search case-insensitive PR [#334](https://github.com/DonJayamanne/gitHistoryVSCode/pull/334)
+
 ## Version 0.4.4
 - Merged PR [#328](https://github.com/DonJayamanne/gitHistoryVSCode/pull/328)
 - Updated webpack to resolve three compile errors
