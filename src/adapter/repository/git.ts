@@ -160,9 +160,28 @@ export class Git implements IGitService {
     @cache('IGitService')
     public async getOriginType(): Promise<GitOriginType | undefined> {
         try {
+            let originIndex = -1;
+            let firstRemote = '';
+            const remotesList = await this.exec('remote').then(remotes => remotes.match(/(^.*$)/mg));
+            if (!remotesList || remotesList.length === 0) {
+                return;
+            } else {
+                const normalizedRemoteList = remotesList.map((remote) => {
+                    return remote.toLowerCase();
+                });
+                originIndex = normalizedRemoteList.indexOf('origin');
+                firstRemote = remotesList[0];
+            }
+
             const remoteName = await this.exec('status', '--porcelain=v1', '-b', '--untracked-files=no').then((branchDetails) => {
                 const matchResult = branchDetails.match(/.*\.\.\.(.*?)\//);
-                return matchResult && matchResult[1] ? matchResult[1] : 'origin';
+                if (matchResult && matchResult[1]) {
+                    return matchResult[1];
+                } else if (remotesList && originIndex > -1) {
+                    return remotesList[originIndex];
+                } else {
+                    return firstRemote;
+                }
             });
 
             return await this.exec('remote', 'get-url', remoteName)
