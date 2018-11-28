@@ -456,6 +456,7 @@
         "bootstrap": "^3.3.7",
         "cors": "^2.8.4",
         "ejs": "^2.5.6",
+        "event-stream": "3.3.4",
         "express": "^4.15.3",
         "font-awesome": "^4.7.0",
         "fs-extra": "^4.0.2",

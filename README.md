@@ -47,6 +47,8 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 [GitHub](https://github.com/DonJayamanne/gitHistoryVSCode)
 
+## Big thanks to [ole](https://github.com/ole1986)
+
 ## License
 
 [MIT](https://raw.githubusercontent.com/DonJayamanne/bowerVSCode/master/LICENSE)
