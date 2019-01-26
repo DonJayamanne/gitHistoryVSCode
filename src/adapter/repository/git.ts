@@ -424,6 +424,25 @@ export class Git implements IGitService {
         return this.gitCmdExecutor.exec({ cwd: gitRootPath, encoding: 'binary' }, destination, ...args);
     }
     private async getGitReposInFolder(dir: string): Promise<string[]> {
+        const folders = await this.getSubfoldersToScan(dir);
+
+        const gitRootArgs = this.gitArgsService.getGitRootArgs();
+        const gitRoots = (await Promise.all(folders.map(async item => {
+            try {
+                const result = await this.gitCmdExecutor.exec(item, ...gitRootArgs);
+                return path.normalize(result.split(/\r?\n/g)[0].trim());
+            } catch {
+                return;
+            }
+        })))
+            .filter(item => !!item)
+            .map(item => item!)
+            // Ensure each git repo is only added once 
+            .filter((item, idx, arr) => { return (arr.indexOf(item) == idx); });
+
+        return gitRoots;
+    }
+    private async getSubfoldersToScan(dir: string): Promise<string[]> {
         return new Promise<string[]>(resolve => {
             fs.readdir(dir, async (err, filesAndFolders) => {
                 if (err) {
@@ -434,22 +453,27 @@ export class Git implements IGitService {
                 const filteredItems = filesAndFolders
                     .filter(item => !item.startsWith('.'))
                     .map(item => path.join(dir, item));
-                filteredItems.push(dir);
 
-                const folders = await asyncFilter(filteredItems, async item => (await fs.stat(item)).isDirectory());
-                const gitRootArgs = this.gitArgsService.getGitRootArgs();
-                const gitRoots = (await Promise.all(folders.map(async item => {
-                    try {
-                        const result = await this.gitCmdExecutor.exec(item, ...gitRootArgs);
-                        return path.normalize(result.split(/\r?\n/g)[0].trim());
-                    } catch {
-                        return;
-                    }
-                })))
-                    .filter(item => !!item)
-                    .map(item => item!);
+                // Filter out all files
+                let folders = await asyncFilter(filteredItems, async item => (await fs.stat(item)).isDirectory());
+                if (folders.length > 0) {
+                    // Traverse all subfolders to generate a list of the entire directory structure
+                    // This ensures all git submodules - that have been pulled - will be detected
+                    const subfolders = await Promise.all(folders.map(folder => this.getSubfoldersToScan(folder)));
+                    subfolders.forEach(folderList => {
+                        // Add each subfolder found
+                        folderList.forEach(folder => {
+                            if (folders.indexOf(folder) < 0)
+                                folders.push(folder);
+                        });
+                    });
+                }
 
-                resolve(gitRoots);
+                // Add the search folder to the list
+                if (folders.indexOf(dir) < 0)
+                    folders.push(dir);
+
+                resolve(folders);
             });
         });
     }
