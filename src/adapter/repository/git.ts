@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { Writable } from 'stream';
 import * as tmp from 'tmp';
-import { Uri } from 'vscode';
+import { Uri, extensions } from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
@@ -11,9 +11,9 @@ import { ActionedUser, Branch, CommittedFile, FsUri, Hash, IGitService, LogEntri
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
+import { GitExtension } from './git.d';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
-import { asyncFilter } from '../../common/helpers';
 
 @injectable()
 export class Git implements IGitService {
@@ -57,7 +57,14 @@ export class Git implements IGitService {
             return [];
         }
 
-        const gitFoldersList = await Promise.all(rootDirectories.map(item => this.getGitReposInFolder(item)));
+        // Instead of traversing the directory structure for the entire workspace, use the Git extension API to get all repo paths
+        const gitExtension = extensions.getExtension<GitExtension>('vscode.git')!.exports;
+        const git = gitExtension.getAPI(1);
+
+        const sourceControlFolders: string[] = git.repositories.map(repo => { return repo.rootUri.path; });
+        sourceControlFolders.sort();
+        // gitFoldersList should be an Array of Arrays
+        const gitFoldersList = [sourceControlFolders];
         const gitRoots = new Set<string>();
         gitFoldersList
             .reduce<string[]>((aggregate, items) => { aggregate.push(...items); return aggregate; }, [])
@@ -422,60 +429,6 @@ export class Git implements IGitService {
     private async execBinary(destination: Writable, ...args: string[]): Promise<void> {
         const gitRootPath = await this.getGitRoot();
         return this.gitCmdExecutor.exec({ cwd: gitRootPath, encoding: 'binary' }, destination, ...args);
-    }
-    private async getGitReposInFolder(dir: string): Promise<string[]> {
-        const folders = await this.getSubfoldersToScan(dir);
-
-        const gitRootArgs = this.gitArgsService.getGitRootArgs();
-        const gitRoots = (await Promise.all(folders.map(async item => {
-            try {
-                const result = await this.gitCmdExecutor.exec(item, ...gitRootArgs);
-                return path.normalize(result.split(/\r?\n/g)[0].trim());
-            } catch {
-                return;
-            }
-        })))
-            .filter(item => !!item)
-            .map(item => item!)
-            // Ensure each git repo is only added once 
-            .filter((item, idx, arr) => { return (arr.indexOf(item) == idx); });
-
-        return gitRoots;
-    }
-    private async getSubfoldersToScan(dir: string): Promise<string[]> {
-        return new Promise<string[]>(resolve => {
-            fs.readdir(dir, async (err, filesAndFolders) => {
-                if (err) {
-                    return resolve([]);
-                }
-                // Lets ignore folders begining with '.' (hopeufully no one will have them).
-                // Ignore python virtual environments, etc.
-                const filteredItems = filesAndFolders
-                    .filter(item => !item.startsWith('.'))
-                    .map(item => path.join(dir, item));
-
-                // Filter out all files
-                let folders = await asyncFilter(filteredItems, async item => (await fs.stat(item)).isDirectory());
-                if (folders.length > 0) {
-                    // Traverse all subfolders to generate a list of the entire directory structure
-                    // This ensures all git submodules - that have been pulled - will be detected
-                    const subfolders = await Promise.all(folders.map(folder => this.getSubfoldersToScan(folder)));
-                    subfolders.forEach(folderList => {
-                        // Add each subfolder found
-                        folderList.forEach(folder => {
-                            if (folders.indexOf(folder) < 0)
-                                folders.push(folder);
-                        });
-                    });
-                }
-
-                // Add the search folder to the list
-                if (folders.indexOf(dir) < 0)
-                    folders.push(dir);
-
-                resolve(folders);
-            });
-        });
     }
 
     // how to check if a commit has been merged into any other branch
