@@ -30,12 +30,12 @@ export class UiService implements IUiService {
         return modeChoice.label === allBranches ? BranchSelection.All : BranchSelection.Current;
     }
     public async getWorkspaceFolder(uri?: Uri): Promise<WorkspaceGitRoot | undefined> {
-        let workspaceFolder: string | undefined;
+        let workspaceFolder: Uri | undefined;
         const workspaceService = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
         if (uri) {
             const workspaceFolderUri = workspaceService.getWorkspaceFolder(uri);
             if (workspaceFolderUri) {
-                workspaceFolder = workspaceFolderUri.uri.fsPath;
+                workspaceFolder = workspaceFolderUri.uri;
             }
         }
         if (!Array.isArray(workspaceService.workspaceFolders) || workspaceService.workspaceFolders.length === 0) {
@@ -43,11 +43,15 @@ export class UiService implements IUiService {
             return;
         }
 
-        const firstWorkspaceFolder = workspaceService.workspaceFolders[0]!.uri.fsPath;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(firstWorkspaceFolder, firstWorkspaceFolder);
-        const gitRoots = await gitService.getGitRoots(workspaceFolder);
+        const firstWorkspaceFolder = workspaceService.workspaceFolders[0].uri.fsPath;
+        const folders = workspaceFolder ? [workspaceFolder] : workspaceService.workspaceFolders.map(item => item.uri);
+        const gitServices = await Promise.all(folders.map(async folder => {
+            const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(folder.fsPath, folder);
+            return gitService.getGitRoots(folder.fsPath);
+        }));
+        const flattendGitServices = gitServices.reduce((a, b) => a.concat(b), []);
         // Filter to get only those that belong to a workspace folder
-        const filteredGitRoots = gitRoots
+        const filteredGitRoots = flattendGitServices
             .map(gitRoot => {
                 const workspaceFolderUri = workspaceService.getWorkspaceFolder(Uri.file(gitRoot));
                 if (workspaceFolderUri) {

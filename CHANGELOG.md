@@ -1,5 +1,6 @@
 ## Version 0.4.6
 - Handle cases where folder/file names conflicts with brancch names [#205](https://github.com/DonJayamanne/gitHistoryVSCode/issues/205), [#340](https://github.com/DonJayamanne/gitHistoryVSCode/issues/340)
+- Adds support for multi-root workspace folders [#346](https://github.com/DonJayamanne/gitHistoryVSCode/issues/346)
 
 ## Version 0.4.5
 - Make search case-insensitive PR [#334](https://github.com/DonJayamanne/gitHistoryVSCode/pull/334)
