@@ -24,7 +24,7 @@ function formatDateTime(locale: string, date?: Date) {
     const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
     try {
         locale = typeof locale === 'string' ? locale.replace('_', '-') : locale;
-        return date.toLocaleString(locale, dateOptions);
+        return date.toLocaleString(locale);
     } catch {
         return date.toLocaleString(undefined, dateOptions);
     }

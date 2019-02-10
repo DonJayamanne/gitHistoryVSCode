@@ -53,9 +53,8 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
 
     // tslint:disable-next-line:member-ordering
     public render() {
-        const style = { color: 'black' };
         return (<header>
-            <input type="text" value={this.state.searchText} style={style} onChange={this.handleSearchChange} />
+            <input className={'textInput'} type="text" value={this.state.searchText} placeholder="Search…" onChange={this.handleSearchChange} />
             <Button
                 bsStyle='primary' bsSize='small'
                 disabled={this.state.isLoading}

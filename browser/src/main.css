@@ -11,7 +11,7 @@ body {
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, Segoe WPC, Segoe UI, HelveticaNeue-Light, Ubuntu, Droid Sans, sans-serif;
 	padding: 0;
-	overflow: hidden;
+    overflow: hidden;
 }
 
 html {
@@ -55,6 +55,7 @@ body {
 .media .media-image {
 	margin: 0 1em 0 0;
 }
+
 .xxsss{
 	background-image: url('../resources/icons/dark/status-added.svg')
 }
@@ -69,7 +70,7 @@ body {
 }
 
 .media.right .media-image {
-	margin: 0 0 0 1em;
+	margin: 0.8em 0.5em 0 0;
 }
 
 div.appRootParent {
@@ -126,9 +127,7 @@ div.appRoot {
 }
 
 .log-entry {
-	padding: 0.5em;
 	position: relative;
-	border-bottom: 1px solid hsla(0, 0%, 100%, 0.3);
 }
 
 .log-entry .media-content {
@@ -136,6 +135,7 @@ div.appRoot {
 	overflow: hidden;
     cursor: pointer;
     min-width: 15em;
+    padding: 0.5em;
 }
 
 .log-entry .media-image {
@@ -168,10 +168,10 @@ div.appRoot {
 }
 
 .log-entry img.avatar {
-	height:30px;
-    width:30px;
+	height:15px;
+    width:15px;
     float:left;
-    margin-right:0.5em;
+    margin:0.2em 0.4em 0.2em 0;
 }
 
 .authorAndCommitInfoContainer {
@@ -179,8 +179,8 @@ div.appRoot {
     width:100%;
 }
 .authorAndCommitInfoContainer img.avatar {
-    height: 150px;
-    width: 150px;
+    height: 42px;
+    width: 42px;
     float: left;
     margin-right: 0.5em;
 }
@@ -204,21 +204,28 @@ div.appRoot {
 }
 
 .commit-hash-container {
-	background-color: hsla(204, 80%, 40%, 1);
-	white-space: nowrap;
+    background-color: var(--vscode-inputValidation-infoBackground);
+    color: var(--vscode-input-foreground);
+    white-space: nowrap;
+}
+
+.commit-remote-container,
+.commit-tag-container,
+.commit-head-container {
+    border-radius: 5px;
 }
 
 .commit-head-container {
-	background-color: #438a43;
+	background-color: var(--vscode-editorGutter-addedBackground);
 	white-space: nowrap;
 }
 
 .commit-remote-container {
-	background-color: #7d3d40;
+	background-color: var(--vscode-editorGutter-deletedBackground);
 }
 
 .commit-tag-container {
-	background-color: gray;
+	background-color: var(--vscode-terminal-ansiBrightBlack);
 }
 
 .commit-remote-container .refs,
@@ -227,7 +234,7 @@ div.appRoot {
 	display: block;
 	color: white;
 	font-size: 75%;
-    padding: 0.3em;
+    padding: 0.25em 0.5em;
     display: flex;
 }
 
@@ -242,21 +249,25 @@ div.appRoot {
 .commit-remote-container .refs span:first-of-type,
 .commit-tag-container .refs span:first-of-type,
 .commit-head-container .refs span:first-of-type {
-    padding-right:0.5em;
+    padding-right: 0.2em;
 }
 
 .commit-hash-container .commit-hash,
 .commit-hash-container .copy-button {
 	display: inline-block;
-	color: white;
-	padding: 0.4em;
+	color: var(--vscode-input-foreground);
+	padding: 0.2em;
 	cursor: pointer;
 }
 
 .commit-hash-container .cherry-pick-button {
 	display: inline-block;
-	color: white;
-	padding: 0.4em;
+	color: var(--vscode-input-foreground);
+	padding: 0.2em;
+}
+
+.commit-hash-container .commit-hash {
+	padding-right: 0.4em;
 }
 
 .cherry-pick-button a,
@@ -266,13 +277,13 @@ div.appRoot {
 
 .commit-hash-container .cherry-pick-button {
 	display: inline-block;
-	color: white;
-	padding: 0.4em;
+	color: var(--vscode-input-foreground);
+	padding: 0.2em;
 }
 
 .cherry-pick-button a,
 .cherry-pick-button a:hover {
-	color: white;
+	color: var(--vscode-input-foreground);
 }
 
 .commit-hash-container .commit-hash:hover {
@@ -282,7 +293,7 @@ div.appRoot {
 .commit-hash-container .copy-button {
 	position: relative;
 	/* compensate for octicon margin */
-	padding-left: 0.8em;
+	padding-left: 0.6em;
 }
 
 .copy-button .clipboard {
@@ -311,15 +322,15 @@ div.appRoot {
 }
 
 .log-entry.active .commit-hash-container {
-	background-color: yellowgreen;
+	background-color: var(--vscode-inputValidation-infoBackground);
 }
 
 .log-entry.active .commit-subject {
-	color: yellowgreen;
+	color: var(--vscode-textLink-foreground);
 }
 
 .log-entry.active .commit-author {
-	color: yellowgreen;
+	color: var(--vscode-textLink-foreground);
 }
 
 header {
@@ -336,7 +347,7 @@ header input, header button {
 #history-navbar {
 	text-align: right;
 	/* Approximation for scroll bar width of 15px*/
-	margin: 0em 1.3em 0.5em 0.5em;
+	margin: 0.5em 1em;
 }
 
 #history-navbar .navbar {
@@ -425,8 +436,7 @@ header input, header button {
 	display:none;
 }
 .detailsCnt {
-	overflow: auto;
-	border-top: 1px solid hsla(0, 0%, 100%, 0.50);
+    overflow: auto;
 }
 #details-view {
 	/* position: absolute;
@@ -471,7 +481,7 @@ div.commitCntDrag {
 div.react-draggable.react-draggable-dragged,
 div.react-draggable {
 	width: 100% !important;
-	bottom: 35px !important;
+	bottom: 45px !important;
 	position: absolute;
 }
 
@@ -491,7 +501,9 @@ div.react-draggable {
 
 div.details-view-cnt {
 	bottom: 30px;
-	overflow-x: hidden;
+    overflow-x: hidden;
+    background: var(--vscode-editor-background);
+    border-top: 1px solid hsla(0, 0%, 100%, 0.50);
 	max-height: 50vh !important;
 }
 
@@ -571,11 +583,11 @@ div.details-view-cnt {
 }
 
 .diff-block.added {
-	background-color: green;
+	background-color: var(--vscode-terminal-ansiGreen);
 }
 
 .diff-block.deleted {
-	background-color: maroon;
+	background-color: var(--vscode-terminal-ansiRed);
 }
 
 
@@ -611,8 +623,58 @@ div.details-view-cnt {
 	display: block;
 }
 
-.dropdown-menu {
+.dropdow§n-menu {
     max-height: 500px;
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+.btn {
+    color: var(--vscode-input-foreground);
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-background);
+    border-radius: 0;
+}
+
+.btn:focus {
+    border: var(--vscode-focusBorder);
+}
+
+.btn-group-sm>.btn, .btn-sm {
+    border-radius: 0;
+}
+
+.btn:hover {
+    color: var(--vscode-breadcrumb-focusForeground);
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-focusBorder);
+}
+
+.btn-warning:hover {
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-inputValidation-warningBorder);
+}
+
+.btn-info:hover {
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-inputValidation-infoBorder);
+}
+
+.textInput {
+    position: relative;
+    top: 1px;
+    left: 2px;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 5px 10px;
+    color: var(--vscode-input-foreground);
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-background);
+    border-radius: 0;
+}
+
+.textInput:focus {
+    outline: none;
+    border: 1px solid var(--vscode-focusBorder);
+}
+

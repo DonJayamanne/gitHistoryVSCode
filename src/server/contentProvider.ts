@@ -41,7 +41,7 @@ export class ContentProvider implements TextDocumentContentProvider {
         return `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
-                    <titleCan I give a title</title>
+                    <title>Git History</title>
                     <script type="text/javascript">
                         function start(){
                             // We need a unique value so html is reloaded
@@ -50,6 +50,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                             var fontSize = '';
                             var theme = '';
                             var fontWeight = '';
+                            var styles = '';
                             try {
                                 computedStyle = window.getComputedStyle(document.body);
                                 color = computedStyle.color + '';
@@ -58,6 +59,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                                 fontSize = computedStyle.fontSize;
                                 fontWeight = computedStyle.fontWeight;
                                 theme = document.body.className;
+                                styles = document.getElementById('_defaultStyles').innerHTML;
                             }
                             catch(ex){
                             }
@@ -72,7 +74,8 @@ export class ContentProvider implements TextDocumentContentProvider {
                                             'fontFamily=' + encodeURIComponent(fontFamily),
                                             'fontWeight=' + encodeURIComponent(fontWeight),
                                             'fontSize=' + encodeURIComponent(fontSize),
-                                            'locale=${encodeURIComponent(locale)}'
+                                            'locale=${encodeURIComponent(locale)}',
+                                            'styles=' + encodeURIComponent(styles)
                                         ];
                             document.getElementById('myframe').src = 'http://localhost:${port}/?_=${timeNow}&' + queryArgs.join('&');
                         }
