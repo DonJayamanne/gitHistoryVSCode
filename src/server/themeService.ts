@@ -4,7 +4,7 @@ import { IThemeService, ThemeDetails } from './types';
 
 @injectable()
 export class ThemeService implements IThemeService {
-    public getThemeDetails(theme: string, backgroundColor: string, color: string): ThemeDetails {
+    public getThemeDetails(theme: string, backgroundColor: string, color: string, styles: string): ThemeDetails {
         const editorConfig = workspace.getConfiguration('editor');
         // tslint:disable-next-line:no-backbone-get-set-outside-model
         const fontFamily = editorConfig.get<string>('fontFamily')!.split('\'').join('').split('"').join('');
@@ -18,7 +18,8 @@ export class ThemeService implements IThemeService {
             color: color,
             fontFamily: fontFamily,
             fontSize: fontSize,
-            fontWeight: fontWeight
+            fontWeight: fontWeight,
+            styles: styles
         };
     }
 }

@@ -6,30 +6,13 @@
     <link rel='stylesheet' type='text/css' href='bootstrap.min.css' />
     <link rel="stylesheet" href="normalize.css" >
     <style>
-        :root {
-            --background-color: <%=backgroundColor%>;
-            --color: <%=color%>;
-            --font-family: <%=fontFamily%>;
-            --font-weight: <%=fontWeight%>;
-            --font-size: <%=fontSize%>;
-        }
-        body {
-            background-color: <%=backgroundColor%>;
-            color: <%=color%>;
-            font-family: <%=fontFamily%>;
-            font-weight: <%=fontWeight%>;
-            font-size: <%=fontSize%>;
-        }
-        html, body {
-            line-height: 1.15;
-            /* 2 */
-        }
+        <%=styles%>
     </style>
     <link rel="stylesheet" href='animate.min.css' >
     <link rel="stylesheet" href='hint.min.css' >
     <link rel='stylesheet' type='text/css' href='main.css' />
     <link rel='stylesheet' type='text/css' href='octicons.min.css' />
-    
+
     <%if (theme === 'vscode-light') { %>
     <link rel="stylesheet" type="text/css" href="/color-theme-light.css"/>
     <%} else { %>

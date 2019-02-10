@@ -78,10 +78,11 @@ export class ServerHost extends EventEmitter implements IServerHost {
         });
     }
     public rootRequestHandler(req: Request, res: Response) {
+        const styles: string = req.query.styles;
         const theme: string = req.query.theme;
         const backgroundColor: string = req.query.backgroundColor;
         const color: string = req.query.color;
-        const themeDetails = this.themeService.getThemeDetails(theme, backgroundColor, color);
+        const themeDetails = this.themeService.getThemeDetails(theme, backgroundColor, color, styles);
         res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), themeDetails);
     }
 }
