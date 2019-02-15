@@ -334,6 +334,12 @@
                     "default": 100,
                     "scope": "window",
                     "description": "Default number of items to be displayed in Git History Viewer"
+                },
+                "gitHistory.avatarCacheExpiration": {
+                    "type": "integer",
+                    "default": 60,
+                    "scope": "window",
+                    "description": "Avatar image cache expiration (default: 60 minutes / 0 = cache disabled)"
                 }
             }
         }

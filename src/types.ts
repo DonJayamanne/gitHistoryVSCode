@@ -49,7 +49,12 @@ export type CommittedFile = {
 };
 
 /////////////////////////////////////////////////////////
+export type AvatarResponse = {
+    items: Avatar[];
+    timestamp: number;
+}
 export type Avatar = {
+    login: string;
     name: string;
     email: string;
     url?: string;
@@ -61,8 +66,6 @@ export type ActionedUser = {
     email: string;
 };
 export type ActionedDetails = ActionedUser & {
-    name: string;
-    email: string;
     date: Date;
 };
 export type LogEntriesResponse = {
@@ -145,6 +148,7 @@ export interface IGitService {
     checkout(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
     getOriginType(): Promise<GitOriginType | undefined>;
+    getOriginUrl(): Promise<string>;
     merge(hash: string): Promise<void>;
     rebase(hash: string): Promise<void>;
 }

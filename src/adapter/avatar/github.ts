@@ -2,7 +2,7 @@ import axios, { AxiosProxyConfig } from 'axios';
 import { inject, injectable } from 'inversify';
 import { IStateStore, IStateStoreFactory } from '../../application/types/stateStore';
 import { IServiceContainer } from '../../ioc/types';
-import { ActionedUser, Avatar } from '../../types';
+import { Avatar, IGitService } from '../../types';
 import { GitOriginType } from '../repository/types';
 import { BaseAvatarProvider } from './base';
 import { IAvatarProvider } from './types';
@@ -29,10 +29,6 @@ type GithubUserSearchResponseItem = {
     'type': string;
     'site_admin': boolean;
     'score': number;
-};
-type GithubUserSearchResponse = {
-    'total_count': number;
-    'items': GithubUserSearchResponseItem[];
 };
 type GithubUserResponse = {
     'login': string;
@@ -85,24 +81,36 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         const stateStoreFactory = this.serviceContainer.get<IStateStoreFactory>(IStateStoreFactory);
         this.stateStore = stateStoreFactory.createStore();
     }
-    protected async getAvatarImplementation(user: ActionedUser): Promise<Avatar | undefined> {
-        const matchedLogins = await this.findMatchingLogins(user);
-        if (!Array.isArray(matchedLogins)) {
-            return;
-        }
-        const userInfo = await this.findLoginWithSameNameAndEmail(user, matchedLogins);
-        if (!userInfo) {
-            return;
-        }
-        return {
-            url: userInfo.url,
-            avatarUrl: userInfo.avatar_url,
-            name: user.name,
-            email: user.email
-        };
+    protected async getAvatarsImplementation(repository: IGitService): Promise<Avatar[]> {
+        const remoteUrl = await repository.getOriginUrl();
+        const remoteRepoPath = remoteUrl.replace(/.*?github.com\//,'');
+        const contributors = await this.getContributors(remoteRepoPath);
+
+        const githubUsers = await Promise.all(contributors.map(async user => {
+            return await this.getUserByLogin(user.login);
+        }));
+
+        let avatars : Avatar[] = [];
+
+        githubUsers.forEach(user => {
+            if(!user) return;
+            avatars.push({
+                login: user.login,
+                name: user.name,
+                email: user.email,
+                url: user.url,
+                avatarUrl: user.avatar_url
+            });
+        });
+
+        return avatars;
     }
+    /**
+     * Fetch the user details through Github API
+     * @param loginName 
+     */
     private async getUserByLogin(loginName: string) {
-        const key = `GitHub:User:LoginName${loginName}`;
+        const key = `GitHub:User:${loginName}`;
 
         if (this.stateStore.has(key)) {
             const cachedInfo = await this.stateStore.get<GithubUserResponse>(key);
@@ -120,54 +128,21 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
                     return result.data;
                 }
             });
-
+        
         await this.stateStore.set(key, info);
         return info;
     }
-    private async findLoginWithSameNameAndEmail(user: ActionedUser, logins: string[]) {
-        const matchedUsers: GithubUserResponse[] = [];
-        for (const loginName of logins) {
-            const userInfo = await this.getUserByLogin(loginName);
-            if (userInfo && userInfo.name === user.name) {
-                if (userInfo.email && user.email && userInfo.email !== user.email) {
-                    continue;
-                }
-                matchedUsers.push(userInfo);
-            }
-        }
 
-        // Return only if there's exactly one match
-        return matchedUsers.length === 1 ? matchedUsers[0] : undefined;
-    }
-    private async searchLogins(cacheKey: string, searchValue: string) {
-        if (this.stateStore.has(cacheKey)) {
-            const cachedInfo = await this.stateStore.get(cacheKey);
-            if (cachedInfo) {
-                return cachedInfo;
-            }
-        }
+    /**
+     * Fetch all constributors from the remote repository through Github API
+     * @param repoPath relative repository path
+     */
+    private async getContributors(repoPath: string) {
         const proxy = this.proxy;
-        const searchResult = await axios.get(`https://api.github.com/search/users?q=${encodeURIComponent(searchValue)}`, { proxy })
-            .then((result: { data: GithubUserSearchResponse }) => {
-                if (!result.data || !Array.isArray(result.data!.items) || result.data!.items.length === 0) {
-                    return undefined;
-                } else {
-                    return result.data!.items.map(item => item.login);
-                }
+        const info = await axios.get(`https://api.github.com/repos/${repoPath}/contributors`, { proxy })
+            .then((result: { data: GithubUserSearchResponseItem[] }) => {
+                return result.data;
             });
-
-        await this.stateStore.set(cacheKey, searchResult);
-        return searchResult;
-    }
-    private async findMatchingLogins(user: ActionedUser) {
-        const searchByName = await this.searchLogins(`GitHub:Users:Search:Name${user.name}`, user.name);
-        if (searchByName) {
-            return searchByName;
-        }
-
-        if (!user.email) {
-            return;
-        }
-        return this.searchLogins(`GitHub:Users:Search:Email${user.email}`, user.email);
+        return info;
     }
 }
