@@ -38,7 +38,7 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
         if (this.props.lineHistory) {
             return null;
         }
-        debugger;
+        
         const title = !this.props.author || this.props.author === '' ? 'All Authors' : this.props.author;
         const selectedAuthor = !this.props.author || this.props.author === '' ? '[ALL]' : this.props.author;
         const authors = Array.isArray(this.props.authors) ? this.props.authors : [];
