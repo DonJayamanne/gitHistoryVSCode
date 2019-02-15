@@ -181,6 +181,20 @@ export class Git implements IGitService {
             return;
         }
     }
+    @cache('IGitService')
+    public async getOriginUrl(): Promise<string> {
+        try {
+            const remoteName = await this.exec('status', '--porcelain=v1', '-b', '--untracked-files=no').then((branchDetails) => {
+                const matchResult = branchDetails.match(/.*\.\.\.(.*?)\//);
+                return matchResult && matchResult[1] ? matchResult[1] : 'origin';
+            });
+
+            const url = await this.exec('remote', 'get-url', remoteName);
+            return url.substring(0, url.length - 1);
+        } catch {
+            return "";
+        }
+    }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
         const args = this.gitArgsService.getRefsContainingCommitArgs(hash);
         const entries = await this.exec(...args);
