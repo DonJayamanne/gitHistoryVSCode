@@ -159,27 +159,17 @@ export class Git implements IGitService {
     }
     @cache('IGitService')
     public async getOriginType(): Promise<GitOriginType | undefined> {
-        try {
-            const remoteName = await this.exec('status', '--porcelain=v1', '-b', '--untracked-files=no').then((branchDetails) => {
-                const matchResult = branchDetails.match(/.*\.\.\.(.*?)\//);
-                return matchResult && matchResult[1] ? matchResult[1] : 'origin';
-            });
+        const url = await this.getOriginUrl();
 
-            return await this.exec('remote', 'get-url', remoteName)
-                .then(url => {
-                    if (url.indexOf('github.com') > 0) {
-                        return GitOriginType.github;
-                    } else if (url.indexOf('bitbucket') > 0) {
-                        return GitOriginType.bitbucket;
-                    } else if (url.indexOf('visualstudio') > 0) {
-                        return GitOriginType.vsts;
-                    } else {
-                        return undefined;
-                    }
-                });
-        } catch {
-            return;
+        if (url.indexOf('github.com') > 0) {
+            return GitOriginType.github;
+        } else if (url.indexOf('bitbucket') > 0) {
+            return GitOriginType.bitbucket;
+        } else if (url.indexOf('visualstudio') > 0) {
+            return GitOriginType.vsts;
         }
+        
+        return undefined;
     }
     @cache('IGitService')
     public async getOriginUrl(): Promise<string> {
