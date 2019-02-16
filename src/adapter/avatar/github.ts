@@ -30,6 +30,7 @@ type GithubUserSearchResponseItem = {
     'site_admin': boolean;
     'score': number;
 };
+
 type GithubUserResponse = {
     'login': string;
     'id': number;
@@ -61,6 +62,7 @@ type GithubUserResponse = {
     'following': number;
     'created_at': string;
     'updated_at': string;
+    'last_modified': string;
 };
 
 @injectable()
@@ -112,25 +114,35 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     private async getUserByLogin(loginName: string) {
         const key = `GitHub:User:${loginName}`;
 
-        if (this.stateStore.has(key)) {
-            const cachedInfo = await this.stateStore.get<GithubUserResponse>(key);
-            if (cachedInfo) {
-                return cachedInfo;
-            }
+        const cachedUser = await this.stateStore.get<GithubUserResponse>(key);
+        let headers = {};
+
+        if(cachedUser) {
+            // Use GitHub API with conditional check on last modified
+            // to avoid API request rate limitation
+            headers = {'If-Modified-Since': cachedUser.last_modified};
         }
 
         const proxy = this.proxy;
-        const info = await axios.get(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { proxy })
-            .then((result: { data: GithubUserResponse }) => {
+        const info = await axios.get(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { proxy, headers })
+            .then((result: { headers: any, data: GithubUserResponse }) => {
                 if (!result.data || (!result.data.name && !result.data.login)) {
                     return;
                 } else {
+                    result.data.last_modified = result.headers['last-modified'];
                     return result.data;
                 }
+            }).catch(() => {
+                // can either be '302 Not Modified' or any other error
+                // in case of '302 Not Modified' this API request is not counted and returns nothing
             });
         
-        await this.stateStore.set(key, info);
-        return info;
+        if(info) {
+            await this.stateStore.set(key, info);
+            return info;
+        } else {
+            return cachedUser;
+        }
     }
 
     /**
