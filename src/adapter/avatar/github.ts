@@ -89,7 +89,8 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         const contributors = await this.getContributors(remoteRepoPath);
 
         const githubUsers = await Promise.all(contributors.map(async user => {
-            return await this.getUserByLogin(user.login);
+            const u = await this.getUserByLogin(user.login);
+            return u;
         }));
 
         let avatars : Avatar[] = [];
@@ -109,7 +110,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     }
     /**
      * Fetch the user details through Github API
-     * @param loginName 
+     * @param loginName
      */
     private async getUserByLogin(loginName: string) {
         const key = `GitHub:User:${loginName}`;
