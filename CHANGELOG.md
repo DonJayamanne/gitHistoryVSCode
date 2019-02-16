@@ -1,3 +1,7 @@
+## Version 0.4.7
+- Always request github users API (when avatar cache expires) and check for modifications
+- Fixed avatar issues (#349, #287) using remote contributors and added avatar cache extension setting (default 1 hour)
+
 ## Version 0.4.6
 - Handle cases where folder/file names conflicts with brancch names [#205](https://github.com/DonJayamanne/gitHistoryVSCode/issues/205), [#340](https://github.com/DonJayamanne/gitHistoryVSCode/issues/340)
 - Adds support for multi-root workspace folders [#346](https://github.com/DonJayamanne/gitHistoryVSCode/issues/346)
