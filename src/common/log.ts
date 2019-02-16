@@ -4,7 +4,7 @@ import { ILogService } from './types';
 
 @injectable()
 export class Logger implements ILogService {
-    private _enabled: boolean;
+    private _enabled: boolean = false;
     private disposable: Disposable;
     private get enabled(): boolean {
         return this._enabled;
