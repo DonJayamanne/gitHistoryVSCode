@@ -7,7 +7,7 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { ActionedUser, BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
+import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Avatar } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -28,7 +28,6 @@ export class ApiController implements IApiRouteHandler {
         this.app.post('/log/clearSelection', this.handleRequest(this.clearSelectedCommit.bind(this)));
         this.app.post('/log/:hash', this.handleRequest(this.doSomethingWithCommit.bind(this)));
         this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
-        this.app.get('/avatar', this.handleRequest(this.getAvatar.bind(this)));
         this.app.post('/avatars', this.handleRequest(this.getAvatars.bind(this)));
         this.app.get('/authors', this.handleRequest(this.getAuthors.bind(this)));
     }
@@ -195,36 +194,14 @@ export class ApiController implements IApiRouteHandler {
                 response.status(500).send(err);
             });
     }
-    // tslint:disable-next-line:no-any
-    public getAvatar = async (request: Request, response: Response): Promise<any | void> => {
-        const id: string = decodeURIComponent(request.query.id);
-        const name: string = decodeURIComponent(request.query.name);
-        const email: string = decodeURIComponent(request.query.email);
-        try {
-            const originType = await (await this.getRepository(id)).getOriginType();
-            if (!originType) {
-                return response.send();
-            }
-            const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
-            const provider = providers.find(item => item.supported(originType));
-            if (provider) {
-                const avatar = await provider.getAvatar({ name, email });
-                response.send(avatar);
-            } else {
-                const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
-                const avatar = await genericProvider.getAvatar({ name, email });
-                return response.send(avatar);
-            }
-        } catch (err) {
-            response.status(500).send(err);
-        }
-    }
+
     // tslint:disable-next-line:no-any
     public getAvatars = async (request: Request, response: Response): Promise<any | void> => {
         const id: string = decodeURIComponent(request.query.id);
-        const users = request.body as ActionedUser[];
+        //const users = request.body as ActionedUser[];
         try {
-            const originType = await (await this.getRepository(id)).getOriginType();
+            const repo = await this.getRepository(id);
+            const originType = await repo.getOriginType();
             if (!originType) {
                 return response.send();
             }
@@ -232,31 +209,15 @@ export class ApiController implements IApiRouteHandler {
             const provider = providers.find(item => item.supported(originType));
             const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
 
-            const distinctUsers = users.reduce<ActionedUser[]>((accumulator, user) => {
-                if (accumulator.findIndex(item => item.email === user.email && item.name === user.name) === -1) {
-                    accumulator.push(user);
-                }
-                return accumulator;
-            }, []);
+            let avatars: Avatar[];
 
-            // Requests could get rejected for sending too many
-            const avatars = await Promise.all(distinctUsers.map(async user => {
-                if (provider) {
-                    try {
-                        const avatar = await provider.getAvatar(user);
-                        if (avatar) {
-                            return avatar;
-                        }
-                    } catch {
-                        // If we have an error, then return nothing
-                        // We don't want to return a generic avatar just because there were errors
-                        return;
-                    }
-                }
-                return genericProvider.getAvatar(user).catch(() => undefined);
-            }));
+            if(provider) {
+                avatars = await provider.getAvatars(repo);
+            } else {
+                avatars = await genericProvider.getAvatars(repo);
+            }
 
-            response.send(avatars.filter(avatar => !!avatar));
+            response.send(avatars);
         } catch (err) {
             response.status(500).send(err);
         }

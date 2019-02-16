@@ -2,7 +2,7 @@
     "name": "githistory",
     "displayName": "Git History",
     "description": "View git log, file history, compare branches or commits",
-    "version": "0.4.6",
+    "version": "0.4.7",
     "publisher": "donjayamanne",
     "author": {
         "name": "Don Jayamanne",
@@ -334,6 +334,12 @@
                     "default": 100,
                     "scope": "window",
                     "description": "Default number of items to be displayed in Git History Viewer"
+                },
+                "gitHistory.avatarCacheExpiration": {
+                    "type": "integer",
+                    "default": 60,
+                    "scope": "window",
+                    "description": "Avatar image cache expiration (default: 60 minutes / 0 = cache disabled)"
                 }
             }
         }
