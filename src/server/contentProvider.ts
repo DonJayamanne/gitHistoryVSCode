@@ -40,9 +40,11 @@ export class ContentProvider implements TextDocumentContentProvider {
 
         return `
                     <!DOCTYPE html>
-                    <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
-                    <titleCan I give a title</title>
-                    <script type="text/javascript">
+                    <head>
+                        <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'unsafe-inline' 'unsafe-eval';">
+                        <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
+                        <titleCan I give a title</title>
+                        <script type="text/javascript">
                         function start(){
                             // We need a unique value so html is reloaded
                             var color = '';
@@ -76,7 +78,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                                         ];
                             document.getElementById('myframe').src = 'http://localhost:${port}/?_=${timeNow}&' + queryArgs.join('&');
                         }
-                    </script>
+                        </script>
                     </head>
                     <body onload="start()">
                     <iframe id="myframe" frameborder="0" style="border: 0px solid transparent;height:100%;width:100%;" src="" seamless></iframe>
