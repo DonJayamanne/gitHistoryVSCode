@@ -41,11 +41,11 @@ export class ContentProvider implements TextDocumentContentProvider {
         return `
                     <!DOCTYPE html>
                     <head>
-                        <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'unsafe-inline' 'unsafe-eval';">
+                        <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" />
                         <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
-                        <titleCan I give a title</title>
                         <script type="text/javascript">
-                        function start(){
+                        function start()
+                        {
                             // We need a unique value so html is reloaded
                             var color = '';
                             var fontFamily = '';
@@ -53,29 +53,29 @@ export class ContentProvider implements TextDocumentContentProvider {
                             var theme = '';
                             var fontWeight = '';
                             try {
-                                computedStyle = window.getComputedStyle(document.body);
+                                var computedStyle = window.getComputedStyle(document.body);
                                 color = computedStyle.color + '';
                                 backgroundColor = computedStyle.backgroundColor + '';
                                 fontFamily = computedStyle.fontFamily;
                                 fontSize = computedStyle.fontSize;
                                 fontWeight = computedStyle.fontWeight;
                                 theme = document.body.className;
-                            }
-                            catch(ex){
-                            }
+                            } catch(ex) { }
+
                             var queryArgs = [
-                                            'id=${id}',
-                                            'branchName=${encodeURIComponent(branchName)}',
-                                            'file=${encodeURIComponent(file)}',
-                                            'branchSelection=${branchSelection}',
-                                            'theme=' + theme,
-                                            'color=' + encodeURIComponent(color),
-                                            'backgroundColor=' + encodeURIComponent(backgroundColor),
-                                            'fontFamily=' + encodeURIComponent(fontFamily),
-                                            'fontWeight=' + encodeURIComponent(fontWeight),
-                                            'fontSize=' + encodeURIComponent(fontSize),
-                                            'locale=${encodeURIComponent(locale)}'
-                                        ];
+                                'id=${id}',
+                                'branchName=${encodeURIComponent(branchName)}',
+                                'file=${encodeURIComponent(file)}',
+                                'branchSelection=${branchSelection}',
+                                'theme=' + theme,
+                                'color=' + encodeURIComponent(color),
+                                'backgroundColor=' + encodeURIComponent(backgroundColor),
+                                'fontFamily=' + encodeURIComponent(fontFamily),
+                                'fontWeight=' + encodeURIComponent(fontWeight),
+                                'fontSize=' + encodeURIComponent(fontSize),
+                                'locale=${encodeURIComponent(locale)}'
+                            ];
+
                             document.getElementById('myframe').src = 'http://localhost:${port}/?_=${timeNow}&' + queryArgs.join('&');
                         }
                         </script>
