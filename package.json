@@ -188,43 +188,46 @@
                 {
                     "command": "git.viewHistory",
                     "group": "navigation",
-                    "when": "config.gitHistory.showEditorTitleMenuBarIcons"
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0 && config.gitHistory.showEditorTitleMenuBarIcons"
                 }
             ],
             "editor/title/context": [
                 {
                     "command": "git.viewFileHistory",
                     "group": "git",
-                    "when": "config.gitHistory.showEditorTitleMenuBarIcons"
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0 && config.gitHistory.showEditorTitleMenuBarIcons"
                 }
             ],
             "scm/title": [
                 {
                     "command": "git.viewHistory",
                     "group": "inline",
-                    "when": "scmProvider == git"
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
                 }
             ],
             "scm/resourceState/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "when": "scmProvider == git"
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
                 }
             ],
             "explorer/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "git"
+                    "group": "git",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
                 }
             ],
             "editor/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "git"
+                    "group": "git",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
                 },
                 {
                     "command": "git.viewLineHistory",
-                    "group": "git"
+                    "group": "git",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
                 }
             ],
             "view/item/context": [
