@@ -321,7 +321,7 @@
                     "type": "boolean",
                     "default": false,
                     "scope": "window",
-                    "description": "Whether to diplay the commit explorer view"
+                    "description": "Whether to display the commit explorer view"
                 },
                 "gitHistory.showEditorTitleMenuBarIcons": {
                     "type": "boolean",
