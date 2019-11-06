@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { Writable } from 'stream';
 import * as tmp from 'tmp';
-import { Uri, extensions } from 'vscode';
+import { Uri } from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
@@ -11,7 +11,6 @@ import { ActionedUser, Branch, CommittedFile, FsUri, Hash, IGitService, LogEntri
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
-import { GitExtension } from './git.d';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
 
@@ -58,10 +57,9 @@ export class Git implements IGitService {
         }
 
         // Instead of traversing the directory structure for the entire workspace, use the Git extension API to get all repo paths
-        const gitExtension = extensions.getExtension<GitExtension>('vscode.git')!.exports;
-        const git = gitExtension.getAPI(1);
-
-        const sourceControlFolders: string[] = git.repositories.map(repo => { return repo.rootUri.path; });
+        const git = this.gitCmdExecutor.gitExtension.getAPI(1);
+        
+        const sourceControlFolders: string[] = git.repositories.map(repo => repo.rootUri.path);
         sourceControlFolders.sort();
         // gitFoldersList should be an Array of Arrays
         const gitFoldersList = [sourceControlFolders];
