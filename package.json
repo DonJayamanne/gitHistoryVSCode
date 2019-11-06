@@ -342,9 +342,13 @@
                     "description": "Avatar image cache expiration (0 = cache disabled)"
                 },
                 "gitHistory.logLevel": {
-                    "type":"string",
+                    "type": "string",
                     "default": "None",
-                    "enum": ["None", "Info", "Debug"],
+                    "enum": [
+                        "None",
+                        "Info",
+                        "Debug"
+                    ],
                     "scope": "window",
                     "description": "Output log information"
                 }
