@@ -13,7 +13,6 @@ import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
-import { asyncFilter } from '../../common/helpers';
 
 @injectable()
 export class Git implements IGitService {
@@ -57,7 +56,13 @@ export class Git implements IGitService {
             return [];
         }
 
-        const gitFoldersList = await Promise.all(rootDirectories.map(item => this.getGitReposInFolder(item)));
+        // Instead of traversing the directory structure for the entire workspace, use the Git extension API to get all repo paths
+        const git = this.gitCmdExecutor.gitExtension.getAPI(1);
+        
+        const sourceControlFolders: string[] = git.repositories.map(repo => repo.rootUri.path);
+        sourceControlFolders.sort();
+        // gitFoldersList should be an Array of Arrays
+        const gitFoldersList = [sourceControlFolders];
         const gitRoots = new Set<string>();
         gitFoldersList
             .reduce<string[]>((aggregate, items) => { aggregate.push(...items); return aggregate; }, [])
@@ -426,36 +431,6 @@ export class Git implements IGitService {
     private async execBinary(destination: Writable, ...args: string[]): Promise<void> {
         const gitRootPath = await this.getGitRoot();
         return this.gitCmdExecutor.exec({ cwd: gitRootPath, encoding: 'binary' }, destination, ...args);
-    }
-    private async getGitReposInFolder(dir: string): Promise<string[]> {
-        return new Promise<string[]>(resolve => {
-            fs.readdir(dir, async (err, filesAndFolders) => {
-                if (err) {
-                    return resolve([]);
-                }
-                // Lets ignore folders begining with '.' (hopeufully no one will have them).
-                // Ignore python virtual environments, etc.
-                const filteredItems = filesAndFolders
-                    .filter(item => !item.startsWith('.'))
-                    .map(item => path.join(dir, item));
-                filteredItems.push(dir);
-
-                const folders = await asyncFilter(filteredItems, async item => (await fs.stat(item)).isDirectory());
-                const gitRootArgs = this.gitArgsService.getGitRootArgs();
-                const gitRoots = (await Promise.all(folders.map(async item => {
-                    try {
-                        const result = await this.gitCmdExecutor.exec(item, ...gitRootArgs);
-                        return path.normalize(result.split(/\r?\n/g)[0].trim());
-                    } catch {
-                        return;
-                    }
-                })))
-                    .filter(item => !!item)
-                    .map(item => item!);
-
-                resolve(gitRoots);
-            });
-        });
     }
 
     // how to check if a commit has been merged into any other branch

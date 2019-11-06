@@ -2,24 +2,26 @@ import { spawn } from 'child_process';
 import * as iconv from 'iconv-lite';
 import { injectable, multiInject } from 'inversify';
 import { Writable } from 'stream';
-import { Disposable, extensions, Extension } from 'vscode';
+import { Disposable, extensions } from 'vscode';
+import { GitExtension } from '../repository/git.d';
 import { StopWatch } from '../../common/stopWatch';
 import { ILogService } from '../../common/types';
 import { IGitCommandExecutor } from './types';
+
 
 const DEFAULT_ENCODING = 'utf8';
 const isWindows = /^win/.test(process.platform);
 
 @injectable()
 export class GitCommandExecutor implements IGitCommandExecutor {
-    private gitExtension : Extension<any> | undefined;
-    private gitApi : any;
+    public gitExtension : GitExtension;
     private gitExecutablePath : string;
 
     constructor(@multiInject(ILogService) private loggers: ILogService[]) {
-        this.gitExtension = extensions.getExtension('vscode.git');
-        this.gitApi = this.gitExtension!.exports.getAPI(1);
-        this.gitExecutablePath = this.gitApi.git.path;
+        this.gitExtension = extensions.getExtension<GitExtension>('vscode.git')!.exports;
+
+        const gitApi = this.gitExtension.getAPI(1);
+        this.gitExecutablePath = gitApi.git.path;
     }
     public async exec(cwd: string, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:unified-signatures
