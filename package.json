@@ -130,7 +130,7 @@
             },
             {
                 "command": "git.commit.compare.file.compare",
-                "title": "Compare   "
+                "title": "Compare"
             },
             {
                 "command": "git.commit.compare.selectForComparison",
@@ -188,40 +188,43 @@
                 {
                     "command": "git.viewHistory",
                     "group": "navigation",
-                    "when": "config.gitHistory.showEditorTitleMenuBarIcons && scmProvider == git"
+                    "when": "config.gitHistory.showEditorTitleMenuBarIcons"
                 }
             ],
             "editor/title/context": [
                 {
                     "command": "git.viewFileHistory",
                     "group": "git",
-                    "when": "config.gitHistory.showEditorTitleMenuBarIcons && scmProvider == git"
+                    "when": "config.gitHistory.showEditorTitleMenuBarIcons"
+                }
+            ],
+            "scm/title": [
+                {
+                    "command": "git.viewHistory",
+                    "group": "inline",
+                    "when": "scmProvider == git"
                 }
             ],
             "scm/resourceState/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "1_git@1",
                     "when": "scmProvider == git"
                 }
             ],
             "explorer/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "git",
-                    "when": "scmProvider == git"
+                    "group": "git"
                 }
             ],
             "editor/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "git",
-                    "when": "scmProvider == git"
+                    "group": "git"
                 },
                 {
                     "command": "git.viewLineHistory",
-                    "group": "git",
-                    "when": "scmProvider == git"
+                    "group": "git"
                 }
             ],
             "view/item/context": [
