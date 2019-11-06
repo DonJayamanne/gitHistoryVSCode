@@ -188,36 +188,40 @@
                 {
                     "command": "git.viewHistory",
                     "group": "navigation",
-                    "when": "config.gitHistory.showEditorTitleMenuBarIcons"
+                    "when": "config.gitHistory.showEditorTitleMenuBarIcons && scmProvider == git"
                 }
             ],
             "editor/title/context": [
                 {
                     "command": "git.viewFileHistory",
                     "group": "git",
-                    "when": "config.gitHistory.showEditorTitleMenuBarIcons"
+                    "when": "config.gitHistory.showEditorTitleMenuBarIcons && scmProvider == git"
                 }
             ],
             "scm/resourceState/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "1_git@1"
+                    "group": "1_git@1",
+                    "when": "scmProvider == git"
                 }
             ],
             "explorer/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "git"
+                    "group": "git",
+                    "when": "scmProvider == git"
                 }
             ],
             "editor/context": [
                 {
                     "command": "git.viewFileHistory",
-                    "group": "git"
+                    "group": "git",
+                    "when": "scmProvider == git"
                 },
                 {
                     "command": "git.viewLineHistory",
-                    "group": "git"
+                    "group": "git",
+                    "when": "scmProvider == git"
                 }
             ],
             "view/item/context": [
