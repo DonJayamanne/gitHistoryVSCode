@@ -315,7 +315,7 @@
         },
         "configuration": {
             "type": "object",
-            "title": "Git History configuration",
+            "title": "Git History",
             "properties": {
                 "gitHistory.hideCommitViewExplorer": {
                     "type": "boolean",
@@ -339,7 +339,14 @@
                     "type": "integer",
                     "default": 60,
                     "scope": "window",
-                    "description": "Avatar image cache expiration (default: 60 minutes / 0 = cache disabled)"
+                    "description": "Avatar image cache expiration (0 = cache disabled)"
+                },
+                "gitHistory.logLevel": {
+                    "type":"string",
+                    "default": "None",
+                    "enum": ["None", "Info", "Debug"],
+                    "scope": "window",
+                    "description": "Output log information"
                 }
             }
         }

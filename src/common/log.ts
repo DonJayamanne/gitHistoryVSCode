@@ -39,6 +39,7 @@ export class Logger implements ILogService {
         console.warn(...args);
     }
     private updateEnabledFlag() {
-        this._enabled = workspace.getConfiguration('gitHistory').get<string>('logLevel', 'None') === 'Info';
+        let logLevel =  workspace.getConfiguration('gitHistory').get<string>('logLevel', 'None');
+        this._enabled = logLevel === 'Info' || logLevel == 'Debug';
     }
 }
