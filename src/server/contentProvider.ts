@@ -34,9 +34,10 @@ export class ContentProvider implements TextDocumentContentProvider {
 
         // tslint:disable-next-line:no-http-string
         const uri = `http://localhost:${port}/?_&${queryArgs.join('&')}`;
-        this.serviceContainer.getAll<ILogService>(ILogService).forEach(logger => {
-            logger.log(`Server running on ${uri}`);
-        });
+        this.serviceContainer.getAll<ILogService>(ILogService)
+            .forEach(logger => {
+                logger.log(`Server running on ${uri}`);
+            });
 
         return `
                     <!DOCTYPE html>

@@ -1,5 +1,5 @@
-import * as querystring from 'query-string';
 import { inject } from 'inversify';
+import * as querystring from 'query-string';
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel } from 'vscode';
 import { window } from 'vscode';
 import { ICommandManager } from '../application/types';
@@ -33,8 +33,8 @@ export class HtmlViewer {
 
         // tslint:disable-next-line:no-any
         const htmlContent = this.contentProvider.provideTextDocumentContent(uri, undefined as any);
-        const webviewPanel = window.createWebviewPanel('gitLog', title, column, { 
-            enableScripts: true, 
+        const webviewPanel = window.createWebviewPanel('gitLog', title, column, {
+            enableScripts: true,
             retainContextWhenHidden: true,
             portMapping: [
                 { webviewPort: port, extensionHostPort: port}
