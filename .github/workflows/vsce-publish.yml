@@ -1,0 +1,16 @@
+name: CI
+
+on: 
+    release:
+      types: [published]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: vsce publish
+      uses: sigma/vsce-publish-action@v0.0.1
+      with:
+        vsce_token: ${{ secrets.VSCE_TOKEN }}
