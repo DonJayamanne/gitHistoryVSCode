@@ -10,21 +10,9 @@ body {
 	height: 100%;
 	width: 100%;
 	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, Segoe WPC, Segoe UI, HelveticaNeue-Light, Ubuntu, Droid Sans, sans-serif;
 	padding: 0;
 	overflow: hidden;
 	color: var(--vscode-editor-foreground)
-}
-
-html {
-	font-sizex: 62.5%;
-	/* make 1rem = 10px */
-}
-
-body {
-	/* font-size: 16px; */
-	font-size: 1.5em;
-	height: 100vh;
 }
 
 .hidden {
@@ -92,8 +80,6 @@ div.appRoot {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	height: 100vh;
-	/* cheight: 100%;
-	overflow-y: auto; */
 }
 
 #log-view.with-details {
@@ -441,27 +427,10 @@ header input, header button {
     overflow: auto;
 }
 #details-view {
-	/* position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0; */
-	/* height: 20rem; */
-	/* max-height: 50vh; */
-	/* overflow: auto; */
 	padding: 1rem 1rem 0 1rem;
-	/* border: 1px solid hsla(0, 0%, 100%, 0.12); */
-	/* border-top: 1px solid hsla(0, 0%, 100%, 0.50); */
-	/* border-bottom: none; */
 }
-
-/* #details-view.resized {
-	height: calc(100% - 20rem);
-} */
-
 #details-view .action-btn {
 	float: right;
-	/* padding: 1rem; */
-	/* increases the hit-area */
 	cursor: pointer;
 	opacity: 0.8;
 	z-index: 5;
@@ -486,20 +455,6 @@ div.react-draggable {
 	bottom: 45px !important;
 	position: absolute;
 }
-
-
-/* #details-view.resized .action-btn.resize-btn {
-	display: none;
-} */
-
-
-/* #details-view .action-btn.resume-btn {
-	display: none;
-}
-
-#details-view.resized .action-btn.resume-btn {
-	display: block;
-} */
 
 div.details-view-cnt {
 	bottom: 30px;

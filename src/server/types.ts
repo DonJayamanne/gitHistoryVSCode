@@ -5,8 +5,6 @@ import { BranchSelection, LogEntries, LogEntry } from '../types';
 export type ThemeDetails = {
     theme: string;
     styles: string;
-    backgroundColor: string;
-    color: string;
     fontFamily: string;
     fontSize: string;
     fontWeight?: string;
@@ -14,7 +12,7 @@ export type ThemeDetails = {
 export const IThemeService = Symbol('IThemeService');
 
 export interface IThemeService {
-    getThemeDetails(theme: string, backgroundColor: string, color: string, styles: string): ThemeDetails;
+    getThemeDetails(theme: string, styles: string): ThemeDetails;
 }
 export const IApiRouteHandler = Symbol('IApiRouteHandler');
 

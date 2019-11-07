@@ -15,9 +15,9 @@ import { IServerHost, IThemeService, IWorkspaceQueryStateStore, StartupInfo } fr
 export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
     private httpServer?: http.Server;
-    private apiController: ApiController;
+    private apiController?: ApiController;
     private port?: number;
-    private startPromise: Promise<StartupInfo>;
+    private startPromise?: Promise<StartupInfo>;
     constructor( @inject(IThemeService) private themeService: IThemeService,
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
@@ -78,11 +78,11 @@ export class ServerHost extends EventEmitter implements IServerHost {
         });
     }
     public rootRequestHandler(req: Request, res: Response) {
-        const styles: string = req.query.styles;
+        // in some cases the hash character is not properly converted
+        // so replace the uri encoded value to #
+        const styles: string = req.query.styles.replace(/%23/g, '#');
         const theme: string = req.query.theme;
-        const backgroundColor: string = req.query.backgroundColor;
-        const color: string = req.query.color;
-        const themeDetails = this.themeService.getThemeDetails(theme, backgroundColor, color, styles);
+        const themeDetails = this.themeService.getThemeDetails(theme, styles);
         res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), themeDetails);
     }
 }
