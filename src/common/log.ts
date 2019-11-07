@@ -29,6 +29,7 @@ export class Logger implements ILogService {
         if (!this.enabled) {
             return;
         }
+        // tslint:disable-next-line:no-console
         console.error(...args);
     }
     // tslint:disable-next-line:no-any
@@ -39,6 +40,8 @@ export class Logger implements ILogService {
         console.warn(...args);
     }
     private updateEnabledFlag() {
-        this._enabled = workspace.getConfiguration('gitHistory').get<string>('logLevel', 'None') === 'Info';
+        // tslint:disable-next-line:newline-per-chained-call
+        const logLevel =  workspace.getConfiguration('gitHistory').get<string>('logLevel', 'None');
+        this._enabled = logLevel === 'Info' || logLevel === 'Debug';
     }
 }

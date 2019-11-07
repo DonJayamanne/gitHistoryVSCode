@@ -13,33 +13,9 @@ export default class LogEntryList extends React.Component<ResultProps> {
     // private scrolled;
     private ref: HTMLDivElement;
     public componentDidUpdate() {
-        // console.log('LogEntryList Component Updated');
 
-        // if (this.scrolled) {
-        //   return;
-        // }
-        // setTimeout(function () {
-        //   this.scrolled = true;
-        //   console.log('scroll');
-        //   scroller.scrollTo('74fde6b00cbf4f2aa796d98a077d52656ade4856', {
-        //     duration: 1500,
-        //     delay: 100,
-        //     smooth: true,
-        //     containerId: 'scrollCnt',
-        //     offset: 50 // Scrolls to element + 50 pixels down the page
-        //   });
-        // }, 30000);
     }
     public componentDidMount() {
-        // Events.scrollEvent.register('begin', function () {
-        //     // tslint:disable-next-line:no-console
-        //     console.log('begin', arguments);
-        // });
-
-        // Events.scrollEvent.register('end', function () {
-        //     console.log('end', arguments);
-        // });
-
         scrollSpy.update();
     }
     public componentWillUnmount() {

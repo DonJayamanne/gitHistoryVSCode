@@ -23,19 +23,13 @@
             "isBackground": true,
             "problemMatcher": [
                 "$tsc-watch",
-                {
-                    "base": "$tslint5",
-                    "fileLocation": "relative"
-                }
+                "$eslint-stylish"
             ]
         },
         {
             "type": "npm",
             "script": "lint",
-            "problemMatcher": {
-                "base": "$tslint5",
-                "fileLocation": "relative"
-            }
+            "problemMatcher": ["$eslint-stylish"]
         },
         {
             "type": "npm",
@@ -46,10 +40,7 @@
         {
             "type": "gulp",
             "task": "hygiene",
-            "problemMatcher": {
-                "base": "$tslint5",
-                "fileLocation": "relative"
-            }
+            "problemMatcher": ["$eslint-stylish"]
         },
         {
             "type": "npm",
@@ -98,10 +89,7 @@
         {
             "type": "npm",
             "script": "lint-staged",
-            "problemMatcher": {
-                "base": "$tslint5",
-                "fileLocation": "relative"
-            }
+            "problemMatcher": ["$eslint-stylish"]
         }
     ]
 }

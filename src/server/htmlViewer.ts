@@ -1,4 +1,5 @@
 import { inject } from 'inversify';
+import * as querystring from 'query-string';
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel } from 'vscode';
 import { window } from 'vscode';
 import { ICommandManager } from '../application/types';
@@ -27,9 +28,19 @@ export class HtmlViewer {
             return this.htmlView.get(uri.toString())!.webview;
         }
 
+        const query = querystring.parse(uri.query.toString())!;
+        const port: number = parseInt(query.port!.toString(), 10);
+        const internalPort: number = parseInt(query.internalPort!.toString(), 10);
+
         // tslint:disable-next-line:no-any
         const htmlContent = this.contentProvider.provideTextDocumentContent(uri, undefined as any);
-        const webviewPanel = window.createWebviewPanel('gitLog', title, column, { enableScripts: true, retainContextWhenHidden: true });
+        const webviewPanel = window.createWebviewPanel('gitLog', title, column, {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            portMapping: [
+                { webviewPort: internalPort, extensionHostPort: port}
+            ]
+         });
         this.htmlView.set(uri.toString(), webviewPanel);
         webviewPanel.onDidDispose(() => {
             if (this.htmlView.has(uri.toString())) {

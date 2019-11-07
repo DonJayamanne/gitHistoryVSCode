@@ -49,12 +49,13 @@ class App extends React.Component<AppProps, AppState> {
             </div >
         );
     }
-    private goBack = () => {
-        this.props.getPreviousCommits();
+    private goBack = async () => {
+        await this.props.getPreviousCommits();
+        document.getElementById('scrollCnt').scrollTo(0,0);
     }
-    private goForward = () => {
-        // this.props.fetchData(this.props.logEntries.pageIndex + 1, this.props.logEntries.pageSize);
-        this.props.getNextCommits();
+    private goForward = async () => {
+        await  this.props.getNextCommits();
+        document.getElementById('scrollCnt').scrollTo(0,0);
     }
 }
 

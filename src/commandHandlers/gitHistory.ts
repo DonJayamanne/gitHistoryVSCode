@@ -78,7 +78,8 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         }
         const workspaceFolder = selection.workspaceFolder;
         const gitRoot = selection.gitRoot;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder, gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory)
+                                                      .createGitService(workspaceFolder, gitRoot);
         const branchNamePromise = gitService.getCurrentBranch();
         const startupInfoPromise = this.server!.start(workspaceFolder);
         const localePromise = osLocale();
@@ -89,10 +90,13 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         // Do not include the search string into this
         const fullId = `${startupInfo.port}:${BranchSelection.Current}:${fileUri ? fileUri.fsPath : ''}:${gitRoot}`;
         const id = md5(fullId); //Date.now().toString();
-        await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).initialize(id, workspaceFolder, gitRoot, branchName, BranchSelection.Current, '', fileUri, lineNumber);
+        await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore)
+                                   .initialize(id, workspaceFolder, gitRoot, branchName, BranchSelection.Current, '', fileUri, lineNumber);
 
         const queryArgs = [
-            `id=${id}`, `port=${startupInfo.port}`,
+            `id=${id}`,
+            `port=${startupInfo.port}`,
+            `internalPort=${startupInfo.port - 1}`,
             `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
             `branchSelection=${BranchSelection.Current}`, `locale=${encodeURIComponent(locale)}`
         ];
