@@ -179,8 +179,8 @@ div.appRoot {
     width:100%;
 }
 .authorAndCommitInfoContainer img.avatar {
-    height: 150px;
-    width: 150px;
+    height:80px;
+    width:80px;
     float: left;
     margin-right: 0.5em;
 }
