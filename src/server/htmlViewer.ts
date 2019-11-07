@@ -30,6 +30,7 @@ export class HtmlViewer {
 
         const query = querystring.parse(uri.query.toString())!;
         const port: number = parseInt(query.port!.toString(), 10);
+        const internalPort: number = parseInt(query.internalPort!.toString(), 10);
 
         // tslint:disable-next-line:no-any
         const htmlContent = this.contentProvider.provideTextDocumentContent(uri, undefined as any);
@@ -37,7 +38,7 @@ export class HtmlViewer {
             enableScripts: true,
             retainContextWhenHidden: true,
             portMapping: [
-                { webviewPort: port, extensionHostPort: port}
+                { webviewPort: internalPort, extensionHostPort: port}
             ]
          });
         this.htmlView.set(uri.toString(), webviewPanel);

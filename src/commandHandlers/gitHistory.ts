@@ -92,7 +92,9 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).initialize(id, workspaceFolder, gitRoot, branchName, BranchSelection.Current, '', fileUri, lineNumber);
 
         const queryArgs = [
-            `id=${id}`, `port=${startupInfo.port}`,
+            `id=${id}`,
+            `port=${startupInfo.port}`,
+            `internalPort=${startupInfo.port-1}`,
             `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
             `branchSelection=${BranchSelection.Current}`, `locale=${encodeURIComponent(locale)}`
         ];
