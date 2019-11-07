@@ -46,6 +46,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                         function start(){
                             // We need a unique value so html is reloaded
                             try {
+                                theme = document.body.className;
                                 styles = document.getElementsByTagName("html")[0].style.cssText;
                             }
                             catch(ex){
@@ -56,6 +57,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                                 'file=${encodeURIComponent(file)}',
                                 'branchSelection=${branchSelection}',
                                 'locale=${encodeURIComponent(locale)}',
+                                'theme=' + theme,
                                 'styles=' + encodeURIComponent(styles)
                             ];
                             document.getElementById('myframe').src = 'http://localhost:${port}/?_=${timeNow}&' + queryArgs.join('&');
