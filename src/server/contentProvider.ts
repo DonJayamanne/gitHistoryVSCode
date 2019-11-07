@@ -45,38 +45,19 @@ export class ContentProvider implements TextDocumentContentProvider {
                     <script type="text/javascript">
                         function start(){
                             // We need a unique value so html is reloaded
-                            var color = '';
-                            var fontFamily = '';
-                            var fontSize = '';
-                            var theme = '';
-                            var fontWeight = '';
-                            var styles = '';
                             try {
-                                computedStyle = window.getComputedStyle(document.body);
-                                color = computedStyle.color + '';
-                                backgroundColor = computedStyle.backgroundColor + '';
-                                fontFamily = computedStyle.fontFamily;
-                                fontSize = computedStyle.fontSize;
-                                fontWeight = computedStyle.fontWeight;
-                                theme = document.body.className;
-                                styles = document.getElementById('_defaultStyles').innerHTML;
+                                styles = document.getElementsByTagName("html")[0].style.cssText;
                             }
                             catch(ex){
                             }
                             var queryArgs = [
-                                            'id=${id}',
-                                            'branchName=${encodeURIComponent(branchName)}',
-                                            'file=${encodeURIComponent(file)}',
-                                            'branchSelection=${branchSelection}',
-                                            'theme=' + theme,
-                                            'color=' + encodeURIComponent(color),
-                                            'backgroundColor=' + encodeURIComponent(backgroundColor),
-                                            'fontFamily=' + encodeURIComponent(fontFamily),
-                                            'fontWeight=' + encodeURIComponent(fontWeight),
-                                            'fontSize=' + encodeURIComponent(fontSize),
-                                            'locale=${encodeURIComponent(locale)}',
-                                            'styles=' + encodeURIComponent(styles)
-                                        ];
+                                'id=${id}',
+                                'branchName=${encodeURIComponent(branchName)}',
+                                'file=${encodeURIComponent(file)}',
+                                'branchSelection=${branchSelection}',
+                                'locale=${encodeURIComponent(locale)}',
+                                'styles=' + encodeURIComponent(styles)
+                            ];
                             document.getElementById('myframe').src = 'http://localhost:${port}/?_=${timeNow}&' + queryArgs.join('&');
                         }
                     </script>

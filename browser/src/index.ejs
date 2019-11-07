@@ -5,13 +5,17 @@
     <title>Git Log</title>
     <link rel='stylesheet' type='text/css' href='bootstrap.min.css' />
     <link rel="stylesheet" href="normalize.css" >
-    <style>
-        <%=styles%>
-    </style>
     <link rel="stylesheet" href='animate.min.css' >
     <link rel="stylesheet" href='hint.min.css' >
     <link rel='stylesheet' type='text/css' href='main.css' />
     <link rel='stylesheet' type='text/css' href='octicons.min.css' />
+
+    <style>
+      :root {
+        <%=styles%>
+      }
+      
+    </style>
 
     <%if (theme === 'vscode-light') { %>
     <link rel="stylesheet" type="text/css" href="/color-theme-light.css"/>

@@ -10,11 +10,11 @@ type FooterProps = {
 export default function Footer(props: FooterProps) {
     return (
         <div id='history-navbar'>
-            <Button bsStyle='primary' className='navbar-link' className={props.canGoBack ? '' : 'disabled'} onClick={() => props.goBack()}>
+            <Button bsStyle='primary' className={props.canGoBack ? 'navbar-link' : 'navbar-link disabled'} onClick={() => props.goBack()}>
                 <i className='octicon octicon-chevron-left'></i>
                 <span>Previous</span>
             </Button>
-            <Button bsStyle='primary' className='navbar-link' lassName={props.canGoForward ? '' : 'disabled'} onClick={() => props.goForward()}>
+            <Button bsStyle='primary' className={props.canGoForward ? 'navbar-link' : 'navbar-link disabled'} onClick={() => props.goForward()}>
                 <span>Next</span>
                 <i className='octicon octicon-chevron-right'></i>
             </Button>

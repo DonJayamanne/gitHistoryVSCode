@@ -9,7 +9,6 @@ import { FileEntry } from './FileEntry';
 const GoX = require('react-icons/lib/go/x');
 import * as jQuery from 'jquery';
 import Rnd from 'react-rnd';
-import { Direction } from 'react-rnd';
 import * as ResultActions from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
 
@@ -59,7 +58,7 @@ class Commit extends React.Component<CommitProps> {
         return (
             // tslint:disable-next-line:react-this-binding-issue
             <Rnd className='details-view-cnt hidden' ref={ref => this.ref = ref} default={ContainerStyle} minWidth={50} minHeight={50} bounds='parent'
-                onResize={this.onResize} onResizeStart={this.onResize} enableResizing={resizing} disableDragging={true}>
+                enableResizing={resizing} disableDragging={true}>
                 <div className='detailsCnt'>
                     <div id='details-view' className='hidden' >
                         <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
