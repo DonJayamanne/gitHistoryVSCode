@@ -100,3 +100,15 @@ slick-grid.active .grid .slick-cell.selected {
 .shortCut {
   color: grey;
 }
+
+.close-btn {
+    color: white;
+}
+
+.log-entry {
+	border-bottom: 1px solid hsla(0, 0%, 100%, .3);
+}
+
+div.details-view-cnt {
+    border-top: 1px solid hsla(0, 0%, 100%, .3);
+}

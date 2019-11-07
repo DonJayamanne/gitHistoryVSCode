@@ -9,7 +9,6 @@ import { FileEntry } from './FileEntry';
 const GoX = require('react-icons/lib/go/x');
 import * as jQuery from 'jquery';
 import Rnd from 'react-rnd';
-import { Direction } from 'react-rnd';
 import * as ResultActions from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
 
@@ -31,25 +30,16 @@ class Commit extends React.Component<CommitProps> {
         if (this.props && this.props.selectedEntry) {
             setTimeout(this.resize.bind(this), 1);
         }
-        else {
-            jQuery('#placeHolderCommit').hide();
-        }
     }
     public componentDidMount() {
         if (this.props && this.props.selectedEntry) {
             setTimeout(this.resize.bind(this), 1);
         }
     }
-    public componentWillUnmount() {
-        jQuery('#placeHolderCommit').hide();
-    }
     private resize() {
         const $ref = jQuery('.react-draggable');
         $ref.removeClass('hidden').css('top', '');
         jQuery('#details-view').removeClass('hidden');
-        const height = $ref.height();
-
-        jQuery('#placeHolderCommit').css('padding-top', height / 2).css('padding-bottom', (height / 2) + 10).show();
     }
     private ref: HTMLElement;
     private onSelectFile = (fileEntry: CommittedFile) => {
@@ -62,25 +52,13 @@ class Commit extends React.Component<CommitProps> {
         return this.props.selectedEntry.committedFiles
             .map((fileEntry, index) => <FileEntry theme={this.props.theme} committedFile={fileEntry} key={index + fileEntry.relativePath} onSelect={this.onSelectFile} />);
     }
-
-    private onResize = (_, direction: Direction, ref: HTMLElement, delta: number) => {
-        const $ref = jQuery(ref);
-        const height = $ref.height();
-        const padding = height / 2;
-        jQuery('#placeHolderCommit').show().css('padding-top', padding).css('padding-bottom', padding);
-    }
     public render() {
-        if (!this.props.selectedEntry) {
-            jQuery('#placeHolderCommit').hide();
-            return null;
-        }
-
         const resizing = { top: true, right: false, bottom: false, left: false, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false };
 
         return (
             // tslint:disable-next-line:react-this-binding-issue
             <Rnd className='details-view-cnt hidden' ref={ref => this.ref = ref} default={ContainerStyle} minWidth={50} minHeight={50} bounds='parent'
-                onResize={this.onResize} onResizeStart={this.onResize} enableResizing={resizing} disableDragging={true}>
+                enableResizing={resizing} disableDragging={true}>
                 <div className='detailsCnt'>
                     <div id='details-view' className='hidden' >
                         <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>

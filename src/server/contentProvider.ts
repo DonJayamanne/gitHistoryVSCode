@@ -41,39 +41,25 @@ export class ContentProvider implements TextDocumentContentProvider {
         return `
                     <!DOCTYPE html>
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
-                    <titleCan I give a title</title>
+                    <title>Git History</title>
                     <script type="text/javascript">
                         function start(){
                             // We need a unique value so html is reloaded
-                            var color = '';
-                            var fontFamily = '';
-                            var fontSize = '';
-                            var theme = '';
-                            var fontWeight = '';
                             try {
-                                computedStyle = window.getComputedStyle(document.body);
-                                color = computedStyle.color + '';
-                                backgroundColor = computedStyle.backgroundColor + '';
-                                fontFamily = computedStyle.fontFamily;
-                                fontSize = computedStyle.fontSize;
-                                fontWeight = computedStyle.fontWeight;
                                 theme = document.body.className;
+                                styles = document.getElementsByTagName("html")[0].style.cssText;
                             }
                             catch(ex){
                             }
                             var queryArgs = [
-                                            'id=${id}',
-                                            'branchName=${encodeURIComponent(branchName)}',
-                                            'file=${encodeURIComponent(file)}',
-                                            'branchSelection=${branchSelection}',
-                                            'theme=' + theme,
-                                            'color=' + encodeURIComponent(color),
-                                            'backgroundColor=' + encodeURIComponent(backgroundColor),
-                                            'fontFamily=' + encodeURIComponent(fontFamily),
-                                            'fontWeight=' + encodeURIComponent(fontWeight),
-                                            'fontSize=' + encodeURIComponent(fontSize),
-                                            'locale=${encodeURIComponent(locale)}'
-                                        ];
+                                'id=${id}',
+                                'branchName=${encodeURIComponent(branchName)}',
+                                'file=${encodeURIComponent(file)}',
+                                'branchSelection=${branchSelection}',
+                                'locale=${encodeURIComponent(locale)}',
+                                'theme=' + theme,
+                                'styles=' + encodeURIComponent(styles)
+                            ];
                             document.getElementById('myframe').src = 'http://localhost:${port}/?_=${timeNow}&' + queryArgs.join('&');
                         }
                     </script>

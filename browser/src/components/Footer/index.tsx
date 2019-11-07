@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from 'react-bootstrap';
 
 type FooterProps = {
     canGoForward: boolean;
@@ -9,20 +10,14 @@ type FooterProps = {
 export default function Footer(props: FooterProps) {
     return (
         <div id='history-navbar'>
-            <ul className='navbar'>
-                <li className={'navbar-item previous ' + (props.canGoBack ? '' : 'disabled')}>
-                    <a href='javascript:void(0);' className='navbar-link' onClick={() => props.goBack()}>
-                        <i className='octicon octicon-chevron-left'></i>
-                        <span>Previous</span>
-                    </a>
-                </li>
-                <li className={'navbar-item next ' + (props.canGoForward ? '' : 'disabled')}>
-                    <a href='javascript:void(0);' className='navbar-link' onClick={() => props.goForward()}>
-                        <span>Next</span>
-                        <i className='octicon octicon-chevron-right'></i>
-                    </a>
-                </li>
-            </ul>
+            <Button bsStyle='primary' className={props.canGoBack ? 'navbar-link' : 'navbar-link disabled'} onClick={() => props.goBack()}>
+                <i className='octicon octicon-chevron-left'></i>
+                <span>Previous</span>
+            </Button>
+            <Button bsStyle='primary' className={props.canGoForward ? 'navbar-link' : 'navbar-link disabled'} onClick={() => props.goForward()}>
+                <span>Next</span>
+                <i className='octicon octicon-chevron-right'></i>
+            </Button>
         </div>
     );
 }
