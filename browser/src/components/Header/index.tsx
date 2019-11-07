@@ -51,10 +51,18 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         this.setState({ isLoading: this.state.isLoading, searchText: e.target.value });
     }
 
+    private handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            this.onSearch();
+        } else if (e.key === 'Escape') {
+            this.onClear();
+        }
+    }
+
     // tslint:disable-next-line:member-ordering
     public render() {
         return (<header>
-            <input className={'textInput'} type="text" value={this.state.searchText} placeholder="Search…" onChange={this.handleSearchChange} />
+            <input className={'textInput'} type="text" value={this.state.searchText} placeholder="Enter term and press enter to search" onKeyDown={this.handleKeyDown} onChange={this.handleSearchChange} />
             <Button
                 bsStyle='primary' bsSize='small'
                 disabled={this.state.isLoading}
