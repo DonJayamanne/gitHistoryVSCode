@@ -45,24 +45,23 @@ export class ContentProvider implements TextDocumentContentProvider {
                     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>
                     <title>Git History</title>
                     <script type="text/javascript">
-                        function start(){
-                            // We need a unique value so html is reloaded
-                            try {
-                                theme = document.body.className;
-                                styles = document.getElementsByTagName("html")[0].style.cssText;
-                            }
-                            catch(ex){
-                            }
+                        function frameLoaded() {
+                            console.log('Sending styles through postMessage');
+                            var styleText = document.getElementsByTagName("html")[0].style.cssText;
+                            document.getElementById('myframe').contentWindow.postMessage(styleText,"http://localhost:${port}/");
+                        }    
+                        function start() {
                             var queryArgs = [
                                 'id=${id}',
                                 'branchName=${encodeURIComponent(branchName)}',
                                 'file=${encodeURIComponent(file)}',
                                 'branchSelection=${branchSelection}',
                                 'locale=${encodeURIComponent(locale)}',
-                                'theme=' + theme,
-                                'styles=' + encodeURIComponent(styles)
+                                'theme=' + document.body.className
                             ];
+                            
                             document.getElementById('myframe').src = 'http://localhost:${internalPort}/?_=${timeNow}&' + queryArgs.join('&');
+                            document.getElementById('myframe').onload = frameLoaded;
                         }
                         </script>
                     </head>

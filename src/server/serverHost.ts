@@ -78,9 +78,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
         });
     }
     public rootRequestHandler(req: Request, res: Response) {
-        // in some cases the hash character is not properly converted
-        // so replace the uri encoded value to #
-        const styles: string = req.query.styles.replace(/%23/g, '#');
+        const styles: string = req.query.styles;
         const theme: string = req.query.theme;
         const themeDetails = this.themeService.getThemeDetails(theme, styles);
         res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), themeDetails);
