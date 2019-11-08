@@ -64,7 +64,6 @@ export class ContentProvider implements TextDocumentContentProvider {
                                 'locale=${encodeURIComponent(locale)}',
                                 'theme=' + document.body.className
                             ];
-                            
                             document.getElementById('myframe').src = 'http://localhost:${internalPort}/?_=${timeNow}&' + queryArgs.join('&');
                             document.getElementById('myframe').onload = frameLoaded;
                         }
