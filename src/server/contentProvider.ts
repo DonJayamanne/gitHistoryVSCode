@@ -44,7 +44,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                 <html>
                     <head>
                         <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
-                        <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:${internalPort} http://127.0.0.1:* 'unsafe-inline' 'unsafe-eval';" />
+                        <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* 'unsafe-inline' 'unsafe-eval';" />
                     <title>Git History</title>
                     <script type="text/javascript">
                         function frameLoaded() {
