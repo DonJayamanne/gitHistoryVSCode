@@ -24,26 +24,21 @@ export class GitArgsService implements IGitArgsService {
         return ['log', '--format=%p', '-n1', hash];
     }
     public getCommitWithNumStatArgs(hash: string) {
-        // return ['log', '--numstat', '--full-history', '--decorate=full', '-M', '--format=""', '-m', '-n1', hash];
         return ['show', '--numstat', '--format=', '-M', hash];
     }
     public getCommitNameStatusArgs(hash: string): string[] {
-        // return ['show', '--name-status', '--full-history', '-M', '--format=""', '-m', '-n1', hash];
         return ['show', '--name-status', '--format=', '-M', hash];
     }
     public getCommitWithNumStatArgsForMerge(hash: string) {
-        // return ['log', '--numstat', '--full-history', '--decorate=full', '-M', '--format=""', '-m', '-n1', hash];
         return ['show', '--numstat', '--format=', '-M', '--first-parent', hash];
     }
     public getCommitNameStatusArgsForMerge(hash: string): string[] {
-        // return ['show', '--name-status', '--full-history', '-M', '--format=""', '-m', '-n1', hash];
         return ['show', '--name-status', '--format=', '-M', '--first-parent', hash];
     }
     public getObjectHashArgs(object: string): string[] {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
     }
     public getRefsContainingCommitArgs(hash: string): string[] {
-        // return ['branch', '--branches', '--tags', '--remotes', '--contains', hash];
         return ['branch', '--all', '--contains', hash];
     }
     public getAuthorsArgs(): string[] {
