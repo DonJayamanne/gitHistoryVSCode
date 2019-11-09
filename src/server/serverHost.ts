@@ -10,7 +10,8 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IServerHost, IThemeService, IWorkspaceQueryStateStore, StartupInfo } from './types';
+import { IServerHost, IWorkspaceQueryStateStore, StartupInfo } from './types';
+import { workspace } from 'vscode';
 
 export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
@@ -18,7 +19,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     private apiController?: ApiController;
     private port?: number;
     private startPromise?: Promise<StartupInfo>;
-    constructor( @inject(IThemeService) private themeService: IThemeService,
+    constructor(
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IWorkspaceQueryStateStore) private stateStore: IWorkspaceQueryStateStore) {
@@ -80,7 +81,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     public rootRequestHandler(req: Request, res: Response) {
         const styles: string = req.query.styles;
         const theme: string = req.query.theme;
-        const themeDetails = this.themeService.getThemeDetails(theme, styles);
-        res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), themeDetails);
+        let config = workspace.getConfiguration('gitHistory');
+        res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), { styles, theme, config });
     }
 }

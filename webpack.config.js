@@ -88,13 +88,6 @@ module.exports = {
     },
     plugins: [
         new CopyWebpackPlugin([
-            // {output}/file.txt
-            {
-                from: 'color-theme-dark.css'
-            },
-            {
-                from: 'color-theme-light.css'
-            },
             {
                 from: 'main.css'
             },

@@ -1,4 +1,3 @@
-// import * as jquery from 'jquery';
 /** Global definitions for developement **/
 
 // for style loader

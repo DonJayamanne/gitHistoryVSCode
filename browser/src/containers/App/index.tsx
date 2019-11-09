@@ -8,8 +8,10 @@ import Commit from '../../components/LogView/Commit';
 import LogView from '../../components/LogView/LogView';
 import { ISettings } from '../../definitions';
 import { LogEntriesState, RootState } from '../../reducers';
+import { IConfiguration } from '../../reducers/vscode';
 
 type AppProps = {
+    configuration: IConfiguration;
     settings: ISettings;
     logEntries: LogEntriesState;
     getCommits: typeof ResultActions.getCommits;
@@ -32,7 +34,7 @@ class App extends React.Component<AppProps, AppState> {
     }
     public render() {
         const { children } = this.props;
-        const canGoForward = this.props.logEntries.count === -1 || (this.props.logEntries.pageIndex + 1) * 100 < this.props.logEntries.count;
+        const canGoForward = this.props.logEntries.count === -1 || (this.props.logEntries.pageIndex + 1) * this.props.configuration.pageSize < this.props.logEntries.count;
         return (
             <div className='appRootParent'>
                 <div className='appRoot'>
@@ -61,6 +63,7 @@ class App extends React.Component<AppProps, AppState> {
 
 function mapStateToProps(state: RootState) {
     return {
+        configuration: state.vscode.configuration,
         settings: state.settings,
         logEntries: state.logEntries
     };

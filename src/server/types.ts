@@ -2,18 +2,6 @@ import { Request, Response } from 'express';
 import { Disposable, Uri } from 'vscode';
 import { BranchSelection, LogEntries, LogEntry } from '../types';
 
-export type ThemeDetails = {
-    theme: string;
-    styles: string;
-    fontFamily: string;
-    fontSize: string;
-    fontWeight?: string;
-};
-export const IThemeService = Symbol('IThemeService');
-
-export interface IThemeService {
-    getThemeDetails(theme: string, styles: string): ThemeDetails;
-}
 export const IApiRouteHandler = Symbol('IApiRouteHandler');
 
 export interface IApiRouteHandler extends Disposable {

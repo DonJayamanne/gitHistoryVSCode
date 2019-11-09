@@ -82,6 +82,14 @@ div.appRoot {
 	height: 100vh;
 }
 
+
+.log-entry {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: var(--vscode-editorGroup-border);
+}
+  
+
 #log-view.with-details {
 	height: calc(100% - 20rem);
 }
@@ -457,11 +465,13 @@ div.react-draggable {
 }
 
 div.details-view-cnt {
-	bottom: 30px;
     overflow-x: hidden;
     background: var(--vscode-editor-background);
-    border-top: 1px solid hsla(0, 0%, 100%, 0.50);
-	max-height: 50vh !important;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: var(--vscode-editorGroup-border);
+	bottom: 45px !important;
+	top: unset !important;
 }
 
 #details-view .commit-subject {
