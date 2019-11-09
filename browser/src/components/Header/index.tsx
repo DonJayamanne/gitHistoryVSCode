@@ -51,7 +51,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         this.setState({ isLoading: this.state.isLoading, searchText: e.target.value });
     }
 
-    private handleKeyDown = (e: React.KeyboardEvent) => {
+    private handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             this.onSearch();
         } else if (e.key === 'Escape') {
