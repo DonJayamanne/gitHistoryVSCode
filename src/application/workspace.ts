@@ -10,9 +10,6 @@ export class WorkspaceService implements IWorkspaceService {
     public get onDidChangeConfiguration(): Event<ConfigurationChangeEvent> {
         return workspace.onDidChangeConfiguration;
     }
-    public get rootPath(): string | undefined {
-        return workspace.rootPath;
-    }
     public get workspaceFolders(): WorkspaceFolder[] | undefined {
         return workspace.workspaceFolders;
     }
