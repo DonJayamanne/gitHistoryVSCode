@@ -34,6 +34,7 @@ export interface ISearchCriteria {
     pageIndex?: number;
     searchText?: string;
 }
+
 export default combineReducers<RootState>({
     routing,
     avatars,
@@ -44,4 +45,4 @@ export default combineReducers<RootState>({
     searchCriteria,
     graph,
     vscode
-});
+} as any);
