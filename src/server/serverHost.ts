@@ -48,17 +48,10 @@ export class ServerHost extends EventEmitter implements IServerHost {
         this.httpServer = http.createServer(this.app as any);
 
         const rootDirectory = path.join(__dirname, '..', '..', 'browser');
-        const node_modulesDirectory = path.join(__dirname, '..', '..', '..', 'node_modules');
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(bodyParser.json());
         this.app.use(express.static(rootDirectory));
         this.app.use(express.static(path.join(__dirname, '..', '..', '..', 'resources'), { extensions: ['.svg', 'svg', 'json', '.json'] }));
-        // this.app.use(express.static(path.join(__dirname, '..', '..'), { extensions: ['.svg', 'svg', 'json', '.json'] }));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'octicons', 'build')));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'hint.css')));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'animate.css')));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'normalize.css')));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'bootstrap', 'dist', 'css')));
         this.app.use(cors());
         this.app.get('/', (req, res) => {
             this.rootRequestHandler(req, res);
