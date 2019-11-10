@@ -62,7 +62,7 @@ function LogEntry(props: ResultListProps) {
                     </CopyToClipboard>
                     <div className='cherry-pick-button'>
                         <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'><span aria-label='Cherry pick, Compare, etc' />
-                            <a role='button' href='javascript:void(0);' onClick={() => props.onClick(props.logEntry)}>
+                            <a role='button' onClick={() => props.onClick(props.logEntry)}>
                                 <GoGitCommit></GoGitCommit>
                             </a>
                         </span>
