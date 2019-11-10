@@ -29,7 +29,6 @@ module.exports = {
                 loader: 'awesome-typescript-loader?',
                 options: {
                     module: 'es6',
-                    tsconfig: './browser/tsconfig.json',
                     configFileName: './browser/tsconfig.json'
                 }
             },
