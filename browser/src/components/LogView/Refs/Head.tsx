@@ -1,7 +1,6 @@
 import { Ref } from '../../../definitions';
 import * as React from 'react';
-// tslint:disable-next-line:no-require-imports no-var-requires
-const octicons = require('octicons');
+import octicons from '@primer/octicons';
 
 export default function HeadRef(props: Ref) {
     const svg = { __html: octicons["git-branch"].toSVG() };
