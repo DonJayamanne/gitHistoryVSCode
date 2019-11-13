@@ -1,5 +1,5 @@
-@import "~bootstrap/dist/css/bootstrap.css";
-@import "~hint.css/hint.css";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~hint.css/hint.min.css";
 
 *,
 *:before,
@@ -10,6 +10,7 @@
 html,
 body {
 	background-color: var(--vscode-editor-background);
+	font-family: var(--vscode-font-family);
 	height: 100%;
 	width: 100%;
 	margin: 0;
