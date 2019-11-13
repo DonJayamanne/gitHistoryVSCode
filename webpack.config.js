@@ -1,4 +1,5 @@
 var path = require('path');
+
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // variables
@@ -9,7 +10,7 @@ var outPath = path.join(__dirname, './out/browser');
 module.exports = {
     mode: isProduction ? 'production' : 'development',
     context: sourcePath,
-    entry: ['./index.tsx', './main.scss'],
+    entry: ['./index.tsx', './main.css'],
     output: {
         path: outPath,
         filename: 'bundle.js',
@@ -33,7 +34,7 @@ module.exports = {
             },
             // scss
             {
-                test: /\.scss$/,
+                test: /\.css$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -41,15 +42,8 @@ module.exports = {
                             name: 'bundle.css',
                         }
                     },
-                    {
-                        loader: 'extract-loader'
-                    },
-                    {
-                        loader: 'css-loader?-url'
-                    },
-                    {
-                        loader: 'sass-loader'
-                    }
+                    'extract-loader',
+                    'css-loader?-url'
                 ]
             }
         ],
