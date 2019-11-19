@@ -3,8 +3,8 @@ import { GitCommitViewExplorerCommandHandler } from './commit/commitViewExplorer
 import { GitCompareCommitCommandHandler } from './commit/compare';
 import { GitCompareCommitViewExplorerCommandHandler } from './commit/compareViewExplorer';
 import { GitBranchFromCommitCommandHandler } from './commit/gitBranchFromCommit';
-import { GitCherryPickCommandHandler } from './commit/gitCherryPick';
 import { GitCheckoutCommandHandler } from './commit/gitCheckout';
+import { GitCherryPickCommandHandler } from './commit/gitCherryPick';
 import { GitCommitCommandHandler } from './commit/gitCommit';
 import { GitCommitViewDetailsCommandHandler } from './commit/gitCommitDetails';
 import { GitMergeCommandHandler } from './commit/gitMerge';

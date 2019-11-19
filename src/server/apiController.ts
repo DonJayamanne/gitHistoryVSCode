@@ -7,7 +7,7 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Avatar } from '../types';
+import { Avatar, BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -211,7 +211,7 @@ export class ApiController implements IApiRouteHandler {
 
             let avatars: Avatar[];
 
-            if(provider) {
+            if (provider) {
                 avatars = await provider.getAvatars(repo);
             } else {
                 avatars = await genericProvider.getAvatars(repo);

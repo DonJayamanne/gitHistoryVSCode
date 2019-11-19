@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
-import { IGitBranchFromCommitCommandHandler, IGitCherryPickCommandHandler, IGitCheckoutCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from '../commandHandlers/types';
-import { CherryPickCommand } from '../commands/commit/cherryPick';
+import { IGitBranchFromCommitCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from '../commandHandlers/types';
 import { CheckoutCommand } from '../commands/commit/checkout';
+import { CherryPickCommand } from '../commands/commit/cherryPick';
 import { CompareCommand } from '../commands/commit/compare';
 import { CreateBranchCommand } from '../commands/commit/createBranch';
 import { MergeCommand } from '../commands/commit/merge';

@@ -6,12 +6,13 @@ import * as express from 'express';
 import * as http from 'http';
 import { inject } from 'inversify';
 import * as path from 'path';
+import { workspace } from 'vscode';
+
 import { ICommandManager } from '../application/types/commandManager';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
 import { IServerHost, IWorkspaceQueryStateStore, StartupInfo } from './types';
-import { workspace } from 'vscode';
 
 export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
@@ -74,7 +75,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     public rootRequestHandler(req: Request, res: Response) {
         const styles: string = req.query.styles;
         const theme: string = req.query.theme;
-        let config = workspace.getConfiguration('gitHistory');
+        const config = workspace.getConfiguration('gitHistory');
         res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), { styles, theme, config });
     }
 }

@@ -1,6 +1,6 @@
 // tslint:disable-next-line:interface-name
 export interface Newable<T> {
-    // tslint:disable-next-line:no-any
+    // tslint:disable-next-line
     new(...args: any[]): T;
 }
 // tslint:disable-next-line:interface-name
@@ -8,10 +8,9 @@ export interface Abstract<T> {
     prototype: T;
 }
 export type ServiceIdentifier<T> = (string | symbol | Newable<T> | Abstract<T>);
-export type ClassType<T> = {
-    // tslint:disable-next-line:no-any
-    new(...args: any[]): T;
-};
+
+// tslint:disable-next-line:no-any
+export type ClassType<T> = new(...args: any[]) => T;
 
 export const IServiceManager = Symbol('IServiceManager');
 
