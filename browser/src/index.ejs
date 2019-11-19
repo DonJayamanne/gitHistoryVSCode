@@ -3,34 +3,24 @@
   <head>
     <meta charset="utf-8">
     <title>Git Log</title>
-    <link rel='stylesheet' type='text/css' href='bootstrap.min.css' />
-    <link rel="stylesheet" href="normalize.css" >
-    <link rel="stylesheet" href='animate.min.css' >
-    <link rel="stylesheet" href='hint.min.css' >
-    <link rel='stylesheet' type='text/css' href='main.css' />
-    <link rel='stylesheet' type='text/css' href='octicons.min.css' />
-
+    <link rel='stylesheet' type='text/css' href='bundle.css' />
     <style id="_defaultStyles">
       
     </style>
     <script>
+      window['configuration'] = <%- JSON.stringify(config) %>;
+
       function receiveMessage(event) {
         console.log('Applying styles received from parent frame...');
         document.getElementById('_defaultStyles').innerHTML = ':root { ' + event.data +  '  }';
       }
 
       window.addEventListener('message', receiveMessage, false);
-    </script>
 
-    <%if (theme === 'vscode-light') { %>
-    <link rel="stylesheet" type="text/css" href="/color-theme-light.css"/>
-    <%} else { %>
-    <link rel="stylesheet" type="text/css" href="/color-theme-dark.css"/>
-    <% } %>
+    </script>
   </head>
     <body>
         <div id=root></div>
-        <script type="text/javascript" src="/vendor.bundle.js"></script>
         <script type="text/javascript" src="/bundle.js"></script>
     </body>
 </html>

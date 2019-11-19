@@ -7,7 +7,6 @@ import Avatar from './Avatar';
 import { FileEntry } from './FileEntry';
 // tslint:disable-next-line:no-require-imports no-var-requires
 const GoX = require('react-icons/lib/go/x');
-import * as jQuery from 'jquery';
 import Rnd from 'react-rnd';
 import * as ResultActions from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
@@ -27,21 +26,12 @@ const ContainerStyle = {
 
 class Commit extends React.Component<CommitProps> {
     public componentDidUpdate() {
-        if (this.props && this.props.selectedEntry) {
-            setTimeout(this.resize.bind(this), 1);
-        }
+        // componentDidUpdate
     }
+
     public componentDidMount() {
-        if (this.props && this.props.selectedEntry) {
-            setTimeout(this.resize.bind(this), 1);
-        }
+        // componentDidMount
     }
-    private resize() {
-        const $ref = jQuery('.react-draggable');
-        $ref.removeClass('hidden').css('top', '');
-        jQuery('#details-view').removeClass('hidden');
-    }
-    private ref: HTMLElement;
     private onSelectFile = (fileEntry: CommittedFile) => {
         this.props.selectCommittedFile(this.props.selectedEntry, fileEntry);
     }
@@ -57,10 +47,10 @@ class Commit extends React.Component<CommitProps> {
 
         return (
             // tslint:disable-next-line:react-this-binding-issue
-            <Rnd className='details-view-cnt hidden' ref={ref => this.ref = ref} default={ContainerStyle} minWidth={50} minHeight={50} bounds='parent'
-                enableResizing={resizing} disableDragging={true}>
+            <Rnd className='details-view-cnt' default={ContainerStyle} minWidth={50} minHeight={50} maxHeight='50%' bounds='parent'
+                enableResizing={resizing}  disableDragging={this.props.selectedEntry !== undefined}>
                 <div className='detailsCnt'>
-                    <div id='details-view' className='hidden' >
+                    <div id='details-view' >
                         <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
                         <div className='authorAndCommitInfoContainer'>
                             <Avatar result={this.props.selectedEntry.author}></Avatar>

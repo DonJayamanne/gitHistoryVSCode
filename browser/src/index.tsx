@@ -2,12 +2,8 @@ import * as querystring from 'query-string';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-// import { browserHistory, Route, Router } from 'react-router';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-// import { syncHistoryWithStore } from 'react-router-redux';
 import * as ResultActions from './actions/results';
-// (window as any).$ = (window as any).jQuery = require('jquery');
-// import 'semantic-ui-css/semantic.min.css';
 import App from './containers/App';
 import { ISettings } from './definitions';
 // tslint:disable-next-line:import-name
@@ -25,8 +21,10 @@ defaultSettings.selectedBranchType = (num === -1) ? undefined : num as BranchSel
 
 const locale = (query.locale || '').toString();
 // tslint:disable-next-line:no-any
-const store = configureStore({ settings: defaultSettings, searchCriteria: {}, graph: {}, vscode: { theme: query.theme as any, locale } });
-// const history = syncHistoryWithStore(browserHistory, store);
+const store = configureStore({ 
+    settings: defaultSettings, 
+    searchCriteria: {}, graph: {}, 
+    vscode: { theme: query.theme as any, locale, configuration: window['configuration'] } });
 
 ReactDOM.render(
     <div>

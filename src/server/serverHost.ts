@@ -10,7 +10,8 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IServerHost, IThemeService, IWorkspaceQueryStateStore, StartupInfo } from './types';
+import { IServerHost, IWorkspaceQueryStateStore, StartupInfo } from './types';
+import { workspace } from 'vscode';
 
 export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
@@ -18,7 +19,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     private apiController?: ApiController;
     private port?: number;
     private startPromise?: Promise<StartupInfo>;
-    constructor( @inject(IThemeService) private themeService: IThemeService,
+    constructor(
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IWorkspaceQueryStateStore) private stateStore: IWorkspaceQueryStateStore) {
@@ -47,17 +48,10 @@ export class ServerHost extends EventEmitter implements IServerHost {
         this.httpServer = http.createServer(this.app as any);
 
         const rootDirectory = path.join(__dirname, '..', '..', 'browser');
-        const node_modulesDirectory = path.join(__dirname, '..', '..', '..', 'node_modules');
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(bodyParser.json());
         this.app.use(express.static(rootDirectory));
         this.app.use(express.static(path.join(__dirname, '..', '..', '..', 'resources'), { extensions: ['.svg', 'svg', 'json', '.json'] }));
-        // this.app.use(express.static(path.join(__dirname, '..', '..'), { extensions: ['.svg', 'svg', 'json', '.json'] }));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'octicons', 'build')));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'hint.css')));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'animate.css')));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'normalize.css')));
-        this.app.use(express.static(path.join(node_modulesDirectory, 'bootstrap', 'dist', 'css')));
         this.app.use(cors());
         this.app.get('/', (req, res) => {
             this.rootRequestHandler(req, res);
@@ -80,7 +74,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     public rootRequestHandler(req: Request, res: Response) {
         const styles: string = req.query.styles;
         const theme: string = req.query.theme;
-        const themeDetails = this.themeService.getThemeDetails(theme, styles);
-        res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), themeDetails);
+        let config = workspace.getConfiguration('gitHistory');
+        res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), { styles, theme, config });
     }
 }
