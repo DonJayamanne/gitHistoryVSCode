@@ -12,7 +12,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: npm install --unsafe-perm
+    - run: npm install -g vsce
     - name: vsce publish
-      uses: sigma/vsce-publish-action@v0.0.2
-      with:
-        vsce_token: ${{ secrets.VSCE_TOKEN }}
+      env: 
+        PAT: ${{ secrets.VSCE_TOKEN }}
+      run: vsce publish -p ${PAT}
+      
