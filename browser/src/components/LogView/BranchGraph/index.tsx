@@ -6,8 +6,6 @@ import { RootState } from '../../../reducers';
 type BranchGrapProps = {
     hideGraph: boolean;
     logEntries: LogEntry[];
-    height?: string;
-    width?: string;
     itemHeight?: number;
     updateTick?: number;
 };
@@ -48,11 +46,10 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
     }
     svg.style.display = '';
     // Draw the graph
-    const circleOffset = 0; //0.5 * logEntryHeight;
+    const circleOffset = 0;
     const standardOffset = (0 + 0.5) * logEntryHeight;
     let currentY = (0 + 0.5) * logEntryHeight;
     let topMostY = (0 + 0.5) * logEntryHeight;
-    // topMostY = (0 + 0.5) * logEntryHeight;
     let maxLeft = 0;
     let lastXOffset = 12;
     let maxXOffset = 12;
@@ -275,8 +272,10 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         branch.path.setAttribute('d', branch.path.cmds + currentY);
     });
 
-    // Commented only fo debugging
-    // circlesToAppend.forEach(svg.appendChild.bind(svg));
+    // calculate the height
+    if (entries.length > 0 && !isNaN(logEntryHeight)) {
+        svg.setAttribute('height', (entries.length * logEntryHeight).toString());
+    }
 }
 
 class BrachGraph extends React.Component<BranchGrapProps> {
@@ -294,10 +293,6 @@ class BrachGraph extends React.Component<BranchGrapProps> {
         if (Array.isArray(newProps.logEntries) && newProps.logEntries.length === 0) {
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
         }
-
-        const itemHeightStr = (newProps.logEntries.length * newProps.itemHeight).toString();
-
-        this.svg.setAttribute('height', itemHeightStr);
 
         if (newProps.itemHeight > 0 && (!Array.isArray(newProps.logEntries) || newProps.logEntries.length === 0)) {
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
@@ -347,13 +342,12 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 function mapStateToProps(state: RootState): BranchGrapProps {
     const hideGraph = (state && state.logEntries) && ((state.logEntries.searchText && state.logEntries.searchText.length > 0) ||
         (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0) ||
-        (state.logEntries.author && state.logEntries.author.length > 0));
+        (state.logEntries.author && state.logEntries.author.length > 0) || state.logEntries.isLoading
+        );
 
     return {
         logEntries: state.logEntries.items,
         hideGraph,
-        height: state.graph.height,
-        width: state.graph.width,
         itemHeight: state.graph.itemHeight,
         updateTick: state.graph.updateTick
     };

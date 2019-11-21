@@ -30,12 +30,13 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
         const el = this.ref.current.ref;
 
         if(el.hasChildNodes() && this.props.logEntries && Array.isArray(this.props.logEntries.items) && this.props.logEntries.items.length > 0) {          
+            // use the total height to be more accurate in positioning the dots from BranchGraph
             setTimeout(() => {
-                const childEl = el.children[0] as HTMLDivElement;
-                const logEntryHeight = childEl.offsetHeight + childEl.offsetTop;
+                const totalHeight = el.offsetHeight;
+                const logEntryHeight = totalHeight / this.props.logEntries.items.length;
                 this.props.setHeight(logEntryHeight);
                 this.props.commitsRendered();
-            }, 1000);
+            }, 700);
         }
     }
 
@@ -63,14 +64,6 @@ function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) 
         logEntries: wrapper.logEntries
     };
 }
-// function mapStateToProps(state: RootState) {
-//   return {
-//     logEntries: {
-//       items: state.logEntries.items,
-//       count: state.logEntries.count
-//     }
-//   };
-// }
 
 function mapDispatchToProps(dispatch) {
     return {
