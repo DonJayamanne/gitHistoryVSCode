@@ -11,7 +11,7 @@ interface ResultProps {
 
 export default class LogEntryList extends React.Component<ResultProps> {
     // private scrolled;
-    private ref: HTMLDivElement;
+    public ref: HTMLDivElement;
     public componentDidUpdate() {
 
     }

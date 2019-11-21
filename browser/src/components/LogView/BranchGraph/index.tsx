@@ -294,9 +294,11 @@ class BrachGraph extends React.Component<BranchGrapProps> {
         if (Array.isArray(newProps.logEntries) && newProps.logEntries.length === 0) {
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
         }
-        if (!newProps.height || !newProps.width || !newProps.itemHeight || !Array.isArray(newProps.logEntries)) {
-            return;
-        }
+
+        const itemHeightStr = (newProps.logEntries.length * newProps.itemHeight).toString();
+
+        this.svg.setAttribute('height', itemHeightStr);
+
         if (newProps.itemHeight > 0 && (!Array.isArray(newProps.logEntries) || newProps.logEntries.length === 0)) {
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
             return;
@@ -326,13 +328,10 @@ class BrachGraph extends React.Component<BranchGrapProps> {
             lastHash: newProps.logEntries.length > 0 ? newProps.logEntries[newProps.logEntries.length - 1].hash.full : '',
         };
 
-        this.svg.setAttribute('height', newProps.height);
-        this.svg.setAttribute('width', newProps.width);
-
         // Hack, first clear before rebuilding.
         // Remember, we will need to support apending results, as opposed to clearing page
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
-        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
+        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);        
     }
     private lastDrawnDetails: { firstHash: string, lastHash: string, count: number };
     private grahWasHidden: boolean;

@@ -255,26 +255,7 @@ function fetchAuthors(dispatch: Dispatch<any>, store: RootState) {
             console.error(err);
         });
 }
-// export const fetchLogEntries = (pageIndex: number, pageSize: number) => {
-//     return (dispatch: Dispatch<any>, getState: () => RootState) => {
-//         return axios.get(`/log?pageSize=${pageSize}&pageIndex=${pageIndex}`)
-//             .then(result => {
-//                 debugger;
-//                 const x = getState();
 
-//                 dispatch(addResults({ logEntries: result.data, pageIndex: pageIndex }));
-//             })
-//             .catch(err => {
-//                 debugger;
-//                 console.error('Result failed');
-//                 console.error(err);
-//             });
-//     };
-// };
-
-export const logViewSizeCalculated = createAction<{ height: string; width: string }>(Actions.LOGVIEW_SIZE_CALCULATED);
 export const logEntryHeightCalculated = createAction<number>(Actions.LOGENTRY_ITEM_HEIGHT_CALCULATED);
 export const commitsRendered = createAction(Actions.COMMITS_RENDERED);
-// export const doSomethingWithCommit = createAction<LogEntry>(Actions.SELECT_COMMIT);
-// export const closeCommitView = createAction(Actions.CLOSE_COMMIT_VIEW);
-// export const closeCommittedFile = createAction(Actions.CLOSE_COMMIT_VIEW);
+
