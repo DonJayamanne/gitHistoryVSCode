@@ -11,6 +11,8 @@
       window['configuration'] = <%- JSON.stringify(config) %>;
 
       function receiveMessage(event) {
+        if(event.origin !== "null") return;
+
         console.log('Applying styles received from parent frame...');
         document.getElementById('_defaultStyles').innerHTML = ':root { ' + event.data +  '  }';
       }
