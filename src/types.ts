@@ -86,7 +86,7 @@ export type LogEntries = {
     count: number;
     isLoading: boolean;
     isLoadingCommit: boolean;
-    selected: LogEntry;
+    selected?: LogEntry;
 };
 export type LogEntry = {
     gitRoot: string;

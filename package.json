@@ -432,8 +432,6 @@
         "react-router": "^4.2.0",
         "react-router-dom": "^4.2.2",
         "react-router-redux": "^4.0.8",
-        "react-scroll": "^1.6.4",
-        "react-toolbox": "^2.0.0-beta.12",
         "redux": "^3.7.2",
         "redux-actions": "^2.2.1",
         "redux-thunk": "2.2.0",
