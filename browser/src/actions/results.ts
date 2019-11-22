@@ -256,6 +256,5 @@ function fetchAuthors(dispatch: Dispatch<any>, store: RootState) {
         });
 }
 
-export const logEntryHeightCalculated = createAction<number>(Actions.LOGENTRY_ITEM_HEIGHT_CALCULATED);
-export const commitsRendered = createAction(Actions.COMMITS_RENDERED);
+export const commitsRendered = createAction<number>(Actions.COMMITS_RENDERED);
 

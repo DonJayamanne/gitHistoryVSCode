@@ -8,7 +8,6 @@ import LogEntryList from '../LogEntryList';
 
 type LogViewProps = {
     logEntries: LogEntries;
-    setHeight: typeof ResultActions.logEntryHeightCalculated;
     commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
     actionACommit: typeof ResultActions.actionACommit;
@@ -29,14 +28,15 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     public componentDidUpdate() {
         const el = this.ref.current.ref;
 
-        if(el.hasChildNodes() && this.props.logEntries && Array.isArray(this.props.logEntries.items) && this.props.logEntries.items.length > 0) {          
+        if (this.props.logEntries.selected) {
+            return;
+        }
+
+        if(el.hasChildNodes() && this.props.logEntries && !this.props.logEntries.isLoading && !this.props.logEntries.isLoadingCommit && Array.isArray(this.props.logEntries.items) && this.props.logEntries.items.length > 0) {          
             // use the total height to be more accurate in positioning the dots from BranchGraph
-            setTimeout(() => {
-                const totalHeight = el.offsetHeight;
-                const logEntryHeight = totalHeight / this.props.logEntries.items.length;
-                this.props.setHeight(logEntryHeight);
-                this.props.commitsRendered();
-            }, 700);
+            const totalHeight = el.offsetHeight;
+            const logEntryHeight = totalHeight / this.props.logEntries.items.length;
+            this.props.commitsRendered(logEntryHeight);
         }
     }
 
@@ -44,7 +44,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
         return (
             // tslint:disable-next-line:react-this-binding-issue
             <div className='log-view' id='scrollCnt'>
-                <BranchGraph ></BranchGraph>
+                <BranchGraph></BranchGraph>
                 <LogEntryList ref={this.ref} logEntries={this.props.logEntries.items}
                     onClick={this.onClick}
                     onViewCommit={this.onViewCommit}></LogEntryList>
@@ -69,8 +69,7 @@ function mapDispatchToProps(dispatch) {
     return {
         // ...bindActionCreators({ ...ResultActions }, dispatch),
         // fetchData: (pageIndex: number) => dispatch(ResultActions.fetchLogEntries(pageIndex))
-        setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
-        commitsRendered: () => dispatch(ResultActions.commitsRendered()),
+        commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
         actionACommit: (logEntry: LogEntry) => dispatch(ResultActions.actionACommit(logEntry))
     };

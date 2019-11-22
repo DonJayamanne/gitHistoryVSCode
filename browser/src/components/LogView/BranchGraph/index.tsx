@@ -283,55 +283,20 @@ class BrachGraph extends React.Component<BranchGrapProps> {
     }
     componentWillUpdate(newProps: BranchGrapProps) {
         if (newProps.hideGraph) {
-            this.grahWasHidden = true;
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, [], true);
-            return;
-        }
-        if (this.props.hideGraph && !newProps.hideGraph) {
-            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries || []);
-        }
-        if (Array.isArray(newProps.logEntries) && newProps.logEntries.length === 0) {
-            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
-        }
-
-        if (newProps.itemHeight > 0 && (!Array.isArray(newProps.logEntries) || newProps.logEntries.length === 0)) {
-            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
-            return;
-        }
-        if (newProps.itemHeight > 0 && newProps.itemHeight === this.props.itemHeight &&
-            Array.isArray(this.props.logEntries) && this.props.logEntries.length > 0 &&
-            newProps.updateTick === this.props.updateTick &&
-            newProps.logEntries.length === this.props.logEntries.length &&
-            newProps.logEntries[0].hash.full === this.props.logEntries[0].hash.full) {
             return;
         }
         if (newProps.updateTick === this.props.updateTick) {
             return;
-        }
-        if (!this.grahWasHidden && this.lastDrawnDetails && newProps.logEntries.length > 0 &&
-            this.lastDrawnDetails.count === newProps.logEntries.length &&
-            this.lastDrawnDetails.firstHash === newProps.logEntries[0].hash.full &&
-            this.lastDrawnDetails.firstHash === newProps.logEntries[0].hash.full) {
-            return;
-        }
-
-        // Hack (dependant components).
-        this.grahWasHidden = false;
-        this.lastDrawnDetails = {
-            count: newProps.logEntries.length,
-            firstHash: newProps.logEntries.length > 0 ? newProps.logEntries[0].hash.full : '',
-            lastHash: newProps.logEntries.length > 0 ? newProps.logEntries[newProps.logEntries.length - 1].hash.full : '',
-        };
+        }       
 
         // Hack, first clear before rebuilding.
         // Remember, we will need to support apending results, as opposed to clearing page
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);        
     }
-    private lastDrawnDetails: { firstHash: string, lastHash: string, count: number };
-    private grahWasHidden: boolean;
+    
     private svg: SVGSVGElement;
-
     render() {
         return (
             <svg className='commitGraph' ref={(ref) => this.svg = ref} xmlns='http://www.w3.org/2000/svg'></svg>
