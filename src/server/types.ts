@@ -19,7 +19,7 @@ export type StartupInfo = {
 
 export const IServerHost = Symbol('IServer');
 export interface IServerHost extends Disposable {
-    start(workspaceFolder: string): Promise<StartupInfo>;
+    start(): Promise<StartupInfo>;
 }
 
 export type State = {

@@ -8,9 +8,7 @@ export type GitLogArgs = {
 export const IGitArgsService = Symbol('IGitArgsService');
 
 export interface IGitArgsService {
-    getGitRootArgs(): string[];
     getAuthorsArgs(): string[];
-    getCurrentBranchArgs(): string[];
     getCommitDateArgs(hash: string): string[];
     getCommitArgs(hash: string): string[];
     getCommitParentHashesArgs(hash: string): string[];

@@ -4,7 +4,7 @@ import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
-import { FileCommitDetails, IUiService } from '../common/types';
+import { FileCommitDetails } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { FileNode } from '../nodes/types';
@@ -70,27 +70,17 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
     }
 
     public async viewHistory(fileUri?: Uri, lineNumber?: number): Promise<void> {
-        const uiService = this.serviceContainer.get<IUiService>(IUiService);
-        const selection = await uiService.getWorkspaceFolder(fileUri);
-        if (!selection) {
-            return undefined;
-        }
-        const workspaceFolder = selection.workspaceFolder;
-        const gitRoot = selection.gitRoot;
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory)
-                                                      .createGitService(workspaceFolder, gitRoot);
-        const branchNamePromise = gitService.getCurrentBranch();
-        const startupInfoPromise = this.server.start(workspaceFolder);
-        const gitRootsUnderWorkspacePromise = gitService.getGitRoots(workspaceFolder);
-
-        const [branchName, startupInfo, gitRootsUnderWorkspace] = await Promise.all([branchNamePromise, startupInfoPromise,  gitRootsUnderWorkspacePromise]);
-
+                                                      .createGitService(fileUri);
+        const branchName = await gitService.getCurrentBranch();
+        const gitRoot = await gitService.getGitRoot();
+        const startupInfo = await this.server.start();
+        const gitRootsUnderWorkspace = await gitService.getGitRoots();
         // Do not include the search string into this
         const fullId = `${startupInfo.port}:${BranchSelection.Current}:${fileUri ? fileUri.fsPath : ''}:${gitRoot}`;
         const id = md5(fullId); //Date.now().toString();
         await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore)
-                                   .initialize(id, workspaceFolder, gitRoot, branchName, BranchSelection.Current, '', fileUri, lineNumber);
-
+                                   .initialize(id, '', gitRoot, branchName, BranchSelection.Current, '', fileUri, lineNumber);
         const queryArgs = [
             `id=${id}`,
             `port=${startupInfo.port}`,

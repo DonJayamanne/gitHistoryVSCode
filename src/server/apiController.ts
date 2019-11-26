@@ -295,6 +295,7 @@ export class ApiController implements IApiRouteHandler {
     private handleRequest = (handler: (request: Request, response: Response) => void) => {
         return async (request: Request, response: Response) => {
             try {
+                // tslint:disable-next-line:await-promise
                 await handler(request, response);
             } catch (err) {
                 response.status(500).send(err);
@@ -308,7 +309,6 @@ export class ApiController implements IApiRouteHandler {
         return this.stateStore.getState(id)!.gitRoot;
     }
     private async getRepository(id: string): Promise<IGitService> {
-        const workspaceFolder = this.getWorkspace(id);
-        return this.gitServiceFactory.createGitService(workspaceFolder, Uri.file(this.getGitRoot(id)));
+        return this.gitServiceFactory.createGitService(this.getGitRoot(id));
     }
 }

@@ -8,12 +8,6 @@ import { GitLogArgs, IGitArgsService } from './types';
 export class GitArgsService implements IGitArgsService {
     constructor(private isWindows: boolean = /^win/.test(process.platform)) {}
 
-    public getGitRootArgs(): string[] {
-        return ['rev-parse', '--show-toplevel'];
-    }
-    public getCurrentBranchArgs(): string[] {
-        return ['rev-parse', '--abbrev-ref', 'HEAD'];
-    }
     public getCommitDateArgs(hash: string) {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.CommitterDateUnixTime)}`, hash];
     }

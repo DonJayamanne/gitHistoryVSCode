@@ -54,7 +54,6 @@ export type AvatarResponse = {
     items: Avatar[];
     timestamp: number;
 };
-
 export type Avatar = {
     login: string;
     name: string;
@@ -82,13 +81,15 @@ export type LogEntriesResponse = {
     file?: FsUri;
     branchSelection?: BranchSelection;
     selected?: LogEntry;
+    isLoading?: boolean;
+    isLoadingCommit?: boolean;
 };
 export type LogEntries = {
     items: LogEntry[];
     count: number;
-    isLoading: boolean;
-    isLoadingCommit: boolean;
     selected?: LogEntry;
+    isLoading?: boolean;
+    isLoadingCommit?: boolean;
 };
 export type LogEntry = {
     gitRoot: string;
@@ -132,14 +133,12 @@ export const IOutputChannel = Symbol('IOutputChannel');
 
 export interface IGitService {
     getGitRoot(): Promise<string>;
-    getGitRoots(rootDirectory?: string): Promise<string[]>;
+    getGitRoots(): Promise<string[]>;
     getGitRelativePath(file: FsUri): Promise<string>;
-    getHeadHashes(): Promise<{ ref: string; hash: string }[]>;
+    getHeadHashes(): Promise<{ ref?: string; hash?: string }[]>;
     getAuthors(): Promise<ActionedUser[]>;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
-    getObjectHash(object: string): Promise<string>;
-    getHash(hash: string): Promise<Hash>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
     getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri, lineNumber?: number, author?: string): Promise<LogEntries>;
     getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
@@ -170,7 +169,7 @@ export type CommitComparison = {
 export const IGitServiceFactory = Symbol('IGitServiceFactory');
 
 export interface IGitServiceFactory {
-    createGitService(workspaceRoot: string, resource?: Uri | string): Promise<IGitService>;
+    createGitService(resource?: Uri | string): Promise<IGitService>;
 }
 
 export enum CommitInfo {

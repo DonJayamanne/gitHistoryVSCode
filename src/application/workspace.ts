@@ -19,9 +19,6 @@ export class WorkspaceService implements IWorkspaceService {
     public getConfiguration(section?: string, resource?: Uri): WorkspaceConfiguration {
         return workspace.getConfiguration(section, resource);
     }
-    public getWorkspaceFolder(uri: Uri): WorkspaceFolder | undefined {
-        return workspace.getWorkspaceFolder(uri);
-    }
     public asRelativePath(pathOrUri: string | Uri, includeWorkspaceFolder?: boolean): string {
         return workspace.asRelativePath(pathOrUri, includeWorkspaceFolder);
     }

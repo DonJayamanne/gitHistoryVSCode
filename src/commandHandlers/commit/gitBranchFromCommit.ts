@@ -24,7 +24,7 @@ export class GitBranchFromCommitCommandHandler implements IGitBranchFromCommitCo
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder, commit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
         gitService.createBranch(newBranchName, commit.logEntry.hash.full)
             .catch(async err => {
                 const currentBranchName = await gitService.getCurrentBranch();

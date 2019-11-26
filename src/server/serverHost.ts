@@ -39,7 +39,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
         }
     }
 
-    public async start(_workspaceFolder: string): Promise<StartupInfo> {
+    public async start(): Promise<StartupInfo> {
         if (this.startPromise) {
             return this.startPromise;
         }
