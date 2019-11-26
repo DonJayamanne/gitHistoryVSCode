@@ -29,18 +29,6 @@ function mapStateToProps(state: RootState, wrapper: { result: ActionedDetails })
     };
 }
 
-// function mapDispatchToProps(dispatch) {
-//   return {
-//     // ...bindActionCreators({ ...ResultActions }, dispatch),
-//     // fetchData: (pageIndex: number) => dispatch(ResultActions.fetchLogEntries(pageIndex))
-//     setSize: (size: Size) => dispatch(ResultActions.logViewSizeCalculated(size)),
-//     setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
-//     commitsRendered: () => dispatch(ResultActions.commitsRendered()),
-//     onViewCommit: (hash: string) => dispatch(ResultActions.viewCommit(hash)),
-//     actionACommit: (logEntry: LogEntry) => dispatch(ResultActions.actionACommit(logEntry))
-//   };
-// }
-
 export default connect(
     mapStateToProps
 )(Avatar);

@@ -1,4 +1,3 @@
-import * as jQuery from 'jquery';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as ResultActions from '../../../actions/results';
@@ -7,11 +6,8 @@ import { RootState } from '../../../reducers';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
 
-type Size = { height: string, width: string };
 type LogViewProps = {
     logEntries: LogEntries;
-    setSize: typeof ResultActions.logViewSizeCalculated;
-    setHeight: typeof ResultActions.logEntryHeightCalculated;
     commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
     actionACommit: typeof ResultActions.actionACommit;
@@ -26,41 +22,30 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     constructor(props?: LogViewProps, context?: any) {
         super(props, context);
         // this.state = { height: '', width: '', itemHeight: 0 };
+        this.ref = React.createRef<LogEntryList>();
     }
-    private calculatedHeight: string;
-    private calculatedWidth: string;
-    private calculatedItemHeight: number;
-    private ref: HTMLDivElement;
+    private ref: React.RefObject<LogEntryList>;
     public componentDidUpdate() {
-        // const $ref = jQuery(this.ref);
-        const $ref = jQuery(this.ref.children[1]);
-        const height = $ref.outerHeight().toString();
-        const width = $ref.outerWidth().toString();
-        const $logEntry = jQuery('.log-entry').filter(':first');
-        const logEntryHeight = $logEntry.outerHeight() + parseFloat($logEntry.css('marginTop'));
+        const el = this.ref.current.ref;
 
-        if (!isNaN(logEntryHeight) && (!this.state || this.calculatedHeight !== height ||
-            this.calculatedItemHeight !== logEntryHeight || this.calculatedWidth !== width)) {
-            // this.setState({ height, width, itemHeight: logEntryHeight, commitsUpdatedTime: new Date().getTime() });
-            this.props.setHeight(logEntryHeight);
-            this.props.setSize({ height, width });
-            this.props.commitsRendered();
+        if (this.props.logEntries.selected) {
             return;
         }
 
-        if (!isNaN(logEntryHeight) && this.props.logEntries &&
-            this.calculatedItemHeight > 0 &&
-            Array.isArray(this.props.logEntries.items) && this.props.logEntries.items.length > 0) {
-            this.props.commitsRendered();
+        if(el.hasChildNodes() && this.props.logEntries && !this.props.logEntries.isLoading && !this.props.logEntries.isLoadingCommit && Array.isArray(this.props.logEntries.items) && this.props.logEntries.items.length > 0) {          
+            // use the total height to be more accurate in positioning the dots from BranchGraph
+            const totalHeight = el.offsetHeight;
+            const logEntryHeight = totalHeight / this.props.logEntries.items.length;
+            this.props.commitsRendered(logEntryHeight);
         }
     }
 
     public render() {
         return (
             // tslint:disable-next-line:react-this-binding-issue
-            <div className='log-view' id='scrollCnt' ref={(ref) => this.ref = ref}>
-                <BranchGraph ></BranchGraph>
-                <LogEntryList logEntries={this.props.logEntries.items}
+            <div className='log-view' id='scrollCnt'>
+                <BranchGraph></BranchGraph>
+                <LogEntryList ref={this.ref} logEntries={this.props.logEntries.items}
                     onClick={this.onClick}
                     onViewCommit={this.onViewCommit}></LogEntryList>
             </div>
@@ -79,22 +64,12 @@ function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) 
         logEntries: wrapper.logEntries
     };
 }
-// function mapStateToProps(state: RootState) {
-//   return {
-//     logEntries: {
-//       items: state.logEntries.items,
-//       count: state.logEntries.count
-//     }
-//   };
-// }
 
 function mapDispatchToProps(dispatch) {
     return {
         // ...bindActionCreators({ ...ResultActions }, dispatch),
         // fetchData: (pageIndex: number) => dispatch(ResultActions.fetchLogEntries(pageIndex))
-        setSize: (size: Size) => dispatch(ResultActions.logViewSizeCalculated(size)),
-        setHeight: (height: number) => dispatch(ResultActions.logEntryHeightCalculated(height)),
-        commitsRendered: () => dispatch(ResultActions.commitsRendered()),
+        commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
         actionACommit: (logEntry: LogEntry) => dispatch(ResultActions.actionACommit(logEntry))
     };
