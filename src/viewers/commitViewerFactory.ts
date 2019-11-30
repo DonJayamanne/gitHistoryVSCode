@@ -12,7 +12,9 @@ import { ICommitViewer, ICommitViewerFactory } from './types';
 
 @injectable()
 export class CommitViewerFactory implements ICommitViewerFactory {
+    // @ts-ignore
     private commitViewer: ICommitViewer;
+    // @ts-ignore
     private compareViewer: ICommitViewer;
     constructor(@inject(IOutputChannel) private outputChannel: OutputChannel,
         @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,

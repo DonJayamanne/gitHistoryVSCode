@@ -98,8 +98,10 @@ export class ApiController implements IApiRouteHandler {
             if (currentState.lastFetchedCommit) {
                 selected = await currentState.lastFetchedCommit;
             }
+            // @ts-ignore
             promise = currentState.entries.then(data => {
                 // tslint:disable-next-line:no-unnecessary-local-variable
+                // @ts-ignore
                 const entriesResponse: LogEntriesResponse = {
                     ...data,
                     branch: currentState.branch,
@@ -126,10 +128,12 @@ export class ApiController implements IApiRouteHandler {
 
             promise = currentState.entries;
         } else {
+            // @ts-ignore
             promise = (await this.getRepository(decodeURIComponent(request.query.id)))
                 .getLogEntries(pageIndex, pageSize, branch, searchText, file, lineNumber, author)
                 .then(data => {
                     // tslint:disable-next-line:no-unnecessary-local-variable
+                    // @ts-ignore
                     const entriesResponse: LogEntriesResponse = {
                         ...data,
                         branch,

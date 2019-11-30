@@ -9,7 +9,9 @@ export interface IDeferred<T> {
 }
 
 class DeferredImpl<T> implements IDeferred<T> {
+    // @ts-ignore
     private _resolve: (value?: T | PromiseLike<T>) => void;
+    // @ts-ignore
     // tslint:disable-next-line:no-any
     private _reject: (reason?: any) => void;
     private _resolved: boolean = false;
@@ -24,11 +26,13 @@ class DeferredImpl<T> implements IDeferred<T> {
         });
     }
     public resolve(_value?: T | PromiseLike<T>) {
+        // @ts-ignore
         this._resolve.apply(this.scope ? this.scope : this, arguments);
         this._resolved = true;
     }
     // tslint:disable-next-line:no-any
     public reject(_reason?: any) {
+        // @ts-ignore
         this._reject.apply(this.scope ? this.scope : this, arguments);
         this._rejected = true;
     }

@@ -17,6 +17,7 @@ export class DocumentManager implements IDocumentManager {
     public showTextDocument(uri: Uri, options?: TextDocumentShowOptions | undefined): Thenable<TextEditor>;
     public showTextDocument(document: any, column?: any, preserveFocus?: any);
     public showTextDocument(...args: any[]) {
+        // @ts-ignore
         return window.showTextDocument.call(window, ...args);
     }
 }

@@ -366,8 +366,8 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run lint && webpack -p --progress",
-        "compile": "tsc --watch -p ./",
+        "vscode:prepublish": "npm run lint && tsc --skipLibCheck -p ./ && webpack -p --progress",
+        "compile": "tsc --skipLibCheck --watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "lint": "tslint ./src/**/*.ts -t verbose || tslint ./test/**/*.ts -t verbose",
         "buildReact": "webpack -p --progress --colors",

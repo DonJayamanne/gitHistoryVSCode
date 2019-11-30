@@ -58,7 +58,6 @@ export class Git implements IGitService {
 
         // Instead of traversing the directory structure for the entire workspace, use the Git extension API to get all repo paths
         const git = this.gitCmdExecutor.gitExtension.getAPI(1);
-        
         const sourceControlFolders: string[] = git.repositories.map(repo => repo.rootUri.path);
         sourceControlFolders.sort();
         // gitFoldersList should be an Array of Arrays
@@ -187,7 +186,7 @@ export class Git implements IGitService {
             const url = await this.exec('remote', 'get-url', remoteName);
             return url.substring(0, url.length - 1);
         } catch {
-            return "";
+            return '';
         }
     }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
@@ -267,7 +266,7 @@ export class Git implements IGitService {
         });
 
         // tslint:disable-next-line:no-suspicious-comment
-        // TODO:Fix
+        // @ts-ignore
         // tslint:disable-next-line:no-object-literal-type-assertion
         return {
             items,
