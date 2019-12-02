@@ -86,7 +86,8 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     protected async getAvatarsImplementation(repository: IGitService): Promise<Avatar[]> {
         const remoteUrl = await repository.getOriginUrl();
         const remoteRepoPath = remoteUrl.replace(/.*?github.com\//,'');
-        const contributors = await this.getContributors(remoteRepoPath);
+        const remoteRepoWithNoGitSuffix = remoteRepoPath.replace(/\.git\/?$/, '');
+        const contributors = await this.getContributors(remoteRepoWithNoGitSuffix);
 
         const githubUsers = await Promise.all(contributors.map(async user => {
             const u = await this.getUserByLogin(user.login);
