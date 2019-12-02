@@ -63,9 +63,15 @@ export class ContentProvider implements TextDocumentContentProvider {
                                 'branchSelection=${branchSelection}',
                                 'locale=${encodeURIComponent(locale)}',
                                 'theme=' + document.body.className
-                            ];
+                            ];                           
+
                             document.getElementById('myframe').src = 'http://localhost:${internalPort}/?_=${timeNow}&' + queryArgs.join('&');
                             document.getElementById('myframe').onload = frameLoaded;
+
+                            // use mutation observer to check if style attribute has changed
+                            // this usually occurs when changing the vscode theme
+                            var observer = new MutationObserver(frameLoaded);
+                            observer.observe(document.getElementsByTagName("html")[0], { attributes: true });
                         }
                         </script>
                     </head>
