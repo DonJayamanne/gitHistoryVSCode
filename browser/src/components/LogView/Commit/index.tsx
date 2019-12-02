@@ -1,4 +1,5 @@
 import * as React from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import { CommittedFile, LogEntry } from '../../../definitions';
 import { RootState } from '../../../reducers';
@@ -10,6 +11,8 @@ const GoX = require('react-icons/lib/go/x');
 import Rnd from 'react-rnd';
 import * as ResultActions from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
+
+const GoClippy = require('react-icons/lib/go/clippy');
 
 interface CommitProps {
     selectedEntry?: LogEntry;
@@ -54,7 +57,15 @@ class Commit extends React.Component<CommitProps> {
                         <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
                         <div className='authorAndCommitInfoContainer'>
                             <Avatar result={this.props.selectedEntry.author}></Avatar>
-                            <h1 className='commit-subject'>{gitmojify(this.props.selectedEntry.subject)}</h1>
+                            <h1 className='commit-subject'>
+                                {gitmojify(this.props.selectedEntry.subject)}
+                                &nbsp;
+                                <CopyToClipboard text={this.props.selectedEntry.subject + "\n" + this.props.selectedEntry.body}>
+                                    <span className='btnx clipboard hint--right hint--rounded hint--bounce' aria-label='Copy commit text'>
+                                        <GoClippy></GoClippy>
+                                    </span>
+                                </CopyToClipboard>
+                            </h1>
                             <Author result={this.props.selectedEntry.author}></Author>
                             <div className='commit-body'>{gitmojify(this.props.selectedEntry.body)}</div>
                             <div className='commit-notes'>{gitmojify(this.props.selectedEntry.notes)}</div>
