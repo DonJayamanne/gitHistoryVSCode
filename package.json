@@ -379,7 +379,6 @@
         "cover:upload": "gulp cover:upload"
     },
     "devDependencies": {
-        "@primer/octicons": "^9.2.0",
         "@types/body-parser": "0.0.34",
         "@types/chai": "^4.0.4",
         "@types/clipboard": "1.5.29",

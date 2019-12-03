@@ -1,13 +1,12 @@
 import { Ref } from '../../../definitions';
 import * as React from 'react';
-import octicons from '@primer/octicons';
+import { GoGitBranch } from 'react-icons/lib/go';
 
 export default function HeadRef(props: Ref) {
-    const svg = { __html: octicons["git-branch"].toSVG() };
     return (<div className='media-image ref'>
         <div className='commit-head-container'>
             <div className='refs'>
-                <span dangerouslySetInnerHTML={svg} />
+                <span><GoGitBranch></GoGitBranch></span>
                 <span title={props.name}>{props.name}</span>
             </div>
         </div>

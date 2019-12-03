@@ -6,13 +6,10 @@ import { RootState } from '../../../reducers';
 import Author from './Author';
 import Avatar from './Avatar';
 import { FileEntry } from './FileEntry';
-// tslint:disable-next-line:no-require-imports no-var-requires
-const GoX = require('react-icons/lib/go/x');
+import { GoX, GoClippy } from 'react-icons/lib/go';
 import Rnd from 'react-rnd';
 import * as ResultActions from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
-
-const GoClippy = require('react-icons/lib/go/clippy');
 
 interface CommitProps {
     selectedEntry?: LogEntry;

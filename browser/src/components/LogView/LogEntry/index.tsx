@@ -9,12 +9,7 @@ import { gitmojify } from '../gitmojify';
 import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
 import TagRef from '../Refs/Tag';
-// tslint:disable-next-line:no-require-imports no-var-requires
-const GoClippy = require('react-icons/lib/go/clippy');
-// tslint:disable-next-line:no-require-imports no-var-requires
-const GoGitCommit = require('react-icons/lib/go/git-commit');
-// tslint:disable-next-line:no-require-imports no-var-requires
-// const GoGitPullRequest = require('react-icons/lib/go/git-pull-request');
+import { GoGitCommit, GoClippy } from 'react-icons/lib/go';
 
 type ResultListPropsSentToComponent = {
     logEntry: LogEntry;

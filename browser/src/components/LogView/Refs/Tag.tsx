@@ -1,13 +1,12 @@
 import { Ref } from '../../../definitions';
 import * as React from 'react';
-import octicons from '@primer/octicons';
+import { GoTag } from 'react-icons/lib/go';
 
 export default function HeadRef(props: Ref) {
-    const svg = { __html: octicons["tag"].toSVG() };
     return (<div className='media-image ref'>
         <div className='commit-tag-container'>
             <div className='refs'>
-                <span dangerouslySetInnerHTML={svg} />
+            <span><GoTag></GoTag></span>
                 <span title={props.name}>{props.name}</span>
             </div>
         </div>
