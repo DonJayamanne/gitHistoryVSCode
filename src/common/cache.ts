@@ -76,7 +76,7 @@ export function cache(storageKey: string, arg1?: any, arg2?: any) {
             const cacheKeyPrefix = typeof arg1 === 'string' ? arg1 : (typeof arg2 === 'string' ? arg2 : '');
 
             // tslint:disable-next-line:no-invalid-this no-parameter-reassignment
-            storageKey = typeof this.getHashCode === 'function' ? `${storageKey}${this.getHashCode()}` as string : storageKey;
+            storageKey = typeof this.getHashCode === 'function' ? `${storageKey}${this.getHashCode()}` : storageKey;
             const key = `${storageKey}.${storageKey}.${cacheKeyPrefix}.${propertyKey}.${JSON.stringify(args)}`;
             const entry = CacheRegister.get(storageKey, key)!;
             if (entry) {
@@ -84,7 +84,7 @@ export function cache(storageKey: string, arg1?: any, arg2?: any) {
             }
 
             // tslint:disable-next-line:no-invalid-this
-            const result = oldFn!.apply(this, args);
+            const result = oldFn.apply(this, args);
             if (result && result.then && result.catch) {
                 // tslint:disable-next-line:no-any
                 result.then((value: any) => {

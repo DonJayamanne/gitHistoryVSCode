@@ -10,7 +10,7 @@ export class FileStatParser implements IFileStatParser {
     constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) {
     }
 
-    private static parseFileMovement(fileInfo: string): { original: string, current: string } | undefined {
+    private static parseFileMovement(fileInfo: string): { original: string; current: string } | undefined {
         // src/client/{common/comms => }/Socket Stream.ts
         // src/client/common/{space in folder => comms}/id Dispenser.ts
         // src/client/common/space in folder/{idDispenser.ts => id Dispenser.ts}
@@ -67,13 +67,11 @@ export class FileStatParser implements IFileStatParser {
 
     /**
      * Parses a line containing file information returned by `git log --name-stat` and returns just the file names
-     * @private
-     * @static
      * @param {string} line
      * @returns {({ original?: string, current: string } | undefined)}
      * @memberof FileStatParser
      */
-    private static getNewAndOldFileNameFromNumStatLine(line: string, status: Status): { original?: string, current: string } | undefined {
+    private static getNewAndOldFileNameFromNumStatLine(line: string, status: Status): { original?: string; current: string } | undefined {
         const statusParts = line.split('\t');
         const fileName = statusParts[1].trim();
         if (status === Status.Renamed || status === Status.Copied) {
@@ -84,8 +82,6 @@ export class FileStatParser implements IFileStatParser {
 
     /**
      * Parses a line containing file information returned by `git log --numstat`
-     * @private
-     * @static
      * @param {string} line
      * @returns {({ additions?: number, deletions?: number } | undefined)}
      * @memberof FileStatParser
@@ -108,8 +104,7 @@ export class FileStatParser implements IFileStatParser {
      * Parsers the file status
      * @param {string[]} filesWithNumStat Files returned using `git log --numstat`
      * @param {string[]} filesWithNameStat Files returned using `git log --name-status`
-     * @returns {CommittedFile[]}
-     * @memberof FileStatParser
+     * @returns {CommittedFile[]} An array of committed files
      */
     public parse(gitRootPath: string, filesWithNumStat: string[], filesWithNameStat: string[]): CommittedFile[] {
         return filesWithNameStat.map((line, index) => {
@@ -142,7 +137,6 @@ export class FileStatParser implements IFileStatParser {
                 uri: Uri.file(path.join(gitRootPath, relativePath)),
                 oldUri
             };
-           
             // uri.fsPath getter sporadically becomes a slash as prefix (E.g  "/z:/folder/subfolder").
             // By fetching fsPath through the getter, the internal method _makeFsPath(this) immediate get called here
             // and the fsPath is set correctly.

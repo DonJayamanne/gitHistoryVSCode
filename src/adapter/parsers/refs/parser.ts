@@ -18,9 +18,8 @@ export class RefsParser implements IRefsParser {
      * git branch --all (only considers)
      * git show-refs
      * git log --format=%D
-     * @param {string} refContent
-     * @returns {Ref[]}
-     * @memberof RefParser
+     * @param {string} refContent the ref content as string to be parsed
+     * @returns {Ref[]} A reference which can either be a branch, tag or origin
      */
     public parse(refContent: string): Ref[] {
         return (refContent || '').split(',')

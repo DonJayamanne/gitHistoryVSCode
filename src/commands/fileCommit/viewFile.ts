@@ -11,7 +11,7 @@ export class ViewFileCommand extends BaseFileCommitCommand {
         this.setCommandArguments([fileCommit]);
     }
     public async preExecute(): Promise<boolean> {
-        return this.data.committedFile!.status !== Status.Deleted;
+        return this.data.committedFile.status !== Status.Deleted;
     }
     public execute() {
         this.handler.viewFile(this.data);

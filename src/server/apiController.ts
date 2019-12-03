@@ -191,7 +191,7 @@ export class ApiController implements IApiRouteHandler {
             .then(data => {
                 response.send(data);
                 if (data && currentState) {
-                    this.commitViewer.viewCommitTree(new CommitDetails(currentState!.workspaceFolder, currentState!.branch!, data!));
+                    this.commitViewer.viewCommitTree(new CommitDetails(currentState.workspaceFolder, currentState.branch!, data));
                 }
             })
             .catch(err => {

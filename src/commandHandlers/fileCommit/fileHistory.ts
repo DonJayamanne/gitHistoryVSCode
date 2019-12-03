@@ -68,17 +68,17 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             return this.applicationShell.showErrorMessage('File cannot be compared with previous, as this is a new file').then(() => void 0);
         }
 
-        const tmpFilePromise = gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
-        const previousCommitHashPromise = gitService.getPreviousCommitHashForFile(fileCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
+        const tmpFilePromise = gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
+        const previousCommitHashPromise = gitService.getPreviousCommitHashForFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
 
         const values = await Promise.all([tmpFilePromise, previousCommitHashPromise]);
         const tmpFile = values[0];
         const previousCommitHash = values[1];
 
-        const previousFile = fileCommit.committedFile!.oldUri ? fileCommit.committedFile!.oldUri! : fileCommit.committedFile!.uri;
+        const previousFile = fileCommit.committedFile.oldUri ? fileCommit.committedFile.oldUri : fileCommit.committedFile.uri;
         const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
-        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.logEntry.hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
+        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile.uri.fsPath), hash: fileCommit.logEntry.hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
         await this.commandManager.executeCommand('vscode.diff', previousTmpFile, tmpFile, title, { preview: true });
     }
     @command('git.commit.FileEntry.ViewPreviousFileContents', IGitFileHistoryCommandHandler)
@@ -90,9 +90,9 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             return this.applicationShell.showErrorMessage('Previous version of the file cannot be opened, as this is a new file').then(() => void 0);
         }
 
-        const previousCommitHash = await gitService.getPreviousCommitHashForFile(fileCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
+        const previousCommitHash = await gitService.getPreviousCommitHashForFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
 
-        const previousFile = fileCommit.committedFile!.oldUri ? fileCommit.committedFile!.oldUri! : fileCommit.committedFile!.uri;
+        const previousFile = fileCommit.committedFile.oldUri ? fileCommit.committedFile.oldUri : fileCommit.committedFile.uri;
         const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
         await this.commandManager.executeCommand('git.openFileInViewer', Uri.file(previousTmpFile.fsPath));
@@ -108,13 +108,13 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             return this.applicationShell.showErrorMessage('File cannot be compared, as this is a new file').then(() => void 0);
         }
 
-        const leftFilePromise = gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
-        const rightFilePromise = gitService.getCommitFile(fileCommit.rightCommit.logEntry.hash.full, fileCommit.committedFile!.uri);
+        const leftFilePromise = gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
+        const rightFilePromise = gitService.getCommitFile(fileCommit.rightCommit.logEntry.hash.full, fileCommit.committedFile.uri);
 
         const [leftFile, rightFile] = await Promise.all([leftFilePromise, rightFilePromise]);
 
-        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.logEntry.hash },
-            { file: Uri.file(fileCommit.committedFile!.uri.fsPath), hash: fileCommit.rightCommit.logEntry.hash });
+        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile.uri.fsPath), hash: fileCommit.logEntry.hash },
+            { file: Uri.file(fileCommit.committedFile.uri.fsPath), hash: fileCommit.rightCommit.logEntry.hash });
 
         await this.commandManager.executeCommand('vscode.diff', leftFile, rightFile, title, { preview: true });
     }

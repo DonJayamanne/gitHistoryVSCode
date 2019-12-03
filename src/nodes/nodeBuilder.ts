@@ -15,7 +15,7 @@ export class NodeBuilder implements INodeBuilder {
         @inject(IPlatformService) private platform: IPlatformService) {
     }
     public buildTree(commit: CommitDetails, committedFiles: CommittedFile[]): (DirectoryNode | FileNode)[] {
-        const sortedFiles = committedFiles!.sort((a, b) => a.uri.fsPath.toUpperCase() > b.uri.fsPath.toUpperCase() ? 1 : -1);
+        const sortedFiles = committedFiles.sort((a, b) => a.uri.fsPath.toUpperCase() > b.uri.fsPath.toUpperCase() ? 1 : -1);
         const commitFileDetails = new Map<string, CommittedFile>();
         sortedFiles.forEach(item => commitFileDetails.set(item.uri.fsPath, item));
 
@@ -28,7 +28,7 @@ export class NodeBuilder implements INodeBuilder {
                 if (folderName === '.' && index === 0) {
                     return undefined;
                 }
-                const currentPath = parent ? path.join(parent!.resource.fsPath, folderName) : folderName;
+                const currentPath = parent ? path.join(parent.resource.fsPath, folderName) : folderName;
                 const nodeExists = nodes.has(currentPath);
                 if (nodes.has(currentPath)) {
                     return nodes.get(currentPath)!;
@@ -37,7 +37,7 @@ export class NodeBuilder implements INodeBuilder {
                 const folderNode = this.nodeFactory.createDirectoryNode(commit, currentPath);
                 nodes.set(currentPath, folderNode);
                 if (parent) {
-                    parent!.children.push(folderNode);
+                    parent.children.push(folderNode);
                 }
                 if (index === 0 && !nodeExists) {
                     roots.push(folderNode);
@@ -47,7 +47,7 @@ export class NodeBuilder implements INodeBuilder {
             }, undefined as any);
             const fileNode = this.nodeFactory.createFileNode(commit, file);
             if (dirNode) {
-                dirNode!.children.push(fileNode);
+                dirNode.children.push(fileNode);
             } else {
                 roots.push(fileNode);
             }
@@ -62,17 +62,17 @@ export class NodeBuilder implements INodeBuilder {
     }
     public async getTreeItem(element: DirectoryNode | FileNode): Promise<DirectoryTreeItem | FileTreeItem> {
         if (element instanceof DirectoryNode) {
-            return this.buildDirectoryTreeItem(element as DirectoryNode);
+            return this.buildDirectoryTreeItem(element);
         } else {
             return this.buildFileTreeItem(element);
         }
     }
     public buildDirectoryTreeItem(element: DirectoryNode): DirectoryTreeItem {
-        const treeItem = new DirectoryTreeItem(element as DirectoryNode);
+        const treeItem = new DirectoryTreeItem(element);
         treeItem.iconPath = FolderIcon;
         treeItem.contextValue = 'folder';
         if (treeItem.command) {
-            treeItem.command!.tooltip = 'sdafasfef.';
+            treeItem.command.tooltip = 'sdafasfef.';
         }
         return treeItem;
     }
@@ -124,7 +124,7 @@ export class NodeBuilder implements INodeBuilder {
     private sortDirectoryNodes(nodes: DirectoryNode[]): DirectoryNode[] {
         const directoryNodes = nodes
             .filter(node => node instanceof DirectoryNode)
-            .map(node => node as DirectoryNode);
+            .map(node => node);
 
         if (this.platform.isWindows) {
             return directoryNodes.sort((a, b) => a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1);
@@ -135,7 +135,7 @@ export class NodeBuilder implements INodeBuilder {
     private sortFileNodes(nodes: FileNode[]): FileNode[] {
         const fileNodes = nodes
             .filter(node => node instanceof FileNode)
-            .map(node => node as FileNode);
+            .map(node => node);
 
         if (this.platform.isWindows) {
             return fileNodes.sort((a, b) => a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1);

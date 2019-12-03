@@ -172,7 +172,7 @@ export class Git implements IGitService {
         } else if (url.indexOf('visualstudio') > 0) {
             return GitOriginType.vsts;
         }
-        
+
         return undefined;
     }
     @cache('IGitService')
@@ -397,8 +397,8 @@ export class Git implements IGitService {
         const hashes = output.split(/\r?\n/g).filter(item => item.length > 0)[0].split('-');
 
         return {
-            short: hashes[1]!,
-            full: hashes[0]!
+            short: hashes[1],
+            full: hashes[0]
         };
     }
 

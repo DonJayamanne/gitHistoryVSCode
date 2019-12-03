@@ -70,7 +70,7 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
             const committedFiles = this.treeId === 'commitViewProvider' ? this.commit!.logEntry.committedFiles! : (this.commit as CompareCommitDetails).committedFiles;
             return this.fileView ? this.nodeBuilder.buildList(this.commit!, committedFiles) : this.nodeBuilder.buildTree(this.commit!, committedFiles);
         }
-        if (element! instanceof DirectoryNode) {
+        if (element instanceof DirectoryNode) {
             return (element as DirectoryNode).children;
         }
         return [];

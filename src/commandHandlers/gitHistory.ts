@@ -22,7 +22,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             this._server = this.serviceContainer.get<IServerHost>(IServerHost);
             this.disposableRegistry.register(this._server);
         }
-        return this._server!;
+        return this._server;
     }
     constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
@@ -34,10 +34,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         if (info) {
             if (info instanceof FileCommitDetails) {
                 const committedFile = info.committedFile;
-                fileUri = committedFile.uri ? Uri.file(committedFile.uri!.fsPath!) : Uri.file(committedFile.oldUri!.fsPath);
+                fileUri = committedFile.uri ? Uri.file(committedFile.uri.fsPath) : Uri.file(committedFile.oldUri!.fsPath);
             } else if (info instanceof FileNode) {
                 const committedFile = info.data!.committedFile;
-                fileUri = committedFile.uri ? Uri.file(committedFile.uri!.fsPath!) : Uri.file(committedFile.oldUri!.fsPath);
+                fileUri = committedFile.uri ? Uri.file(committedFile.uri.fsPath) : Uri.file(committedFile.oldUri!.fsPath);
             } else if (info instanceof Uri) {
                 fileUri = info;
                 // tslint:disable-next-line:no-any
@@ -81,7 +81,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory)
                                                       .createGitService(workspaceFolder, gitRoot);
         const branchNamePromise = gitService.getCurrentBranch();
-        const startupInfoPromise = this.server!.start(workspaceFolder);
+        const startupInfoPromise = this.server.start(workspaceFolder);
         const localePromise = osLocale();
         const gitRootsUnderWorkspacePromise = gitService.getGitRoots(workspaceFolder);
 

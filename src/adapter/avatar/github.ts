@@ -85,19 +85,20 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     }
     protected async getAvatarsImplementation(repository: IGitService): Promise<Avatar[]> {
         const remoteUrl = await repository.getOriginUrl();
-        const remoteRepoPath = remoteUrl.replace(/.*?github.com\//,'');
+        const remoteRepoPath = remoteUrl.replace(/.*?github.com\//, '');
         const remoteRepoWithNoGitSuffix = remoteRepoPath.replace(/\.git\/?$/, '');
         const contributors = await this.getContributors(remoteRepoWithNoGitSuffix);
 
         const githubUsers = await Promise.all(contributors.map(async user => {
-            const u = await this.getUserByLogin(user.login);
-            return u;
+            return await this.getUserByLogin(user.login);
         }));
 
         let avatars : Avatar[] = [];
 
         githubUsers.forEach(user => {
-            if(!user) return;
+            if (!user) {
+                return;
+            }
             avatars.push({
                 login: user.login,
                 name: user.name,
@@ -111,7 +112,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     }
     /**
      * Fetch the user details through Github API
-     * @param loginName
+     * @param loginName the user login name from github
      */
     private async getUserByLogin(loginName: string) {
         const key = `GitHub:User:${loginName}`;
@@ -119,7 +120,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         const cachedUser = await this.stateStore.get<GithubUserResponse>(key);
         let headers = {};
 
-        if(cachedUser) {
+        if (cachedUser) {
             // Use GitHub API with conditional check on last modified
             // to avoid API request rate limitation
             headers = {'If-Modified-Since': cachedUser.last_modified};
@@ -138,8 +139,8 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
                 // can either be '302 Not Modified' or any other error
                 // in case of '302 Not Modified' this API request is not counted and returns nothing
             });
-        
-        if(info) {
+
+        if (info) {
             await this.stateStore.set(key, info);
             return info;
         } else {
@@ -153,10 +154,9 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
      */
     private async getContributors(repoPath: string) {
         const proxy = this.proxy;
-        const info = await axios.get(`https://api.github.com/repos/${repoPath}/contributors`, { proxy })
+        return axios.get(`https://api.github.com/repos/${repoPath}/contributors`, { proxy })
             .then((result: { data: GithubUserSearchResponseItem[] }) => {
                 return result.data;
             });
-        return info;
     }
 }

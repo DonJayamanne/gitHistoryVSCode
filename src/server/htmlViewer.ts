@@ -28,7 +28,7 @@ export class HtmlViewer {
             return this.htmlView.get(uri.toString())!.webview;
         }
 
-        const query = querystring.parse(uri.query.toString())!;
+        const query = querystring.parse(uri.query.toString());
         const port: number = parseInt(query.port!.toString(), 10);
         const internalPort: number = parseInt(query.internalPort!.toString(), 10);
 

@@ -15,14 +15,14 @@ export class CommitViewFormatter implements ICommitViewFormatter {
             sb.push(this.formatAuthor(item));
         }
         if (item.author && item.author.date) {
-            const authorDate = item.author!.date!.toLocaleString();
+            const authorDate = item.author.date.toLocaleString();
             sb.push(`Author Date : ${authorDate}`);
         }
         if (item.committer) {
             sb.push(`Committer : ${item.committer.name} <${item.committer.email}>`);
         }
         if (item.committer && item.committer.date) {
-            const committerDate = item.committer!.date!.toLocaleString();
+            const committerDate = item.committer.date.toLocaleString();
             sb.push(`Commit Date : ${committerDate}`);
         }
         if (item.subject) {

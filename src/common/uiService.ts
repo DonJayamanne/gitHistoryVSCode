@@ -70,7 +70,7 @@ export class UiService implements IUiService {
                 return { workspaceFolder: firstWorkspaceFolder, gitRoot: firstWorkspaceFolder };
             }
             case 1: {
-                return filteredGitRoots[0]!;
+                return filteredGitRoots[0];
             }
             default: {
                 return this.selectGitRoot(filteredGitRoots);

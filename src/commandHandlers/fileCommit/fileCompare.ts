@@ -34,7 +34,7 @@ export class GitCompareFileCommitCommandHandler implements IGitCompareFileComman
         }
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
         const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder, fileCommit.logEntry.gitRoot);
-        const fileDiffs = await gitService.getDifferences(this.selectedCommit!.logEntry.hash.full, fileCommit.logEntry.hash.full);
-        await this.commandManager.executeCommand('git.commit.diff.view', this.selectedCommit!, fileCommit, fileDiffs);
+        const fileDiffs = await gitService.getDifferences(this.selectedCommit.logEntry.hash.full, fileCommit.logEntry.hash.full);
+        await this.commandManager.executeCommand('git.commit.diff.view', this.selectedCommit, fileCommit, fileDiffs);
     }
 }

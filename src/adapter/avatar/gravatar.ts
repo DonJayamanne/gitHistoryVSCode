@@ -21,7 +21,7 @@ export class GravatarAvatarProvider extends BaseAvatarProvider implements IAvata
                 avatarUrl: gravatar.url(user.email),
                 name: user.name,
                 email: user.email
-            }
+            };
         });
     }
 }

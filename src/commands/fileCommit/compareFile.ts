@@ -6,7 +6,7 @@ export class CompareFileCommand extends BaseFileCommitCommand {
     constructor(fileCommit: FileCommitDetails, private handler: IGitCompareFileCommandHandler) {
         super(fileCommit);
         if (handler.selectedCommit) {
-            this.setTitle(`$(git-compare) Compare with ${handler.selectedCommit!.logEntry.hash.short}`);
+            this.setTitle(`$(git-compare) Compare with ${handler.selectedCommit.logEntry.hash.short}`);
         }
         this.setCommand('git.commit.FileEntry.compare');
         this.setCommandArguments([fileCommit]);

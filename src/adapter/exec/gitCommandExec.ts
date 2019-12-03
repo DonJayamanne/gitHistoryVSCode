@@ -3,19 +3,18 @@ import * as iconv from 'iconv-lite';
 import { injectable, multiInject } from 'inversify';
 import { Writable } from 'stream';
 import { Disposable, extensions } from 'vscode';
+import { IGitCommandExecutor } from './types';
 import { GitExtension } from '../repository/git.d';
 import { StopWatch } from '../../common/stopWatch';
 import { ILogService } from '../../common/types';
-import { IGitCommandExecutor } from './types';
-
 
 const DEFAULT_ENCODING = 'utf8';
 const isWindows = /^win/.test(process.platform);
 
 @injectable()
 export class GitCommandExecutor implements IGitCommandExecutor {
-    public gitExtension : GitExtension;
-    private gitExecutablePath : string;
+    public gitExtension: GitExtension;
+    private gitExecutablePath: string;
 
     constructor(@multiInject(ILogService) private loggers: ILogService[]) {
         this.gitExtension = extensions.getExtension<GitExtension>('vscode.git')!.exports;
@@ -36,7 +35,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
             childProcOptions.encoding = DEFAULT_ENCODING;
         }
         const binaryOuput = childProcOptions.encoding === 'binary';
-        const destination: Writable = binaryOuput ? args.shift()! : undefined;
+        const destination: Writable = binaryOuput ? args.shift() : undefined;
         const gitPathCommand = childProcOptions.shell && gitPath.indexOf(' ') > 0 ? `"${gitPath}"` : gitPath;
         const stopWatch = new StopWatch();
         const gitShow = spawn(gitPathCommand, args, childProcOptions);

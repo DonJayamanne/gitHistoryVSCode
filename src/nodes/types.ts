@@ -32,7 +32,7 @@ export abstract class AbstractCommitNode<T> implements INode<T> {
         this._label = value;
     }
     protected setResoruce(value: string | Uri) {
-        this._resource = typeof value === 'string' ? Uri.file(value as string) : value as Uri;
+        this._resource = typeof value === 'string' ? Uri.file(value) : value;
     }
 }
 

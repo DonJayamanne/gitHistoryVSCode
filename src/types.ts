@@ -52,7 +52,8 @@ export type CommittedFile = {
 export type AvatarResponse = {
     items: Avatar[];
     timestamp: number;
-}
+};
+
 export type Avatar = {
     login: string;
     name: string;

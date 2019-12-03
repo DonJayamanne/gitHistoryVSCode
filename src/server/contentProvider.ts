@@ -8,14 +8,14 @@ export class ContentProvider implements TextDocumentContentProvider {
     constructor(private serviceContainer: IServiceContainer) {
     }
     public provideTextDocumentContent(uri: Uri, _token: CancellationToken): string {
-        const query = querystring.parse(uri.query.toString())!;
+        const query = querystring.parse(uri.query.toString());
         const port: number = parseInt(query.port!.toString(), 10);
         const internalPort: number = parseInt(query.internalPort!.toString(), 10);
         const id: string = query.id! as string;
-        const branchName: string | undefined = query.branchName ? decodeURIComponent(query.branchName! as string) : '';
+        const branchName: string | undefined = query.branchName ? decodeURIComponent(query.branchName as string) : '';
         const branchSelection: BranchSelection = parseInt(query.branchSelection!.toString(), 10) as BranchSelection;
-        const locale: string = decodeURIComponent(query.locale!.toString()) as string;
-        const file: string = decodeURIComponent(query.file!.toString()) as string;
+        const locale: string = decodeURIComponent(query.locale!.toString());
+        const file: string = decodeURIComponent(query.file!.toString());
         return this.generateResultsView(port, internalPort, id, branchName, branchSelection, locale, file);
     }
     private generateResultsView(port: number, internalPort: number, id: string, branchName: string, branchSelection: BranchSelection, locale: string, file: string): string {
@@ -63,7 +63,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                                 'branchSelection=${branchSelection}',
                                 'locale=${encodeURIComponent(locale)}',
                                 'theme=' + document.body.className
-                            ];                           
+                            ];
 
                             document.getElementById('myframe').src = 'http://localhost:${internalPort}/?_=${timeNow}&' + queryArgs.join('&');
                             document.getElementById('myframe').onload = frameLoaded;

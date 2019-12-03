@@ -2,10 +2,6 @@ import * as path from 'path';
 
 const resourcesPath = path.join(__dirname, '..', '..', '..', 'resources');
 
-export const GitCommitIcon = {
-    dark: path.join(resourcesPath, 'darkTheme', 'git-commit.png'),
-    light: path.join(resourcesPath, 'octicons', 'svg', 'git-commit.svg')
-};
 export const FolderIcon = {
     dark: path.join(resourcesPath, 'darkTheme', 'folder.svg'),
     light: path.join(resourcesPath, 'lightTheme', 'folder.svg')
