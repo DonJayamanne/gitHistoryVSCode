@@ -465,8 +465,6 @@
         "md5": "^2.2.1",
         "os-locale": "^2.1.0",
         "query-string": "^4.3.2",
-        "reflect-metadata": "^0.1.12",
-        "tmp": "0.1.0",
-        "vscode-extension-telemetry": "0.0.5"
+        "tmp": "0.1.0"
     }
 }
