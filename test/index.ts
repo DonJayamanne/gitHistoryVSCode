@@ -1,3 +1,9 @@
+// tslint:disable-next-line:no-any
+if ((Reflect as any).metadata === undefined) {
+    // tslint:disable-next-line:no-require-imports no-var-requires
+    require('reflect-metadata');
+}
+
 import { MochaSetupOptions } from 'vscode/lib/testrunner';
 import * as testRunner from './testRunner';
 process.env.VSC_GITHISTORY_CI_TEST = '1';
