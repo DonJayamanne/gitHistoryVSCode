@@ -1,6 +1,6 @@
 import { inject } from 'inversify';
 import * as querystring from 'query-string';
-import { Disposable, Uri, ViewColumn, Webview, WebviewPanel } from 'vscode';
+import { Disposable, Uri, ViewColumn, WebviewPanel } from 'vscode';
 import { window } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IServiceContainer } from '../ioc/types';
@@ -21,11 +21,17 @@ export class HtmlViewer {
         this.disposable.forEach(disposable => disposable.dispose());
     }
     private onPreviewHtml = (uri: string, column: ViewColumn, title: string) => {
-        return this.getHtmlView(Uri.parse(uri), column, title);
+        this.createHtmlView(Uri.parse(uri), column, title);
     }
-    private getHtmlView(uri: Uri, column: ViewColumn, title: string): Webview {
+    private createHtmlView(uri: Uri, column: ViewColumn, title: string) {
         if (this.htmlView.has(uri.toString())) {
-            return this.htmlView.get(uri.toString())!.webview;
+            // skip recreating a webview, when already exist
+            // and reveal it in tab view
+            const webviewPanel = this.htmlView.get(uri.toString());
+            if (webviewPanel) {
+                webviewPanel.reveal();
+            }
+            return;
         }
 
         const query = querystring.parse(uri.query.toString());
@@ -49,6 +55,6 @@ export class HtmlViewer {
         });
         webviewPanel.webview.html = htmlContent;
 
-        return webviewPanel.webview;
+        //return webviewPanel.webview;
     }
 }
