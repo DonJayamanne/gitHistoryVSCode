@@ -1,3 +1,22 @@
+
+## Version 0.4.10
+- Fixed [#287](https://github.com/DonJayamanne/gitHistoryVSCode/issues/287)
+- Fixed [#412](https://github.com/DonJayamanne/gitHistoryVSCode/issues/412)
+- Copy commit message from detail view [#413](https://github.com/DonJayamanne/gitHistoryVSCode/issues/413) [#378](https://github.com/DonJayamanne/gitHistoryVSCode/issues/378)
+- Some typescript hygiene and unused package removal
+
+## Version 0.4.9
+- Fixed issue [#411](https://github.com/DonJayamanne/gitHistoryVSCode/issues/411)
+
+## Version 0.4.8
+- Remote support (PR [#401](https://github.com/DonJayamanne/gitHistoryVSCode/pull/401))
+- Browser improvements (PR [#406](https://github.com/DonJayamanne/gitHistoryVSCode/pull/406), PR [#407](https://github.com/DonJayamanne/gitHistoryVSCode/pull/407))
+- Style amendments by passing `--vscode-*` into the iframe (PR [#360](https://github.com/DonJayamanne/gitHistoryVSCode/pull/360))
+- Slightly improved finding submodules using git extension api (PR [#358](https://github.com/DonJayamanne/gitHistoryVSCode/pull/358))
+- Fixed typo (PR [#399](https://github.com/DonJayamanne/gitHistoryVSCode/pull/399))
+- Fixed [#397](https://github.com/DonJayamanne/gitHistoryVSCode/issues/397)
+- Several other improvements on styling, code coverage and user experience
+
 ## Version 0.4.7
 - Always request github users API (when avatar cache expires) and check for modifications
 - Fixed avatar issues (#349, #287) using remote contributors and added avatar cache extension setting (default 1 hour)
