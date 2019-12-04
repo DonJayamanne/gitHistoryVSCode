@@ -1,3 +1,16 @@
+## Version 0.4.10
+- Typescript hygiene
+
+## Version 0.4.9
+- Added 'tsc' during prepublish and ignore compile erros complete the command
+
+## Version 0.4.8
+- Removed jquery from browser
+- Slightly amended the dot positions of BranchGraph
+- Reduced repeating calls on componentWillUpdate by removing LOGENTRY_ITEM_HEIGHT_CALCULATED action
+- Apply styles only for origin "null"
+- removed react-scroll as it was pretty much unused (or not properly working)
+
 ## Version 0.4.7
 - Always request github users API (when avatar cache expires) and check for modifications
 - Fixed avatar issues (#349, #287) using remote contributors and added avatar cache extension setting (default 1 hour)
