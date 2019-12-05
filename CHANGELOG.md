@@ -1,3 +1,5 @@
+## Version 0.4.11
+- Reveal "Git History" and "File History" tab when already opened [#382](https://github.com/DonJayamanne/gitHistoryVSCode/issues/382) [#365](https://github.com/DonJayamanne/gitHistoryVSCode/issues/365)
 
 ## Version 0.4.10
 - Fixed [#287](https://github.com/DonJayamanne/gitHistoryVSCode/issues/287)
