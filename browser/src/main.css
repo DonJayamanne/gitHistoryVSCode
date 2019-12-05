@@ -435,9 +435,7 @@ header input, header button {
 .hidden {
 	display:none;
 }
-.detailsCnt {
-    overflow: auto;
-}
+
 #details-view {
 	padding: 1rem 1rem 0 1rem;
 }
@@ -495,13 +493,17 @@ div.details-view-cnt {
 	display: none;
 }
 
-#details-view .committed-files {
-	list-style: none;
-	margin: 0 0;
-	padding: 0;
+#comitted-files {
+	position: relative; 
 }
 
-.committed-files .diff-row , .diff-row {
+#comitted-files > div:first-child {
+	position: absolute;
+	right: 1.5rem;
+	top: -5rem;
+}
+
+.diff-row {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -513,12 +515,12 @@ div.details-view-cnt {
 	position: relative;
 }
 
-.committed-files .file-name, .file-name {
+.file-name {
 	display: inline-block;
 	padding-left: 0.5em;
 }
 
-.committed-files a.file-name, a.file-name {
+a.file-name {
 	position: absolute;
 	top: 0;
 	left: 0;
