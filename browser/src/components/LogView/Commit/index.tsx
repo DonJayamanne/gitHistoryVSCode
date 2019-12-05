@@ -80,8 +80,11 @@ class Commit extends React.Component<CommitProps, CommitState> {
             // tslint:disable-next-line:react-this-binding-issue
             <Rnd className='details-view-cnt' default={ContainerStyle} minWidth={50} minHeight={50} maxHeight='50%' bounds='parent'
                 enableResizing={resizing}  disableDragging={this.props.selectedEntry !== undefined}>
-                <div id='details-view'>
+                <div className='actions'>
+                    <input ref={x => {this.ref = x;} } className={'textInput'} type="text" value={this.state.searchText} placeholder="Find file" onKeyDown={this.handleKeyDown} onChange={this.handleSearchChange} />
                     <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
+                </div>
+                <div id='details-view'>
                     <div className='authorAndCommitInfoContainer'>
                         <Avatar result={this.props.selectedEntry.author}></Avatar>
                         <h1 className='commit-subject'>
@@ -96,11 +99,6 @@ class Commit extends React.Component<CommitProps, CommitState> {
                         <Author result={this.props.selectedEntry.author}></Author>
                         <div className='commit-body'>{gitmojify(this.props.selectedEntry.body)}</div>
                         <div className='commit-notes'>{gitmojify(this.props.selectedEntry.notes)}</div>
-                    </div>
-                </div>
-                <div id="comitted-files">
-                    <div>
-                        <input ref={x => {this.ref = x;} } className={'textInput'} type="text" value={this.state.searchText} placeholder="Find file" onKeyDown={this.handleKeyDown} onChange={this.handleSearchChange} />
                     </div>
                     {this.renderFileEntries()}
                 </div>

@@ -436,23 +436,6 @@ header input, header button {
 	display:none;
 }
 
-#details-view {
-	padding: 1rem 1rem 0 1rem;
-}
-#details-view .action-btn {
-	float: right;
-	cursor: pointer;
-	opacity: 0.8;
-	z-index: 5;
-	position: fixed;
-    right: 20px;
-}
-
-#details-view .action-btn:hover {
-	opacity: 1;
-	transition: opacity 0.3s ease-out;
-}
-
 div.commitCntDrag {
 	width: 100vw !important;
 	display: block !important;
@@ -476,6 +459,10 @@ div.details-view-cnt {
 	top: unset !important;
 }
 
+#details-view {
+	padding: 1rem 1rem 0 1rem;
+}
+
 #details-view .commit-subject {
 	font-size: 1.4em;
 	font-weight: lighter;
@@ -493,14 +480,33 @@ div.details-view-cnt {
 	display: none;
 }
 
-#comitted-files {
-	position: relative; 
+.details-view-cnt .action-btn {
+	display: inline-block;
+	margin-left: 20px;
+	cursor: pointer;
+	opacity: 0.8;
+	z-index: 5;
 }
 
-#comitted-files > div:first-child {
+.details-view-cnt .action-btn:hover {
+	opacity: 1;
+	transition: opacity 0.3s ease-out;
+}
+
+.details-view-cnt > div.actions {
 	position: absolute;
-	right: 1.5rem;
-	top: -5rem;
+	top: 5px;
+	right: 20px;
+}
+
+#details-view {
+	overflow-y: auto;
+	height: 100%;
+	max-height: 100%;
+}
+
+.details-view-cnt > div.actions > .textInput {
+	max-width: 150px;
 }
 
 .diff-row {
