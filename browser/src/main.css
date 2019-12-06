@@ -174,17 +174,6 @@ div.appRoot {
     margin:0.2em 0.4em 0em 0em;
 }
 
-.authorAndCommitInfoContainer {
-    display:inline-block;
-    width:100%;
-}
-.authorAndCommitInfoContainer img.avatar {
-    height:80px;
-    width:80px;
-    float: left;
-    margin-right: 0.5em;
-}
-
 .commit-subject {
 	font-weight: bold;
 }
@@ -450,63 +439,77 @@ div.react-draggable {
 }
 
 div.details-view-cnt {
-    overflow-x: hidden;
+	overflow: auto;
     background: var(--vscode-editor-background);
 	border-top-width: 1px;
 	border-top-style: solid;
 	border-top-color: var(--vscode-editorGroup-border);
 	bottom: 45px !important;
 	top: unset !important;
-}
-
-#details-view {
 	padding: 1rem 1rem 0 1rem;
 }
 
-#details-view .commit-subject {
+div.details-view-cnt .commit-subject {
 	font-size: 1.4em;
 	font-weight: lighter;
 	margin: 0;
 }
 
-#details-view .commit-body,
-#details-view .commit-notes {
+div.details-view-cnt .commit-body,
+div.details-view-cnt .commit-notes {
 	margin: 1em 0;
 	white-space: pre;
 }
 
-#details-view .commit-body:empty,
-#details-view .commit-notes:empty {
+div.details-view-cnt .commit-body:empty,
+div.details-view-cnt .commit-notes:empty {
 	display: none;
 }
 
-.details-view-cnt .action-btn {
+#detail-view {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+}
+
+#detail-view .authorAndCommitInfoContainer {
+    flex: 1 1;
+}
+#detail-view .authorAndCommitInfoContainer img.avatar {
+    height:80px;
+    width:80px;
+    float: left;
+    margin-right: 0.5em;
+}
+
+#detail-view .action-btn {
+	margin-left: 1rem;
 	display: inline-block;
-	margin-left: 20px;
 	cursor: pointer;
 	opacity: 0.8;
 	z-index: 5;
 }
 
-.details-view-cnt .action-btn:hover {
+#detail-view .action-btn:hover {
 	opacity: 1;
 	transition: opacity 0.3s ease-out;
 }
 
-.details-view-cnt > div.actions {
-	position: absolute;
-	top: 5px;
-	right: 20px;
+#detail-view div.actions {
+	position: sticky;
+	top: 0px;
+	align-self: flex-start;
+	white-space: nowrap;
+	flex: 0 1;
+	text-align: right;
 }
 
-#details-view {
-	overflow-y: auto;
-	height: 100%;
-	max-height: 100%;
+#detail-view .comitted-files {
+	width: 100%;
 }
 
-.details-view-cnt > div.actions > .textInput {
-	max-width: 150px;
+#detail-view div.actions > .textInput {
+	width: unset;
 }
 
 .diff-row {

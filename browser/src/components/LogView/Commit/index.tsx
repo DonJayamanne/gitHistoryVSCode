@@ -58,7 +58,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
     }
     private renderFileEntries() {
         if (this.state.searchText) {
-            return this.props.selectedEntry.committedFiles.filter(x => x.relativePath.indexOf(this.state.searchText) !== -1)
+            return this.props.selectedEntry.committedFiles.filter(x => x.relativePath.toLowerCase().indexOf(this.state.searchText.toLowerCase()) !== -1)
             .map((fileEntry, index) => <FileEntry theme={this.props.theme} committedFile={fileEntry} key={index + fileEntry.relativePath} onSelect={this.onSelectFile} />);
         } else {
             return this.props.selectedEntry.committedFiles
@@ -79,12 +79,8 @@ class Commit extends React.Component<CommitProps, CommitState> {
         return (
             // tslint:disable-next-line:react-this-binding-issue
             <Rnd className='details-view-cnt' default={ContainerStyle} minWidth={50} minHeight={50} maxHeight='50%' bounds='parent'
-                enableResizing={resizing}  disableDragging={this.props.selectedEntry !== undefined}>
-                <div className='actions'>
-                    <input ref={x => {this.ref = x;} } className={'textInput'} type="text" value={this.state.searchText} placeholder="Find file" onKeyDown={this.handleKeyDown} onChange={this.handleSearchChange} />
-                    <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
-                </div>
-                <div id='details-view'>
+                enableResizing={resizing} disableDragging={this.props.selectedEntry !== undefined}>
+                <div id='detail-view'>
                     <div className='authorAndCommitInfoContainer'>
                         <Avatar result={this.props.selectedEntry.author}></Avatar>
                         <h1 className='commit-subject'>
@@ -100,7 +96,13 @@ class Commit extends React.Component<CommitProps, CommitState> {
                         <div className='commit-body'>{gitmojify(this.props.selectedEntry.body)}</div>
                         <div className='commit-notes'>{gitmojify(this.props.selectedEntry.notes)}</div>
                     </div>
-                    {this.renderFileEntries()}
+                    <div className='actions'>
+                        <input ref={x => {this.ref = x;} } className={'textInput'} type="text" value={this.state.searchText} placeholder="Find file" onKeyDown={this.handleKeyDown} onChange={this.handleSearchChange} />
+                        <a role='button' className='action-btn close-btn' onClick={this.onClose}><GoX></GoX></a>
+                    </div>
+                    <div className='comitted-files'>
+                        {this.renderFileEntries()}
+                    </div>
                 </div>
             </Rnd >);
     }
