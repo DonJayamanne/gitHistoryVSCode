@@ -7,7 +7,7 @@ import Author from './Author';
 import Avatar from './Avatar';
 import { FileEntry } from './FileEntry';
 import { GoX, GoClippy } from 'react-icons/lib/go';
-import Rnd from 'react-rnd';
+import { Resizable } from "re-resizable";
 import * as ResultActions from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
 
@@ -78,8 +78,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
 
         return (
             // tslint:disable-next-line:react-this-binding-issue
-            <Rnd className='details-view-cnt' default={ContainerStyle} minWidth={50} minHeight={50} maxHeight='50%' bounds='parent'
-                enableResizing={resizing} disableDragging={this.props.selectedEntry !== undefined}>
+            <Resizable className='details-view-cnt' defaultSize={ContainerStyle} minHeight={90} maxHeight='50%' enable={resizing}>
                 <div id='detail-view'>
                     <div className='authorAndCommitInfoContainer'>
                         <Avatar result={this.props.selectedEntry.author}></Avatar>
@@ -104,7 +103,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
                         {this.renderFileEntries()}
                     </div>
                 </div>
-            </Rnd >);
+            </Resizable >);
     }
 }
 

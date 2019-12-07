@@ -439,7 +439,7 @@ div.react-draggable {
 }
 
 div.details-view-cnt {
-	overflow: auto;
+	position: fixed !important;
     background: var(--vscode-editor-background);
 	border-top-width: 1px;
 	border-top-style: solid;
@@ -468,8 +468,10 @@ div.details-view-cnt .commit-notes:empty {
 
 #detail-view {
 	display: flex;
+	overflow-y: scroll;
 	flex-flow: row wrap;
 	justify-content: space-between;
+	max-height:  100%;
 }
 
 #detail-view .authorAndCommitInfoContainer {
