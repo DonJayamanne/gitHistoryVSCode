@@ -6,6 +6,7 @@ interface ResultProps {
     logEntries: LogEntry[];
     onViewCommit(entry: LogEntry): void;
     onClick(entry: LogEntry): void;
+    onNewClick(entry: LogEntry): void;
 }
 
 export default class LogEntryList extends React.Component<ResultProps> {
@@ -30,6 +31,7 @@ export default class LogEntryList extends React.Component<ResultProps> {
                     key={entry.hash.full}
                     logEntry={entry}
                     onViewCommit={this.props.onViewCommit}
+                    onNewClick={this.props.onNewClick}
                     onClick={this.props.onClick} />
         );
         return (

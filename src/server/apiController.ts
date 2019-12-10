@@ -24,6 +24,7 @@ export class ApiController implements IApiRouteHandler {
         this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
         this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
         this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
+        this.app.post('/branch/:hash', this.handleRequest(this.doNewRefWithCommit.bind(this)))
         this.app.get('/log/:hash', this.handleRequest(this.getCommit.bind(this)));
         this.app.post('/log/clearSelection', this.handleRequest(this.clearSelectedCommit.bind(this)));
         this.app.post('/log/:hash', this.handleRequest(this.doSomethingWithCommit.bind(this)));
@@ -231,6 +232,14 @@ export class ApiController implements IApiRouteHandler {
 
         await this.stateStore.clearLastHashCommit(id);
         response.send('');
+    }
+    public doNewRefWithCommit = async (request: Request, response: Response) => {
+        response.status(200).send('');
+        const id: string = decodeURIComponent(request.query.id);
+        const workspaceFolder = this.getWorkspace(id);
+        const currentState = this.stateStore.getState(id)!;
+        const logEntry = request.body as LogEntry;
+        this.commandManager.executeCommand('git.commit.doNewRef', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
     }
     public doSomethingWithCommit = async (request: Request, response: Response) => {
         response.status(200).send('');

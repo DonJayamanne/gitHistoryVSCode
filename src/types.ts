@@ -151,6 +151,7 @@ export interface IGitService {
     cherryPick(hash: string): Promise<void>;
     checkout(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
+    createTag(tagName: string, hash: string): Promise<void>;
     getOriginType(): Promise<GitOriginType | undefined>;
     getOriginUrl(): Promise<string>;
     merge(hash: string): Promise<void>;

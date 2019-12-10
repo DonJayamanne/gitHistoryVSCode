@@ -11,6 +11,7 @@ export const ICommitCommandFactory = Symbol('ICommitCommandFactory');
 
 export interface ICommitCommandFactory {
     createCommands(data: CommitDetails): Promise<ICommand<CommitDetails>[]>;
+    createNewCommands(data: CommitDetails): Promise<ICommand<CommitDetails>[]>;
 }
 
 export const IBranchCommandFactory = Symbol('IBranchCommandFactory');

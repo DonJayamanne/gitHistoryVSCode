@@ -97,6 +97,16 @@ export class UiService implements IUiService {
 
         return this.application.showQuickPick(commands, options);
     }
+    public async newRefCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined> {
+        if (this.selectionActionToken) {
+            this.selectionActionToken.cancel();
+        }
+        this.selectionActionToken = new CancellationTokenSource();
+        const commands = await this.serviceContainer.get<ICommitCommandFactory>(ICommitCommandFactory).createNewCommands(commit);
+        const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
+
+        return this.application.showQuickPick(commands, options);
+    }
     private async selectGitRoot(workspaceGitRoots: WorkspaceGitRoot[]) {
         const app = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
         type itemType = QuickPickItem & WorkspaceGitRoot;

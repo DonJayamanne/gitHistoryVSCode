@@ -34,6 +34,15 @@ export const actionACommit = (logEntry: LogEntry) => {
     };
 };
 
+export const actionNewRef = (logEntry: LogEntry) => {
+    // tslint:disable-next-line:no-any
+    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const url = getQueryUrl(state, `/branch/${logEntry.hash.full}`);
+        return axios.post(url, logEntry);
+    };
+};
+
 // tslint:disable-next-line:no-any
 export const fetchAvatars = async (dispatch: Dispatch<any>, getState: () => RootState) => {
     const state = getState();

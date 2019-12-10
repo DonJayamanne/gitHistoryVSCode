@@ -50,10 +50,6 @@ body {
 	margin: 0 1em 0 0;
 }
 
-.xxsss{
-	background-image: url('../resources/icons/dark/status-added.svg')
-}
-
 .media .media-content {
 	flex: 1;
 }
@@ -86,14 +82,12 @@ div.appRoot {
 	height: 100vh;
 }
 
-
 .log-entry {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color: var(--vscode-editorGroup-border);
 }
   
-
 #log-view.with-details {
 	height: calc(100% - 20rem);
 }
@@ -241,48 +235,19 @@ div.appRoot {
     padding-right: 0.2em;
 }
 
-.commit-hash-container .commit-hash,
-.commit-hash-container .copy-button {
+.commit-hash-container > div {
 	display: inline-block;
 	color: var(--vscode-input-foreground);
 	padding: 0.2em;
 	cursor: pointer;
 }
 
-.commit-hash-container .cherry-pick-button {
-	display: inline-block;
-	color: var(--vscode-input-foreground);
-	padding: 0.2em;
-}
-
-.commit-hash-container .commit-hash {
-	padding-right: 0.4em;
-}
-
-.cherry-pick-button a,
-.cherry-pick-button a:hover {
-	color: white;
-}
-
-.commit-hash-container .cherry-pick-button {
-	display: inline-block;
-	color: var(--vscode-input-foreground);
-	padding: 0.2em;
-}
-
-.cherry-pick-button a,
-.cherry-pick-button a:hover {
+.commit-hash-container svg {
 	color: var(--vscode-input-foreground);
 }
 
-.commit-hash-container .commit-hash:hover {
+.commit-hash-container > div:hover {
 	background-color: hsla(0, 0%, 100%, 0.12);
-}
-
-.commit-hash-container .copy-button {
-	position: relative;
-	/* compensate for octicon margin */
-	padding-left: 0.6em;
 }
 
 .copy-button .clipboard {
@@ -468,7 +433,7 @@ div.details-view-cnt .commit-notes:empty {
 
 #detail-view {
 	display: flex;
-	overflow-y: scroll;
+	overflow-y: auto;
 	flex-flow: row wrap;
 	justify-content: space-between;
 	max-height:  100%;
@@ -486,6 +451,7 @@ div.details-view-cnt .commit-notes:empty {
 
 #detail-view .action-btn {
 	margin-left: 1rem;
+	margin-right: 1rem;
 	display: inline-block;
 	cursor: pointer;
 	opacity: 0.8;

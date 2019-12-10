@@ -17,6 +17,13 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
             return cmd.execute();
         }
     }
+    @command('git.commit.doNewRef', IGitCommitCommandHandler)
+    public async doNewRef(commit: CommitDetails) {
+        const cmd = await this.serviceContainer.get<IUiService>(IUiService).newRefCommitCommandAction(commit);
+        if (cmd) {
+            return cmd.execute();
+        }
+    }
     @command('git.commit.selected', IGitCommitCommandHandler)
     public onCommitSelected(commit: CommitDetails) {
         const viewer = this.commitViewerFactory.getCommitViewer();
