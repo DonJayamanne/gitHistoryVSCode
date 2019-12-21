@@ -1,3 +1,7 @@
+## Version 0.4.12
+- Fixed [#417](https://github.com/DonJayamanne/gitHistoryVSCode/issues/417) using scrollbars for now
+* Added PR [#419](https://github.com/DonJayamanne/gitHistoryVSCode/pull/419) allowing to create tags or branches from git history view
+
 ## Version 0.4.11
 - Reveal "Git History" and "File History" tab when already opened [#382](https://github.com/DonJayamanne/gitHistoryVSCode/issues/382) [#365](https://github.com/DonJayamanne/gitHistoryVSCode/issues/365)
 
