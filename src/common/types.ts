@@ -22,6 +22,7 @@ export interface IUiService {
     getWorkspaceFolder(uri?: Uri): Promise<{ workspaceFolder: string; gitRoot: string } | undefined>;
     selectFileCommitCommandAction(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined>;
     selectCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined>;
+    newRefCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined>;
 }
 
 export enum CallContextSource {

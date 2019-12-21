@@ -9,12 +9,13 @@ import { gitmojify } from '../gitmojify';
 import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
 import TagRef from '../Refs/Tag';
-import { GoGitCommit, GoClippy } from 'react-icons/lib/go';
+import { GoGitCommit, GoClippy, GoPlus } from 'react-icons/lib/go';
 
 type ResultListPropsSentToComponent = {
     logEntry: LogEntry;
     onViewCommit(entry: LogEntry): void;
     onClick(entry: LogEntry): void;
+    onNewClick(entry: LogEntry): void;
 };
 
 type ResultListProps = ResultListPropsSentToComponent & {
@@ -47,22 +48,29 @@ function LogEntry(props: ResultListProps) {
         <div className='media right'>
             <div className='media-image'>
                 <div className='commit-hash-container'>
+                    <div>
+                        <span className='btnx hint--left hint--rounded hint--bounce' aria-label='New branch or tag'>
+                            <a role='button' onClick={() => props.onNewClick(props.logEntry)}>
+                                <GoPlus></GoPlus>
+                            </a>
+                        </span>
+                    </div>
                     <CopyToClipboard text={props.logEntry.hash.full}>
-                        <div className='copy-button'>
+                        <div>
                             <span className='btnx clipboard hint--left hint--rounded hint--bounce'
                                 aria-label='Copy the full Hash'>
                                 <GoClippy></GoClippy>
                             </span>
                         </div>
                     </CopyToClipboard>
-                    <div className='cherry-pick-button'>
-                        <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'><span aria-label='Cherry pick, Compare, etc' />
+                    <div>
+                        <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
                             <a role='button' onClick={() => props.onClick(props.logEntry)}>
                                 <GoGitCommit></GoGitCommit>
                             </a>
                         </span>
                     </div>
-                    <div role='button' className='commit-hash' onClick={() => props.onViewCommit(props.logEntry)}>
+                    <div role='button' onClick={() => props.onViewCommit(props.logEntry)}>
                         <span className='sha-code short' aria-label={props.logEntry.hash.short}>{props.logEntry.hash.short}</span>
                     </div>
                 </div>
