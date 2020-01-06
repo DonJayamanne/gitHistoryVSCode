@@ -183,8 +183,8 @@ export class Git implements IGitService {
                 return matchResult && matchResult[1] ? matchResult[1] : 'origin';
             });
 
-            const url = await this.exec('remote', 'get-url', remoteName);
-            return url.substring(0, url.length - 1);
+            const url = await this.exec('config', `remote.${remoteName}.url`);
+            return url.slice(0, url.length - 1);
         } catch {
             return '';
         }
