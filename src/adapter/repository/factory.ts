@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
-import { Uri } from 'vscode';
+import { Uri, QuickPickItem } from 'vscode';
+import { IApplicationShell } from '../../application/types';
 import { IServiceContainer } from '../../ioc/types';
 import { IGitService, IGitServiceFactory } from '../../types';
 import { IGitCommandExecutor } from '../exec';
@@ -7,12 +8,13 @@ import { ILogParser } from '../parsers/types';
 import { Git } from './git';
 import { API } from './git.d';
 import { IGitArgsService } from './types';
+import * as path from 'path';
 
 @injectable()
 export class GitServiceFactory implements IGitServiceFactory {
     private readonly gitServices = new Map<number, IGitService>();
     private gitApi: API;
-    private repoIndex: number;
+    public repoIndex: number;
     constructor(@inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
@@ -22,23 +24,50 @@ export class GitServiceFactory implements IGitServiceFactory {
         this.repoIndex = -1;
     }
 
+    public async repositoryPicker() : Promise<void> {
+        if (this.repoIndex > -1) return;
+
+        const app = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
+        const pickList: QuickPickItem[] = [];
+
+        this.gitApi.repositories.forEach(x => {
+            pickList.push({ label: path.basename(x.rootUri.path), detail: x.rootUri.path, description: x.state.HEAD!.name });
+        });
+        
+        const options = {
+            canPickMany: false, matchOnDescription: false,
+            matchOnDetail: true, placeHolder: 'Select a Git Repository'
+        };
+        const selectedItem = await app.showQuickPick(pickList, options);
+        if (selectedItem) {
+            this.repoIndex = this.gitApi.repositories.findIndex(x => x.rootUri.path == selectedItem.detail);
+        }
+    }
+
     public async createGitService(resource?: Uri | string): Promise<IGitService> {
         const resourceUri = typeof resource === 'string' ? Uri.file(resource) : resource;
 
         if (!resourceUri) {
-            // no git service initialized, so take the selected as primary
-            this.repoIndex = this.gitApi.repositories.findIndex(x => x.ui.selected);
+            const currentIndex = this.gitApi.repositories.findIndex(x => x.ui.selected);
+
+            // show repository picker
+            if (this.repoIndex === -1) {
+                await this.repositoryPicker();
+            } else if(currentIndex !== this.repoIndex) {
+                this.repoIndex = currentIndex;
+            }
         }
 
-        if (this.repoIndex === -1) {
+        if (resourceUri) {
             // find the correct repository from the given resource uri
-            this.gitApi.repositories.forEach((x, i) => {
-                if (resourceUri!.fsPath.startsWith(x.rootUri.fsPath)) {
-                    if (this.repoIndex === -1 || x.rootUri.fsPath.length > this.gitApi.repositories[this.repoIndex].rootUri.fsPath.length) {
-                        this.repoIndex = i;
-                    }
+            let i = 0;
+            for(let x of this.gitApi.repositories) {
+                if (resourceUri!.fsPath.startsWith(x.rootUri.fsPath) && x.rootUri.fsPath === this.gitApi.repositories[i].rootUri.fsPath) {
+                    this.repoIndex = i;
+                    break;
                 }
-            });
+                i++;
+            }
         }
 
         if (!this.gitServices.has(this.repoIndex)) {
