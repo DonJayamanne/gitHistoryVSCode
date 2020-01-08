@@ -12,7 +12,7 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IServiceContainer } from '../ioc/types';
 import { IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IServerHost, IWorkspaceQueryStateStore, StartupInfo } from './types';
+import { IServerHost, StartupInfo } from './types';
 
 export class ServerHost extends EventEmitter implements IServerHost {
     private app?: Express;
@@ -22,8 +22,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
     private startPromise?: Promise<StartupInfo>;
     constructor(
         @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
-        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(IWorkspaceQueryStateStore) private stateStore: IWorkspaceQueryStateStore) {
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer) {
         super();
     }
 
@@ -60,7 +59,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
 
         return this.startPromise = new Promise<StartupInfo>((resolve, reject) => {
             const commandManager = this.serviceContainer.get<ICommandManager>(ICommandManager);
-            this.apiController = new ApiController(this.app!, this.gitServiceFactory, this.serviceContainer, this.stateStore, commandManager);
+            this.apiController = new ApiController(this.app!, this.gitServiceFactory, this.serviceContainer, commandManager);
             this.httpServer!.listen(0, () => {
                 this.port = this.httpServer!.address().port;
                 resolve({ port: this.port });

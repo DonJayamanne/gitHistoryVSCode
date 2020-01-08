@@ -14,7 +14,7 @@ import * as path from 'path';
 export class GitServiceFactory implements IGitServiceFactory {
     private readonly gitServices = new Map<number, IGitService>();
     private gitApi: API;
-    public repoIndex: number;
+    private repoIndex: number;
     constructor(@inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
@@ -22,6 +22,14 @@ export class GitServiceFactory implements IGitServiceFactory {
 
         this.gitApi = this.gitCmdExecutor.gitExtension.getAPI(1);
         this.repoIndex = -1;
+    }
+
+    public getIndex(): number {
+        return this.repoIndex;
+    }
+
+    public getService(index: number) : IGitService {
+        return this.gitServices.get(index)!; 
     }
 
     public async repositoryPicker() : Promise<void> {
