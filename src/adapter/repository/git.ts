@@ -11,28 +11,20 @@ import { ActionedUser, Branch, CommittedFile, FsUri, Hash, IGitService, LogEntri
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
-import { API, Repository } from './git.d';
+import { Repository } from './git.d';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
 
 @injectable()
 export class Git implements IGitService {
-    private gitApi: API;
     constructor(private repo: Repository, @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
-
-        this.gitApi = this.gitCmdExecutor.gitExtension.getAPI(1);
     }
 
     public async getGitRoot(): Promise<string> {
         return this.repo.rootUri.fsPath;
-    }
-
-    public async getGitRoots(): Promise<string[]> {
-        // Instead of traversing the directory structure for the entire workspace, use the Git extension API to get all repo paths
-        return this.gitApi.repositories.map(x => path.basename(x.rootUri.path));
     }
     public async getGitRelativePath(file: Uri | FsUri) {
         if (!path.isAbsolute(file.fsPath)) {

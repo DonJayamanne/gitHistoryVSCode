@@ -75,13 +75,8 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         const branchName = await gitService.getCurrentBranch();
         const gitRoot = await gitService.getGitRoot();
         const startupInfo = await this.server.start();
-        const gitRootsUnderWorkspace = await gitService.getGitRoots();
-        // Do not include the search string into this
-        //const fullId = `${startupInfo.port}:${BranchSelection.Current}:${fileUri ? fileUri.fsPath : ''}:${gitRoot}`;
-        const id = gitServiceFactory.getIndex();
 
-        //await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore)
-        //                           .initialize(id, '', gitRoot, branchName, BranchSelection.Current, '', fileUri, lineNumber);
+        const id = gitServiceFactory.getIndex();
 
         const queryArgs = [
             `id=${id}`,
@@ -94,10 +89,13 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         
         const uri = `${previewUri}?${queryArgs.join('&')}`;
 
-        const repoName = gitRootsUnderWorkspace.length > 1 ? ` (${path.basename(gitRoot)})` : '';
-        let title = fileUri ? `File History (${path.basename(fileUri.fsPath)})` : `Git History ${repoName}`;
-        if (fileUri && typeof lineNumber === 'number') {
-            title = `Line History (${path.basename(fileUri.fsPath)}#${lineNumber})`;
+        let title = `Git History (${path.basename(gitRoot)})`;
+
+        if (fileUri) {
+            title = `File History (${path.basename(fileUri.fsPath)})`;
+            if (typeof lineNumber === 'number') {
+                title = `Line History (${path.basename(fileUri.fsPath)}#${lineNumber})`;
+            }
         }
 
         this.commandManager.executeCommand('previewHtml', uri, ViewColumn.One, title);
