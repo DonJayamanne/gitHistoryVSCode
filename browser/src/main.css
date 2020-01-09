@@ -7,6 +7,17 @@
 	box-sizing: border-box;
 }
 
+::-webkit-scrollbar {
+	background-color: var(--vscode-scrollbarSlider-background);
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--vscode-scrollbarSlider-hoverBackground);
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
 html,
 body {
 	background-color: var(--vscode-editor-background);
@@ -576,7 +587,17 @@ a.file-name {
 .dropdown-menu {
     max-height: 500px;
     overflow-y: auto;
-    overflow-x: hidden;
+	overflow-x: hidden;
+	background-color: var(--vscode-input-background);
+}
+
+.dropdown-menu>li>a {
+	color: var(--vscode-input-foreground);
+}
+
+.dropdown-menu>li>a:hover {
+	background-color: var(--vscode-menubar-selectionBackground);
+	color: var(--vscode-input-foreground);
 }
 
 .btn {
