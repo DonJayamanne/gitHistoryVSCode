@@ -1,3 +1,6 @@
+## Version 0.4.14
+- Slightly amended scrollbar and dropdown style to match theme colors [#423](https://github.com/DonJayamanne/gitHistoryVSCode/issues/423)
+
 ## Version 0.4.13
 - Applied PR [#420](https://github.com/DonJayamanne/gitHistoryVSCode/pull/420) to fix repositories with no remote, thanks to @jsejcksn
 
