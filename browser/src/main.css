@@ -147,8 +147,19 @@ div.appRoot {
 	min-width: 6em;
 }
 
-.log-entry .media-image.ref {
+.log-entry .media-image > div.ref {
 	min-width: 1em;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.log-entry .media-image > div.buttons {
+	margin-top: .3em;
+	margin-bottom: .3em;
+	min-width: 1em;
+	display: flex;
+	justify-content: flex-end;
+	font-size: 75%;
 }
 
 .log-entry a.commit-subject-link {
@@ -206,7 +217,8 @@ div.appRoot {
 .commit-remote-container,
 .commit-tag-container,
 .commit-head-container {
-    border-radius: 5px;
+	border-radius: 5px;
+	margin-left: .3em;
 }
 
 .commit-head-container {

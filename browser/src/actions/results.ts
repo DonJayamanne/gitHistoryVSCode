@@ -25,20 +25,11 @@ function getQueryUrl(store: RootState, baseUrl: string, args: string[] = []): st
     const queryArgs = args.concat([`id=${encodeURIComponent(id)}`]);
     return `${baseUrl}?${queryArgs.join('&')}`;
 }
-export const actionACommit = (logEntry: LogEntry) => {
+export const actionCommit = (logEntry: LogEntry, name: string = '') => {
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        const url = getQueryUrl(state, `/log/${logEntry.hash.full}`);
-        return axios.post(url, logEntry);
-    };
-};
-
-export const actionNewRef = (logEntry: LogEntry) => {
-    // tslint:disable-next-line:no-any
-    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
-        const state = getState();
-        const url = getQueryUrl(state, `/branch/${logEntry.hash.full}`);
+        const url = getQueryUrl(state, `/action/${name}`);
         return axios.post(url, logEntry);
     };
 };

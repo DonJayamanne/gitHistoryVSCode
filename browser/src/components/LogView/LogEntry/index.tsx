@@ -75,9 +75,13 @@ function LogEntry(props: ResultListProps) {
                     </div>
                 </div>
             </div>
-            {renderRemoteRefs(props.logEntry.refs)}
-            {renderHeadRef(props.logEntry.refs)}
-            {renderTagRef(props.logEntry.refs)}
+            <div className='media-image'>
+                <div className='ref'>
+                    {renderRemoteRefs(props.logEntry.refs)}
+                    {renderHeadRef(props.logEntry.refs)}
+                    {renderTagRef(props.logEntry.refs)}
+                </div>
+            </div>
             <div role='button' className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>
                 <div className='commit-subject' title={gitmojify(props.logEntry.subject)}>{gitmojify(props.logEntry.subject)}</div>
                 <Avatar result={props.logEntry.author}></Avatar>

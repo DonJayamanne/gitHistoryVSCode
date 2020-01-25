@@ -24,10 +24,9 @@ export class ApiController implements IApiRouteHandler {
         this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
         this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
         this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
-        this.app.post('/branch/:hash', this.handleRequest(this.doNewRefWithCommit.bind(this)))
+        this.app.post('/action/:name?', this.handleRequest(this.doAction.bind(this)));
         this.app.get('/log/:hash', this.handleRequest(this.getCommit.bind(this)));
         this.app.post('/log/clearSelection', this.handleRequest(this.clearSelectedCommit.bind(this)));
-        this.app.post('/log/:hash', this.handleRequest(this.doSomethingWithCommit.bind(this)));
         this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
         this.app.post('/avatars', this.handleRequest(this.getAvatars.bind(this)));
         this.app.get('/authors', this.handleRequest(this.getAuthors.bind(this)));
@@ -233,22 +232,31 @@ export class ApiController implements IApiRouteHandler {
         await this.stateStore.clearLastHashCommit(id);
         response.send('');
     }
-    public doNewRefWithCommit = async (request: Request, response: Response) => {
+
+    public doAction = async (request: Request, response: Response) => {
         response.status(200).send('');
         const id: string = decodeURIComponent(request.query.id);
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
+        const actionName = request.param('name');
         const logEntry = request.body as LogEntry;
-        this.commandManager.executeCommand('git.commit.doNewRef', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
+        
+        switch(actionName) {
+            default: 
+                this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
+                break;
+            case 'new':
+                this.commandManager.executeCommand('git.commit.doNewRef', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
+                break;
+            case 'newtag':
+                this.commandManager.executeCommand('git.commit.createTag', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
+                break;
+            case 'newbranch':
+                this.commandManager.executeCommand('git.commit.createBranch', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
+                break;
+        }
     }
-    public doSomethingWithCommit = async (request: Request, response: Response) => {
-        response.status(200).send('');
-        const id: string = decodeURIComponent(request.query.id);
-        const workspaceFolder = this.getWorkspace(id);
-        const currentState = this.stateStore.getState(id)!;
-        const logEntry = request.body as LogEntry;
-        this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
-    }
+
     public selectCommittedFile = async (request: Request, response: Response) => {
         response.status(200).send('');
         const id: string = decodeURIComponent(request.query.id);

@@ -10,8 +10,7 @@ type LogViewProps = {
     logEntries: LogEntries;
     commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
-    actionACommit: typeof ResultActions.actionACommit;
-    actionNewRef: typeof ResultActions.actionNewRef;
+    actionCommit: typeof ResultActions.actionCommit;
 };
 
 // tslint:disable-next-line:no-empty-interface
@@ -58,10 +57,10 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
         this.props.onViewCommit(logEntry.hash.full);
     }
     public onClick = (entry: LogEntry) => {
-        this.props.actionACommit(entry);
+        this.props.actionCommit(entry);
     }
     public onNewClick = (entry: LogEntry) => {
-        this.props.actionNewRef(entry);
+        this.props.actionCommit(entry, 'new');
     }
 }
 function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) {
@@ -72,12 +71,9 @@ function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) 
 
 function mapDispatchToProps(dispatch) {
     return {
-        // ...bindActionCreators({ ...ResultActions }, dispatch),
-        // fetchData: (pageIndex: number) => dispatch(ResultActions.fetchLogEntries(pageIndex))
         commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
-        actionNewRef: (logEntry: LogEntry) => dispatch(ResultActions.actionNewRef(logEntry)),
-        actionACommit: (logEntry: LogEntry) => dispatch(ResultActions.actionACommit(logEntry))
+        actionCommit: (logEntry: LogEntry, name: string) => dispatch(ResultActions.actionCommit(logEntry, name))
     };
 }
 
