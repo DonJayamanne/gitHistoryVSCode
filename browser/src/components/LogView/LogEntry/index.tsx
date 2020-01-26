@@ -14,8 +14,7 @@ import { GoGitCommit, GoClippy, GoPlus } from 'react-icons/lib/go';
 type ResultListPropsSentToComponent = {
     logEntry: LogEntry;
     onViewCommit(entry: LogEntry): void;
-    onClick(entry: LogEntry): void;
-    onNewClick(entry: LogEntry): void;
+    onAction(entry: LogEntry, name: string): void;
 };
 
 type ResultListProps = ResultListPropsSentToComponent & {
@@ -47,39 +46,35 @@ function LogEntry(props: ResultListProps) {
     return (<div className={cssClassName}>
         <div className='media right'>
             <div className='media-image'>
-                <div className='commit-hash-container'>
-                    <div>
-                        <span className='btnx hint--left hint--rounded hint--bounce' aria-label='New branch or tag'>
-                            <a role='button' onClick={() => props.onNewClick(props.logEntry)}>
-                                <GoPlus></GoPlus>
-                            </a>
-                        </span>
-                    </div>
-                    <CopyToClipboard text={props.logEntry.hash.full}>
-                        <div>
-                            <span className='btnx clipboard hint--left hint--rounded hint--bounce'
-                                aria-label='Copy the full Hash'>
-                                <GoClippy></GoClippy>
-                            </span>
-                        </div>
-                    </CopyToClipboard>
-                    <div>
-                        <span className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
-                            <a role='button' onClick={() => props.onClick(props.logEntry)}>
-                                <GoGitCommit></GoGitCommit>
-                            </a>
-                        </span>
-                    </div>
-                    <div role='button' onClick={() => props.onViewCommit(props.logEntry)}>
-                        <span className='sha-code short' aria-label={props.logEntry.hash.short}>{props.logEntry.hash.short}</span>
-                    </div>
-                </div>
-            </div>
-            <div className='media-image'>
                 <div className='ref'>
                     {renderRemoteRefs(props.logEntry.refs)}
                     {renderHeadRef(props.logEntry.refs)}
                     {renderTagRef(props.logEntry.refs)}
+                    &nbsp;
+                </div>
+                <div className='buttons'>
+                    <CopyToClipboard text={props.logEntry.hash.full}>
+                    <span className='btnx hash clipboard hint--left hint--rounded hint--bounce' aria-label="Copy hash to clipboard">
+                        {props.logEntry.hash.short}&nbsp;
+                        <GoClippy></GoClippy>
+                    </span>
+                    </CopyToClipboard>
+                    &nbsp;
+                    <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new tag'>
+                        <a role='button' onClick={() => props.onAction(props.logEntry, 'newtag')}>
+                        <GoPlus></GoPlus>Tag
+                        </a>
+                    </span>
+                    <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new branch from here'>
+                        <a role='button' onClick={() => props.onAction(props.logEntry, 'newbranch')}>
+                        <GoPlus></GoPlus>Branch
+                        </a>
+                    </span>
+                    <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
+                        <a role='button' onClick={() => props.onAction(props.logEntry, '')}>
+                            <GoGitCommit></GoGitCommit>More
+                        </a>
+                    </span>
                 </div>
             </div>
             <div role='button' className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>

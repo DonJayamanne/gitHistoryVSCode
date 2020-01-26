@@ -46,8 +46,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
             <div className='log-view' id='scrollCnt'>
                 <BranchGraph></BranchGraph>
                 <LogEntryList ref={this.ref} logEntries={this.props.logEntries.items}
-                    onClick={this.onClick}
-                    onNewClick={this.onNewClick}
+                    onAction={this.onAction}
                     onViewCommit={this.onViewCommit}></LogEntryList>
             </div>
         );
@@ -56,11 +55,8 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     public onViewCommit = (logEntry: LogEntry) => {
         this.props.onViewCommit(logEntry.hash.full);
     }
-    public onClick = (entry: LogEntry) => {
-        this.props.actionCommit(entry);
-    }
-    public onNewClick = (entry: LogEntry) => {
-        this.props.actionCommit(entry, 'new');
+    public onAction = (entry: LogEntry, name: string = '') => { 
+        this.props.actionCommit(entry, name);
     }
 }
 function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) {

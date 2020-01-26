@@ -5,8 +5,7 @@ import LogEntryView from '../LogEntry';
 interface ResultProps {
     logEntries: LogEntry[];
     onViewCommit(entry: LogEntry): void;
-    onClick(entry: LogEntry): void;
-    onNewClick(entry: LogEntry): void;
+    onAction(entry: LogEntry, name: string): void;
 }
 
 export default class LogEntryList extends React.Component<ResultProps> {
@@ -30,9 +29,8 @@ export default class LogEntryList extends React.Component<ResultProps> {
                 <LogEntryView
                     key={entry.hash.full}
                     logEntry={entry}
-                    onViewCommit={this.props.onViewCommit}
-                    onNewClick={this.props.onNewClick}
-                    onClick={this.props.onClick} />
+                    onAction={this.props.onAction}
+                    onViewCommit={this.props.onViewCommit} />
         );
         return (
             // tslint:disable-next-line:react-this-binding-issue

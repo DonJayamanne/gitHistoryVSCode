@@ -145,11 +145,14 @@ div.appRoot {
 
 .log-entry .media-image {
 	min-width: 6em;
+	display: flex;
+	flex-direction: column;
 }
 
 .log-entry .media-image > div.ref {
 	min-width: 1em;
 	display: flex;
+	flex-wrap: nowrap;
 	justify-content: flex-end;
 }
 
@@ -160,6 +163,19 @@ div.appRoot {
 	display: flex;
 	justify-content: flex-end;
 	font-size: 75%;
+	font-weight: normal;
+}
+
+.log-entry .media-image > div.buttons > .btnx {
+	margin-left: .5em;
+}
+
+.log-entry .media-image > div.buttons .hash {
+	opacity: 0.7;
+}
+
+.log-entry .media-image > div.buttons a:hover {
+	text-decoration: none;
 }
 
 .log-entry a.commit-subject-link {
@@ -206,12 +222,6 @@ div.appRoot {
 
 .commit-author .timestamp {
 	opacity: 0.7;
-}
-
-.commit-hash-container {
-    background-color: var(--vscode-inputValidation-infoBackground);
-    color: var(--vscode-input-foreground);
-    white-space: nowrap;
 }
 
 .commit-remote-container,
