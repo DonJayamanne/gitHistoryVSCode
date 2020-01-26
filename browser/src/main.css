@@ -38,13 +38,6 @@ body {
 	pointer-events: none;
 }
 
-.btn_used-by-bootstrap-hence-not-used {
-	cursor: pointer;
-	margin: 0;
-	padding: 0;
-	border-style: none;
-}
-
 .btnx {
 	cursor: pointer;
 	margin: 0;
@@ -172,6 +165,10 @@ div.appRoot {
 
 .log-entry .media-image > div.buttons .hash {
 	opacity: 0.7;
+}
+
+.log-entry .media-image > div.buttons a {
+	color: var(--vscode-textLink-foreground);
 }
 
 .log-entry .media-image > div.buttons a:hover {
@@ -624,42 +621,26 @@ a.file-name {
 
 .btn {
     color: var(--vscode-input-foreground);
-    background: var(--vscode-input-background);
-    border: 1px solid var(--vscode-input-background);
-    border-radius: 0;
-}
-
-.btn:focus {
-    border: var(--vscode-focusBorder);
+	background: var(--vscode-input-background);
+	border: 1px solid var(--vscode-input-background);
+	border-radius: 0;
 }
 
 .btn-group-sm>.btn, .btn-sm {
     border-radius: 0;
 }
 
-.btn:hover {
+.btn:hover, btn:focus {
     color: var(--vscode-breadcrumb-focusForeground);
     background: var(--vscode-input-background);
     border: 1px solid var(--vscode-focusBorder);
 }
 
-.btn-warning:hover {
-    background: var(--vscode-input-background);
-    border: 1px solid var(--vscode-inputValidation-warningBorder);
-}
-
-.btn-info:hover {
-    background: var(--vscode-input-background);
-    border: 1px solid var(--vscode-inputValidation-infoBorder);
-}
-
 .textInput {
     position: relative;
-    top: 1px;
-    left: 2px;
     font-size: 12px;
-    line-height: 1.5;
 	padding: 5px 10px;
+	vertical-align: top;
 	width: 250px;
     color: var(--vscode-input-foreground);
     background: var(--vscode-input-background);
