@@ -5,12 +5,14 @@ import { LogEntries, LogEntry } from '../../../definitions';
 import { RootState } from '../../../reducers';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
+import Dialog from '../../Dialog';
 
 type LogViewProps = {
     logEntries: LogEntries;
     commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
     actionCommit: typeof ResultActions.actionCommit;
+    refresh: typeof ResultActions.refresh;
 };
 
 // tslint:disable-next-line:no-empty-interface
@@ -18,13 +20,15 @@ interface LogViewState {
 }
 
 class LogView extends React.Component<LogViewProps, LogViewState> {
+    private ref: React.RefObject<LogEntryList>;
+    private dialog: Dialog;
     // tslint:disable-next-line:no-any
     constructor(props?: LogViewProps, context?: any) {
         super(props, context);
         // this.state = { height: '', width: '', itemHeight: 0 };
         this.ref = React.createRef<LogEntryList>();
     }
-    private ref: React.RefObject<LogEntryList>;
+    
     public componentDidUpdate() {
         const el = this.ref.current.ref;
 
@@ -47,7 +51,9 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                 <BranchGraph></BranchGraph>
                 <LogEntryList ref={this.ref} logEntries={this.props.logEntries.items}
                     onAction={this.onAction}
-                    onViewCommit={this.onViewCommit}></LogEntryList>
+                    onViewCommit={this.onViewCommit}>
+                </LogEntryList>
+                <Dialog ref={(r) => this.dialog = r} onOk={this.onActionCommit.bind(this)} />
             </div>
         );
     }
@@ -55,8 +61,24 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     public onViewCommit = (logEntry: LogEntry) => {
         this.props.onViewCommit(logEntry.hash.full);
     }
-    public onAction = (entry: LogEntry, name: string = '') => { 
-        this.props.actionCommit(entry, name);
+
+    public onAction = (entry: LogEntry, name: string = '') => {
+        switch(name) {
+            case 'newtag':
+                this.dialog.showInput("Add tag on " + entry.hash.short, '<strong>' + entry.subject + '</strong><br />' + entry.author.name + ' on ' + entry.author.date.toISOString(), {entry, name});
+                break;
+            case 'newbranch':
+                this.dialog.showInput("Branch from " + entry.hash.short, '<strong>' + entry.subject + '</strong><br />' + entry.author.name + ' on ' + entry.author.date.toISOString(), {entry, name});
+                break;
+            default:
+                this.props.actionCommit(entry, name);
+                break;
+        }
+    }
+
+    public onActionCommit = (sender: HTMLButtonElement, args: any) => {
+        this.props.actionCommit(args.entry, args.name, this.dialog.getValue());
+        this.props.refresh();
     }
 }
 function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) {
@@ -69,7 +91,8 @@ function mapDispatchToProps(dispatch) {
     return {
         commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
-        actionCommit: (logEntry: LogEntry, name: string) => dispatch(ResultActions.actionCommit(logEntry, name))
+        actionCommit: (logEntry: LogEntry, name: string, value: string = '') => dispatch(ResultActions.actionCommit(logEntry, name, value)),
+        refresh: () => dispatch(ResultActions.refresh())
     };
 }
 

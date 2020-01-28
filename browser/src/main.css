@@ -389,7 +389,29 @@ header input, header button {
 }
 
 
-/* Errors */
+/* Dialog Modal */
+#dialog {
+	position: fixed;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: var(--vscode-scrollbarSlider-background);
+}
+
+#dialog hr {
+	border-top: 1px solid var(--vscode-editorGroup-border);
+}
+
+#dialog > div {
+	padding: 1em;
+	border: 2px solid var(--vscode-editorGroup-border);
+	background-color: var(--vscode-editor-background);
+	width: 50%;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
 
 .error-box {
 	text-align: center;
