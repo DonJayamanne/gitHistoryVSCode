@@ -25,11 +25,11 @@ function getQueryUrl(store: RootState, baseUrl: string, args: string[] = []): st
     const queryArgs = args.concat([`id=${encodeURIComponent(id)}`]);
     return `${baseUrl}?${queryArgs.join('&')}`;
 }
-export const actionCommit = (logEntry: LogEntry, name: string = '') => {
+export const actionCommit = (logEntry: LogEntry, name: string = '', value: string = '') => {
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        const url = getQueryUrl(state, `/action/${name}`);
+        const url = getQueryUrl(state, `/action/${name}`, [`value=${encodeURIComponent(value)}`]);
         return axios.post(url, logEntry);
     };
 };
