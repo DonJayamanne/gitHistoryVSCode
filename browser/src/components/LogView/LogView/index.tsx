@@ -13,6 +13,7 @@ type LogViewProps = {
     onViewCommit: typeof ResultActions.selectCommit;
     actionCommit: typeof ResultActions.actionCommit;
     refresh: typeof ResultActions.refresh;
+    selectBranch: typeof ResultActions.selectBranch;
 };
 
 // tslint:disable-next-line:no-empty-interface
@@ -63,12 +64,12 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     }
 
     public onAction = (entry: LogEntry, name: string = '') => {
-        switch(name) {
+        switch (name) {
             case 'newtag':
-                this.dialog.showInput("Add tag on " + entry.hash.short, '<strong>' + entry.subject + '</strong><br />' + entry.author.name + ' on ' + entry.author.date.toISOString(), {entry, name});
+                this.dialog.showInput("Create a new tag on " + entry.hash.short, '<strong>' + entry.subject + '</strong><br />' + entry.author.name + ' on ' + entry.author.date.toISOString(), 'Enter tag here', {entry, name});
                 break;
             case 'newbranch':
-                this.dialog.showInput("Branch from " + entry.hash.short, '<strong>' + entry.subject + '</strong><br />' + entry.author.name + ' on ' + entry.author.date.toISOString(), {entry, name});
+                this.dialog.showInput("Create a branch from " + entry.hash.short, '<strong>' + entry.subject + '</strong><br />' + entry.author.name + ' on ' + entry.author.date.toISOString(), 'Enter branch name here', {entry, name});
                 break;
             default:
                 this.props.actionCommit(entry, name);
@@ -78,7 +79,15 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
 
     public onActionCommit = (sender: HTMLButtonElement, args: any) => {
         this.props.actionCommit(args.entry, args.name, this.dialog.getValue());
-        this.props.refresh();
+
+        switch (args.name) {
+            case 'newtag':
+                this.props.refresh();
+                break;
+            case 'newbranch':
+                this.props.selectBranch(this.dialog.getValue());
+                break;
+        }
     }
 }
 function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) {
@@ -92,7 +101,8 @@ function mapDispatchToProps(dispatch) {
         commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
         actionCommit: (logEntry: LogEntry, name: string, value: string = '') => dispatch(ResultActions.actionCommit(logEntry, name, value)),
-        refresh: () => dispatch(ResultActions.refresh())
+        refresh: () => dispatch(ResultActions.refresh()),
+        selectBranch: (branchName: string) => dispatch(ResultActions.selectBranch(branchName)),
     };
 }
 

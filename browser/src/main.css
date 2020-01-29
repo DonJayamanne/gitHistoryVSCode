@@ -396,6 +396,7 @@ header input, header button {
 	width: 100%;
 	height: 100%;
 	background-color: var(--vscode-scrollbarSlider-background);
+	z-index: 99999;
 }
 
 #dialog hr {
@@ -412,30 +413,6 @@ header input, header button {
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
-
-.error-box {
-	text-align: center;
-	color: #c33;
-	padding: 3rem;
-}
-
-.error-box {
-	animation-duration: 0.75s;
-}
-
-.error-box .error-icon>i {
-	font-size: 4em;
-	margin-right: 0;
-}
-
-.error-box .error-title {
-	font-weight: lighter;
-}
-
-.error-box .error-details {
-	font-weight: normal;
-}
-
 
 /* Details View */
 .hidden {
