@@ -239,20 +239,21 @@ export class ApiController implements IApiRouteHandler {
         const workspaceFolder = this.getWorkspace(id);
         const currentState = this.stateStore.getState(id)!;
         const actionName = request.param('name');
+        const value = decodeURIComponent(request.query.value);
         const logEntry = request.body as LogEntry;
-        
-        switch(actionName) {
-            default: 
+
+        switch (actionName) {
+            default:
                 this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
                 break;
             case 'new':
                 this.commandManager.executeCommand('git.commit.doNewRef', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
                 break;
             case 'newtag':
-                this.commandManager.executeCommand('git.commit.createTag', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
+                this.commandManager.executeCommand('git.commit.createTag', new CommitDetails(workspaceFolder, currentState.branch!, logEntry), value);
                 break;
             case 'newbranch':
-                this.commandManager.executeCommand('git.commit.createBranch', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
+                this.commandManager.executeCommand('git.commit.createBranch', new CommitDetails(workspaceFolder, currentState.branch!, logEntry), value);
                 break;
         }
     }

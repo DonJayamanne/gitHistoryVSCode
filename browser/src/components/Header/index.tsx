@@ -64,7 +64,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         return (<header>
             <input className={'textInput'} type="text" value={this.state.searchText} placeholder="Enter term and press enter to search" onKeyDown={this.handleKeyDown} onChange={this.handleSearchChange} />
             <Button
-                bsStyle='primary' bsSize='small'
+                bsSize='small'
                 disabled={this.state.isLoading}
                 onClick={this.onSearch}>
                 {this.state.isLoading ? 'Loading...' : 'Search'}
@@ -72,11 +72,11 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
             <Branch></Branch>
             <Author></Author>
             <Button
-                bsStyle='warning' bsSize='small'
+                bsSize='small'
                 disabled={this.state.isLoading}
                 onClick={this.onClear}>Clear</Button>
             <Button
-                bsStyle="info" bsSize='small'
+                bsSize='small'
                 disabled={this.state.isLoading}
                 onClick={this.onRefresh}>Refresh</Button>
         </header>);

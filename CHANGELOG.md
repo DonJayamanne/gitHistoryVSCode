@@ -1,5 +1,7 @@
 ## Version 0.4.14
 - Slightly amended scrollbar and dropdown style to match theme colors [#423](https://github.com/DonJayamanne/gitHistoryVSCode/issues/423)
+- Added browser actionbar for quicker access to relevant functions (E.g. create tag, create branch) [#428](https://github.com/DonJayamanne/gitHistoryVSCode/pull/428)
+- Added modal window to allow user input and confirmation dialogs [#429](https://github.com/DonJayamanne/gitHistoryVSCode/pull/429)
 
 ## Version 0.4.13
 - Applied PR [#420](https://github.com/DonJayamanne/gitHistoryVSCode/pull/420) to fix repositories with no remote, thanks to @jsejcksn

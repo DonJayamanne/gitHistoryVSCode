@@ -46,9 +46,9 @@ class App extends React.Component<AppProps, AppState> {
                         goBack={ this.goBack }
                         goForward={ this.goForward }></Footer>
                     { children }
-                </div >
-                 { this.props.logEntries && this.props.logEntries.selected ? <Commit /> : '' }
-            </div >
+                </div>
+                { this.props.logEntries && this.props.logEntries.selected ? <Commit /> : '' }
+            </div>
         );
     }
     private goBack = async () => {
