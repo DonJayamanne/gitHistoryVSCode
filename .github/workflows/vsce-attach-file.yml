@@ -2,7 +2,7 @@ name: Attach VSIX to Github Release
 
 on:
     release:
-      types: [edited, created]
+      types: [prereleased]
 
 jobs:
   build:
