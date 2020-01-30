@@ -12,8 +12,6 @@ type LogViewProps = {
     commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
     actionCommit: typeof ResultActions.actionCommit;
-    refresh: typeof ResultActions.refresh;
-    selectBranch: typeof ResultActions.selectBranch;
 };
 
 // tslint:disable-next-line:no-empty-interface
@@ -79,15 +77,6 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
 
     public onActionCommit = (sender: HTMLButtonElement, args: any) => {
         this.props.actionCommit(args.entry, args.name, this.dialog.getValue());
-
-        switch (args.name) {
-            case 'newtag':
-                this.props.refresh();
-                break;
-            case 'newbranch':
-                this.props.selectBranch(this.dialog.getValue());
-                break;
-        }
     }
 }
 function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) {
@@ -100,9 +89,7 @@ function mapDispatchToProps(dispatch) {
     return {
         commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
-        actionCommit: (logEntry: LogEntry, name: string, value: string = '') => dispatch(ResultActions.actionCommit(logEntry, name, value)),
-        refresh: () => dispatch(ResultActions.refresh()),
-        selectBranch: (branchName: string) => dispatch(ResultActions.selectBranch(branchName)),
+        actionCommit: (logEntry: LogEntry, name: string, value: string = '') => dispatch(ResultActions.actionCommit(logEntry, name, value))
     };
 }
 

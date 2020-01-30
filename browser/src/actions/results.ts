@@ -30,7 +30,17 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
         const url = getQueryUrl(state, `/action/${name}`, [`value=${encodeURIComponent(value)}`]);
-        return axios.post(url, logEntry);
+        return axios.post(url, logEntry).then(result => {
+            switch (name) {
+                case 'newtag':
+                    dispatch(refresh());
+                    break;
+                case 'newbranch':
+                    dispatch(getBranches());
+                    dispatch(refresh());
+                    break;
+            }
+        });
     };
 };
 
