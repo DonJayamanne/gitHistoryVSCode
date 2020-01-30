@@ -50,31 +50,32 @@ function LogEntry(props: ResultListProps) {
                     {renderRemoteRefs(props.logEntry.refs)}
                     {renderHeadRef(props.logEntry.refs)}
                     {renderTagRef(props.logEntry.refs)}
-                    &nbsp;
                 </div>
                 <div className='buttons'>
-                    <CopyToClipboard text={props.logEntry.hash.full}>
-                    <span className='btnx hash clipboard hint--left hint--rounded hint--bounce' aria-label="Copy hash to clipboard">
-                        {props.logEntry.hash.short}&nbsp;
-                        <GoClippy></GoClippy>
-                    </span>
-                    </CopyToClipboard>
-                    &nbsp;
-                    <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new tag'>
-                        <a role='button' onClick={() => props.onAction(props.logEntry, 'newtag')}>
-                        <GoPlus></GoPlus>Tag
-                        </a>
-                    </span>
-                    <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new branch from here'>
-                        <a role='button' onClick={() => props.onAction(props.logEntry, 'newbranch')}>
-                        <GoPlus></GoPlus>Branch
-                        </a>
-                    </span>
-                    <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
-                        <a role='button' onClick={() => props.onAction(props.logEntry, '')}>
-                            <GoGitCommit></GoGitCommit>More
-                        </a>
-                    </span>
+                    <div>
+                        <CopyToClipboard text={props.logEntry.hash.full}>
+                        <span className='btnx hash clipboard hint--left hint--rounded hint--bounce' aria-label="Copy hash to clipboard">
+                            {props.logEntry.hash.short}&nbsp;
+                            <GoClippy></GoClippy>
+                        </span>
+                        </CopyToClipboard>
+                        &nbsp;
+                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new tag'>
+                            <a role='button' onClick={() => props.onAction(props.logEntry, 'newtag')}>
+                            <GoPlus></GoPlus>Tag
+                            </a>
+                        </span>
+                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new branch from here'>
+                            <a role='button' onClick={() => props.onAction(props.logEntry, 'newbranch')}>
+                            <GoPlus></GoPlus>Branch
+                            </a>
+                        </span>
+                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
+                            <a role='button' onClick={() => props.onAction(props.logEntry, '')}>
+                                <GoGitCommit></GoGitCommit>More
+                            </a>
+                        </span>
+                    </div>
                 </div>
             </div>
             <div role='button' className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>

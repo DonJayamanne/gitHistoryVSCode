@@ -64,7 +64,7 @@ body {
 }
 
 .media.right .media-image {
-	margin: 0.8em 0.5em 0 0;
+	margin: 0.8em 0.3em 0 0;
 }
 
 div.appRootParent {
@@ -78,7 +78,6 @@ div.appRoot {
 	overflow: hidden;
 }
 
-#log-view,
 .log-view {
 	position: relative;
 	overflow-y: scroll;
@@ -86,42 +85,28 @@ div.appRoot {
 	height: 100vh;
 }
 
-.log-entry {
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: var(--vscode-editorGroup-border);
-}
-  
-#log-view.with-details {
-	height: calc(100% - 20rem);
-}
-
-#log-view.with-details.with-details-resized {
-	height: 20rem;
-}
-
-#log-view svg.commitGraph,
 .log-view svg.commitGraph {
 	position: absolute;
 	top: 0;
 	left: 0;
 }
 
-#log-view svg.commitGraph,
 .log-view svg.commitGraph path {
 	stroke-width: 3;
 	fill: none;
 }
 
-#log-view svg.commitGraph,
 .log-view svg.commitGraph circle {
 	stroke: white;
 	stroke-width: 0.1em;
 	fill: #333;
 }
 
-#commit-history {
-	padding: 0;
+
+.log-entry {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: var(--vscode-editorGroup-border);
 }
 
 .log-entry {
@@ -144,27 +129,33 @@ div.appRoot {
 
 .log-entry .media-image > div.ref {
 	min-width: 1em;
+	height: 20px;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: flex-end;
 }
 
 .log-entry .media-image > div.buttons {
-	margin-top: .3em;
-	margin-bottom: .3em;
-	min-width: 1em;
+	margin-top: .5em;
+	margin-bottom: 0px;
 	display: flex;
 	justify-content: flex-end;
-	font-size: 75%;
-	font-weight: normal;
 }
 
-.log-entry .media-image > div.buttons > .btnx {
+.log-entry .media-image > div.buttons > div {
+	background-color: var(--vscode-activityBar-background);
+	padding: .3em .5em .3em 0em;
+	font-size: 75%;
+	font-weight: normal;
+	text-align: right;
+}
+
+.log-entry .media-image > div.buttons .btnx {
 	margin-left: .5em;
 }
 
 .log-entry .media-image > div.buttons .hash {
-	opacity: 0.7;
+	font-family: monospace;
 }
 
 .log-entry .media-image > div.buttons a {
@@ -175,22 +166,7 @@ div.appRoot {
 	text-decoration: none;
 }
 
-.log-entry a.commit-subject-link {
-	display: block;
-	height: 1em;
-	position: absolute;
-	width: 100%;
-	color: transparent !important;
-}
-
-.log-entry .commit-subject-link:hover~.commit-subject,
-.log-entry .commit-subject-link~.commit-subject:hover {
-	text-decoration: underline;
-	cursor: pointer;
-}
-
 .log-entry .commit-subject {
-	font-weight: bold;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -201,10 +177,6 @@ div.appRoot {
     width:15px;
     float:left;
     margin:0.2em 0.4em 0em 0em;
-}
-
-.commit-subject {
-	font-weight: bold;
 }
 
 .commit-author {
@@ -226,11 +198,11 @@ div.appRoot {
 .commit-head-container {
 	border-radius: 5px;
 	margin-left: .3em;
+	white-space: nowrap;
 }
 
 .commit-head-container {
 	background-color: var(--vscode-editorGutter-addedBackground);
-	white-space: nowrap;
 }
 
 .commit-remote-container {
@@ -280,40 +252,7 @@ div.appRoot {
 	background-color: hsla(0, 0%, 100%, 0.12);
 }
 
-.copy-button .clipboard {
-	opacity: 0.8;
-}
-
-.copy-button .clipboard:hover {
-	opacity: 1;
-}
-
-.copy-button .clipboard-link {
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	opacity: 0;
-}
-
-.sha-code {
-	font-family: Consolas, 'Courier New', monospace;
-}
-
-.sha-code.short {
-	width: 7em;
-}
-
-.log-entry.active .commit-hash-container {
-	background-color: var(--vscode-inputValidation-infoBackground);
-}
-
-.log-entry.active .commit-subject {
-	color: var(--vscode-textLink-foreground);
-}
-
-.log-entry.active .commit-author {
+.log-entry.active .commit-subject, .log-entry.active .commit-author {
 	color: var(--vscode-textLink-foreground);
 }
 
@@ -324,7 +263,6 @@ header {
 header input, header button {
     margin: 0.2em;
 }
-
 
 /* Navigation*/
 
@@ -388,7 +326,6 @@ header input, header button {
 	color: hsla(0, 0%, 100%, 0.5);
 }
 
-
 /* Dialog Modal */
 #dialog {
 	position: fixed;
@@ -417,19 +354,6 @@ header input, header button {
 /* Details View */
 .hidden {
 	display:none;
-}
-
-div.commitCntDrag {
-	width: 100vw !important;
-	display: block !important;
-	height: 200px;
-}
-
-div.react-draggable.react-draggable-dragged,
-div.react-draggable {
-	width: 100% !important;
-	bottom: 45px !important;
-	position: absolute;
 }
 
 div.details-view-cnt {
