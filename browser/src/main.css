@@ -143,7 +143,7 @@ div.appRoot {
 }
 
 .log-entry .media-image > div.buttons > div {
-	background-color: var(--vscode-activityBar-background);
+	background-color: var(--vscode-scrollbarSlider-background);
 	padding: .3em .5em .3em 0em;
 	font-size: 75%;
 	font-weight: normal;
