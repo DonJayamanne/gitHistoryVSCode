@@ -1,3 +1,7 @@
+## Version 0.4.15
+- Fixed issue [#430](https://github.com/DonJayamanne/gitHistoryVSCode/issues/430)
+- Fixed refresh issue when new tag/branch is added
+
 ## Version 0.4.14
 - Slightly amended scrollbar and dropdown style to match theme colors [#423](https://github.com/DonJayamanne/gitHistoryVSCode/issues/423)
 - Added browser actionbar for quicker access to relevant functions (E.g. create tag, create branch) [#428](https://github.com/DonJayamanne/gitHistoryVSCode/pull/428)
