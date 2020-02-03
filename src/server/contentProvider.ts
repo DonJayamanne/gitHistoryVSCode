@@ -40,7 +40,7 @@ export class ContentProvider implements TextDocumentContentProvider {
                 <html>
                     <head>
                         <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
-                        <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* 'unsafe-inline' 'unsafe-eval';" />
+                        <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* 'unsafe-inline' 'unsafe-eval'; img-src *" />
                         <link rel='stylesheet' type='text/css' href='http://localhost:${internalPort}/bundle.css' />
                     <title>Git History</title>
                     <script type="text/javascript">
@@ -48,7 +48,14 @@ export class ContentProvider implements TextDocumentContentProvider {
                         window['settings'] = ${JSON.stringify(settings)};
                         window['locale'] = '${env.language}';
 
-                        window['server_url'] = 'http://localhost:${internalPort}/';
+                        var request = new XMLHttpRequest();
+                        request.open('GET', 'http://localhost:${internalPort}/', true);
+                        request.onload = function() {
+                            // get the correct url (after redirection)
+                            window['server_url'] = this.responseURL;
+                        };
+                        request.send();
+
                         </script>
                     </head>
                     <body>

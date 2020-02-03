@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
@@ -222,7 +222,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
             }
             
             dispatch(addResults(result.data));
-            //fetchAvatars(dispatch, () => store);
+            fetchAvatars(dispatch, () => store);
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
