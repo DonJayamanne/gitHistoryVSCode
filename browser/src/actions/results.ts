@@ -222,7 +222,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
             }
             
             dispatch(addResults(result.data));
-            fetchAvatars(dispatch, () => store);
+            //fetchAvatars(dispatch, () => store);
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
