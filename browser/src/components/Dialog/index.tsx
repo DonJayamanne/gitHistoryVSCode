@@ -71,11 +71,11 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
         switch (this.state.buttons) {
             default:
             case DialogButtons.Ok:
-                return [<Button name='ok' ref={(i) => this.buttonOk = i} bsStyle='primary' onClick={this.clickHander.bind(this)}>Ok</Button>];
+                return [<Button key="btnOk" name='ok' ref={(i) => this.buttonOk = i} bsStyle='primary' onClick={this.clickHander.bind(this)}>Ok</Button>];
             case DialogButtons.OkCancel:
                 return [
-                    <Button name='cancel' onClick={this.clickHander.bind(this)}>Cancel</Button>,
-                    <Button name='ok' ref={(i) => this.buttonOk = i} style={{'margin-left': '.3em'}} bsStyle='primary' onClick={this.clickHander.bind(this)}>Ok</Button>
+                    <Button key="btnCancel" name='cancel' onClick={this.clickHander.bind(this)}>Cancel</Button>,
+                    <Button key="btnOk" name='ok' ref={(i) => this.buttonOk = i} style={{marginLeft: '.3em'}} bsStyle='primary' onClick={this.clickHander.bind(this)}>Ok</Button>
                 ];
         }
     }
