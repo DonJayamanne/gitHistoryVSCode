@@ -23,7 +23,8 @@ export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHO
 function getQueryUrl(store: RootState, baseUrl: string, args: string[] = []): string {
     const id = store.settings.id || '';
     const queryArgs = args.concat([`id=${encodeURIComponent(id)}`]);
-    return `${baseUrl}?${queryArgs.join('&')}`;
+    const serverurl = window['server_url'];
+    return `${serverurl}${baseUrl}?${queryArgs.join('&')}`;
 }
 export const actionCommit = (logEntry: LogEntry, name: string = '', value: string = '') => {
     // tslint:disable-next-line:no-any
@@ -47,7 +48,7 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
 // tslint:disable-next-line:no-any
 export const fetchAvatars = async (dispatch: Dispatch<any>, getState: () => RootState) => {
     const state = getState();
-    const url = getQueryUrl(state, '/avatars');
+    const url = getQueryUrl(state, 'avatars');
 
     axios.post(url)
         .then(result => {
@@ -63,7 +64,7 @@ export const selectCommittedFile = (logEntry: LogEntry, committedFile: Committed
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        const url = getQueryUrl(state, `/log/${logEntry.hash.full}/committedFile`);
+        const url = getQueryUrl(state, `log/${logEntry.hash.full}/committedFile`);
         await axios.post(url, { logEntry, committedFile })
             .catch(err => {
                 // tslint:disable-next-line:no-debugger
@@ -76,7 +77,7 @@ export const closeCommitView = () => {
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        const url = getQueryUrl(state, '/log/clearSelection');
+        const url = getQueryUrl(state, 'log/clearSelection');
         // tslint:disable-next-line:no-backbone-get-set-outside-model
         await axios.post(url);
         await dispatch(clearCommitSelection());
@@ -89,7 +90,7 @@ export const selectCommit = (hash?: string) => {
         if (hash) {
             await fetchCommit(dispatch, state, hash);
         } else {
-            const url = getQueryUrl(state, '/log/clearSelection');
+            const url = getQueryUrl(state, 'log/clearSelection');
             // tslint:disable-next-line:no-backbone-get-set-outside-model
             await axios.get(url);
             await dispatch(clearCommitSelection());
@@ -178,19 +179,11 @@ function fixDates(logEntry: LogEntry) {
 }
 // tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number, searchText?: string, refreshData?: boolean, branchName?: string, author?: string) {
-    // pageSize = pageSize || store.logEntries.pageSize;
-    const id = store.settings.id || '';
     const queryParts = [];
-    queryParts.push(`id=${encodeURIComponent(id)}`);
+
     if (typeof branchName === 'string') {
         queryParts.push(`branch=${encodeURIComponent(branchName)}`);
     }
-    // if (store.settings.file) {
-    //     queryParts.push(`file=${encodeURIComponent(store.settings.file)}`);
-    // }
-    // if (store.settings.selectedBranchType) {
-    //     queryParts.push(`branchSelection=${encodeURIComponent(store.settings.selectedBranchType.toString())}`);
-    // }
     if (typeof searchText === 'string') {
         queryParts.push(`searchText=${encodeURIComponent(searchText)}`);
     }
@@ -207,7 +200,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
         queryParts.push(`pageSize=${pageSize}`);
     }
     dispatch(notifyIsLoading());
-    return axios.get(`/log?${queryParts.join('&')}`)
+    return axios.get(getQueryUrl(store, 'log', queryParts))
         .then((result: { data: LogEntriesResponse }) => {
             if (Array.isArray(result.data.items)) {
                 result.data.items.forEach(item => {
@@ -215,7 +208,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
                 });
             }
             dispatch(addResults(result.data));
-            fetchAvatars(dispatch, () => store);
+            //fetchAvatars(dispatch, () => store);
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
@@ -226,8 +219,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
 // tslint:disable-next-line:no-any
 function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
     dispatch(notifyIsFetchingCommit());
-    const id = store.settings.id || '';
-    return axios.get(`/log/${hash}?id=${encodeURIComponent(id)}`)
+    return axios.get(getQueryUrl(store, `log/${hash}`))
         .then((result: { data: LogEntry }) => {
             if (result.data) {
                 fixDates(result.data);
@@ -243,8 +235,7 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
 }
 // tslint:disable-next-line:no-any
 function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
-    const id = store.settings.id || '';
-    return axios.get(`/branches?id=${encodeURIComponent(id)}`)
+    return axios.get(getQueryUrl(store, 'branches'))
         .then(result => {
             dispatch(updateBranchList(result.data));
         })
@@ -255,8 +246,7 @@ function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
 }
 // tslint:disable-next-line:no-any
 function fetchAuthors(dispatch: Dispatch<any>, store: RootState) {
-    const id = store.settings.id || '';
-    return axios.get(`/authors?id=${encodeURIComponent(id)}`)
+    return axios.get(getQueryUrl(store,'authors'))
         .then(result => {
             dispatch(fetchedAuthors(result.data));
         })

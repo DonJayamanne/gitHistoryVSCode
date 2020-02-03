@@ -1,5 +1,5 @@
 import * as querystring from 'query-string';
-import { CancellationToken, TextDocumentContentProvider, Uri } from 'vscode';
+import { CancellationToken, TextDocumentContentProvider, Uri, workspace } from 'vscode';
 import { ILogService } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection } from '../types';
@@ -23,7 +23,6 @@ export class ContentProvider implements TextDocumentContentProvider {
         // so that the content returned is different. Otherwise VSCode will not refresh the document since it
         // thinks that there is nothing to be updated.
         // this.provided = true;
-        const timeNow = ''; // new Date().getTime();
         const queryArgs = [
             `id=${id}`,
             `branchName=${encodeURIComponent(branchName)}`,
@@ -32,6 +31,14 @@ export class ContentProvider implements TextDocumentContentProvider {
             `branchSelection=${branchSelection}`,
             `locale=${encodeURIComponent(locale)}`
         ];
+
+        const config = workspace.getConfiguration('gitHistory');
+        const settings = {
+            id,
+            branchName,
+            file,
+            branchSelection
+        };
 
         // tslint:disable-next-line:no-http-string
         const uri = `http://localhost:${port}/?_&${queryArgs.join('&')}`;
@@ -45,38 +52,19 @@ export class ContentProvider implements TextDocumentContentProvider {
                     <head>
                         <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
                         <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* 'unsafe-inline' 'unsafe-eval';" />
+                        <link rel='stylesheet' type='text/css' href='http://localhost:${internalPort}/bundle.css' />
                     <title>Git History</title>
                     <script type="text/javascript">
-                        function frameLoaded() {
-                            console.log('Sending styles through postMessage');
-                            var styleText = document.getElementsByTagName("html")[0].style.cssText;
-                            // since the nested iframe may become the origin http://127.0.0.1:<randomPort>
-                            // it is necessary to use asterisk
-                            document.getElementById('myframe').contentWindow.postMessage(styleText,"*");
-                        }
+                        window['configuration'] = ${JSON.stringify(config)};
+                        window['settings'] = ${JSON.stringify(settings)};
+                        window['locale'] = '${locale}';
 
-                        function start() {
-                            var queryArgs = [
-                                'id=${id}',
-                                'branchName=${encodeURIComponent(branchName)}',
-                                'file=${encodeURIComponent(file)}',
-                                'branchSelection=${branchSelection}',
-                                'locale=${encodeURIComponent(locale)}',
-                                'theme=' + document.body.className
-                            ];
-
-                            document.getElementById('myframe').src = 'http://localhost:${internalPort}/?_=${timeNow}&' + queryArgs.join('&');
-                            document.getElementById('myframe').onload = frameLoaded;
-
-                            // use mutation observer to check if style attribute has changed
-                            // this usually occurs when changing the vscode theme
-                            var observer = new MutationObserver(frameLoaded);
-                            observer.observe(document.getElementsByTagName("html")[0], { attributes: true });
-                        }
+                        window['server_url'] = 'http://localhost:${internalPort}/';
                         </script>
                     </head>
-                    <body onload="start()">
-                        <iframe id="myframe" frameborder="0" style="border: 0px solid transparent;height:100%;width:100%;" src="" seamless></iframe>
+                    <body>
+                        <div id="root"></div>
+                        <script type="text/javascript" src="http://localhost:${internalPort}/bundle.js"></script>
                     </body>
                 </html>`;
     }
