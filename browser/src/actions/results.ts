@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
@@ -30,7 +30,7 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        const url = getQueryUrl(state, `/action/${name}`, [`value=${encodeURIComponent(value)}`]);
+        const url = getQueryUrl(state, `action/${name}`, [`value=${encodeURIComponent(value)}`]);
         return axios.post(url, logEntry).then(result => {
             switch (name) {
                 case 'newtag':
@@ -207,8 +207,9 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
                     fixDates(item);
                 });
             }
+            
             dispatch(addResults(result.data));
-            //fetchAvatars(dispatch, () => store);
+            fetchAvatars(dispatch, () => store);
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
