@@ -390,7 +390,6 @@
         "@types/md5": "^2.1.32",
         "@types/mocha": "^2.2.32",
         "@types/node": "^6.0.49",
-        "@types/os-locale": "^2.1.0",
         "@types/query-string": "^3.0.31",
         "@types/react": "^16.0.20",
         "@types/react-dom": "^16.0.2",
@@ -462,7 +461,6 @@
         "iconv-lite": "^0.4.19",
         "inversify": "^4.3.0",
         "md5": "^2.2.1",
-        "os-locale": "^2.1.0",
         "query-string": "^4.3.2",
         "tmp": "0.1.0",
         "reflect-metadata": "^0.1.12"

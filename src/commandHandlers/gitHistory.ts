@@ -1,8 +1,7 @@
 import { inject, injectable } from 'inversify';
 import * as md5 from 'md5';
-import * as osLocale from 'os-locale';
 import * as path from 'path';
-import { Uri, ViewColumn, window } from 'vscode';
+import { Uri, ViewColumn, window, env } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { FileCommitDetails, IUiService } from '../common/types';
@@ -82,10 +81,9 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
                                                       .createGitService(workspaceFolder, gitRoot);
         const branchNamePromise = gitService.getCurrentBranch();
         const startupInfoPromise = this.server.start(workspaceFolder);
-        const localePromise = osLocale();
         const gitRootsUnderWorkspacePromise = gitService.getGitRoots(workspaceFolder);
 
-        const [branchName, startupInfo, locale, gitRootsUnderWorkspace] = await Promise.all([branchNamePromise, startupInfoPromise, localePromise, gitRootsUnderWorkspacePromise]);
+        const [branchName, startupInfo, gitRootsUnderWorkspace] = await Promise.all([branchNamePromise, startupInfoPromise,  gitRootsUnderWorkspacePromise]);
 
         // Do not include the search string into this
         const fullId = `${startupInfo.port}:${BranchSelection.Current}:${fileUri ? fileUri.fsPath : ''}:${gitRoot}`;
@@ -98,7 +96,8 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             `port=${startupInfo.port}`,
             `internalPort=${startupInfo.port - 1}`,
             `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
-            `branchSelection=${BranchSelection.Current}`, `locale=${encodeURIComponent(locale)}`
+            `branchSelection=${BranchSelection.Current}`, 
+            `locale=${encodeURIComponent(env.language)}`
         ];
         queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
         const uri = `${previewUri}?${queryArgs.join('&')}`;
