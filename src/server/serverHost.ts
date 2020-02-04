@@ -1,11 +1,12 @@
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import { EventEmitter } from 'events';
-import { Express } from 'express';
+import { Express, Request, Response } from 'express';
 import * as express from 'express';
 import * as http from 'http';
 import { inject } from 'inversify';
 import * as path from 'path';
+import { workspace } from 'vscode';
 
 import { ICommandManager } from '../application/types/commandManager';
 import { IServiceContainer } from '../ioc/types';
@@ -53,9 +54,9 @@ export class ServerHost extends EventEmitter implements IServerHost {
         this.app.use(express.static(rootDirectory));
         this.app.use(express.static(path.join(__dirname, '..', '..', '..', 'resources'), { extensions: ['.svg', 'svg', 'json', '.json'] }));
         this.app.use(cors());
-        /*this.app.get('/', (req, res) => {
+        this.app.get('/', (req, res) => {
             this.rootRequestHandler(req, res);
-        });*/
+        });
 
         return this.startPromise = new Promise<StartupInfo>((resolve, reject) => {
             const commandManager = this.serviceContainer.get<ICommandManager>(ICommandManager);

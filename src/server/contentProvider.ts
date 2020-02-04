@@ -47,12 +47,26 @@ export class ContentProvider implements TextDocumentContentProvider {
                         window['configuration'] = ${JSON.stringify(config)};
                         window['settings'] = ${JSON.stringify(settings)};
                         window['locale'] = '${env.language}';
+                        window['server_url'] = 'http://localhost:${internalPort}/';
+
+                        // Since CORS is not permitted for redirects and
+                        // a redirect from http://localhost:<internalPort> to http://127.0.0.1:<randomPort>
+                        // may occur in some cases (proberly due to proxy bypass)
+                        // it is necessary to use the "redirected" URL.
+                        // This only applies to other methods than "GET" (E.g. POST)
+                        // Further info: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSExternalRedirectNotAllowed
 
                         var request = new XMLHttpRequest();
                         request.open('GET', 'http://localhost:${internalPort}/', true);
                         request.onload = function() {
-                            // get the correct url (after redirection)
+                            // get the redirected URL
                             window['server_url'] = this.responseURL;
+                            console.log("Expected URL: " + this.responseURL + "?${queryArgs.join('&')}");
+
+                            // Load the react app
+                            var script = document.createElement('script');
+                            script.src = this.responseURL + '/bundle.js';
+                            document.head.appendChild(script);
                         };
                         request.send();
 
@@ -60,7 +74,6 @@ export class ContentProvider implements TextDocumentContentProvider {
                     </head>
                     <body>
                         <div id="root"></div>
-                        <script type="text/javascript" src="http://localhost:${internalPort}/bundle.js"></script>
                     </body>
                 </html>`;
     }
