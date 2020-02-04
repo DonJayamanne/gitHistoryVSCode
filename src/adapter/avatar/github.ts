@@ -154,7 +154,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
      */
     private async getContributors(repoPath: string) {
         const proxy = this.proxy;
-        return axios.get(`https://api.github.com/repos/${repoPath}/contributors`, { proxy })
+        return axios.get(`https://api.github.com/repos/${repoPath}/contributors`, { proxy, timeout: 8000 })
             .then((result: { data: GithubUserSearchResponseItem[] }) => {
                 return result.data;
             });
