@@ -103,7 +103,8 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
 
 function mapStateToProps(state: RootState, wrapper: ResultListProps): ResultListProps {
     return {
-        ...wrapper
+        ...wrapper,
+        selected: state.logEntries.selected
     };
 }
 
