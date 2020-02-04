@@ -242,6 +242,7 @@ export class ApiController implements IApiRouteHandler {
         const actionName = request.param('name');
         //const value = decodeURIComponent(request.query.value);
         const refEntry = request.body as Ref;
+        
         switch (actionName) {
             case 'removeTag':
                 this.commandManager.executeCommand('git.commit.removeTag', new BranchDetails(workspaceFolder, currentState.branch!), refEntry.name);
