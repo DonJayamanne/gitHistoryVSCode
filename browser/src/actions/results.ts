@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';

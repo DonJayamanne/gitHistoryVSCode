@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import * as md5 from 'md5';
 import * as path from 'path';
-import { Uri, ViewColumn, window, env } from 'vscode';
+import { Uri, ViewColumn, window } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { FileCommitDetails, IUiService } from '../common/types';
@@ -97,9 +97,9 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             `internalPort=${startupInfo.port - 1}`,
             `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
             `branchSelection=${BranchSelection.Current}`, 
-            `locale=${encodeURIComponent(env.language)}`
+            `branchName=${encodeURIComponent(branchName)}`
         ];
-        queryArgs.push(`branchName=${encodeURIComponent(branchName)}`);
+        
         const uri = `${previewUri}?${queryArgs.join('&')}`;
 
         const repoName = gitRootsUnderWorkspace.length > 1 ? ` (${path.basename(gitRoot)})` : '';

@@ -1,5 +1,5 @@
 import * as querystring from 'query-string';
-import { CancellationToken, TextDocumentContentProvider, Uri, workspace } from 'vscode';
+import { CancellationToken, TextDocumentContentProvider, Uri, workspace, env } from 'vscode';
 import { ILogService } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection } from '../types';
@@ -14,22 +14,13 @@ export class ContentProvider implements TextDocumentContentProvider {
         const id: string = query.id! as string;
         const branchName: string | undefined = query.branchName ? decodeURIComponent(query.branchName as string) : '';
         const branchSelection: BranchSelection = parseInt(query.branchSelection!.toString(), 10) as BranchSelection;
-        const locale: string = decodeURIComponent(query.locale!.toString());
         const file: string = decodeURIComponent(query.file!.toString());
-        return this.generateResultsView(port, internalPort, id, branchName, branchSelection, locale, file);
-    }
-    private generateResultsView(port: number, internalPort: number, id: string, branchName: string, branchSelection: BranchSelection, locale: string, file: string): string {
-        // Fix for issue #669 "Results Panel not Refreshing Automatically" - always include a unique time
-        // so that the content returned is different. Otherwise VSCode will not refresh the document since it
-        // thinks that there is nothing to be updated.
-        // this.provided = true;
+
         const queryArgs = [
             `id=${id}`,
             `branchName=${encodeURIComponent(branchName)}`,
             `file=${encodeURIComponent(file)}`,
-            'theme=',
-            `branchSelection=${branchSelection}`,
-            `locale=${encodeURIComponent(locale)}`
+            `branchSelection=${branchSelection}`
         ];
 
         const config = workspace.getConfiguration('gitHistory');
@@ -40,11 +31,10 @@ export class ContentProvider implements TextDocumentContentProvider {
             branchSelection
         };
 
-        // tslint:disable-next-line:no-http-string
-        const uri = `http://localhost:${port}/?_&${queryArgs.join('&')}`;
         this.serviceContainer.getAll<ILogService>(ILogService)
             .forEach(logger => {
-                logger.log(`Server running on ${uri}`);
+                logger.log(`Server running on http://localhost:${port}/?${queryArgs.join('&')}`);
+                logger.log(`Webview port: ${internalPort}`);
             });
 
         return `<!DOCTYPE html>
@@ -57,13 +47,27 @@ export class ContentProvider implements TextDocumentContentProvider {
                     <script type="text/javascript">
                         window['configuration'] = ${JSON.stringify(config)};
                         window['settings'] = ${JSON.stringify(settings)};
-                        window['locale'] = '${locale}';
+                        window['locale'] = '${env.language}';
+                        window['server_url'] = 'http://localhost:${internalPort}/';
+
+                        // Since CORS is not permitted for redirects and
+                        // a redirect from http://localhost:<internalPort> to http://127.0.0.1:<randomPort>
+                        // may occur in some cases (proberly due to proxy bypass)
+                        // it is necessary to use the "redirected" URL.
+                        // This only applies to other methods than "GET" (E.g. POST)
+                        // Further info: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSExternalRedirectNotAllowed
 
                         var request = new XMLHttpRequest();
                         request.open('GET', 'http://localhost:${internalPort}/', true);
                         request.onload = function() {
-                            // get the correct url (after redirection)
+                            // get the redirected URL
                             window['server_url'] = this.responseURL;
+                            console.log("Expected URL: " + this.responseURL + "?${queryArgs.join('&')}");
+
+                            // Load the react app
+                            var script = document.createElement('script');
+                            script.src = this.responseURL + '/bundle.js';
+                            document.head.appendChild(script);
                         };
                         request.send();
 
@@ -71,7 +75,6 @@ export class ContentProvider implements TextDocumentContentProvider {
                     </head>
                     <body>
                         <div id="root"></div>
-                        <script type="text/javascript" src="http://localhost:${internalPort}/bundle.js"></script>
                     </body>
                 </html>`;
     }
