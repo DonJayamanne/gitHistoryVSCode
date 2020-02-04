@@ -14,6 +14,7 @@ import { GoGitCommit, GoClippy, GoPlus } from 'react-icons/lib/go';
 
 type ResultListProps = {
     logEntry: LogEntry;
+    selected?: LogEntry;
     onViewCommit(entry: LogEntry): void;
     onAction(entry: LogEntry, name: string): void;
     onRefAction(ref: Ref, name: string): void;
@@ -43,9 +44,8 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
     }
 
     public render() {
-        //const isActive = this.props.logEntry && props.logEntry && props.selected.hash.full === props.logEntry.hash.full;
-        //const cssClassName = `log-entry ${isActive ? 'active' : ''}`;
-        const cssClassName = `log-entry`;
+        const isActive = this.props.logEntry && this.props.selected && this.props.selected.hash.full === this.props.logEntry.hash.full;
+        const cssClassName = `log-entry ${isActive ? 'active' : ''}`;
         return (<div className={cssClassName}>
             <div className='media right'>
                 <div className='media-image'>
@@ -93,7 +93,8 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
 
 function mapStateToProps(state: RootState, wrapper: ResultListProps): ResultListProps {
     return {
-        ...wrapper
+        ...wrapper,
+        selected: state.logEntries.selected
     };
 }
 
