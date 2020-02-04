@@ -1,3 +1,7 @@
+## Version 0.4.16
+- Removed nested iframe causing keyboard focus issues [#433](https://github.com/DonJayamanne/gitHistoryVSCode/pull/433)
+- Corrected language setting using vscode display language (vscode.env.language)
+
 ## Version 0.4.15
 - Fixed issue [#430](https://github.com/DonJayamanne/gitHistoryVSCode/issues/430)
 - Fixed refresh issue when new tag/branch is added
