@@ -107,7 +107,19 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
      * @param args optional arguments
      */
     public showMessage(title: string, description: string, args: any = undefined) {
-        this.setState({show: true, title, description});
+        this.setState({show: true, title, description, input: false, buttons: DialogButtons.Ok});
+        this.args = args;
+    }
+
+    /**
+     * Display a simple message box a user can confirm with DialogButtons.Ok button
+     * 
+     * @param title title of the dialog
+     * @param description description with html entities support
+     * @param args optional arguments
+     */
+    public showConfirm(title: string, description: string, args: any = undefined) {
+        this.setState({show: true, title, description, input: false, buttons: DialogButtons.OkCancel});
         this.args = args;
     }
 

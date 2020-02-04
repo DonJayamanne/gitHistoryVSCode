@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as ResultActions from '../../../actions/results';
-import { LogEntries, LogEntry } from '../../../definitions';
+import { LogEntries, LogEntry, Ref } from '../../../definitions';
 import { RootState } from '../../../reducers';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
@@ -12,6 +12,7 @@ type LogViewProps = {
     commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
     actionCommit: typeof ResultActions.actionCommit;
+    actionRef: typeof ResultActions.actionRef;
 };
 
 // tslint:disable-next-line:no-empty-interface
@@ -50,15 +51,20 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                 <BranchGraph></BranchGraph>
                 <LogEntryList ref={this.ref} logEntries={this.props.logEntries.items}
                     onAction={this.onAction}
+                    onRefAction={this.onRefAction}
                     onViewCommit={this.onViewCommit}>
                 </LogEntryList>
-                <Dialog ref={(r) => this.dialog = r} onOk={this.onActionCommit.bind(this)} />
+                <Dialog ref={(r) => this.dialog = r} onOk={this.onDialogOk.bind(this)} />
             </div>
         );
     }
 
     public onViewCommit = (logEntry: LogEntry) => {
         this.props.onViewCommit(logEntry.hash.full);
+    }
+
+    public onRefAction = (ref: Ref, name: string) => {
+        this.dialog.showConfirm(`Remove tag ${ref.name}?`, `Do you really want to remove the tag ${ref.name}?`, {ref, name});
     }
 
     public onAction = (entry: LogEntry, name: string = '') => {
@@ -75,9 +81,18 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
         }
     }
 
-    public onActionCommit = (sender: HTMLButtonElement, args: any) => {
-        this.props.actionCommit(args.entry, args.name, this.dialog.getValue());
+    public onDialogOk = (sender: HTMLButtonElement, args: any) => {
+        switch (args!.name) {
+            case 'newbranch':
+            case 'newtag':
+                this.props.actionCommit(args.entry, args.name, this.dialog.getValue());    
+                break;
+            case 'removeTag':
+                this.props.actionRef(args.ref, args.name);
+                break;
+        }
     }
+
 }
 function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) {
     return {
@@ -89,7 +104,8 @@ function mapDispatchToProps(dispatch) {
     return {
         commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
-        actionCommit: (logEntry: LogEntry, name: string, value: string = '') => dispatch(ResultActions.actionCommit(logEntry, name, value))
+        actionCommit: (logEntry: LogEntry, name: string, value: string = '') => dispatch(ResultActions.actionCommit(logEntry, name, value)),
+        actionRef: (ref: Ref, name: string) => dispatch(ResultActions.actionRef(ref, name))
     };
 }
 

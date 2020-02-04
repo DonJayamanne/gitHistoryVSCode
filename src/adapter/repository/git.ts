@@ -420,6 +420,9 @@ export class Git implements IGitService {
     public async createTag(tagName: string, hash: string): Promise<void> {
         await this.exec('tag', '-a', tagName, '-m', tagName, hash);
     }
+    public async removeTag(tagName: string) {
+        await this.exec('tag', '-d', tagName);
+    }
     public async merge(hash: string): Promise<void> {
         await this.exec('merge', hash);
     }

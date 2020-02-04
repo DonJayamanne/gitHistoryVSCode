@@ -89,9 +89,15 @@ export interface IGitBranchFromCommitCommandHandler extends ICommandHandler {
 }
 
 export const IGitTagFromCommitCommandHandler = Symbol('IGitTagFromCommitCommandHandler');
+
 // tslint:disable-next-line:no-empty-interface
 export interface IGitTagFromCommitCommandHandler extends ICommandHandler {
     createTagFromCommit(commit: CommitDetails): void;
+}
+
+export const IGitTagRemoveCommandHandler = Symbol('IGitTagRemoveCommandHandler');
+export interface IGitTagRemoveCommandHandler extends ICommandHandler {
+    removeTagFromCommit(commit: CommitDetails): void;
 }
 
 export const IGitCompareCommandHandler = Symbol('IGitCompareCommandHandler');

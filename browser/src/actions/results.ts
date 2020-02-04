@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
-import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry } from '../definitions';
+import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry, Ref } from '../definitions';
 import { BranchesState, RootState } from '../reducers';
 
 // tslint:disable:no-any
@@ -41,6 +41,17 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
                     dispatch(refresh());
                     break;
             }
+        });
+    };
+};
+
+export const actionRef = (ref: Ref, name: string = '') => {
+    // tslint:disable-next-line:no-any
+    return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        const state = getState();
+        const url = getQueryUrl(state, `actionref/${name}`);
+        return axios.post(url, ref).then(result => {
+            dispatch(refresh());
         });
     };
 };
