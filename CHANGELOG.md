@@ -1,6 +1,7 @@
 ## Version 0.4.16
 - Removed nested iframe causing keyboard focus issues [#433](https://github.com/DonJayamanne/gitHistoryVSCode/pull/433)
 - Corrected language setting using vscode display language (vscode.env.language)
+- Support for removing tags from history view
 
 ## Version 0.4.15
 - Fixed issue [#430](https://github.com/DonJayamanne/gitHistoryVSCode/issues/430)
