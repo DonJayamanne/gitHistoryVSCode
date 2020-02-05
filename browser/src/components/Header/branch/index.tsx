@@ -49,7 +49,7 @@ export class Branch extends React.Component<BranchProps, BranchState> {
             bsSize='small'
             title={title}
             key={selectedBranch}
-            onSelect={this.onSelect}
+            onSelect={(e) => this.onSelect(e)}
             id='authorSelection'
         >
             <MenuItem eventKey='[ALL]'>All branches</MenuItem>

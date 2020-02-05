@@ -55,7 +55,7 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
             bsSize='small'
             title={title}
             key={selectedAuthor}
-            onSelect={this.onSelect}
+            onSelect={(e) => this.onSelect(e)}
             id='authorSelection'
         >
             <MenuItem eventKey='[ALL]'>All Authors</MenuItem>
