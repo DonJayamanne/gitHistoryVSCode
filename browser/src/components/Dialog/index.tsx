@@ -47,8 +47,8 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
      * handle click event of dialog buttons
      * @param e the given event
      */
-    private clickHander(e: Event) {
-        const button: HTMLButtonElement = e.currentTarget as HTMLButtonElement;
+    private clickHander(e: React.MouseEvent<Button, MouseEvent>) {
+        const button: HTMLButtonElement = ReactDOM.findDOMNode(e.currentTarget) as HTMLButtonElement;
 
         switch (button.name) {
             case 'cancel':
@@ -71,11 +71,11 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
         switch (this.state.buttons) {
             default:
             case DialogButtons.Ok:
-                return [<Button name='ok' ref={(i) => this.buttonOk = i} bsStyle='primary' onClick={this.clickHander.bind(this)}>Ok</Button>];
+                return [<Button key="btnOk" name='ok' ref={(i) => this.buttonOk = i} bsStyle='primary' onClick={this.clickHander.bind(this)}>Ok</Button>];
             case DialogButtons.OkCancel:
                 return [
-                    <Button name='cancel' onClick={this.clickHander.bind(this)}>Cancel</Button>,
-                    <Button name='ok' ref={(i) => this.buttonOk = i} style={{'margin-left': '.3em'}} bsStyle='primary' onClick={this.clickHander.bind(this)}>Ok</Button>
+                    <Button key="btnCancel" name='cancel' onClick={this.clickHander.bind(this)}>Cancel</Button>,
+                    <Button key="btnOk" name='ok' onKeyDown={this.handleKeyDown.bind(this)} ref={(i) => this.buttonOk = i} style={{marginLeft: '.3em'}} bsStyle='primary' onClick={this.clickHander.bind(this)}>Ok</Button>
                 ];
         }
     }
@@ -83,14 +83,16 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
     /**
      * input change handler triggered on any text change to update field value
      */
-    private handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    private handleChange(e: React.ChangeEvent<HTMLInputElement>)
+    {
         this.setState({ value: e.target.value });
     }
 
     /**
      * KeyDown handler to submit data using 'Enter' key or cancel using 'Escape' key
      */
-    private handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    private handleKeyDown(e: React.KeyboardEvent<any>) 
+    {
         if (e.key === 'Enter') {
             const buttonEl = ReactDOM.findDOMNode(this.buttonOk) as HTMLButtonElement;
             buttonEl.click();
@@ -107,7 +109,22 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
      * @param args optional arguments
      */
     public showMessage(title: string, description: string, args: any = undefined) {
-        this.setState({show: true, title, description});
+        this.setState({show: true, title, description, input: false, buttons: DialogButtons.Ok});
+        this.args = args;
+    }
+
+    /**
+     * Display a simple message box a user can confirm with DialogButtons.Ok button
+     * 
+     * @param title title of the dialog
+     * @param description description with html entities support
+     * @param args optional arguments
+     */
+    public showConfirm(title: string, description: string, args: any = undefined) {
+        this.setState({show: true, title, description, input: false, buttons: DialogButtons.OkCancel}, () => {
+            const buttonEl = ReactDOM.findDOMNode(this.buttonOk) as HTMLButtonElement;
+            buttonEl.focus();
+        });
         this.args = args;
     }
 
@@ -142,7 +159,7 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
                         <div dangerouslySetInnerHTML={{__html: this.state.description}}></div>
                     </div>
                     <div style={{textAlign: 'center', marginTop: '1em'}}>
-                        <input hidden={!this.state.input} ref={(i) => this.inputField = i} className={'textInput'} type="text" value={this.state.value} onKeyDown={this.handleKeyDown} onChange={this.handleChange} placeholder={this.state.placeholder} />
+                        <input hidden={!this.state.input} ref={(i) => this.inputField = i} className={'textInput'} type="text" value={this.state.value} onKeyDown={this.handleKeyDown.bind(this)} onChange={this.handleChange.bind(this)} placeholder={this.state.placeholder} />
                     </div>
                     <hr />
                     <div style={{textAlign: 'right'}}>

@@ -26,6 +26,7 @@ export enum RefType {
 export type Ref = {
     type: RefType;
     name?: string;
+    onRemove?(): void;
 };
 export type Remote = {
     name: string;
@@ -152,6 +153,7 @@ export interface IGitService {
     checkout(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
     createTag(tagName: string, hash: string): Promise<void>;
+    removeTag(tagName: string): Promise<void>;
     getOriginType(): Promise<GitOriginType | undefined>;
     getOriginUrl(): Promise<string>;
     merge(hash: string): Promise<void>;

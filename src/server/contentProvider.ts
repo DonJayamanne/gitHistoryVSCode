@@ -1,5 +1,5 @@
 import * as querystring from 'query-string';
-import { CancellationToken, TextDocumentContentProvider, Uri } from 'vscode';
+import { CancellationToken, TextDocumentContentProvider, Uri, workspace, env } from 'vscode';
 import { ILogService } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { BranchSelection } from '../types';
@@ -14,69 +14,67 @@ export class ContentProvider implements TextDocumentContentProvider {
         const id: string = query.id! as string;
         const branchName: string | undefined = query.branchName ? decodeURIComponent(query.branchName as string) : '';
         const branchSelection: BranchSelection = parseInt(query.branchSelection!.toString(), 10) as BranchSelection;
-        const locale: string = decodeURIComponent(query.locale!.toString());
         const file: string = decodeURIComponent(query.file!.toString());
-        return this.generateResultsView(port, internalPort, id, branchName, branchSelection, locale, file);
-    }
-    private generateResultsView(port: number, internalPort: number, id: string, branchName: string, branchSelection: BranchSelection, locale: string, file: string): string {
-        // Fix for issue #669 "Results Panel not Refreshing Automatically" - always include a unique time
-        // so that the content returned is different. Otherwise VSCode will not refresh the document since it
-        // thinks that there is nothing to be updated.
-        // this.provided = true;
-        const timeNow = ''; // new Date().getTime();
+
         const queryArgs = [
             `id=${id}`,
             `branchName=${encodeURIComponent(branchName)}`,
             `file=${encodeURIComponent(file)}`,
-            'theme=',
-            `branchSelection=${branchSelection}`,
-            `locale=${encodeURIComponent(locale)}`
+            `branchSelection=${branchSelection}`
         ];
 
-        // tslint:disable-next-line:no-http-string
-        const uri = `http://localhost:${port}/?_&${queryArgs.join('&')}`;
+        const config = workspace.getConfiguration('gitHistory');
+        const settings = {
+            id,
+            branchName,
+            file,
+            branchSelection
+        };
+
         this.serviceContainer.getAll<ILogService>(ILogService)
             .forEach(logger => {
-                logger.log(`Server running on ${uri}`);
+                logger.log(`Server running on http://localhost:${port}/?${queryArgs.join('&')}`);
+                logger.log(`Webview port: ${internalPort}`);
             });
 
         return `<!DOCTYPE html>
                 <html>
                     <head>
                         <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
-                        <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* 'unsafe-inline' 'unsafe-eval';" />
+                        <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* 'unsafe-inline' 'unsafe-eval'; img-src *" />
+                        <link rel='stylesheet' type='text/css' href='http://localhost:${internalPort}/bundle.css' />
                     <title>Git History</title>
                     <script type="text/javascript">
-                        function frameLoaded() {
-                            console.log('Sending styles through postMessage');
-                            var styleText = document.getElementsByTagName("html")[0].style.cssText;
-                            // since the nested iframe may become the origin http://127.0.0.1:<randomPort>
-                            // it is necessary to use asterisk
-                            document.getElementById('myframe').contentWindow.postMessage(styleText,"*");
-                        }
+                        window['configuration'] = ${JSON.stringify(config)};
+                        window['settings'] = ${JSON.stringify(settings)};
+                        window['locale'] = '${env.language}';
+                        window['server_url'] = 'http://localhost:${internalPort}/';
 
-                        function start() {
-                            var queryArgs = [
-                                'id=${id}',
-                                'branchName=${encodeURIComponent(branchName)}',
-                                'file=${encodeURIComponent(file)}',
-                                'branchSelection=${branchSelection}',
-                                'locale=${encodeURIComponent(locale)}',
-                                'theme=' + document.body.className
-                            ];
+                        // Since CORS is not permitted for redirects and
+                        // a redirect from http://localhost:<internalPort> to http://127.0.0.1:<randomPort>
+                        // may occur in some cases (proberly due to proxy bypass)
+                        // it is necessary to use the "redirected" URL.
+                        // This only applies to other methods than "GET" (E.g. POST)
+                        // Further info: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSExternalRedirectNotAllowed
 
-                            document.getElementById('myframe').src = 'http://localhost:${internalPort}/?_=${timeNow}&' + queryArgs.join('&');
-                            document.getElementById('myframe').onload = frameLoaded;
+                        var request = new XMLHttpRequest();
+                        request.open('GET', 'http://localhost:${internalPort}/', true);
+                        request.onload = function() {
+                            // get the redirected URL
+                            window['server_url'] = this.responseURL;
+                            console.log("Expected URL: " + this.responseURL + "?${queryArgs.join('&')}");
 
-                            // use mutation observer to check if style attribute has changed
-                            // this usually occurs when changing the vscode theme
-                            var observer = new MutationObserver(frameLoaded);
-                            observer.observe(document.getElementsByTagName("html")[0], { attributes: true });
-                        }
+                            // Load the react app
+                            var script = document.createElement('script');
+                            script.src = this.responseURL + '/bundle.js';
+                            document.head.appendChild(script);
+                        };
+                        request.send();
+
                         </script>
                     </head>
-                    <body onload="start()">
-                        <iframe id="myframe" frameborder="0" style="border: 0px solid transparent;height:100%;width:100%;" src="" seamless></iframe>
+                    <body>
+                        <div id="root"></div>
                     </body>
                 </html>`;
     }

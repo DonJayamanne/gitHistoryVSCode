@@ -24,8 +24,6 @@ body {
 	font-family: var(--vscode-font-family);
 	height: 100%;
 	width: 100%;
-	margin: 0;
-	padding: 0;
 	overflow: hidden;
 	color: var(--vscode-editor-foreground)
 }
@@ -230,10 +228,18 @@ div.appRoot {
     overflow-x: hidden;
     display: inline-block;
 }
+.refs a.remove {
+	color: #ff6565;
+    border-left: 1px solid var(--vscode-editorGroup-border);
+    margin-left: 10px;
+    padding-left: 5px;
+    font-size: 140%;
+    line-height: 10px;
+}
 
-.commit-remote-container .refs span:first-of-type,
-.commit-tag-container .refs span:first-of-type,
-.commit-head-container .refs span:first-of-type {
+.commit-remote-container .refs span:first-child,
+.commit-tag-container .refs span:first-child,
+.commit-head-container .refs span:first-child {
     padding-right: 0.2em;
 }
 

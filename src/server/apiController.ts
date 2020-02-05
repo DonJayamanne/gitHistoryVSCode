@@ -5,9 +5,9 @@ import { IAvatarProvider } from '../adapter/avatar/types';
 import { GitOriginType } from '../adapter/repository/index';
 import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
-import { CommitDetails, FileCommitDetails } from '../common/types';
+import { CommitDetails, FileCommitDetails, BranchDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { Avatar, BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry } from '../types';
+import { Avatar, BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref } from '../types';
 import { IApiRouteHandler, IWorkspaceQueryStateStore } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -25,6 +25,7 @@ export class ApiController implements IApiRouteHandler {
         this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
         this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
         this.app.post('/action/:name?', this.handleRequest(this.doAction.bind(this)));
+        this.app.post('/actionref/:name?', this.handleRequest(this.doActionRef.bind(this)));
         this.app.get('/log/:hash', this.handleRequest(this.getCommit.bind(this)));
         this.app.post('/log/clearSelection', this.handleRequest(this.clearSelectedCommit.bind(this)));
         this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
@@ -231,6 +232,22 @@ export class ApiController implements IApiRouteHandler {
 
         await this.stateStore.clearLastHashCommit(id);
         response.send('');
+    }
+
+    public doActionRef = async (request: Request, response: Response) => {
+        response.status(200).send('');
+        const id: string = decodeURIComponent(request.query.id);
+        const workspaceFolder = this.getWorkspace(id);
+        const currentState = this.stateStore.getState(id)!;
+        const actionName = request.param('name');
+        //const value = decodeURIComponent(request.query.value);
+        const refEntry = request.body as Ref;
+
+        switch (actionName) {
+            case 'removeTag':
+                this.commandManager.executeCommand('git.commit.removeTag', new BranchDetails(workspaceFolder, currentState.branch!), refEntry.name);
+                break;
+        }
     }
 
     public doAction = async (request: Request, response: Response) => {

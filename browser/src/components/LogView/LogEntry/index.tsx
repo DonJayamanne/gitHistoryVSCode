@@ -11,83 +11,87 @@ import RemoteRef from '../Refs/Remote';
 import TagRef from '../Refs/Tag';
 import { GoGitCommit, GoClippy, GoPlus } from 'react-icons/lib/go';
 
-type ResultListPropsSentToComponent = {
+
+type ResultListProps = {
     logEntry: LogEntry;
+    selected?: LogEntry;
     onViewCommit(entry: LogEntry): void;
     onAction(entry: LogEntry, name: string): void;
+    onRefAction(ref: Ref, name: string): void;
 };
 
-type ResultListProps = ResultListPropsSentToComponent & {
-    selected: LogEntry;
-};
+class LogEntryView extends React.Component<ResultListProps, {}> {
+    constructor(props?: ResultListProps, context?: any) {
+        super(props, context);
+    }
 
-function renderRemoteRefs(refs: Ref[]) {
-    return refs
+    private renderRemoteRefs() {
+        return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.RemoteHead)
-        .map(ref => (<RemoteRef key={ref.name} {...ref} />));
-}
+        .map(ref => (<RemoteRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeRemote')} {...ref} />));
+    }
 
-function renderHeadRef(refs: Ref[]) {
-    return refs
+    private renderHeadRef() {
+        return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.Head)
         .map(ref => (<HeadRef key={ref.name} {...ref} />));
-}
+    }
 
-function renderTagRef(refs: Ref[]) {
-    return refs
+    private renderTagRef() {
+        return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.Tag)
-        .map(ref => (<TagRef key={ref.name} {...ref} />));
-}
+        .map(ref => (<TagRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeTag')} {...ref} />));
+    }
 
-// tslint:disable-next-line:function-name
-function LogEntry(props: ResultListProps) {
-    const isActive = props.selected && props.logEntry && props.selected.hash.full === props.logEntry.hash.full;
-    const cssClassName = `log-entry ${isActive ? 'active' : ''}`;
-    return (<div className={cssClassName}>
-        <div className='media right'>
-            <div className='media-image'>
-                <div className='ref'>
-                    {renderRemoteRefs(props.logEntry.refs)}
-                    {renderHeadRef(props.logEntry.refs)}
-                    {renderTagRef(props.logEntry.refs)}
-                </div>
-                <div className='buttons'>
-                    <div>
-                        <CopyToClipboard text={props.logEntry.hash.full}>
-                        <span className='btnx hash clipboard hint--left hint--rounded hint--bounce' aria-label="Copy hash to clipboard">
-                            {props.logEntry.hash.short}&nbsp;
-                            <GoClippy></GoClippy>
-                        </span>
-                        </CopyToClipboard>
-                        &nbsp;
-                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new tag'>
-                            <a role='button' onClick={() => props.onAction(props.logEntry, 'newtag')}>
-                            <GoPlus></GoPlus>Tag
-                            </a>
-                        </span>
-                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new branch from here'>
-                            <a role='button' onClick={() => props.onAction(props.logEntry, 'newbranch')}>
-                            <GoPlus></GoPlus>Branch
-                            </a>
-                        </span>
-                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
-                            <a role='button' onClick={() => props.onAction(props.logEntry, '')}>
-                                <GoGitCommit></GoGitCommit>More
-                            </a>
-                        </span>
+    public render() {
+        const isActive = this.props.logEntry && this.props.selected && this.props.selected.hash.full === this.props.logEntry.hash.full;
+        const cssClassName = `log-entry ${isActive ? 'active' : ''}`;
+        return (<div className={cssClassName}>
+            <div className='media right'>
+                <div className='media-image'>
+                    <div className='ref'>
+                        {this.renderRemoteRefs()}
+                        {this.renderHeadRef()}
+                        {this.renderTagRef()}
+                    </div>
+                    <div className='buttons'>
+                        <div>
+                            <CopyToClipboard text={this.props.logEntry.hash.full}>
+                            <span className='btnx hash clipboard hint--left hint--rounded hint--bounce' aria-label="Copy hash to clipboard">
+                                {this.props.logEntry.hash.short}&nbsp;
+                                <GoClippy></GoClippy>
+                            </span>
+                            </CopyToClipboard>
+                            &nbsp;
+                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new tag'>
+                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'newtag')}>
+                                <GoPlus></GoPlus>Tag
+                                </a>
+                            </span>
+                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new branch from here'>
+                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'newbranch')}>
+                                <GoPlus></GoPlus>Branch
+                                </a>
+                            </span>
+                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
+                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, '')}>
+                                    <GoGitCommit></GoGitCommit>More
+                                </a>
+                            </span>
+                        </div>
                     </div>
                 </div>
+                <div role='button' className='media-content' onClick={() => this.props.onViewCommit(this.props.logEntry)}>
+                    <div className='commit-subject' title={gitmojify(this.props.logEntry.subject)}>{gitmojify(this.props.logEntry.subject)}</div>
+                    <Avatar result={this.props.logEntry.author}></Avatar>
+                    <Author result={this.props.logEntry.author}></Author>
+                </div>
             </div>
-            <div role='button' className='media-content' onClick={() => props.onViewCommit(props.logEntry)}>
-                <div className='commit-subject' title={gitmojify(props.logEntry.subject)}>{gitmojify(props.logEntry.subject)}</div>
-                <Avatar result={props.logEntry.author}></Avatar>
-                <Author result={props.logEntry.author}></Author>
-            </div>
-        </div>
-    </div>);
+        </div>);
+    }
 }
 
-function mapStateToProps(state: RootState, wrapper: ResultListPropsSentToComponent): ResultListProps {
+function mapStateToProps(state: RootState, wrapper: ResultListProps): ResultListProps {
     return {
         ...wrapper,
         selected: state.logEntries.selected
@@ -96,4 +100,4 @@ function mapStateToProps(state: RootState, wrapper: ResultListPropsSentToCompone
 
 export default connect(
     mapStateToProps
-)(LogEntry);
+)(LogEntryView);

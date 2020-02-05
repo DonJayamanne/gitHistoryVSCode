@@ -73,9 +73,23 @@ export class ServerHost extends EventEmitter implements IServerHost {
         });
     }
     public rootRequestHandler(req: Request, res: Response) {
-        const styles: string = req.query.styles;
-        const theme: string = req.query.theme;
+        if (Object.keys(req.query).length <= 0) {
+            // This request is used to fetch the redirected url
+            res.status(200).send('The Git History server is running...');
+            return;
+        }
+
+        // DEVELOPER HINT: 
+        // The below is only necessary when opening from an external browser
+        const locale: string = 'en_US';
+        const settings = {
+            id: req.query.id,
+            branchName: req.query.branchName,
+            file: req.query.file,
+            branchSelection: req.query.branchSelection
+        };
+
         const config = workspace.getConfiguration('gitHistory');
-        res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), { styles, theme, config });
+        res.render(path.join(__dirname, '..', '..', 'browser', 'index.ejs'), { locale, config, settings });
     }
 }
