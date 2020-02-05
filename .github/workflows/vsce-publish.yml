@@ -16,8 +16,8 @@ jobs:
         node-version: '10.x'
     - run: npm install
     - run: npm install -g vsce
-    - name: vsce publish 
-      run: vsce publish -p "${{ secrets.VSCE_TOKEN }}"
+    - name: vsce package
+      run: vsce package
     - name: Upload to Release
       uses: actions/upload-release-asset@v1.0.1
       env:
@@ -27,3 +27,6 @@ jobs:
         asset_path: ${{ format('githistory-{0}.vsix', github.event.release.tag_name) }}
         asset_name: ${{ format('githistory-{0}.vsix', github.event.release.tag_name) }}
         asset_content_type: application/zip
+    - name: vsce publish 
+      run: vsce publish -p "${{ secrets.VSCE_TOKEN }}"
+      
