@@ -152,6 +152,12 @@ div.appRoot {
 	margin-left: .5em;
 }
 
+.log-entry .media-image > div.buttons svg {
+	font-size: 115%;
+	margin-right: .1em;
+	margin-top: -2px;
+}
+
 .log-entry .media-image > div.buttons .hash {
 	font-family: monospace;
 }

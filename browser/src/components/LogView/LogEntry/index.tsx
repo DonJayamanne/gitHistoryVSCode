@@ -9,7 +9,7 @@ import { gitmojify } from '../gitmojify';
 import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
 import TagRef from '../Refs/Tag';
-import { GoGitCommit, GoClippy, GoPlus } from 'react-icons/lib/go';
+import { GoGitCommit, GoClippy, GoPlus, GoFileSymlinkFile, GoFileSymlinkDirectory } from 'react-icons/lib/go';
 
 
 type ResultListProps = {
@@ -63,14 +63,24 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                             </span>
                             </CopyToClipboard>
                             &nbsp;
+                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Soft reset to this commit'>
+                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'reset_soft')}>
+                                    <GoFileSymlinkFile></GoFileSymlinkFile>Soft
+                                </a>
+                            </span>
+                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Hard reset to this commit'>
+                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'reset_hard')}>
+                                    <GoFileSymlinkDirectory></GoFileSymlinkDirectory>Hard
+                                </a>
+                            </span>
                             <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new tag'>
                                 <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'newtag')}>
-                                <GoPlus></GoPlus>Tag
+                                    <GoPlus></GoPlus>Tag
                                 </a>
                             </span>
                             <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new branch from here'>
                                 <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'newbranch')}>
-                                <GoPlus></GoPlus>Branch
+                                    <GoPlus></GoPlus>Branch
                                 </a>
                             </span>
                             <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>

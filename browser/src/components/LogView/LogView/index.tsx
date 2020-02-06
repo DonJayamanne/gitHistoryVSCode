@@ -70,10 +70,16 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     public onAction = (entry: LogEntry, name: string = '') => {
         switch (name) {
             case 'newtag':
-                this.dialog.showInput("Create a new tag on " + entry.hash.short, '<strong>' + entry.subject + '</strong><br />' + entry.author.name + ' on ' + entry.author.date.toISOString(), 'Enter tag here', {entry, name});
+                this.dialog.showInput(`Create a new tag on ${entry.hash.short}`, `<strong>${entry.subject}</strong><br />${entry.author.name} on ${entry.author.date.toISOString()}`, 'Enter tag here', {entry, name});
                 break;
             case 'newbranch':
-                this.dialog.showInput("Create a branch from " + entry.hash.short, '<strong>' + entry.subject + '</strong><br />' + entry.author.name + ' on ' + entry.author.date.toISOString(), 'Enter branch name here', {entry, name});
+                this.dialog.showInput(`Create a branch from ${entry.hash.short}`,`<strong>${entry.subject}</strong><br />${entry.author.name} on ${entry.author.date.toISOString()}`, 'Enter branch name here', {entry, name});
+                break;
+            case 'reset_soft':
+                this.dialog.showConfirm(`Reset to ${entry.hash.short}?`, `<p><strong>${entry.subject}</strong><br />${entry.author.name} on ${entry.author.date.toISOString()}</p><small>All affected files will be merged and kept in local workspace</small>`, {entry, name});
+                break;
+            case 'reset_hard':
+                this.dialog.showConfirm(`Reset hard to ${entry.hash.short}?`, `<p><strong>${entry.subject}</strong><br />${entry.author.name} on ${entry.author.date.toISOString()}</p><small style='color: red'>All affected files will be dropped</small>`, {entry, name});
                 break;
             default:
                 this.props.actionCommit(entry, name);
@@ -85,7 +91,11 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
         switch (args!.name) {
             case 'newbranch':
             case 'newtag':
-                this.props.actionCommit(args.entry, args.name, this.dialog.getValue());    
+                this.props.actionCommit(args.entry, args.name, this.dialog.getValue());
+                break;
+            case 'reset_soft':
+            case 'reset_hard':
+                this.props.actionCommit(args.entry, args.name);
                 break;
             case 'removeTag':
                 this.props.actionRef(args.ref, args.name);

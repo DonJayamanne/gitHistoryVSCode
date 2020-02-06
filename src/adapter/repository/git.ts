@@ -406,6 +406,10 @@ export class Git implements IGitService {
         await this.exec('cherry-pick', hash);
     }
 
+    public async reset(hash: string, hard: boolean = false) : Promise<void> {
+        await this.exec('reset', hard ? '--hard' : '--soft', hash);
+    }
+
     public async checkout(hash: string) : Promise<void> {
         await this.exec('checkout', hash);
     }

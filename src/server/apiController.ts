@@ -259,6 +259,8 @@ export class ApiController implements IApiRouteHandler {
         const value = decodeURIComponent(request.query.value);
         const logEntry = request.body as LogEntry;
 
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder, workspaceFolder);
+
         switch (actionName) {
             default:
                 this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(workspaceFolder, currentState.branch!, logEntry));
@@ -271,6 +273,12 @@ export class ApiController implements IApiRouteHandler {
                 break;
             case 'newbranch':
                 this.commandManager.executeCommand('git.commit.createBranch', new CommitDetails(workspaceFolder, currentState.branch!, logEntry), value);
+                break;
+            case 'reset_hard':
+                await gitService.reset(logEntry.hash.full, true);
+                break;
+            case 'reset_soft':
+                await gitService.reset(logEntry.hash.full);
                 break;
         }
     }

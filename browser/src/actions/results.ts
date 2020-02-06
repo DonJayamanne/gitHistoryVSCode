@@ -33,6 +33,8 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
         const url = getQueryUrl(state, `action/${name}`, [`value=${encodeURIComponent(value)}`]);
         return axios.post(url, logEntry).then(result => {
             switch (name) {
+                case 'reset_soft':
+                case 'reset_hard':
                 case 'newtag':
                     dispatch(refresh());
                     break;
