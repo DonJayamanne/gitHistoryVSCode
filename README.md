@@ -34,13 +34,11 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ![Image of Git Log](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/gitLogv3.gif)
 
-![Image of File History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/fileHistoryCommand.gif)
+![Image of File History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/fileHistoryCommandv3.gif)
 
-![Image of another instance of File History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/fileHistoryCommandMore.gif)
+![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommandv3.gif)
 
-![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommand.gif)
-
-![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/compare.gif)
+![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/compareCommits.gif)
 
 
 ## Source
