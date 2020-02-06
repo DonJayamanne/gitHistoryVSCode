@@ -50,7 +50,7 @@ export class ServerHost extends EventEmitter implements IServerHost {
 
         const rootDirectory = path.join(__dirname, '..', '..', 'browser');
         this.app.use(bodyParser.urlencoded({ extended: false }));
-        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.json({ limit: '2mb' }));
         this.app.use(express.static(rootDirectory));
         this.app.use(express.static(path.join(__dirname, '..', '..', '..', 'resources'), { extensions: ['.svg', 'svg', 'json', '.json'] }));
         this.app.use(cors());
