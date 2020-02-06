@@ -1,3 +1,7 @@
+## Version 0.4.17
+- Support for soft and hard reset in Git History view
+- Fixed issue request payload limit exceeded [#432](https://github.com/DonJayamanne/gitHistoryVSCode/issues/432)
+
 ## Version 0.4.16
 - Removed nested iframe causing keyboard focus issues [#433](https://github.com/DonJayamanne/gitHistoryVSCode/pull/433)
 - Corrected language setting using vscode display language (vscode.env.language)
