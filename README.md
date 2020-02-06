@@ -14,6 +14,9 @@
 * Miscellaneous features:
     * Github avatars
     * Cherry-picking commits
+    * Create Tag
+    * Create Branch
+    * Reset commit (soft and hard)
     * Reverting commits
     * Create branches from a commits
     * View commit information in a treeview (snapshot of all changes)
