@@ -174,6 +174,15 @@ export interface IGitServiceFactory {
     createGitService(resource?: Uri | string): Promise<IGitService>;
 }
 
+export interface ISettings {
+    selectedBranchType?: BranchSelection;
+    branchName?: string;
+    pageIndex?: number;
+    searchText?: string;
+    file?: string;
+    id?: string;
+}
+
 export enum CommitInfo {
     ParentFullHash,
     ParentShortHash,
