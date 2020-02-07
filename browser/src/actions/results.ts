@@ -137,7 +137,7 @@ export const selectBranch = (branchName: string) => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        state.logEntries.branch = state.settings.selectedBranchName = branchName;
+        state.logEntries.branch = state.settings.branchName = branchName;
         
         return fetchCommits(dispatch, state, 0, undefined, '', true);
     };
@@ -194,8 +194,8 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     if (typeof branchName === 'string') {
         queryParts.push(`branch=${encodeURIComponent(branchName)}`);
     }
-    if (store.settings.selectedBranchName) {
-        queryParts.push(`branch=${encodeURIComponent(store.settings.selectedBranchName)}`);
+    if (store.settings.branchName) {
+        queryParts.push(`branch=${encodeURIComponent(store.settings.branchName)}`);
     }
     if (store.settings.file) {
         queryParts.push(`file=${encodeURIComponent(store.settings.file)}`);
