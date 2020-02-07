@@ -158,7 +158,7 @@ export const refresh = () => {
         return fetchCommits(dispatch, state, undefined, undefined, undefined, true);
     };
 };
-export const getCommits = (id?: string) => {
+export const getCommits = () => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
