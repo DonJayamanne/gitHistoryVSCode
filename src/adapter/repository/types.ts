@@ -22,8 +22,6 @@ export interface IGitArgsService {
     getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[];
     getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[];
     getPreviousCommitHashForFileArgs(hash: string, file: string): string[];
-    // getCommittedFileArgs(hash1: string, file: FsUri | string): string[];
-    // getCommittedFileContentArgs(hash1: string, file: FsUri | string): string[];
 }
 
 export enum GitOriginType {

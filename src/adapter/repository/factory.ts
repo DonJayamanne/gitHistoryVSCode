@@ -61,7 +61,7 @@ export class GitServiceFactory implements IGitServiceFactory {
             // show repository picker
             if (this.repoIndex === -1) {
                 await this.repositoryPicker();
-            } else if(currentIndex !== this.repoIndex) {
+            } else if(currentIndex > -1 && currentIndex !== this.repoIndex) {
                 this.repoIndex = currentIndex;
             }
         }
