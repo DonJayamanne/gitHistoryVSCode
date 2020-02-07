@@ -175,8 +175,6 @@ export class ApiController implements IApiRouteHandler {
         const value = decodeURIComponent(request.query.value);
         const logEntry = request.body as LogEntry;
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(workspaceFolder, workspaceFolder);
-
         switch (actionName) {
             default:
                 this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
