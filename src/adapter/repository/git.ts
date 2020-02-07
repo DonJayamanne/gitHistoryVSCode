@@ -41,14 +41,20 @@ export class Git implements IGitService {
         const gitRootPath = this.repo.rootUri.fsPath;
         const localBranches = this.repo.state.refs.filter(x => x.type === 0);
 
-        return localBranches.map(x => {
+        return await Promise.all(localBranches.map(async x => {
             // tslint:disable-next-line:no-object-literal-type-assertion
+
+            let originUrl = await this.getOriginUrl(x.name);
+            let originType = await this.getOriginType(originUrl);
+
             return {
                 gitRoot: gitRootPath,
                 name: x.name,
+                remote: originUrl,
+                remoteType: originType,
                 current: currentBranchName === x.name
             } as Branch;
-        });
+        }));
     }
     public async getCurrentBranch(): Promise<string> {
         return this.repo.state.HEAD!.name || '';
@@ -89,9 +95,11 @@ export class Git implements IGitService {
             })
             .sort((a, b) => a.name > b.name ? 1 : -1);
     }
-    @cache('IGitService')
-    public async getOriginType(): Promise<GitOriginType | undefined> {
-        const url = await this.getOriginUrl();
+    
+    public async getOriginType(url?: string): Promise<GitOriginType | undefined> {
+        if (!url) {
+            url = await this.getOriginUrl();
+        }
 
         if (url.indexOf('github.com') > 0) {
             return GitOriginType.github;
@@ -102,10 +110,13 @@ export class Git implements IGitService {
         }
         return undefined;
     }
-    @cache('IGitService')
-    public async getOriginUrl(): Promise<string> {
-        const currentBranchName = await this.getCurrentBranch();
-        const branch = await this.repo.getBranch(currentBranchName);
+
+    public async getOriginUrl(branchName?: string): Promise<string> {
+        if (!branchName) {
+            branchName = await this.getCurrentBranch();
+        }
+        
+        const branch = await this.repo.getBranch(branchName);
 
         if (branch.upstream) {
             const remoteIndex = this.repo.state.remotes.findIndex(x => x.name === branch.upstream!.remote);

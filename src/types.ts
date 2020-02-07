@@ -36,6 +36,8 @@ export type Remote = {
 export type Branch = {
     gitRoot: string;
     name: string;
+    remote: string;
+    remoteType: GitOriginType | undefined;
     current: boolean;
 };
 
