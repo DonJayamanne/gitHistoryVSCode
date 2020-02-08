@@ -353,7 +353,7 @@
                 },
                 "gitHistory.logLevel": {
                     "type": "string",
-                    "default": "None",
+                    "default": "Info",
                     "enum": [
                         "None",
                         "Info",

@@ -4,11 +4,9 @@ import { ILogService } from './types';
 
 @injectable()
 export class Logger implements ILogService {
-    private _enabled: boolean = false;
+    private enabled: boolean = true;
+    private traceEnabled: boolean = false;
     private disposable: Disposable;
-    private get enabled(): boolean {
-        return this._enabled;
-    }
     constructor() {
         this.updateEnabledFlag();
         this.disposable = workspace.onDidChangeConfiguration(() => this.updateEnabledFlag());
@@ -26,9 +24,6 @@ export class Logger implements ILogService {
     }
     // tslint:disable-next-line:no-any
     public error(...args: any[]): void {
-        if (!this.enabled) {
-            return;
-        }
         // tslint:disable-next-line:no-console
         console.error(...args);
     }
@@ -37,11 +32,14 @@ export class Logger implements ILogService {
         if (!this.enabled) {
             return;
         }
+        if (!this.traceEnabled) {
+            return;
+        }
         console.warn(...args);
     }
     private updateEnabledFlag() {
         // tslint:disable-next-line:newline-per-chained-call
         const logLevel =  workspace.getConfiguration('gitHistory').get<string>('logLevel', 'None');
-        this._enabled = logLevel === 'Info' || logLevel === 'Debug';
+        this.traceEnabled = logLevel === 'Debug';
     }
 }
