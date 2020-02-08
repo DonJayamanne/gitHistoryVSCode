@@ -229,19 +229,13 @@ export class Git implements IGitService {
         const singleParent = parentHashes.trim().split(' ').filter(item => item.trim().length > 0).length === 1;
 
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
-        const numStartArgs = singleParent ? this.gitArgsService.getCommitWithNumStatArgs(hash) : this.gitArgsService.getCommitWithNumStatArgsForMerge(hash);
         const nameStatusArgs = singleParent ? this.gitArgsService.getCommitNameStatusArgs(hash) : this.gitArgsService.getCommitNameStatusArgsForMerge(hash);
 
-        const gitRootPathPromise = await this.getGitRoot();
-        const commitOutputPromise = await this.exec(...commitArgs);
-        const filesWithNumStatPromise = await this.exec(...numStartArgs);
-        const filesWithNameStatusPromise = await this.exec(...nameStatusArgs);
+        const gitRootPath = await this.getGitRoot();
+        const commitOutput = await this.exec(...commitArgs);
 
-        const values = await Promise.all([gitRootPathPromise, commitOutputPromise, filesWithNumStatPromise, filesWithNameStatusPromise]);
-        const gitRootPath = values[0];
-        const commitOutput = values[1];
-        const filesWithNumStat = values[2];
-        const filesWithNameStatus = values[3];
+        const filesWithNumStat = commitOutput.split("\n\n", 2)[1];
+        const filesWithNameStatus = await this.exec(...nameStatusArgs);
 
         const entries = commitOutput
             .split(LOG_ENTRY_SEPARATOR)
