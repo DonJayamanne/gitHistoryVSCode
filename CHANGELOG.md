@@ -5,6 +5,8 @@
 - Possible fix for [#381](https://github.com/DonJayamanne/gitHistoryVSCode/issues/381)
 - Possible fix for [#424](https://github.com/DonJayamanne/gitHistoryVSCode/issues/424)
 - Slightly amended ui and debug logging
+- Removed redundant call on getCommit while always using --first-parent argument (if necessary)
+- Fixed issue not showing status icon in commit details view
 
 PLEASE NOTE: It may be neccessary to select the correct repository from vscode source control before running "Git History"
 
