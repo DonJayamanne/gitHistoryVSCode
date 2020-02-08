@@ -1,3 +1,13 @@
+## Version 0.5.0
+- Replaced git commands with git extension api (1/2) [#410](https://github.com/DonJayamanne/gitHistoryVSCode/pull/410)
+- Fixed dialog button triggered twice when pressing enter key
+- Display external link to upstream (if available) in Git History view
+- Possible fix for [#381](https://github.com/DonJayamanne/gitHistoryVSCode/issues/381)
+- Possible fix for [#424](https://github.com/DonJayamanne/gitHistoryVSCode/issues/424)
+- Slightly amended ui and debug logging
+
+PLEASE NOTE: It may be neccessary to select the correct repository from vscode source control before running "Git History"
+
 ## Version 0.4.17
 - Support for soft and hard reset in Git History view
 - Fixed issue request payload limit exceeded [#432](https://github.com/DonJayamanne/gitHistoryVSCode/issues/432)
