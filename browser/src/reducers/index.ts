@@ -15,7 +15,7 @@ export type LogEntriesState = LogEntriesResponse & {
     isLoadingCommit: boolean;
 };
 
-export type BranchesState = { name: string; current: boolean }[];
+export type BranchesState = { name: string; current: boolean, remote: string, remoteType: number }[];
 export type AuthorsState = ActionedUser[];
 export type AvatarsState = Avatar[];
 export type RootState = {

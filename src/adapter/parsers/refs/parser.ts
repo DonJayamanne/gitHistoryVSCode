@@ -2,8 +2,6 @@ export * from './types';
 import { injectable, multiInject } from 'inversify';
 import { ILogService } from '../../../common/types';
 import { Ref } from '../../../types';
-// import { TYPES } from '../constants';
-// import * as TYPES from '../types';
 import { IRefsParser } from '../types';
 import { IRefParser } from './types';
 

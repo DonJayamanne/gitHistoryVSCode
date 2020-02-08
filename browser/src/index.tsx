@@ -28,6 +28,6 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-store.dispatch(ResultActions.getCommits(defaultSettings.id));
+store.dispatch(ResultActions.getCommits());
 store.dispatch(ResultActions.getBranches());
 store.dispatch(ResultActions.getAuthors());

@@ -30,7 +30,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     @command('git.commit.FileEntry.ViewFileContents', IGitFileHistoryCommandHandler)
     public async viewFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder, fileCommit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.logEntry.gitRoot);
         if (fileCommit.committedFile.status === Status.Deleted) {
             return this.applicationShell.showErrorMessage('File cannot be viewed as it was deleted').then(() => void 0);
         }
@@ -42,7 +42,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     @command('git.commit.FileEntry.CompareAgainstWorkspace', IGitFileHistoryCommandHandler)
     public async compareFileWithWorkspace(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder, fileCommit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.logEntry.gitRoot);
         if (fileCommit.committedFile.status === Status.Deleted) {
             return this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
         }
@@ -59,7 +59,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     @command('git.commit.FileEntry.CompareAgainstPrevious', IGitFileHistoryCommandHandler)
     public async compareFileWithPrevious(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder, fileCommit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.logEntry.gitRoot);
 
         if (fileCommit.committedFile.status === Status.Deleted) {
             return this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
@@ -84,7 +84,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     @command('git.commit.FileEntry.ViewPreviousFileContents', IGitFileHistoryCommandHandler)
     public async viewPreviousFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder, fileCommit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.logEntry.gitRoot);
 
         if (fileCommit.committedFile.status === Status.Added) {
             return this.applicationShell.showErrorMessage('Previous version of the file cannot be opened, as this is a new file').then(() => void 0);
@@ -99,7 +99,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
     }
     @command('git.commit.compare.file.compare', IGitFileHistoryCommandHandler)
     public async compareFileAcrossCommits(fileCommit: CompareFileCommitDetails): Promise<void> {
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder, fileCommit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.logEntry.gitRoot);
 
         if (fileCommit.committedFile.status === Status.Deleted) {
             return this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);

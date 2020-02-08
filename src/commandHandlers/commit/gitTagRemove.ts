@@ -23,7 +23,7 @@ export class GitTagRemoveCommandHandler implements IGitTagRemoveCommandHandler {
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(branch.workspaceFolder, branch.workspaceFolder);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(branch.workspaceFolder);
         gitService.removeTag(tagName).catch(async err => {
             this.applicationShell.showErrorMessage(err);
         });

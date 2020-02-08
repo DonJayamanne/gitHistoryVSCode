@@ -24,7 +24,7 @@ export class GitTagFromCommitCommandHandler implements IGitTagFromCommitCommandH
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder, commit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
         gitService.createTag(newTagName, commit.logEntry.hash.full)
             .catch(async err => {
                 this.applicationShell.showErrorMessage(err);

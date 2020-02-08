@@ -93,7 +93,7 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
      */
     private handleKeyDown(e: React.KeyboardEvent<any>) 
     {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !(e.currentTarget instanceof HTMLButtonElement)) {
             const buttonEl = ReactDOM.findDOMNode(this.buttonOk) as HTMLButtonElement;
             buttonEl.click();
         } else if (e.key === 'Escape') {

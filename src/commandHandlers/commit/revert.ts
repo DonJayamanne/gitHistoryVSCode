@@ -16,7 +16,7 @@ export class GitRevertCommandHandler implements IGitRevertCommandHandler {
     @command('git.commit.revert', IGitRevertCommandHandler)
     public async revertCommit(commit: CommitDetails, showPrompt: boolean = true) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder, commit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
 
         const msg = `Are you sure you want to revert this '${commit.logEntry.hash.short}' commit?`;
         const yesNo = showPrompt ? await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg }) : 'Yes';

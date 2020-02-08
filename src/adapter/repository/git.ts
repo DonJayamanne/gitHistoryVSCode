@@ -11,65 +11,20 @@ import { ActionedUser, Branch, CommittedFile, FsUri, Hash, IGitService, LogEntri
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
+import { Repository } from './git.d';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
 
 @injectable()
 export class Git implements IGitService {
-    private gitRootPath: string | undefined;
-    private knownGitRoots: Set<string>;
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        private workspaceRoot: string,
-        private resource: Uri,
+    constructor(private repo: Repository, @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
-        this.knownGitRoots = new Set<string>();
-    }
-    public getHashCode() {
-        return this.workspaceRoot;
     }
 
-    @cache('IGitService')
     public async getGitRoot(): Promise<string> {
-        if (this.gitRootPath) {
-            return this.gitRootPath;
-        }
-        const gitRootPath = await this.gitCmdExecutor.exec(this.resource.fsPath, ...this.gitArgsService.getGitRootArgs());
-        return this.gitRootPath = gitRootPath.split(/\r?\n/g)[0].trim();
-    }
-    @cache('IGitService', 5 * 60 * 1000)
-    public async getGitRoots(rootDirectory?: string): Promise<string[]> {
-        // Lets not enable support for sub modules for now.
-        if (rootDirectory && (this.knownGitRoots.has(rootDirectory) || this.knownGitRoots.has(Uri.file(rootDirectory).fsPath))) {
-            return [rootDirectory];
-        }
-        const rootDirectories: string[] = [];
-        if (rootDirectory) {
-            rootDirectories.push(rootDirectory);
-        } else {
-            const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
-            const workspaceFolders = Array.isArray(workspace.workspaceFolders) ? workspace.workspaceFolders.map(item => item.uri.fsPath) : [];
-            rootDirectories.push(...workspaceFolders);
-        }
-        if (rootDirectories.length === 0) {
-            return [];
-        }
-
-        // Instead of traversing the directory structure for the entire workspace, use the Git extension API to get all repo paths
-        const git = this.gitCmdExecutor.gitExtension.getAPI(1);
-        const sourceControlFolders: string[] = git.repositories.map(repo => repo.rootUri.path);
-        sourceControlFolders.sort();
-        // gitFoldersList should be an Array of Arrays
-        const gitFoldersList = [sourceControlFolders];
-        const gitRoots = new Set<string>();
-        gitFoldersList
-            .reduce<string[]>((aggregate, items) => { aggregate.push(...items); return aggregate; }, [])
-            .forEach(item => {
-                gitRoots.add(item);
-                this.knownGitRoots.add(item);
-            });
-        return Array.from(gitRoots.values());
+        return this.repo.rootUri.fsPath;
     }
     public async getGitRelativePath(file: Uri | FsUri) {
         if (!path.isAbsolute(file.fsPath)) {
@@ -78,16 +33,31 @@ export class Git implements IGitService {
         const gitRoot: string = await this.getGitRoot();
         return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
     }
-    @cache('IGitService', 10 * 1000)
-    public async getHeadHashes(): Promise<{ ref: string; hash: string }[]> {
-        const fullHashArgs = ['show-ref'];
-        const fullHashRefsOutput = await this.exec(...fullHashArgs);
-        return fullHashRefsOutput.split(/\r?\n/g)
-            .filter(line => line.length > 0)
-            .filter(line => line.indexOf('refs/heads/') > 0 || line.indexOf('refs/remotes/') > 0)
-            .map(line => line.trim().split(' '))
-            .filter(lineParts => lineParts.length > 1)
-            .map(hashAndRef => { return { ref: hashAndRef[1], hash: hashAndRef[0] }; });
+    public async getHeadHashes(): Promise<{ ref?: string; hash?: string }[]> {
+        return this.repo.state.refs.filter(x => x.type <= 1).map(x =>  { return { ref: x.name, hash: x.commit }; });
+    }
+    public async getBranches(): Promise<Branch[]> {
+        const currentBranchName = await this.getCurrentBranch();
+        const gitRootPath = this.repo.rootUri.fsPath;
+        const localBranches = this.repo.state.refs.filter(x => x.type === 0);
+
+        return await Promise.all(localBranches.map(async x => {
+            // tslint:disable-next-line:no-object-literal-type-assertion
+
+            let originUrl = await this.getOriginUrl(x.name);
+            let originType = await this.getOriginType(originUrl);
+
+            return {
+                gitRoot: gitRootPath,
+                name: x.name,
+                remote: originUrl,
+                remoteType: originType,
+                current: currentBranchName === x.name
+            } as Branch;
+        }));
+    }
+    public async getCurrentBranch(): Promise<string> {
+        return this.repo.state.HEAD!.name || '';
     }
 
     @cache('IGitService', 60 * 1000)
@@ -125,45 +95,11 @@ export class Git implements IGitService {
             })
             .sort((a, b) => a.name > b.name ? 1 : -1);
     }
-
-    // tslint:disable-next-line:no-suspicious-comment
-    // TODO: We need a way of clearing this cache, if a new branch is created.
-    @cache('IGitService', 30 * 1000)
-    public async getBranches(): Promise<Branch[]> {
-        const output = await this.exec('branch');
-        const gitRootPath = await this.getGitRoot();
-        return output.split(/\r?\n/g)
-            .filter(line => line.trim())
-            .filter(line => line.length > 0)
-            .map(line => {
-                const isCurrent = line.startsWith('*');
-                const name = isCurrent ? line.substring(1).trim() : line.trim();
-                return {
-                    gitRoot: gitRootPath,
-                    name,
-                    current: isCurrent
-                };
-            });
-    }
-    // tslint:disable-next-line:no-suspicious-comment
-    // TODO: We need a way of clearing this cache, if a new branch is created.
-    @cache('IGitService', 30 * 1000)
-    public async getCurrentBranch(): Promise<string> {
-        const args = this.gitArgsService.getCurrentBranchArgs();
-        const branch = await this.exec(...args);
-        return branch.split(/\r?\n/g)[0].trim();
-    }
-    @cache('IGitService')
-    public async getObjectHash(object: string): Promise<string> {
-        // Get the hash of the given ref
-        // E.g. git show --format=%H --shortstat remotes/origin/tyriar/xterm-v3
-        const args = this.gitArgsService.getObjectHashArgs(object);
-        const output = await this.exec(...args);
-        return output.split(/\r?\n/g)[0].trim();
-    }
-    @cache('IGitService')
-    public async getOriginType(): Promise<GitOriginType | undefined> {
-        const url = await this.getOriginUrl();
+    
+    public async getOriginType(url?: string): Promise<GitOriginType | undefined> {
+        if (!url) {
+            url = await this.getOriginUrl();
+        }
 
         if (url.indexOf('github.com') > 0) {
             return GitOriginType.github;
@@ -172,33 +108,26 @@ export class Git implements IGitService {
         } else if (url.indexOf('visualstudio') > 0) {
             return GitOriginType.vsts;
         }
-
         return undefined;
     }
-    @cache('IGitService')
-    public async getOriginUrl(): Promise<string> {
-        try {
-            const remoteName = await this.exec('status', '--porcelain=v1', '-b', '--untracked-files=no').then((branchDetails) => {
-                const matchResult = branchDetails.match(/.*\.\.\.(.*?)\//);
-                return matchResult && matchResult[1] ? matchResult[1] : 'origin';
-            });
 
-            const url = await this.exec('config', `remote.${remoteName}.url`);
-            return url.slice(0, url.length - 1);
-        } catch {
-            return '';
+    public async getOriginUrl(branchName?: string): Promise<string> {
+        if (!branchName) {
+            branchName = await this.getCurrentBranch();
         }
+        
+        const branch = await this.repo.getBranch(branchName);
+
+        if (branch.upstream) {
+            const remoteIndex = this.repo.state.remotes.findIndex(x => x.name === branch.upstream!.remote);
+            return this.repo.state.remotes[remoteIndex].fetchUrl || '';
+        }
+
+        return '';
     }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
-        const args = this.gitArgsService.getRefsContainingCommitArgs(hash);
-        const entries = await this.exec(...args);
-        return entries.split(/\r?\n/g)
-            .map(line => line.trim())
-            .filter(line => line.length > 0)
-            // Remove the '*' prefix from current branch
-            .map(line => line.startsWith('*') ? line.substring(1) : line)
-            // Remove the '->' from ref pointers (take first portion)
-            .map(ref => ref.indexOf(' ') ? ref.split(' ')[0].trim() : ref);
+        // tslint:disable-next-line:possible-timing-attack
+        return this.repo.state.refs.filter(x => x.commit === hash).map(x => x.name || '');
     }
     public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri, lineNumber?: number, author?: string): Promise<LogEntries> {
         if (pageSize <= 0) {
@@ -207,7 +136,7 @@ export class Git implements IGitService {
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
-        const args = await this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber, author);
+        const args = this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber, author);
 
         const gitRootPathPromise = this.getGitRoot();
         const outputPromise = this.exec(...args.logArgs);
@@ -242,7 +171,7 @@ export class Git implements IGitService {
         const headHashes = await this.getHeadHashes();
         const headHashesOnly = headHashes.map(item => item.hash);
         // tslint:disable-next-line:prefer-type-cast
-        const headHashMap = new Map<string, string>(headHashes.map(item => [item.ref, item.hash] as [string, string]));
+        //const headHashMap = new Map<string, string>(headHashes.map(item => [item.ref, item.hash] as [string, string]));
 
         items.forEach(async item => {
             item.gitRoot = gitRepoPath;
@@ -255,14 +184,14 @@ export class Git implements IGitService {
             if (!item.isLastCommit) {
                 return;
             }
-            const refsContainingThisCommit = await this.getRefsContainingCommit(item.hash.full);
+            /*const refsContainingThisCommit = await this.getRefsContainingCommit(item.hash.full);
             const hashesOfRefs = refsContainingThisCommit
                 .filter(ref => headHashMap.has(ref))
                 .map(ref => headHashMap.get(ref)!)
                 // tslint:disable-next-line:possible-timing-attack
                 .filter(hash => hash !== item.hash.full);
             // If we have hashes other than current, then yes it has been merged
-            item.isThisLastCommitMerged = hashesOfRefs.length > 0;
+            item.isThisLastCommitMerged = hashesOfRefs.length > 0;*/
         });
 
         // tslint:disable-next-line:no-suspicious-comment
@@ -277,15 +206,6 @@ export class Git implements IGitService {
             pageSize,
             searchText
         } as LogEntries;
-    }
-    @cache('IGitService')
-    public async getHash(hash: string): Promise<Hash> {
-        const hashes = await this.exec('show', '--format=%H-%h', '--no-patch', hash);
-        const parts = hashes.split(/\r?\n/g).filter(item => item.length > 0)[0].split('-');
-        return {
-            full: parts[0],
-            short: parts[1]
-        };
     }
     @cache('IGitService')
     public async getCommitDate(hash: string): Promise<Date | undefined> {
@@ -358,7 +278,9 @@ export class Git implements IGitService {
                     fsStream.end();
                     resolve(Uri.file(tmpFile));
                 } catch (ex) {
+                    // tslint:disable-next-line:no-console
                     console.error('Git History: failed to get file contents (again)');
+                    // tslint:disable-next-line:no-console
                     console.error(ex);
                     reject(ex);
                 }

@@ -39,8 +39,7 @@ import { registerTypes as registerPlatformTypes } from './platform/serviceRegist
 import { ContentProvider } from './server/contentProvider';
 import { HtmlViewer } from './server/htmlViewer';
 import { ServerHost } from './server/serverHost';
-import { StateStore } from './server/stateStore';
-import { IServerHost, IWorkspaceQueryStateStore } from './server/types';
+import { IServerHost } from './server/types';
 import { IGitServiceFactory, IOutputChannel } from './types';
 import { CommitFileViewerProvider } from './viewers/file/commitFileViewer';
 import { registerTypes as registerViewerTypes } from './viewers/serviceRegistry';
@@ -61,7 +60,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     cont.bind<ILogService>(ILogService).to(OutputPanelLogger).inSingletonScope(); // .whenTargetNamed('Viewer');
     cont.bind<IUiService>(IUiService).to(UiService).inSingletonScope();
     cont.bind<ICommitViewFormatter>(ICommitViewFormatter).to(CommitViewFormatter).inSingletonScope();
-    cont.bind<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore).to(StateStore).inSingletonScope();
     cont.bind<OutputChannel>(IOutputChannel).toConstantValue(getLogChannel());
     cont.bind<Memento>('globalMementoStore').toConstantValue(context.globalState);
     cont.bind<Memento>('workspaceMementoStore').toConstantValue(context.workspaceState);
@@ -77,8 +75,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     setServiceContainer(serviceContainer);
 
     const gitServiceFactory = serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
-    const workspaceQuerySessionStore = serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore);
-    serviceManager.addSingletonInstance(IServerHost, new ServerHost(gitServiceFactory, serviceContainer, workspaceQuerySessionStore));
+    serviceManager.addSingletonInstance(IServerHost, new ServerHost(gitServiceFactory, serviceContainer));
 
     // Register last.
     registerCommandTypes(serviceManager);

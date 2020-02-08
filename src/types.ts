@@ -36,6 +36,8 @@ export type Remote = {
 export type Branch = {
     gitRoot: string;
     name: string;
+    remote: string;
+    remoteType: GitOriginType | undefined;
     current: boolean;
 };
 
@@ -54,7 +56,6 @@ export type AvatarResponse = {
     items: Avatar[];
     timestamp: number;
 };
-
 export type Avatar = {
     login: string;
     name: string;
@@ -82,13 +83,15 @@ export type LogEntriesResponse = {
     file?: FsUri;
     branchSelection?: BranchSelection;
     selected?: LogEntry;
+    isLoading?: boolean;
+    isLoadingCommit?: boolean;
 };
 export type LogEntries = {
     items: LogEntry[];
     count: number;
-    isLoading: boolean;
-    isLoadingCommit: boolean;
     selected?: LogEntry;
+    isLoading?: boolean;
+    isLoadingCommit?: boolean;
 };
 export type LogEntry = {
     gitRoot: string;
@@ -132,14 +135,11 @@ export const IOutputChannel = Symbol('IOutputChannel');
 
 export interface IGitService {
     getGitRoot(): Promise<string>;
-    getGitRoots(rootDirectory?: string): Promise<string[]>;
     getGitRelativePath(file: FsUri): Promise<string>;
-    getHeadHashes(): Promise<{ ref: string; hash: string }[]>;
+    getHeadHashes(): Promise<{ ref?: string; hash?: string }[]>;
     getAuthors(): Promise<ActionedUser[]>;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
-    getObjectHash(object: string): Promise<string>;
-    getHash(hash: string): Promise<Hash>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
     getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri, lineNumber?: number, author?: string): Promise<LogEntries>;
     getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
@@ -170,7 +170,19 @@ export type CommitComparison = {
 export const IGitServiceFactory = Symbol('IGitServiceFactory');
 
 export interface IGitServiceFactory {
-    createGitService(workspaceRoot: string, resource?: Uri | string): Promise<IGitService>;
+    getIndex(): number;
+    getService(index: number): IGitService;
+    repositoryPicker(): Promise<void>;
+    createGitService(resource?: Uri | string): Promise<IGitService>;
+}
+
+export interface ISettings {
+    selectedBranchType?: BranchSelection;
+    branchName?: string;
+    pageIndex?: number;
+    searchText?: string;
+    file?: string;
+    id?: string;
 }
 
 export enum CommitInfo {

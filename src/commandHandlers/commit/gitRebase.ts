@@ -16,7 +16,7 @@ export class GitRebaseCommandHandler implements IGitRebaseCommandHandler {
     @command('git.commit.rebase', IGitRebaseCommandHandler)
     public async rebase(commit: CommitDetails, showPrompt: boolean = true) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder, commit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
         const currentBranch = await gitService.getCurrentBranch();
 
         const msg = `Rebase ${currentBranch} onto '${commit.logEntry.hash.short}'?`;

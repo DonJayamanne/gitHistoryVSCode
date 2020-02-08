@@ -38,7 +38,7 @@ class App extends React.Component<AppProps, AppState> {
         return (
             <div className='appRootParent'>
                 <div className='appRoot'>
-                    <Header></Header >
+                    <Header></Header>
                     <LogView logEntries={ this.props.logEntries }></LogView>
                     <Footer
                         canGoBack={ this.props.logEntries.pageIndex > 0 }

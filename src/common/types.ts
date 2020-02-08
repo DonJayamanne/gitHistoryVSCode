@@ -1,7 +1,7 @@
 // tslint:disable-next-line:max-classes-per-file
 // tslint:disable:max-classes-per-file
 
-import { Command, Uri } from 'vscode';
+import { Command } from 'vscode';
 import { BranchSelection, CommittedFile, LogEntry } from '../types';
 
 export const ILogService = Symbol('ILogService');
@@ -19,7 +19,6 @@ export const IUiService = Symbol('IUiService');
 
 export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
-    getWorkspaceFolder(uri?: Uri): Promise<{ workspaceFolder: string; gitRoot: string } | undefined>;
     selectFileCommitCommandAction(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined>;
     selectCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined>;
     newRefCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined>;

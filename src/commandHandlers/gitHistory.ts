@@ -1,14 +1,13 @@
 import { inject, injectable } from 'inversify';
-import * as md5 from 'md5';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IDisposableRegistry } from '../application/types/disposableRegistry';
-import { FileCommitDetails, IUiService } from '../common/types';
+import { FileCommitDetails } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { FileNode } from '../nodes/types';
-import { IServerHost, IWorkspaceQueryStateStore } from '../server/types';
+import { IServerHost } from '../server/types';
 import { BranchSelection, IGitServiceFactory } from '../types';
 import { command } from './registration';
 import { IGitHistoryCommandHandler } from './types';
@@ -70,26 +69,14 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
     }
 
     public async viewHistory(fileUri?: Uri, lineNumber?: number): Promise<void> {
-        const uiService = this.serviceContainer.get<IUiService>(IUiService);
-        const selection = await uiService.getWorkspaceFolder(fileUri);
-        if (!selection) {
-            return undefined;
-        }
-        const workspaceFolder = selection.workspaceFolder;
-        const gitRoot = selection.gitRoot;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory)
-                                                      .createGitService(workspaceFolder, gitRoot);
-        const branchNamePromise = gitService.getCurrentBranch();
-        const startupInfoPromise = this.server.start(workspaceFolder);
-        const gitRootsUnderWorkspacePromise = gitService.getGitRoots(workspaceFolder);
+        const gitServiceFactory = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
 
-        const [branchName, startupInfo, gitRootsUnderWorkspace] = await Promise.all([branchNamePromise, startupInfoPromise,  gitRootsUnderWorkspacePromise]);
+        const gitService = await gitServiceFactory.createGitService(fileUri);
+        const branchName = await gitService.getCurrentBranch();
+        const gitRoot = await gitService.getGitRoot();
+        const startupInfo = await this.server.start();
 
-        // Do not include the search string into this
-        const fullId = `${startupInfo.port}:${BranchSelection.Current}:${fileUri ? fileUri.fsPath : ''}:${gitRoot}`;
-        const id = md5(fullId); //Date.now().toString();
-        await this.serviceContainer.get<IWorkspaceQueryStateStore>(IWorkspaceQueryStateStore)
-                                   .initialize(id, workspaceFolder, gitRoot, branchName, BranchSelection.Current, '', fileUri, lineNumber);
+        const id = gitServiceFactory.getIndex();
 
         const queryArgs = [
             `id=${id}`,
@@ -102,10 +89,13 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         
         const uri = `${previewUri}?${queryArgs.join('&')}`;
 
-        const repoName = gitRootsUnderWorkspace.length > 1 ? ` (${path.basename(gitRoot)})` : '';
-        let title = fileUri ? `File History (${path.basename(fileUri.fsPath)})` : `Git History ${repoName}`;
-        if (fileUri && typeof lineNumber === 'number') {
-            title = `Line History (${path.basename(fileUri.fsPath)}#${lineNumber})`;
+        let title = `Git History (${path.basename(gitRoot)})`;
+
+        if (fileUri) {
+            title = `File History (${path.basename(fileUri.fsPath)})`;
+            if (typeof lineNumber === 'number') {
+                title = `Line History (${path.basename(fileUri.fsPath)}#${lineNumber})`;
+            }
         }
 
         this.commandManager.executeCommand('previewHtml', uri, ViewColumn.One, title);
