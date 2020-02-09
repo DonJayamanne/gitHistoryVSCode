@@ -143,7 +143,6 @@ export interface IGitService {
     getRefsContainingCommit(hash: string): Promise<string[]>;
     getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri, lineNumber?: number, author?: string): Promise<LogEntries>;
     getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
-    getCommitDate(hash: string): Promise<Date | undefined>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
     revertCommit(hash: string): Promise<void>;
     getCommitFile(hash: string, file: FsUri | string): Promise<FsUri>;

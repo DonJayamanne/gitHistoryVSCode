@@ -8,9 +8,6 @@ import { GitLogArgs, IGitArgsService } from './types';
 export class GitArgsService implements IGitArgsService {
     constructor(private isWindows: boolean = /^win/.test(process.platform)) {}
 
-    public getCommitDateArgs(hash: string) {
-        return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.CommitterDateUnixTime)}`, hash];
-    }
     public getCommitArgs(hash: string): string[] {
         return ['show', LOG_FORMAT, '--decorate=full', '--numstat', hash];
     }

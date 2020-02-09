@@ -206,21 +206,7 @@ export class Git implements IGitService {
             searchText
         } as LogEntries;
     }
-    @cache('IGitService')
-    public async getCommitDate(hash: string): Promise<Date | undefined> {
-        const args = this.gitArgsService.getCommitDateArgs(hash);
-        const output = await this.exec(...args);
-        const lines = output.split(/\r?\n/g).map(line => line.trim()).filter(line => line.length > 0);
-        if (lines.length === 0) {
-            return;
-        }
-
-        const unixTime = parseInt(lines[0], 10);
-        if (isNaN(unixTime) || unixTime <= 0) {
-            return;
-        }
-        return new Date(unixTime * 1000);
-    }
+    
     @cache('IGitService')
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
         //const parentHashesArgs = this.gitArgsService.getCommitParentHashesArgs(hash);
