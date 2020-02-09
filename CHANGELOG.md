@@ -7,8 +7,9 @@
 - Slightly amended ui and debug logging
 - Removed redundant call on getCommit while always using --first-parent argument (if necessary)
 - Fixed issue not showing status icon in commit details view
+- Removed some unused git related methods
 
-PLEASE NOTE: It may be neccessary to select the correct repository from vscode source control before running "Git History"
+PLEASE NOTE: It may be necessary to select the correct repository from vscode source control before running "Git History"
 
 ## Version 0.4.17
 - Support for soft and hard reset in Git History view
