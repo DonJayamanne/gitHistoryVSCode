@@ -1,7 +1,6 @@
 import * as fs from 'fs-extra';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
-import { Writable } from 'stream';
 import * as tmp from 'tmp';
 import { Uri } from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
@@ -253,23 +252,22 @@ export class Git implements IGitService {
 
     @cache('IGitService')
     public async getCommitFile(hash: string, file: Uri | string): Promise<Uri> {
-        const gitRootPath = await this.getGitRoot();
+        //const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.fsPath.toString();
+
+        const content = await this.repo.show(hash, filePath);
 
         return new Promise<Uri>((resolve, reject) => {
             tmp.file({ postfix: path.extname(filePath) }, async (err: Error, tmpPath: string) => {
                 if (err) {
                     return reject(err);
                 }
+
                 try {
-                    // Sometimes the damn file is in use, lets create a new one everytime.
                     const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`).replace(/\\/g, '/');
                     const tmpFile = path.join(tmpFilePath, path.basename(filePath));
                     await fs.ensureDir(tmpFilePath);
-                    const relativeFilePath = path.relative(gitRootPath, filePath);
-                    const fsStream = fs.createWriteStream(tmpFile);
-                    await this.execBinary(fsStream, 'show', `${hash}:${relativeFilePath.replace(/\\/g, '/')}`);
-                    fsStream.end();
+                    await fs.writeFile(tmpFile, content);
                     resolve(Uri.file(tmpFile));
                 } catch (ex) {
                     // tslint:disable-next-line:no-console
@@ -347,10 +345,6 @@ export class Git implements IGitService {
     private async exec(...args: string[]): Promise<string> {
         const gitRootPath = await this.getGitRoot();
         return this.gitCmdExecutor.exec(gitRootPath, ...args);
-    }
-    private async execBinary(destination: Writable, ...args: string[]): Promise<void> {
-        const gitRootPath = await this.getGitRoot();
-        return this.gitCmdExecutor.exec({ cwd: gitRootPath, encoding: 'binary' }, destination, ...args);
     }
 
     // how to check if a commit has been merged into any other branch
