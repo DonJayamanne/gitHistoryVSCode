@@ -147,7 +147,6 @@ export interface IGitService {
     getCommit(hash: string): Promise<LogEntry | undefined>;
     revertCommit(hash: string): Promise<void>;
     getCommitFile(hash: string, file: FsUri | string): Promise<FsUri>;
-    getCommitFileContent(hash: string, file: FsUri | string): Promise<string>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
     cherryPick(hash: string): Promise<void>;
     reset(hash: string, hard?: boolean): Promise<void>;

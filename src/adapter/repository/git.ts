@@ -281,12 +281,7 @@ export class Git implements IGitService {
             });
         });
     }
-    public async getCommitFileContent(hash: string, file: Uri | string): Promise<string> {
-        const gitRootPath = await this.getGitRoot();
-        const filePath = typeof file === 'string' ? file : file.fsPath.toString();
-        const relativeFilePath = path.relative(gitRootPath, filePath);
-        return this.exec('show', `${hash}:${relativeFilePath.replace(/\\/g, '/')}`);
-    }
+
     @cache('IGitService')
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
         const numStartArgs = this.gitArgsService.getDiffCommitWithNumStatArgs(hash1, hash2);

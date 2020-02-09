@@ -15,18 +15,11 @@ import { ICommandManager } from './application/types/commandManager';
 import { IDisposableRegistry } from './application/types/disposableRegistry';
 import { registerTypes as registerCommandFactoryTypes } from './commandFactories/serviceRegistry';
 import { registerTypes as registerCommandTypes } from './commandHandlers/serviceRegistry';
-// import * as fileHistory from './commands/fileHistory';
-// import * as lineHistory from './commands/lineHistory';
-// import { CommandRegister } from './commands/register';
-// import * as searchHistory from './commands/searchHistory';
-// import * as commitComparer from './commitCompare/main';
-// import * as commitViewer from './commitViewer/main';
-// import * as logViewer from './logViewer/logViewer';
 import { Logger } from './common/log';
 import { ILogService, IUiService } from './common/types';
 import { OutputPanelLogger } from './common/uiLogger';
 import { UiService } from './common/uiService';
-import { gitHistoryFileViewerSchema, gitHistorySchema } from './constants';
+import { gitHistorySchema } from './constants';
 import { CommitViewFormatter } from './formatters/commitFormatter';
 import { ICommitViewFormatter } from './formatters/types';
 import { ServiceContainer } from './ioc/container';
@@ -41,7 +34,6 @@ import { HtmlViewer } from './server/htmlViewer';
 import { ServerHost } from './server/serverHost';
 import { IServerHost } from './server/types';
 import { IGitServiceFactory, IOutputChannel } from './types';
-import { CommitFileViewerProvider } from './viewers/file/commitFileViewer';
 import { registerTypes as registerViewerTypes } from './viewers/serviceRegistry';
 
 let cont: Container;
@@ -81,9 +73,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     registerCommandTypes(serviceManager);
 
     let disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, new ContentProvider(serviceContainer));
-    context.subscriptions.push(disposable);
-
-    disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistoryFileViewerSchema, new CommitFileViewerProvider(serviceContainer));
     context.subscriptions.push(disposable);
     context.subscriptions.push(serviceManager.get<IDisposableRegistry>(IDisposableRegistry));
 
