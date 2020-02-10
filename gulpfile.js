@@ -18,7 +18,7 @@ const gitmodified = require('gulp-gitmodified');
 const path = require('path');
 const debounce = require('debounce');
 const jeditor = require("gulp-json-editor");
-const del = require('del');
+const fs = require('fs-extra');
 const codecov = require('gulp-codecov');
 
 /**
@@ -69,9 +69,9 @@ gulp.task('clean', ['output:clean', 'cover:clean'], () => { });
 
 gulp.task('cover:upload', () => gulp.src('./coverage/lcov.info').pipe(codecov()));
 
-gulp.task('output:clean', () => del('coverage'));
+gulp.task('output:clean', () => fs.remove('coverage'));
 
-gulp.task('cover:clean', () => del('coverage'));
+gulp.task('cover:clean', () => fs.remove('coverage'));
 
 gulp.task('cover:enable', () => {
     return gulp.src("./coverconfig.json")
