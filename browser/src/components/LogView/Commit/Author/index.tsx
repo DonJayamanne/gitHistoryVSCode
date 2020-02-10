@@ -2,15 +2,23 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { ActionedDetails } from '../../../../definitions';
 import { RootState } from '../../../../reducers/index';
+import * as ResultActions from '../../../../actions/results';
+import { FaFilter } from 'react-icons/lib/fa';
 
 type AuthorProps = {
     result: ActionedDetails;
     locale: string;
+    selectAuthor(author: string): void;
 };
 
 // tslint:disable-next-line:function-name
 function Author(props: AuthorProps) {
     return (<div className='commit-author'>
+        <span role='button' style={{fontSize: '130%'}} className='btnx hint--right hint--rounded hint--bounce' aria-label='Filter by author'>
+            <a role='button' onClick={() => props.selectAuthor(props.result.name)}>
+                <FaFilter></FaFilter>
+            </a>
+        </span>
         <span className='name hint--right hint--rounded hint--bounce' aria-label={props.result.email}>{props.result.name}</span>
         <span className='timestamp'> on {formatDateTime(props.locale, props.result.date)}</span>
     </div>);
@@ -37,6 +45,13 @@ function mapStateToProps(state: RootState, wrapper: { result: ActionedDetails })
     };
 }
 
+function mapDispatchToProps(dispatch) {
+    return {
+        selectAuthor: (text: string) => dispatch(ResultActions.selectAuthor(text))
+    };
+}
+
 export default connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Author);

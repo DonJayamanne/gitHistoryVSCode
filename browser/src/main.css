@@ -554,6 +554,10 @@ a.file-name {
 	color: var(--vscode-input-foreground);
 }
 
+.dropdown-menu>li.divider {
+	background-color: #888888;
+}
+
 .btn {
     color: var(--vscode-input-foreground);
 	background: var(--vscode-input-background);

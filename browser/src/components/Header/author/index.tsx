@@ -17,20 +17,52 @@ interface AuthorState {
     author?: string;
     lineHistory: boolean;
     authors?: AuthorsState;
+    searchText?: string;
 }
 
 export class Author extends React.Component<AuthorProps, AuthorState> {
+    private searchField: HTMLInputElement;
     constructor(props: AuthorProps) {
         super(props);
         this.state = { isLoading: props.isLoading, author: props.author, authors: props.authors, lineHistory: props.lineHistory };
+        this.searchField = null;
     }
     public componentWillReceiveProps(nextProps: AuthorProps): void {
         this.setState({ isLoading: nextProps.isLoading, author: nextProps.author, authors: nextProps.authors, lineHistory: nextProps.lineHistory });
     }
     private onSelect = (branch: string) => {
-        const selectedBranch = branch === '[ALL]' ? '' : branch;
+        const selectedAuthor = branch === '[ALL]' ? '' : branch;
         this.setState({ isLoading: this.state.isLoading });
-        this.props.selectAuthor(selectedBranch.trim());
+        this.props.selectAuthor(selectedAuthor.trim());
+    }
+    private onClick = (e: React.MouseEvent<any, MouseEvent>) => {
+        if (e.currentTarget.getAttribute('aria-expanded') === 'false') {
+            setTimeout(() => { 
+                this.searchField.select();
+                this.searchField.focus();
+            }, 300);
+        }
+    }
+    
+    private getAuthorList() {
+        let authors = Array.isArray(this.props.authors) ? this.props.authors : [];
+        const selectedAuthor = !this.props.author || this.props.author === '' ? '[ALL]' : this.props.author;
+
+        if (this.state.searchText) {
+            authors = authors.filter(x => x.name.toLowerCase().indexOf( this.state.searchText.toLowerCase() ) !== -1);
+        }
+
+        return authors.map(author => {
+            if (author.name === selectedAuthor) {
+                return <MenuItem key={author.name} active eventKey={author.name}>{author.name}</MenuItem>;
+            } else {
+                return <MenuItem key={author.name} eventKey={author.name}>{author.name}</MenuItem>;
+            }
+        });
+    }
+
+    private handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ searchText: e.target.value });
     }
 
     // tslint:disable-next-line:member-ordering
@@ -40,27 +72,20 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
         }
         
         const title = !this.props.author || this.props.author === '' ? 'All Authors' : this.props.author;
-        const selectedAuthor = !this.props.author || this.props.author === '' ? '[ALL]' : this.props.author;
-        const authors = Array.isArray(this.props.authors) ? this.props.authors : [];
-        const authorList = authors.map(author => {
-            if (author.name === selectedAuthor) {
-                return <MenuItem key={author.name} active eventKey={author.name}>{author.name}</MenuItem>;
-            } else {
-                return <MenuItem key={author.name} eventKey={author.name}>{author.name}</MenuItem>;
-            }
-        });
 
         return (<DropdownButton
             bsStyle='primary'
             bsSize='small'
             title={title}
-            key={selectedAuthor}
             onSelect={(e) => this.onSelect(e)}
+            onClick={(e => this.onClick(e))}
             id='authorSelection'
         >
             <MenuItem eventKey='[ALL]'>All Authors</MenuItem>
             <MenuItem divider />
-            {authorList}
+            <input ref={x => this.searchField = x} type="text" className='textInput' placeholder="Search.." id="myInput" value={this.state.searchText}  onChange={this.handleSearchChange} />
+            <MenuItem divider />
+            {this.getAuthorList()}
         </DropdownButton>);
     }
 }

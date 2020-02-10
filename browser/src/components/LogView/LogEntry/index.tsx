@@ -91,8 +91,8 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                         </div>
                     </div>
                 </div>
-                <div role='button' className='media-content' onClick={() => this.props.onViewCommit(this.props.logEntry)}>
-                    <div className='commit-subject' title={gitmojify(this.props.logEntry.subject)}>{gitmojify(this.props.logEntry.subject)}</div>
+                <div role='button' className='media-content'>
+                    <div className='commit-subject' onClick={() => this.props.onViewCommit(this.props.logEntry)} title={gitmojify(this.props.logEntry.subject)}>{gitmojify(this.props.logEntry.subject)}</div>
                     <Avatar result={this.props.logEntry.author}></Avatar>
                     <Author result={this.props.logEntry.author}></Author>
                 </div>
