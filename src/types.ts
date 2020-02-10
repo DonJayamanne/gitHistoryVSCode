@@ -153,6 +153,7 @@ export interface IGitService {
     createBranch(branchName: string, hash: string): Promise<void>;
     createTag(tagName: string, hash: string): Promise<void>;
     removeTag(tagName: string): Promise<void>;
+    removeBranch(tagName: string): Promise<void>;
     getOriginType(): Promise<GitOriginType | undefined>;
     getOriginUrl(): Promise<string>;
     merge(hash: string): Promise<void>;

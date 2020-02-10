@@ -322,6 +322,9 @@ export class Git implements IGitService {
     public async removeTag(tagName: string) {
         await this.exec('tag', '-d', tagName);
     }
+    public async removeBranch(branchName: string) {
+        await this.exec('branch', '-D', branchName);
+    }
     public async merge(hash: string): Promise<void> {
         await this.exec('merge', hash);
     }

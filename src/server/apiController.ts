@@ -160,6 +160,9 @@ export class ApiController implements IApiRouteHandler {
             case 'removeTag':
                 this.commandManager.executeCommand('git.commit.removeTag', new BranchDetails(gitRoot, branch), refEntry.name);
                 break;
+            case 'removeBranch':
+                this.commandManager.executeCommand('git.commit.removeBranch', new BranchDetails(gitRoot, branch), refEntry.name);
+                break;
         }
     }
 

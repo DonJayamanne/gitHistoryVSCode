@@ -34,7 +34,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
     private renderHeadRef() {
         return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.Head)
-        .map(ref => (<HeadRef key={ref.name} {...ref} />));
+        .map(ref => (<HeadRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeBranch')} {...ref} />));
     }
 
     private renderTagRef() {

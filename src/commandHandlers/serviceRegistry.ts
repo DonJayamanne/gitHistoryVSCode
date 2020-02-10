@@ -5,6 +5,7 @@ import { GitCompareCommitViewExplorerCommandHandler } from './commit/compareView
 import { GitBranchFromCommitCommandHandler } from './commit/gitBranchFromCommit';
 import { GitTagFromCommitCommandHandler } from './commit/gitTagFromCommit';
 import { GitTagRemoveCommandHandler } from './commit/gitTagRemove';
+import { GitBranchRemoveCommandHandler } from './commit/gitBranchRemove';
 import { GitCheckoutCommandHandler } from './commit/gitCheckout';
 import { GitCherryPickCommandHandler } from './commit/gitCherryPick';
 import { GitCommitCommandHandler } from './commit/gitCommit';
@@ -17,13 +18,14 @@ import { GitCompareFileCommitCommandHandler } from './fileCommit/fileCompare';
 import { GitFileHistoryCommandHandler } from './fileCommit/fileHistory';
 import { GitHistoryCommandHandler } from './gitHistory';
 import { CommandHandlerManager } from './handlerManager';
-import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitBranchFromCommitCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler, IGitTagFromCommitCommandHandler, IGitTagRemoveCommandHandler } from './types';
+import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitBranchFromCommitCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler, IGitTagFromCommitCommandHandler, IGitTagRemoveCommandHandler, IGitBranchRemoveCommandHandler } from './types';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler, GitFileHistoryCommandHandler);
     serviceManager.addSingleton<IGitBranchFromCommitCommandHandler>(IGitBranchFromCommitCommandHandler, GitBranchFromCommitCommandHandler);
     serviceManager.addSingleton<IGitTagFromCommitCommandHandler>(IGitTagFromCommitCommandHandler, GitTagFromCommitCommandHandler);
     serviceManager.addSingleton<IGitTagRemoveCommandHandler>(IGitTagRemoveCommandHandler, GitTagRemoveCommandHandler);
+    serviceManager.addSingleton<IGitBranchRemoveCommandHandler>(IGitBranchRemoveCommandHandler, GitBranchRemoveCommandHandler);
     serviceManager.addSingleton<IGitHistoryCommandHandler>(IGitHistoryCommandHandler, GitHistoryCommandHandler);
     serviceManager.addSingleton<IGitCommitCommandHandler>(IGitCommitCommandHandler, GitCommitCommandHandler);
     serviceManager.addSingleton<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler, GitCommitViewDetailsCommandHandler);

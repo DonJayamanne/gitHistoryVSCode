@@ -64,7 +64,14 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     }
 
     public onRefAction = (ref: Ref, name: string) => {
-        this.dialog.showConfirm(`Remove tag ${ref.name}?`, `Do you really want to remove the tag ${ref.name}?`, {ref, name});
+        switch (name) {
+            case 'removeTag':
+                this.dialog.showConfirm(`Remove tag ${ref.name}?`, `Do you really want to remove the tag ${ref.name}?`, {ref, name});
+                break;
+            case 'removeBranch':
+                this.dialog.showConfirm(`Remove branch ${ref.name}?`, `Do you really want to remove the branch ${ref.name}?`, {ref, name});
+                break;
+        }
     }
 
     public onAction = (entry: LogEntry, name: string = '') => {
@@ -97,6 +104,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
             case 'reset_hard':
                 this.props.actionCommit(args.entry, args.name);
                 break;
+            case 'removeBranch':
             case 'removeTag':
                 this.props.actionRef(args.ref, args.name);
                 break;

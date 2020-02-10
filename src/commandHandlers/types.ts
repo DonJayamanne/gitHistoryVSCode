@@ -100,6 +100,12 @@ export interface IGitTagRemoveCommandHandler extends ICommandHandler {
     removeTagFromCommit(commit: CommitDetails): void;
 }
 
+export const IGitBranchRemoveCommandHandler = Symbol('IGitBranchRemoveCommandHandler');
+export interface IGitBranchRemoveCommandHandler extends ICommandHandler {
+    removeBranchFromCommit(commit: CommitDetails): void;
+}
+
+
 export const IGitCompareCommandHandler = Symbol('IGitCompareCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCompareCommandHandler extends ICommandHandler {
