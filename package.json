@@ -2,7 +2,7 @@
     "name": "githistory",
     "displayName": "Git History",
     "description": "View git log, file history, compare branches or commits",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "publisher": "donjayamanne",
     "author": {
         "name": "Don Jayamanne",
@@ -422,7 +422,6 @@
         "react-bootstrap": "^0.31.5",
         "react-copy-to-clipboard": "^5.0.1",
         "react-dom": "^16.0.0",
-        "react-hot-loader": "^3.1.1",
         "react-icons": "^2.2.7",
         "react-redux": "^5.0.6",
         "re-resizable": "6.1.1",
