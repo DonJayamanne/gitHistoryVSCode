@@ -399,6 +399,7 @@
         "@types/react-router-redux": "^4.0.51",
         "@types/redux-actions": "^2.2.2",
         "@types/react-bootstrap": "^0.32.20",
+        "@types/node-emoji": "^1.8.1",
         "awesome-typescript-loader": "5.2.1",
         "chai": "^4.1.2",
         "copy-webpack-plugin": "^4.0.1",
@@ -445,7 +446,8 @@
         "webpack": "4.41.2",
         "webpack-cli": "^3.3.10",
         "hint.css": "^2.4.1",
-        "bootstrap": "^3.4.1"
+        "bootstrap": "^3.4.1",
+        "node-emoji": "1.10.0"
     },
     "dependencies": {
         "axios": "^0.19.0",
