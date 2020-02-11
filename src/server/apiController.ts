@@ -4,6 +4,7 @@ import { Uri } from 'vscode';
 import { IAvatarProvider } from '../adapter/avatar/types';
 import { GitOriginType } from '../adapter/repository/index';
 import { ICommandManager } from '../application/types/commandManager';
+import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails, BranchDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { Avatar, BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref } from '../types';
@@ -13,13 +14,14 @@ import { IApiRouteHandler } from './types';
 
 @injectable()
 export class ApiController implements IApiRouteHandler {
-    //private readonly commitViewer: IGitCommitViewDetailsCommandHandler;
+    private readonly commitViewer: IGitCommitViewDetailsCommandHandler;
     constructor(private app: Express,
         private gitServiceFactory: IGitServiceFactory,
         private serviceContainer: IServiceContainer,
         private commandManager: ICommandManager) {
 
-        //this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
+        this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
+
         this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
         this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
         this.app.post('/action/:name?', this.handleRequest(this.doAction.bind(this)));
@@ -102,14 +104,20 @@ export class ApiController implements IApiRouteHandler {
             .then(data => response.send(data))
             .catch(err => response.status(500).send(err));
     }
+
     public getCommit = async (request: Request, response: Response) => {
         const id: string = decodeURIComponent(request.query.id);
         const hash: string = request.params.hash;
 
         const gitService = await this.getRepository(id);
+        const gitRoot = await gitService.getGitRoot();
+        const branch = await gitService.getCurrentBranch();
         
         try {
             let commitPromise = await gitService.getCommit(hash);
+
+            this.commitViewer.viewCommitTree(new CommitDetails(gitRoot, branch, commitPromise as LogEntry));	
+
             response.send(commitPromise);
         } catch (err) {
             response.status(500).send(err);
