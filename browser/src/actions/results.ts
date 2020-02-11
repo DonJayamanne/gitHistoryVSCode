@@ -242,7 +242,7 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
                 fixDates(result.data);
             }
             dispatch(updateCommit(result.data));
-            fetchAvatars(dispatch, () => store);
+            //fetchAvatars(dispatch, () => store);
         })
         .catch(err => {
             // tslint:disable-next-line:no-debugger
