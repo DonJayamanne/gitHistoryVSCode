@@ -1,6 +1,7 @@
-## VErsion 0.5.1
+## Version 0.5.1
 - Added filter support in branches and authors dropdown [#384](https://github.com/DonJayamanne/gitHistoryVSCode/pull/384)
 - Support for deletion of branches in GUI [#348](https://github.com/DonJayamanne/gitHistoryVSCode/pull/348)
+- Replaced gemoji submodule with node-emoji npm package
 
 ## Version 0.5.0
 - Replaced git commands with git extension api (1/2) [#410](https://github.com/DonJayamanne/gitHistoryVSCode/pull/410)
