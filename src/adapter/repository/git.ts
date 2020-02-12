@@ -325,6 +325,13 @@ export class Git implements IGitService {
     public async removeBranch(branchName: string) {
         await this.exec('branch', '-D', branchName);
     }
+    public async removeRemoteBranch(remoteBranchName: string) {
+        const pathes = remoteBranchName.split('/');
+        const remote = pathes.shift() as string;
+        const branchName = pathes.join('/');
+
+        await this.repo.push(remote, ':' + branchName);
+    }
     public async merge(hash: string): Promise<void> {
         await this.exec('merge', hash);
     }

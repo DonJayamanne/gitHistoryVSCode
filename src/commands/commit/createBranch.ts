@@ -1,9 +1,9 @@
-import { IGitBranchFromCommitCommandHandler } from '../../commandHandlers/types';
+import { IGitCommitCommandHandler } from '../../commandHandlers/types';
 import { CommitDetails } from '../../common/types';
 import { BaseCommitCommand } from '../baseCommitCommand';
 
 export class CreateBranchCommand extends BaseCommitCommand {
-    constructor(commit: CommitDetails, private handler: IGitBranchFromCommitCommandHandler) {
+    constructor(commit: CommitDetails, private handler: IGitCommitCommandHandler) {
         super(commit);
         // const committer = `${commit.logEntry.author!.name} <${commit.logEntry.author!.email}> on ${commit.logEntry.author!.date!.toLocaleString()}`;
         // this.setTitle(`$(git-branch) Branch from here ${commit.logEntry.hash.short} (${committer})`);

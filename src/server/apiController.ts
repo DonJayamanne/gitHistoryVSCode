@@ -153,7 +153,6 @@ export class ApiController implements IApiRouteHandler {
     }
     
     public doActionRef = async (request: Request, response: Response) => {
-        response.status(200).send('');
         const id: string = decodeURIComponent(request.query.id);
 
         const gitService = await this.getRepository(id);
@@ -166,12 +165,17 @@ export class ApiController implements IApiRouteHandler {
         
         switch (actionName) {
             case 'removeTag':
-                this.commandManager.executeCommand('git.commit.removeTag', new BranchDetails(gitRoot, branch), refEntry.name);
+                await this.commandManager.executeCommand('git.commit.removeTag', new BranchDetails(gitRoot, branch), refEntry.name);
                 break;
             case 'removeBranch':
-                this.commandManager.executeCommand('git.commit.removeBranch', new BranchDetails(gitRoot, branch), refEntry.name);
+                await this.commandManager.executeCommand('git.commit.removeBranch', new BranchDetails(gitRoot, branch), refEntry.name);
+                break;
+            case 'removeRemote':
+                await this.commandManager.executeCommand('git.commit.removeRemote', new BranchDetails(gitRoot, branch), refEntry.name);
                 break;
         }
+        
+        response.status(200).send('');
     }
 
     public doAction = async (request: Request, response: Response) => {

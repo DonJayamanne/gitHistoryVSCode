@@ -45,7 +45,19 @@ export const IGitCommitCommandHandler = Symbol('IGitCommitCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCommitCommandHandler extends ICommandHandler {
     doSomethingWithCommit(commit: CommitDetails): Promise<void>;
+    doNewRef(commit: CommitDetails): Promise<void>;
+    createTagFromCommit(commit: CommitDetails, newTagName?: string): Promise<void>;
+    createBranchFromCommit(commit: CommitDetails, newBranchName?: string): Promise<void>;
+    onCommitSelected(commit: CommitDetails): Promise<void>;
 }
+
+export const IGitRefCommandHandler = Symbol('IGitRefCommandHandler');
+// tslint:disable-next-line:no-empty-interface
+export interface IGitRefCommandHandler extends ICommandHandler {
+    
+}
+
+
 
 export const IGitCommitViewDetailsCommandHandler = Symbol('IGitCommitViewDetailsCommandHandler');
 // tslint:disable-next-line:no-empty-interface
@@ -81,30 +93,6 @@ export const IGitRevertCommandHandler = Symbol('IGitRevertCommandHandler');
 export interface IGitRevertCommandHandler extends ICommandHandler {
     revertCommit(commit: CommitDetails, showPrompt?: boolean): Promise<void>;
 }
-
-export const IGitBranchFromCommitCommandHandler = Symbol('IGitBranchFromCommitCommandHandler');
-// tslint:disable-next-line:no-empty-interface
-export interface IGitBranchFromCommitCommandHandler extends ICommandHandler {
-    createBranchFromCommit(commit: CommitDetails): void;
-}
-
-export const IGitTagFromCommitCommandHandler = Symbol('IGitTagFromCommitCommandHandler');
-
-// tslint:disable-next-line:no-empty-interface
-export interface IGitTagFromCommitCommandHandler extends ICommandHandler {
-    createTagFromCommit(commit: CommitDetails): void;
-}
-
-export const IGitTagRemoveCommandHandler = Symbol('IGitTagRemoveCommandHandler');
-export interface IGitTagRemoveCommandHandler extends ICommandHandler {
-    removeTagFromCommit(commit: CommitDetails): void;
-}
-
-export const IGitBranchRemoveCommandHandler = Symbol('IGitBranchRemoveCommandHandler');
-export interface IGitBranchRemoveCommandHandler extends ICommandHandler {
-    removeBranchFromCommit(commit: CommitDetails): void;
-}
-
 
 export const IGitCompareCommandHandler = Symbol('IGitCompareCommandHandler');
 // tslint:disable-next-line:no-empty-interface

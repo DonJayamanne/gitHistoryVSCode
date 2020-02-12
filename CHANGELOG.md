@@ -1,6 +1,7 @@
 ## Version 0.5.1
 - Added filter support in branches and authors dropdown [#384](https://github.com/DonJayamanne/gitHistoryVSCode/pull/384)
 - Support for deletion of branches in GUI [#348](https://github.com/DonJayamanne/gitHistoryVSCode/pull/348)
+- Support for deletion of remote branches in GUI
 - Replaced gemoji submodule with node-emoji npm package
 - Fixed [#435](https://github.com/DonJayamanne/gitHistoryVSCode/pull/435)
 

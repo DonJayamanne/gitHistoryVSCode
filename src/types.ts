@@ -154,6 +154,7 @@ export interface IGitService {
     createTag(tagName: string, hash: string): Promise<void>;
     removeTag(tagName: string): Promise<void>;
     removeBranch(tagName: string): Promise<void>;
+    removeRemoteBranch(remoteBranchName: string): Promise<void>;
     getOriginType(): Promise<GitOriginType | undefined>;
     getOriginUrl(): Promise<string>;
     merge(hash: string): Promise<void>;

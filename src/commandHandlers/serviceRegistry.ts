@@ -2,12 +2,9 @@ import { IServiceManager } from '../ioc/types';
 import { GitCommitViewExplorerCommandHandler } from './commit/commitViewExplorer';
 import { GitCompareCommitCommandHandler } from './commit/compare';
 import { GitCompareCommitViewExplorerCommandHandler } from './commit/compareViewExplorer';
-import { GitBranchFromCommitCommandHandler } from './commit/gitBranchFromCommit';
-import { GitTagFromCommitCommandHandler } from './commit/gitTagFromCommit';
-import { GitTagRemoveCommandHandler } from './commit/gitTagRemove';
-import { GitBranchRemoveCommandHandler } from './commit/gitBranchRemove';
 import { GitCheckoutCommandHandler } from './commit/gitCheckout';
 import { GitCherryPickCommandHandler } from './commit/gitCherryPick';
+import { GitRefCommandHandler } from './ref/gitRef';
 import { GitCommitCommandHandler } from './commit/gitCommit';
 import { GitCommitViewDetailsCommandHandler } from './commit/gitCommitDetails';
 import { GitMergeCommandHandler } from './commit/gitMerge';
@@ -18,16 +15,13 @@ import { GitCompareFileCommitCommandHandler } from './fileCommit/fileCompare';
 import { GitFileHistoryCommandHandler } from './fileCommit/fileHistory';
 import { GitHistoryCommandHandler } from './gitHistory';
 import { CommandHandlerManager } from './handlerManager';
-import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitBranchFromCommitCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler, IGitTagFromCommitCommandHandler, IGitTagRemoveCommandHandler, IGitBranchRemoveCommandHandler } from './types';
+import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitRefCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from './types';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler, GitFileHistoryCommandHandler);
-    serviceManager.addSingleton<IGitBranchFromCommitCommandHandler>(IGitBranchFromCommitCommandHandler, GitBranchFromCommitCommandHandler);
-    serviceManager.addSingleton<IGitTagFromCommitCommandHandler>(IGitTagFromCommitCommandHandler, GitTagFromCommitCommandHandler);
-    serviceManager.addSingleton<IGitTagRemoveCommandHandler>(IGitTagRemoveCommandHandler, GitTagRemoveCommandHandler);
-    serviceManager.addSingleton<IGitBranchRemoveCommandHandler>(IGitBranchRemoveCommandHandler, GitBranchRemoveCommandHandler);
     serviceManager.addSingleton<IGitHistoryCommandHandler>(IGitHistoryCommandHandler, GitHistoryCommandHandler);
     serviceManager.addSingleton<IGitCommitCommandHandler>(IGitCommitCommandHandler, GitCommitCommandHandler);
+    serviceManager.addSingleton<IGitRefCommandHandler>(IGitRefCommandHandler, GitRefCommandHandler);
     serviceManager.addSingleton<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler, GitCommitViewDetailsCommandHandler);
     serviceManager.addSingleton<IGitCherryPickCommandHandler>(IGitCherryPickCommandHandler, GitCherryPickCommandHandler);
     serviceManager.addSingleton<IGitCheckoutCommandHandler>(IGitCheckoutCommandHandler, GitCheckoutCommandHandler);
@@ -40,7 +34,7 @@ export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitRebaseCommandHandler>(IGitRebaseCommandHandler, GitRebaseCommandHandler);
     serviceManager.addSingleton<IGitRevertCommandHandler>(IGitRevertCommandHandler, GitRevertCommandHandler);
 
-    [IGitFileHistoryCommandHandler, IGitBranchFromCommitCommandHandler, IGitHistoryCommandHandler,
+    [IGitFileHistoryCommandHandler,  IGitHistoryCommandHandler,
         IGitCommitCommandHandler, IGitCherryPickCommandHandler, IGitCompareFileCommandHandler,
         IGitCommitViewExplorerCommandHandler, IGitCompareCommitViewExplorerCommandHandler,
         IFileCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler,

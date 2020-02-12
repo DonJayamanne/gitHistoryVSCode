@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { IGitBranchFromCommitCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler, IGitTagFromCommitCommandHandler } from '../commandHandlers/types';
+import { IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler, IGitCommitCommandHandler } from '../commandHandlers/types';
 import { CheckoutCommand } from '../commands/commit/checkout';
 import { CherryPickCommand } from '../commands/commit/cherryPick';
 import { CompareCommand } from '../commands/commit/compare';
@@ -15,8 +15,7 @@ import { ICommitCommandFactory } from './types';
 
 @injectable()
 export class CommitCommandFactory implements ICommitCommandFactory {
-    constructor( @inject(IGitBranchFromCommitCommandHandler) private branchCreationCommandHandler: IGitBranchFromCommitCommandHandler,
-        @inject(IGitTagFromCommitCommandHandler) private tagCreationCommandHandler: IGitTagFromCommitCommandHandler,
+    constructor( @inject(IGitCommitCommandHandler) private commitCommandHandler: IGitCommitCommandHandler,
         @inject(IGitCherryPickCommandHandler) private cherryPickHandler: IGitCherryPickCommandHandler,
         @inject(IGitCheckoutCommandHandler) private checkoutHandler: IGitCheckoutCommandHandler,
         @inject(IGitCompareCommandHandler) private compareHandler: IGitCompareCommandHandler,
@@ -47,8 +46,8 @@ export class CommitCommandFactory implements ICommitCommandFactory {
 
     public async createNewCommands(commit: CommitDetails): Promise<ICommand<CommitDetails>[]> {
         const commands: ICommand<CommitDetails>[] = [
-            new CreateBranchCommand(commit, this.branchCreationCommandHandler),
-            new CreateTagCommand(commit, this.tagCreationCommandHandler)
+            new CreateBranchCommand(commit, this.commitCommandHandler),
+            new CreateTagCommand(commit, this.commitCommandHandler)
         ];
 
         return (await Promise.all(commands.map(async cmd => {
