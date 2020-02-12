@@ -14,7 +14,7 @@ type AuthorProps = {
 // tslint:disable-next-line:function-name
 function Author(props: AuthorProps) {
     return (<div className='commit-author'>
-        <span role='button' style={{fontSize: '130%'}} className='btnx hint--right hint--rounded hint--bounce' aria-label='Filter by author'>
+        <span role='button' style={{fontSize: '130%', marginRight: '0.2em'}} className='btnx hint--right hint--rounded hint--bounce' aria-label='Filter by author'>
             <a role='button' onClick={() => props.selectAuthor(props.result.name)}>
                 <FaFilter></FaFilter>
             </a>

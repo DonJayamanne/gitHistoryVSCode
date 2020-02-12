@@ -18,7 +18,7 @@ export class GravatarAvatarProvider extends BaseAvatarProvider implements IAvata
             return {
                 login: user.name,
                 url: '',
-                avatarUrl: gravatar.url(user.email),
+                avatarUrl: gravatar.url(user.email, { protocol: 'https' }),
                 name: user.name,
                 email: user.email
             };
