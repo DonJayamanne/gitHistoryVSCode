@@ -56,13 +56,16 @@ export class GitServiceFactory implements IGitServiceFactory {
         const resourceUri = typeof resource === 'string' ? Uri.file(resource) : resource;
 
         if (!resourceUri) {
-            const currentIndex = this.gitApi.repositories.findIndex(x => x.ui.selected);
-
-            // show repository picker
-            if (this.repoIndex === -1) {
-                await this.repositoryPicker();
-            } else if(currentIndex > -1 && currentIndex !== this.repoIndex) {
-                this.repoIndex = currentIndex;
+            if (this.repoIndex === -1 && this.gitApi.repositories.length === 1) {
+                this.repoIndex = 0;
+            } else {
+                const currentIndex = this.gitApi.repositories.findIndex(x => x.ui.selected);
+                // show repository picker
+                if (this.repoIndex === -1) {
+                    await this.repositoryPicker();
+                } else if(currentIndex > -1 && currentIndex !== this.repoIndex) {
+                    this.repoIndex = currentIndex;
+                }
             }
         }
 
