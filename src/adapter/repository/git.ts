@@ -173,7 +173,6 @@ export class Git implements IGitService {
         //const headHashMap = new Map<string, string>(headHashes.map(item => [item.ref, item.hash] as [string, string]));
 
         items.forEach(async item => {
-            item.gitRoot = gitRepoPath;
             // Check if this the very last commit of a branch
             // Just check if this is a head commit (if shows up in 'git show-ref')
             item.isLastCommit = headHashesOnly.indexOf(item.hash.full) >= 0;

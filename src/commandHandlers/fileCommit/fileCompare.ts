@@ -33,7 +33,7 @@ export class GitCompareFileCommitCommandHandler implements IGitCompareFileComman
             return;
         }
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
         const fileDiffs = await gitService.getDifferences(this.selectedCommit.logEntry.hash.full, fileCommit.logEntry.hash.full);
         await this.commandManager.executeCommand('git.commit.diff.view', this.selectedCommit!, fileCommit, fileDiffs);
     }

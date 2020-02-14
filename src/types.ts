@@ -76,12 +76,7 @@ export type LogEntriesResponse = {
     count: number;
     pageIndex?: number;
     pageSize?: number;
-    branch?: string;
     lineNumber?: number;
-    author?: string;
-    searchText?: string;
-    file?: FsUri;
-    branchSelection?: BranchSelection;
     selected?: LogEntry;
     isLoading?: boolean;
     isLoadingCommit?: boolean;
@@ -94,7 +89,6 @@ export type LogEntries = {
     isLoadingCommit?: boolean;
 };
 export type LogEntry = {
-    gitRoot: string;
     author?: ActionedDetails;
     committer?: ActionedDetails;
     parents: Hash[];
@@ -179,6 +173,7 @@ export interface IGitServiceFactory {
 export interface ISettings {
     selectedBranchType?: BranchSelection;
     branchName?: string;
+    authorFilter?: string;
     pageIndex?: number;
     searchText?: string;
     file?: string;

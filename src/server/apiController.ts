@@ -7,7 +7,7 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails, BranchDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { Avatar, BranchSelection, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref } from '../types';
+import { Avatar, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref } from '../types';
 import { IApiRouteHandler } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -55,8 +55,6 @@ export class ApiController implements IApiRouteHandler {
         const filePath: string | undefined = request.query.file;
         let file = filePath ? Uri.file(filePath) : undefined;
 
-        let branchSelection = request.query.pageSize ? parseInt(request.query.branchSelection, 10) as BranchSelection : undefined;
-
         let promise: Promise<LogEntries>;
             
         // @ts-ignore
@@ -67,13 +65,8 @@ export class ApiController implements IApiRouteHandler {
                 // @ts-ignore
                 const entriesResponse: LogEntriesResponse = {
                     ...data,
-                    branch,
-                    author,
-                    branchSelection,
-                    file,
                     pageIndex,
                     pageSize,
-                    searchText,
                     selected: undefined
                 };
                 return entriesResponse;

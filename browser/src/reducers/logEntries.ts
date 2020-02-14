@@ -14,8 +14,6 @@ export default handleActions<LogEntriesState, any>({
             ...action.payload!,
             selected: action.payload ? action.payload.selected : undefined,
             isLoading: false,
-            searchText: action.payload ? action.payload.searchText : undefined,
-            author: action.payload ? action.payload.author : undefined
         };
     },
 
@@ -35,10 +33,6 @@ export default handleActions<LogEntriesState, any>({
 
     [Actions.IS_FETCHING_COMMIT]: (state, action) => {
         return { ...state, isLoadingCommit: true } as LogEntriesState;
-    },
-
-    [Actions.CLEAR_RESULTS]: (state, action) => {
-        return { ...state, items: [], count: 0, pageIndex: 0, isLoading: false } as LogEntriesState;
     },
 
     [Actions.SELECT_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {

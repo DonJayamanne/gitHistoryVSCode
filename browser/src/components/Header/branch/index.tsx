@@ -86,8 +86,8 @@ export class Branch extends React.Component<BranchProps, BranchState> {
 }
 
 function mapStateToProps(state: RootState): BranchState {
-    const branch = (state && state.logEntries.branch) ?
-        state.logEntries.branch : '';
+    const branch = (state && state.settings.branchName) ?
+        state.settings.branchName : '';
     const branches = (state && state.branches) ?
         state.branches : [];
     const isLoading = state && state.logEntries && state.logEntries.isLoading;

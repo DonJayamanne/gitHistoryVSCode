@@ -32,7 +32,7 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
         gitService.createTag(newTagName, commit.logEntry.hash.full)
             .catch(async err => {
                 this.applicationShell.showErrorMessage(err);
@@ -50,7 +50,7 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
         gitService.createBranch(newBranchName, commit.logEntry.hash.full)
             .catch(async err => {
                 const currentBranchName = await gitService.getCurrentBranch();

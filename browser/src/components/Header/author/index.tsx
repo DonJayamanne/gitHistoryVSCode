@@ -91,8 +91,8 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
 }
 
 function mapStateToProps(state: RootState): AuthorState {
-    const author = (state && state.logEntries.author) ?
-        state.logEntries.author : '';
+    const author = (state && state.settings.authorFilter) ?
+        state.settings.authorFilter : '';
     const authors = (state && state.authors) ?
         state.authors : [];
     const isLoading = state && state.logEntries && state.logEntries.isLoading;
