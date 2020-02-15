@@ -1,3 +1,6 @@
+## Version 0.5.3
+- Fixed commit details not correctly parsed when message has several line breaks [#435](https://github.com/DonJayamanne/gitHistoryVSCode/issues/435)
+
 ## Version 0.5.2
 - Fixed gravatar picture not loading due to missing protocol [#436](https://github.com/DonJayamanne/gitHistoryVSCode/issues/436)
 - Fixed repository selector when only one repo exist [#436](https://github.com/DonJayamanne/gitHistoryVSCode/issues/436)
