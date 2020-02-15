@@ -1,5 +1,6 @@
 ## Version 0.5.3
 - Fixed commit details not correctly parsed when message has several line breaks [#435](https://github.com/DonJayamanne/gitHistoryVSCode/issues/435)
+- Reduced `bundle.js` file size again by replacing FaFilter with GoEye from react-icons [#439](https://github.com/DonJayamanne/gitHistoryVSCode/issues/439)
 
 ## Version 0.5.2
 - Fixed gravatar picture not loading due to missing protocol [#436](https://github.com/DonJayamanne/gitHistoryVSCode/issues/436)
