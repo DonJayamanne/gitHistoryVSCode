@@ -7,7 +7,7 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails, BranchDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { Avatar, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref } from '../types';
+import { Avatar, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref, RefType } from '../types';
 import { IApiRouteHandler } from './types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
@@ -153,7 +153,7 @@ export class ApiController implements IApiRouteHandler {
         const branch = await gitService.getCurrentBranch();
 
         const actionName = request.param('name');
-        //const value = decodeURIComponent(request.query.value);
+        //const hash = decodeURIComponent(request.query.hash);
         const refEntry = request.body as Ref;
         
         switch (actionName) {
@@ -167,12 +167,11 @@ export class ApiController implements IApiRouteHandler {
                 await this.commandManager.executeCommand('git.commit.removeRemote', new BranchDetails(gitRoot, branch), refEntry.name);
                 break;
         }
-        
+
         response.status(200).send('');
     }
 
     public doAction = async (request: Request, response: Response) => {
-        response.status(200).send('');
         const id: string = decodeURIComponent(request.query.id);
 
         const gitService = await this.getRepository(id);
@@ -183,25 +182,29 @@ export class ApiController implements IApiRouteHandler {
         const value = decodeURIComponent(request.query.value);
         const logEntry = request.body as LogEntry;
 
-        switch (actionName) {
-            default:
-                this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
-                break;
-            case 'new':
-                this.commandManager.executeCommand('git.commit.doNewRef', new CommitDetails(gitRoot, branch, logEntry));
-                break;
-            case 'newtag':
-                this.commandManager.executeCommand('git.commit.createTag', new CommitDetails(gitRoot, branch, logEntry), value);
-                break;
-            case 'newbranch':
-                this.commandManager.executeCommand('git.commit.createBranch', new CommitDetails(gitRoot, branch, logEntry), value);
-                break;
-            case 'reset_hard':
-                await gitService.reset(logEntry.hash.full, true);
-                break;
-            case 'reset_soft':
-                await gitService.reset(logEntry.hash.full);
-                break;
+        try {
+            switch (actionName) {
+                default:
+                    await this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
+                    break;
+                case 'newtag':
+                    await this.commandManager.executeCommand('git.commit.createTag', new CommitDetails(gitRoot, branch, logEntry), value);
+                    logEntry.refs.push({ type: RefType.Tag, name: value });
+                    break;
+                case 'newbranch':
+                    await this.commandManager.executeCommand('git.commit.createBranch', new CommitDetails(gitRoot, branch, logEntry), value);
+                    logEntry.refs.push({ type: RefType.Head, name: value });
+                    break;
+                case 'reset_hard':
+                    await gitService.reset(logEntry.hash.full, true);
+                    break;
+                case 'reset_soft':
+                    await gitService.reset(logEntry.hash.full);
+                    break;
+            }
+            response.status(200).send(logEntry);
+        } catch(err) {
+            response.status(500).send(err);
         }
     }
 

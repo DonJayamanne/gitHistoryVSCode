@@ -17,7 +17,7 @@ type ResultListProps = {
     selected?: LogEntry;
     onViewCommit(entry: LogEntry): void;
     onAction(entry: LogEntry, name: string): void;
-    onRefAction(ref: Ref, name: string): void;
+    onRefAction(logEntry: LogEntry, ref: Ref, name: string): void;
 };
 
 class LogEntryView extends React.Component<ResultListProps, {}> {
@@ -28,19 +28,19 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
     private renderRemoteRefs() {
         return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.RemoteHead)
-        .map(ref => (<RemoteRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeRemote')} {...ref} />));
+        .map(ref => (<RemoteRef key={ref.name} onRemove={() => this.props.onRefAction(this.props.logEntry, ref, 'removeRemote')} {...ref} />));
     }
 
     private renderHeadRef() {
         return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.Head)
-        .map(ref => (<HeadRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeBranch')} {...ref} />));
+        .map(ref => (<HeadRef key={ref.name} onRemove={() => this.props.onRefAction(this.props.logEntry, ref, 'removeBranch')} {...ref} />));
     }
 
     private renderTagRef() {
         return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.Tag)
-        .map(ref => (<TagRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeTag')} {...ref} />));
+        .map(ref => (<TagRef key={ref.name} onRemove={() => this.props.onRefAction(this.props.logEntry, ref, 'removeTag')} {...ref} />));
     }
 
     public render() {

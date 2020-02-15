@@ -9,6 +9,7 @@ import { BranchesState, RootState } from '../reducers';
 export const addResult = createAction<any>(Actions.ADD_RESULT);
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
 export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
+export const updateCommitInList = createAction<LogEntry>(Actions.UPDATE_COMMIT_IN_LIST);
 export const updateSettings = createAction(Actions.UPDATE_SETTINGS);
 export const updateBranchList = createAction<BranchesState>(Actions.FETCHED_BRANCHES);
 export const clearCommitSelection = createAction(Actions.CLEAR_SELECTED_COMMIT);
@@ -34,25 +35,32 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
             switch (name) {
                 case 'reset_soft':
                 case 'reset_hard':
-                case 'newtag':
                     dispatch(refresh());
                     break;
+                case 'newtag':
+                    dispatch(updateCommitInList(result.data as LogEntry));
+                    break;
                 case 'newbranch':
+                    dispatch(updateCommitInList(result.data as LogEntry));
                     dispatch(getBranches());
-                    dispatch(refresh());
                     break;
             }
         });
     };
 };
 
-export const actionRef = (ref: Ref, name: string = '') => {
+export const actionRef = (logEntry: LogEntry, ref: Ref, name: string = '') => {
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
         const state = getState();
-        const url = getQueryUrl(state, `actionref/${name}`);
+        const url = getQueryUrl(state, `actionref/${name}`, [`hash=${encodeURIComponent(logEntry.hash.full)}`]);
         return axios.post(url, ref).then(result => {
-            dispatch(refresh());
+            const index = logEntry.refs.indexOf(ref);
+            if (index > -1) {
+                logEntry.refs.splice(index, 1);
+            }
+
+            dispatch(updateCommitInList(logEntry));
         });
     };
 };
@@ -181,14 +189,7 @@ export const getAuthors = () => {
         return fetchAuthors(dispatch, state);
     };
 };
-function fixDates(logEntry: LogEntry) {
-    if (logEntry.author && typeof logEntry.author.date === 'string') {
-        logEntry.author.date = new Date(logEntry.author.date);
-    }
-    if (logEntry.committer && typeof logEntry.committer.date === 'string') {
-        logEntry.committer.date = new Date(logEntry.committer.date);
-    }
-}
+
 // tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
     const queryParts = [];
@@ -214,12 +215,6 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     dispatch(notifyIsLoading());
     return axios.get(getQueryUrl(store, 'log', queryParts))
         .then((result: { data: LogEntriesResponse }) => {
-            if (Array.isArray(result.data.items)) {
-                result.data.items.forEach(item => {
-                    fixDates(item);
-                });
-            }
-            
             dispatch(addResults(result.data));
             fetchAvatars(dispatch, () => store);
         })
@@ -234,9 +229,6 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
     dispatch(notifyIsFetchingCommit());
     return axios.get(getQueryUrl(store, `log/${hash}`))
         .then((result: { data: LogEntry }) => {
-            if (result.data) {
-                fixDates(result.data);
-            }
             dispatch(updateCommit(result.data));
         })
         .catch(err => {

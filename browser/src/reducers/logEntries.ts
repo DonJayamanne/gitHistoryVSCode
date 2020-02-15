@@ -6,26 +6,53 @@ import { LogEntriesState } from './';
 
 const initialState: LogEntriesState = { count: 0, isLoading: false, isLoadingCommit: false, items: [], pageIndex: 0 };
 
+function fixDates(logEntry: LogEntry) {
+    if (logEntry.author && typeof logEntry.author.date === 'string') {
+        logEntry.author.date = new Date(logEntry.author.date);
+    }
+    if (logEntry.committer && typeof logEntry.committer.date === 'string') {
+        logEntry.committer.date = new Date(logEntry.committer.date);
+    }
+}
+
 // tslint:disable-next-line:no-any
 export default handleActions<LogEntriesState, any>({
     [Actions.FETCHED_COMMITS]: (state, action: ReduxActions.Action<LogEntriesResponse>) => {
+        action.payload!.items.forEach(x => {
+            fixDates(x);
+        })
+
         return {
             ...state,
             ...action.payload!,
-            selected: action.payload ? action.payload.selected : undefined,
             isLoading: false,
         };
     },
 
-    [Actions.FETCHED_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
-        const items = state.items.slice();
-        const index = items.findIndex(item => item.hash.full === action.payload.hash.full);
+    [Actions.UPDATE_COMMIT_IN_LIST]:  (state, action: ReduxActions.Action<LogEntry>) => {
+        const index = state.items.findIndex(item => item.hash.full === action.payload.hash.full);
+
         if (index >= 0) {
-            items.splice(index, 1, action.payload);
+            const logEntry = JSON.parse(JSON.stringify(action.payload));
+            fixDates(logEntry);
+            state.items.splice(index, 1, logEntry);
         }
         return {
             ...state,
-            items,
+            selected: undefined
+        };
+    },
+    [Actions.FETCHED_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
+        /*const index = state.items.findIndex(item => item.hash.full === action.payload.hash.full);
+
+        if (index >= 0) {
+            state.items[index] = action.payload;
+        }*/
+
+        fixDates(action.payload);
+
+        return {
+            ...state,
             isLoadingCommit: false,
             selected: action.payload
         };
@@ -36,6 +63,7 @@ export default handleActions<LogEntriesState, any>({
     },
 
     [Actions.SELECT_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
+        //const index = state.items.findIndex(item => item.hash.full === action.payload.hash.full);
         return { ...state, selected: action.payload } as LogEntriesState;
     },
     // tslint:disable-next-line:no-any

@@ -206,7 +206,6 @@ export class Git implements IGitService {
         } as LogEntries;
     }
     
-    @cache('IGitService')
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgsForMerge(hash);

@@ -21,7 +21,6 @@ export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
     selectFileCommitCommandAction(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined>;
     selectCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined>;
-    newRefCommitCommandAction(commit: CommitDetails): Promise<ICommand<CommitDetails> | undefined>;
 }
 
 export enum CallContextSource {
