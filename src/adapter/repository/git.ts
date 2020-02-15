@@ -209,17 +209,13 @@ export class Git implements IGitService {
     
     @cache('IGitService')
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
-        //const parentHashesArgs = this.gitArgsService.getCommitParentHashesArgs(hash);
-        //const parentHashes = await this.exec(...parentHashesArgs);
-        //const singleParent = parentHashes.trim().split(' ').filter(item => item.trim().length > 0).length === 1;
-
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgsForMerge(hash);
 
         const gitRootPath = await this.getGitRoot();
         const commitOutput = await this.exec(...commitArgs);
 
-        const filesWithNumStat = commitOutput.split("\n\n", 2)[1];
+        const filesWithNumStat = commitOutput.slice(commitOutput.lastIndexOf(ITEM_ENTRY_SEPARATOR) + ITEM_ENTRY_SEPARATOR.length);
         const filesWithNameStatus = await this.exec(...nameStatusArgs);
 
         const entries = commitOutput
