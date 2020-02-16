@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import * as iconv from 'iconv-lite';
 import { injectable, multiInject } from 'inversify';
 import { Writable } from 'stream';
-import { Disposable, extensions } from 'vscode';
+import { extensions } from 'vscode';
 import { IGitCommandExecutor } from './types';
 import { GitExtension } from '../repository/git.d';
 import { StopWatch } from '../../common/stopWatch';
@@ -39,55 +39,47 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         const gitPathCommand = childProcOptions.shell && gitPath.indexOf(' ') > 0 ? `"${gitPath}"` : gitPath;
         const stopWatch = new StopWatch();
         const gitShow = spawn(gitPathCommand, args, childProcOptions);
+
+        let stdout: Buffer = new Buffer('');
+        let stderr: Buffer = new Buffer('');
+
         if (binaryOuput) {
             gitShow.stdout.pipe(destination);
-        }
-        const disposables: Disposable[] = [];
-        const on = (ee: NodeJS.EventEmitter, name: string, fn: Function) => {
-            ee.on(name, fn);
-            disposables.push({ dispose: () => ee.removeListener(name, fn) });
-        };
-
-        const buffers: Buffer[] = [];
-        if (!binaryOuput) {
-            on(gitShow.stdout, 'data', (data: Buffer) => buffers.push(data));
-        }
-        const errBuffers: Buffer[] = [];
-        on(gitShow.stderr, 'data', (data: Buffer) => errBuffers.push(data));
-
-        // tslint:disable-next-line:no-any
-        return new Promise<any>((resolve, reject) => {
-            gitShow.once('close', () => {
-                if (errBuffers.length > 0) {
-                    let stdErr = decode(errBuffers, childProcOptions.encoding);
-                    stdErr = stdErr.startsWith('error: ') ? stdErr.substring('error: '.length) : stdErr;
-                    this.loggers.forEach(logger => {
-                        logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
-                        logger.error(stdErr);
-                    });
-                    reject(stdErr);
-                } else {
-                    const stdOut = binaryOuput ? undefined : decode(buffers, childProcOptions.encoding);
-                    this.loggers.forEach(logger => {
-                        logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
-                        logger.trace(binaryOuput ? '<binary>' : stdOut);
-                    });
-                    resolve(stdOut);
-                }
-                disposables.forEach(disposable => disposable.dispose());
+        } else {
+            gitShow.stdout.on('data',  data => {
+                stdout = Buffer.concat([stdout, data as Buffer]);
             });
-            gitShow.once('error', ex => {
-                reject(ex);
+        }
+
+        gitShow.stderr.on('data', data => {
+            stderr = Buffer.concat([stderr, data as Buffer]);
+        });
+
+        return new Promise<any>((resolve, reject) => {
+            gitShow.on('error', reject)
+            gitShow.on('exit', code => {
                 this.loggers.forEach(logger => {
                     logger.log('git', ...args, ` (completed in ${stopWatch.elapsedTime / 1000}s)`);
-                    logger.error(ex);
                 });
-                disposables.forEach(disposable => disposable.dispose());
-            });
+                
+                if (code === 0) {
+                    const stdOut = binaryOuput ? undefined : decode(stdout, childProcOptions.encoding);
+                    this.loggers.forEach(logger => {
+                        logger.trace(binaryOuput ? '<binary>' : stdout);
+                    });
+                    resolve(stdOut);
+                } else {
+                    const stdErr = binaryOuput ? undefined : decode(stderr, childProcOptions.encoding);
+                    this.loggers.forEach(logger => {
+                        logger.error(stdErr);
+                    });
+                    reject({code, error: stdErr});
+                }
+            })
         });
     }
 }
 
-function decode(buffers: Buffer[], encoding: string): string {
-    return iconv.decode(Buffer.concat(buffers), encoding);
+function decode(buffers: Buffer, encoding: string): string {
+    return iconv.decode(buffers, encoding);
 }
