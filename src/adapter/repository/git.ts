@@ -22,7 +22,7 @@ export class Git implements IGitService {
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
     }
 
-    public async getGitRoot(): Promise<string> {
+    public getGitRoot(): string {
         return this.repo.rootUri.fsPath;
     }
     public async getGitRelativePath(file: Uri | FsUri) {
@@ -137,8 +137,8 @@ export class Git implements IGitService {
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
         const args = this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber, author);
 
-        const gitRootPathPromise = this.getGitRoot();
-        const outputPromise = this.exec(...args.logArgs);
+        const gitRepoPath = this.getGitRoot();
+        const output = await this.exec(...args.logArgs);
 
         // tslint:disable-next-line:no-suspicious-comment
         // TODO: Disabled due to performance issues https://github.com/DonJayamanne/gitHistoryVSCode/issues/195
@@ -151,7 +151,6 @@ export class Git implements IGitService {
         //         return -1;
         //     });
         const count = -1;
-        const [gitRepoPath, output] = await Promise.all([gitRootPathPromise, outputPromise]);
 
         // Run another git history, but get file stats instead of the changes
         // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);
@@ -333,8 +332,8 @@ export class Git implements IGitService {
         await this.exec('rebase', hash);
     }
     private async exec(...args: string[]): Promise<string> {
-        const gitRootPath = await this.getGitRoot();
-        return this.gitCmdExecutor.exec(gitRootPath, ...args);
+        const gitRootPath = this.getGitRoot();
+        return await this.gitCmdExecutor.exec(gitRootPath, ...args);
     }
 
     // how to check if a commit has been merged into any other branch
