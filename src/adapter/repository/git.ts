@@ -307,17 +307,21 @@ export class Git implements IGitService {
     }
 
     public async createBranch(branchName: string, hash: string): Promise<void> {
-        await this.exec('checkout', '-b', branchName, hash);
+        await this.repo.createBranch(branchName, false, hash);
     }
-    public async createTag(tagName: string, hash: string): Promise<void> {
-        await this.exec('tag', '-a', tagName, '-m', tagName, hash);
+
+    public async createTag(tagName: string, hash: string): Promise<any> {
+        return await this.exec('tag', '-a', tagName, '-m', tagName, hash);
     }
+
     public async removeTag(tagName: string) {
         await this.exec('tag', '-d', tagName);
     }
+
     public async removeBranch(branchName: string) {
-        await this.exec('branch', '-D', branchName);
+        await this.repo.deleteBranch(branchName);
     }
+
     public async removeRemoteBranch(remoteBranchName: string) {
         const pathes = remoteBranchName.split('/');
         const remote = pathes.shift() as string;
@@ -325,12 +329,15 @@ export class Git implements IGitService {
 
         await this.repo.push(remote, ':' + branchName);
     }
+
     public async merge(hash: string): Promise<void> {
         await this.exec('merge', hash);
     }
+
     public async rebase(hash: string): Promise<void> {
         await this.exec('rebase', hash);
     }
+    
     private async exec(...args: string[]): Promise<string> {
         const gitRootPath = this.getGitRoot();
         return await this.gitCmdExecutor.exec(gitRootPath, ...args);
