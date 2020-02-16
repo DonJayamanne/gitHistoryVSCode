@@ -5,7 +5,7 @@ import { IAvatarProvider } from '../adapter/avatar/types';
 import { GitOriginType } from '../adapter/repository/index';
 import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
-import { CommitDetails, FileCommitDetails, BranchDetails } from '../common/types';
+import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { Avatar, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref, RefType } from '../types';
 import { IApiRouteHandler } from './types';
@@ -149,26 +149,27 @@ export class ApiController implements IApiRouteHandler {
         const id: string = decodeURIComponent(request.query.id);
 
         const gitService = await this.getRepository(id);
-        const gitRoot = await gitService.getGitRoot();
-        const branch = await gitService.getCurrentBranch();
 
         const actionName = request.param('name');
         //const hash = decodeURIComponent(request.query.hash);
         const refEntry = request.body as Ref;
         
-        switch (actionName) {
-            case 'removeTag':
-                await this.commandManager.executeCommand('git.commit.removeTag', new BranchDetails(gitRoot, branch), refEntry.name);
-                break;
-            case 'removeBranch':
-                await this.commandManager.executeCommand('git.commit.removeBranch', new BranchDetails(gitRoot, branch), refEntry.name);
-                break;
-            case 'removeRemote':
-                await this.commandManager.executeCommand('git.commit.removeRemote', new BranchDetails(gitRoot, branch), refEntry.name);
-                break;
+        try {
+            switch (actionName) {
+                case 'removeTag':
+                    await gitService.removeTag(refEntry.name!);
+                    break;
+                case 'removeBranch':
+                    await gitService.removeBranch(refEntry.name!);
+                    break;
+                case 'removeRemote':
+                    await gitService.removeRemoteBranch(refEntry.name!);
+                    break;
+            }
+            response.status(200).send('');
+        } catch (err) {
+            response.status(500).send(err);
         }
-
-        response.status(200).send('');
     }
 
     public doAction = async (request: Request, response: Response) => {
@@ -188,11 +189,11 @@ export class ApiController implements IApiRouteHandler {
                     await this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
                     break;
                 case 'newtag':
-                    await this.commandManager.executeCommand('git.commit.createTag', new CommitDetails(gitRoot, branch, logEntry), value);
+                    await gitService.createTag(value, logEntry.hash.full);
                     logEntry.refs.push({ type: RefType.Tag, name: value });
                     break;
                 case 'newbranch':
-                    await this.commandManager.executeCommand('git.commit.createBranch', new CommitDetails(gitRoot, branch, logEntry), value);
+                    await gitService.createBranch(value, logEntry.hash.full);
                     logEntry.refs.push({ type: RefType.Head, name: value });
                     break;
                 case 'reset_hard':

@@ -61,6 +61,7 @@ export const actionRef = (logEntry: LogEntry, ref: Ref, name: string = '') => {
             }
 
             dispatch(updateCommitInList(logEntry));
+            dispatch(getBranches());
         });
     };
 };
