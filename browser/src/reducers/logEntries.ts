@@ -4,7 +4,7 @@ import { LogEntry } from '../definitions';
 import { LogEntriesResponse } from '../types';
 import { LogEntriesState } from './';
 
-const initialState: LogEntriesState = { count: 0, isLoading: false, isLoadingCommit: false, items: [], pageIndex: 0 };
+const initialState: LogEntriesState = { count: 0, isLoading: false, isLoadingCommit: undefined, items: [], pageIndex: 0 };
 
 function fixDates(logEntry: LogEntry) {
     if (logEntry.author && typeof logEntry.author.date === 'string') {
@@ -25,7 +25,9 @@ export default handleActions<LogEntriesState, any>({
         return {
             ...state,
             ...action.payload!,
+            selected: undefined,
             isLoading: false,
+            isLoadingCommit: undefined
         };
     },
 
@@ -39,27 +41,21 @@ export default handleActions<LogEntriesState, any>({
         }
         return {
             ...state,
-            selected: undefined
+            isLoadingCommit: undefined
         };
     },
     [Actions.FETCHED_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
-        /*const index = state.items.findIndex(item => item.hash.full === action.payload.hash.full);
-
-        if (index >= 0) {
-            state.items[index] = action.payload;
-        }*/
-
         fixDates(action.payload);
 
         return {
             ...state,
-            isLoadingCommit: false,
+            isLoadingCommit: undefined,
             selected: action.payload
         };
     },
 
-    [Actions.IS_FETCHING_COMMIT]: (state, action) => {
-        return { ...state, isLoadingCommit: true } as LogEntriesState;
+    [Actions.IS_FETCHING_COMMIT]: (state, action: ReduxActions.Action<string>) => {
+        return { ...state, isLoadingCommit: action.payload } as LogEntriesState;
     },
     // tslint:disable-next-line:no-any
     [Actions.CLEAR_SELECTED_COMMIT]: (state, action: any) => {

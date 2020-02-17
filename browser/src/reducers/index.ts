@@ -11,7 +11,7 @@ import vscode, { IVSCodeSettings } from './vscode';
 
 export type LogEntriesState = LogEntriesResponse & {
     isLoading: boolean;
-    isLoadingCommit: boolean;
+    isLoadingCommit?: string;
 };
 
 export type BranchesState = { name: string; current: boolean, remote: string, remoteType: number }[];

@@ -6,7 +6,6 @@ import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry, Ref 
 import { BranchesState, RootState } from '../reducers';
 
 // tslint:disable:no-any
-export const addResult = createAction<any>(Actions.ADD_RESULT);
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
 export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
 export const updateCommitInList = createAction<LogEntry>(Actions.UPDATE_COMMIT_IN_LIST);
@@ -16,7 +15,7 @@ export const clearCommitSelection = createAction(Actions.CLEAR_SELECTED_COMMIT);
 export const goToPreviousPage = createAction<void>(Actions.GO_TO_PREVIOUS_PAGE);
 export const goToNextPage = createAction<void>(Actions.GO_TO_NEXT_PAGE);
 export const notifyIsLoading = createAction(Actions.IS_LOADING_COMMITS);
-export const notifyIsFetchingCommit = createAction(Actions.IS_FETCHING_COMMIT);
+export const notifyIsFetchingCommit = createAction<string>(Actions.IS_FETCHING_COMMIT);
 export const fetchedAvatar = createAction<Avatar[]>(Actions.FETCHED_AVATARS);
 export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHORS);
 
@@ -29,6 +28,7 @@ function getQueryUrl(store: RootState, baseUrl: string, args: string[] = []): st
 export const actionCommit = (logEntry: LogEntry, name: string = '', value: string = '') => {
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        dispatch(notifyIsFetchingCommit(logEntry.hash.full));
         const state = getState();
         const url = getQueryUrl(state, `action/${name}`, [`value=${encodeURIComponent(value)}`]);
         return axios.post(url, logEntry).then(result => {
@@ -41,8 +41,8 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
                     dispatch(updateCommitInList(result.data as LogEntry));
                     break;
                 case 'newbranch':
+                    dispatch(getBranches());    
                     dispatch(updateCommitInList(result.data as LogEntry));
-                    dispatch(getBranches());
                     break;
             }
         });
@@ -52,6 +52,7 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
 export const actionRef = (logEntry: LogEntry, ref: Ref, name: string = '') => {
     // tslint:disable-next-line:no-any
     return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        dispatch(notifyIsFetchingCommit(logEntry.hash.full));
         const state = getState();
         const url = getQueryUrl(state, `actionref/${name}`, [`hash=${encodeURIComponent(logEntry.hash.full)}`]);
         return axios.post(url, ref).then(result => {
@@ -60,8 +61,8 @@ export const actionRef = (logEntry: LogEntry, ref: Ref, name: string = '') => {
                 logEntry.refs.splice(index, 1);
             }
 
-            dispatch(updateCommitInList(logEntry));
             dispatch(getBranches());
+            dispatch(updateCommitInList(logEntry));
         });
     };
 };
@@ -227,7 +228,7 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
 }
 // tslint:disable-next-line:no-any
 function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
-    dispatch(notifyIsFetchingCommit());
+    dispatch(notifyIsFetchingCommit(hash));
     return axios.get(getQueryUrl(store, `log/${hash}`))
         .then((result: { data: LogEntry }) => {
             dispatch(updateCommit(result.data));

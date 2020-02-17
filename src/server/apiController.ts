@@ -67,7 +67,6 @@ export class ApiController implements IApiRouteHandler {
                     ...data,
                     pageIndex,
                     pageSize,
-                    selected: undefined
                 };
                 return entriesResponse;
             });

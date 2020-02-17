@@ -79,14 +79,14 @@ export type LogEntriesResponse = {
     lineNumber?: number;
     selected?: LogEntry;
     isLoading?: boolean;
-    isLoadingCommit?: boolean;
+    isLoadingCommit?: string;
 };
 export type LogEntries = {
     items: LogEntry[];
     count: number;
     selected?: LogEntry;
     isLoading?: boolean;
-    isLoadingCommit?: boolean;
+    isLoadingCommit?: string;
 };
 export type LogEntry = {
     author?: ActionedDetails;
