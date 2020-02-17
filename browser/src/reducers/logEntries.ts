@@ -61,15 +61,6 @@ export default handleActions<LogEntriesState, any>({
     [Actions.IS_FETCHING_COMMIT]: (state, action) => {
         return { ...state, isLoadingCommit: true } as LogEntriesState;
     },
-
-    [Actions.SELECT_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
-        //const index = state.items.findIndex(item => item.hash.full === action.payload.hash.full);
-        return { ...state, selected: action.payload } as LogEntriesState;
-    },
-    // tslint:disable-next-line:no-any
-    // [Actions.CLOSE_COMMIT_VIEW]: (state, action: any) => {
-    //     return { ...state, selected: undefined } as LogEntriesState;
-    // },
     // tslint:disable-next-line:no-any
     [Actions.CLEAR_SELECTED_COMMIT]: (state, action: any) => {
         return { ...state, selected: undefined } as LogEntriesState;
