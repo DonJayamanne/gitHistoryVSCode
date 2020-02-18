@@ -60,7 +60,7 @@ export class GitArgsService implements IGitArgsService {
 
         const authorArgs: string[] = [];
         if (author && author.length > 0) {
-            authorArgs.push(`--author=${author}`);
+            authorArgs.push(`--author=${author} `);
         }
 
         const lineArgs =
