@@ -12,7 +12,7 @@ import * as path from 'path';
 
 @injectable()
 export class GitServiceFactory implements IGitServiceFactory {
-    private readonly gitServices = new Map<number, IGitService>();
+    private readonly gitServices = new Map<string, IGitService>();
     private gitApi: API;
     private repoIndex: number;
     constructor(@inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
@@ -29,7 +29,7 @@ export class GitServiceFactory implements IGitServiceFactory {
     }
 
     public getService(index: number) : IGitService {
-        return this.gitServices.get(index)!; 
+        return this.gitServices.get(index.toString())!; 
     }
 
     public async repositoryPicker() : Promise<void> {
@@ -81,10 +81,10 @@ export class GitServiceFactory implements IGitServiceFactory {
             }
         }
 
-        if (!this.gitServices.has(this.repoIndex)) {
-            this.gitServices.set(this.repoIndex, new Git(this.gitApi.repositories[this.repoIndex], this.serviceContainer, this.gitCmdExecutor, this.logParser, this.gitArgsService));
+        if (!this.gitServices.has(this.repoIndex.toString())) {
+            this.gitServices.set(this.repoIndex.toString(), new Git(this.gitApi.repositories[this.repoIndex], this.serviceContainer, this.gitCmdExecutor, this.logParser, this.gitArgsService));
         }
 
-        return this.gitServices.get(this.repoIndex)!;
+        return this.getService(this.repoIndex);
     }
 }
