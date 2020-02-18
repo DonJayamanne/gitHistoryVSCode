@@ -72,18 +72,27 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         const gitServiceFactory = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
 
         const gitService = await gitServiceFactory.createGitService(fileUri);
-        const branchName = await gitService.getCurrentBranch();
+        let branchName = await gitService.getCurrentBranch();
         const gitRoot = await gitService.getGitRoot();
         const startupInfo = await this.server.start();
 
         const id = gitServiceFactory.getIndex();
+
+        let branchSelection = BranchSelection.Current;
+
+        // check if the current branch is detached
+        const detached = gitService.getDetachedHash();
+        if (!branchName && detached) {
+            branchSelection = BranchSelection.Detached;
+            branchName = detached;
+        }
 
         const queryArgs = [
             `id=${id}`,
             `port=${startupInfo.port}`,
             `internalPort=${startupInfo.port - 1}`,
             `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
-            `branchSelection=${BranchSelection.Current}`, 
+            `branchSelection=${branchSelection}`, 
             `branchName=${encodeURIComponent(branchName)}`
         ];
         

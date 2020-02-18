@@ -4,6 +4,7 @@ import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
 import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry, Ref } from '../definitions';
 import { BranchesState, RootState } from '../reducers';
+import { BranchSelection } from '../types';
 
 // tslint:disable:no-any
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
@@ -38,13 +39,12 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
                     dispatch(refresh());
                     break;
                 case 'newtag':
-                    dispatch(updateCommitInList(result.data as LogEntry));
                     break;
                 case 'newbranch':
                     dispatch(getBranches());    
-                    dispatch(updateCommitInList(result.data as LogEntry));
                     break;
             }
+            dispatch(updateCommitInList(result.data as LogEntry));
         });
     };
 };
@@ -144,11 +144,11 @@ export const clearSearch = () => {
         return fetchCommits(dispatch, state, 0, undefined);
     };
 };
-export const selectBranch = (branchName: string) => {
+export const selectBranch = (branchName: string, branchSelection: BranchSelection) => {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>, getState: () => RootState) => {
         //state.settings.branchName = branchName;
-        dispatch(updateSettings({ branchName }));
+        dispatch(updateSettings({ branchName, branchSelection }));
         const state = getState();
         return fetchCommits(dispatch, state, 0, undefined);
     };

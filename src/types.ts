@@ -7,7 +7,8 @@ import { CommitDetails } from './common/types';
 
 export enum BranchSelection {
     Current = 1,
-    All = 2
+    All = 2,
+    Detached = 3
 }
 export type FsUri = Readonly<{
     scheme: string;
@@ -132,6 +133,7 @@ export interface IGitService {
     getGitRelativePath(file: FsUri): Promise<string>;
     getHeadHashes(): Promise<{ ref?: string; hash?: string }[]>;
     getAuthors(): Promise<ActionedUser[]>;
+    getDetachedHash(): string | undefined;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
@@ -171,7 +173,7 @@ export interface IGitServiceFactory {
 }
 
 export interface ISettings {
-    selectedBranchType?: BranchSelection;
+    branchSelection?: BranchSelection;
     branchName?: string;
     authorFilter?: string;
     pageIndex?: number;

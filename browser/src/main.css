@@ -561,6 +561,9 @@ a.file-name {
 .dropdown-menu>li.divider {
 	background-color: #888888;
 }
+.dropdown-menu > .dropdown-header {
+	padding: 0px 0px;
+}
 
 .btn {
     color: var(--vscode-input-foreground);

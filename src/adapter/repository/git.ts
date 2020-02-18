@@ -35,6 +35,11 @@ export class Git implements IGitService {
     public async getHeadHashes(): Promise<{ ref?: string; hash?: string }[]> {
         return this.repo.state.refs.filter(x => x.type <= 1).map(x =>  { return { ref: x.name, hash: x.commit }; });
     }
+
+    public getDetachedHash(): string | undefined {
+        return this.repo.state.HEAD!.name === undefined ? this.repo.state.HEAD!.commit : undefined;
+    }
+
     public async getBranches(): Promise<Branch[]> {
         const currentBranchName = await this.getCurrentBranch();
         const gitRootPath = this.repo.rootUri.fsPath;
@@ -135,6 +140,7 @@ export class Git implements IGitService {
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
+        
         const args = this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber, author);
 
         const gitRepoPath = this.getGitRoot();
