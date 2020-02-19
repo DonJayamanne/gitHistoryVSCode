@@ -14,7 +14,7 @@ export class CacheRegister implements Disposable {
         const storage = CacheStores.get(storageKey)!;
         if (storage && storage.has(key)) {
             const entry = storage.get(key)!;
-            if (!entry.expiryTime || entry.expiryTime < new Date().getTime()) {
+            if (!entry.expiryTime || entry.expiryTime > new Date().getTime()) {
                 return { data: entry.data };
             }
             storage.delete(key);
@@ -76,25 +76,21 @@ export function cache(storageKey: string, arg1?: any, arg2?: any) {
             const cacheKeyPrefix = typeof arg1 === 'string' ? arg1 : (typeof arg2 === 'string' ? arg2 : '');
 
             // tslint:disable-next-line:no-invalid-this no-parameter-reassignment
-            storageKey = typeof this.getHashCode === 'function' ? `${storageKey}${this.getHashCode()}` : storageKey;
-            const key = `${storageKey}.${storageKey}.${cacheKeyPrefix}.${propertyKey}.${JSON.stringify(args)}`;
-            const entry = CacheRegister.get(storageKey, key)!;
+            const innerStorageKey = typeof this.getHashCode === 'function' ? `${storageKey}${this.getHashCode()}` : storageKey;
+            const key = `${innerStorageKey}.${cacheKeyPrefix}.${propertyKey}.${JSON.stringify(args)}`;
+            const entry = CacheRegister.get(innerStorageKey, key)!;
             if (entry) {
                 return entry.data;
             }
 
             // tslint:disable-next-line:no-invalid-this
-            const result = oldFn.apply(this, args);
-            if (result && result.then && result.catch) {
-                // tslint:disable-next-line:no-any
-                result.then((value: any) => {
-                    // We could add the promise itself into the cache store.
-                    // But lets leave this simple for now.
-                    CacheRegister.add(storageKey, key, value, expiryMs);
-                });
+            try {
+                const result = await oldFn.apply(this, args);
+                CacheRegister.add(innerStorageKey, key, result, expiryMs);
+                return result;
+            } catch (ex) {
+                console.error(`Error calling ${storageKey}.${propertyKey} from @cache decorator`, ex);
             }
-
-            return result;
         };
         return descriptor;
     };
