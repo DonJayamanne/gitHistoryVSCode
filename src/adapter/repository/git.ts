@@ -22,6 +22,13 @@ export class Git implements IGitService {
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
     }
 
+    /**
+     * Used to differentiate between repository being cached using the @cache decorator
+     */
+    public getHashCode(): string {
+        return ':' + this.getGitRoot();
+    }
+
     public getGitRoot(): string {
         return this.repo.rootUri.fsPath;
     }
@@ -282,6 +289,7 @@ export class Git implements IGitService {
         const fileStatParser = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
         return fileStatParser.parse(gitRootPath, filesWithNumStat.split(/\r?\n/g), filesWithNameStatus.split(/\r?\n/g));
     }
+    
     @cache('IGitService')
     public async getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash> {
         const gitRootPath = await this.getGitRoot();
