@@ -16,7 +16,6 @@ export interface IGitArgsService {
     getCommitWithNumStatArgsForMerge(hash: string): string[];
     getCommitNameStatusArgsForMerge(hash: string): string[];
     getObjectHashArgs(object: string): string[];
-    getRefsContainingCommitArgs(hash: string): string[];
     getLogArgs(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, relativeFilePath?: string, lineNumber?: number, author?: string): GitLogArgs;
     getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[];
     getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[];

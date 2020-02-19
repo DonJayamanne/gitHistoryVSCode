@@ -29,9 +29,6 @@ export class GitArgsService implements IGitArgsService {
     public getObjectHashArgs(object: string): string[] {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
     }
-    public getRefsContainingCommitArgs(hash: string): string[] {
-        return ['branch', '--all', '--contains', hash];
-    }
     public getAuthorsArgs(): string[] {
         return ['shortlog', '-e', '-s', '-n', 'HEAD'];
     }
