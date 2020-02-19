@@ -182,26 +182,9 @@ export class Git implements IGitService {
         const headHashes = await this.getHeadHashes();
         const headHashesOnly = headHashes.map(item => item.hash);
         // tslint:disable-next-line:prefer-type-cast
-        //const headHashMap = new Map<string, string>(headHashes.map(item => [item.ref, item.hash] as [string, string]));
 
-        items.forEach(async item => {
-            // Check if this the very last commit of a branch
-            // Just check if this is a head commit (if shows up in 'git show-ref')
-            item.isLastCommit = headHashesOnly.indexOf(item.hash.full) >= 0;
-
-            // Check if this commit has been merged into another branch
-            // Do this only if this is a head commit (we don't care otherwise, only the graph needs it)
-            if (!item.isLastCommit) {
-                return;
-            }
-            /*const refsContainingThisCommit = await this.getRefsContainingCommit(item.hash.full);
-            const hashesOfRefs = refsContainingThisCommit
-                .filter(ref => headHashMap.has(ref))
-                .map(ref => headHashMap.get(ref)!)
-                // tslint:disable-next-line:possible-timing-attack
-                .filter(hash => hash !== item.hash.full);
-            // If we have hashes other than current, then yes it has been merged
-            item.isThisLastCommitMerged = hashesOfRefs.length > 0;*/
+        items.filter(x => headHashesOnly.indexOf(x.hash.full) > -1).forEach(item => {
+            item.isLastCommit = true;
         });
 
         // tslint:disable-next-line:no-suspicious-comment
