@@ -268,7 +268,6 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         }
     }
 
-    console.log(svgPaths.size);
     branches.forEach(branch => {
         const svgPath = branch.path.cmds + currentY;
         branch.path.setAttribute('d', svgPath);
