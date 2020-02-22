@@ -25,6 +25,7 @@ const COLORS = ['#ffab1d', '#fd8c25', '#f36e4a', '#fc6148', '#d75ab6', '#b25ade'
     '#e47b07', '#e36920', '#d34e2a', '#ec3b24', '#ba3d99', '#9d45c9', '#4f5aec', '#615dcf', '#3286cf', '#00abca', '#279227', '#3a980c', '#6c7f00', '#ab8b0a', '#b56427', '#757575',
     '#ff911a', '#fc8120', '#e7623e', '#fa5236', '#ca4da9', '#a74fd3', '#5a68ff', '#6d69db', '#489bd9', '#00bcde', '#36a436', '#47a519', '#798d0a', '#c1a120', '#bf7730', '#8e8e8e'];
 
+// tslint:disable
 // TODO: Think about appending (could be very expensive, but could be something worthwhile)
 // Appending could produce a better UX
 // Dunno, I think, cuz this way you can see where merges take place, rather than seeing a line vanish off
@@ -45,6 +46,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         branchColor = 0;
     }
     svg.style.display = '';
+    const svgPaths = new Map<SVGElement, string>();
     // Draw the graph
     const circleOffset = 0;
     const standardOffset = (0 + 0.5) * logEntryHeight;
@@ -91,6 +93,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                 if (childCount === 0) {
                     // Replace the branch
                     branch.path.setAttribute('d', branch.path.cmds + currentY);
+                    svgPaths.set(branch.path, branch.path.cmds + currentY);
                     if (entry.parents.length === 0) {
                         branches.splice(j, 1);
                         branched = true;
@@ -103,6 +106,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                     // Join the branch
                     let x = (index + 1) * xOffset;
                     branch.path.setAttribute('d', branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
+                    svgPaths.set(branch.path, branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
                     branches.splice(j, 1);
                     branched = true;
                     ++removedBranches;
@@ -112,6 +116,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                 if (removedBranches !== 0) {
                     let x = (j + 1) * xOffset;
                     branch.path.setAttribute('d', branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
+                    svgPaths.set(branch.path, branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
                 }
                 ++j;
             }
@@ -125,6 +130,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             let x = (index + j + 1) * xOffset;
             if (j !== 0 || branches.length === 0) {
                 let svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                svgPaths.set(svgPath, '');
                 ++branchColor;
                 if (branchColor === COLORS.length) {
                     branchColor = 0;
@@ -165,6 +171,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                 index = branches.length;
 
                 let svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                svgPaths.set(svgPath, '');
                 ++branchColor;
                 if (branchColor === COLORS.length) {
                     branchColor = 0;
@@ -195,6 +202,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             for (let i = 0; i < branches.length; ++i) {
                 let branch = branches[i];
                 branch.path.setAttribute('d', branch.path.cmds + currentY);
+                svgPaths.set(branch.path, branch.path.cmds + currentY);
             }
         }
 
@@ -259,6 +267,27 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             }
         }
     }
+
+    branches.forEach(branch => {
+        const svgPath = branch.path.cmds + currentY;
+        branch.path.setAttribute('d', svgPath);
+        svgPaths.set(branch.path, svgPath);
+    });
+
+    debugger;
+    const lines: Point[][] = [];
+    svgPaths.forEach((pathOrSvg, svg) => {
+        try {
+            lines.push(getPointsFromPath(pathOrSvg));
+        } catch (ex) {
+            console.error('Failed to generate SVG line path', ex);
+        }
+    });
+
+    // Sort all points in lines.
+    lines.forEach((points, i) => {
+        lines[i] = points.sort((a, b) => a.y - b.y);
+    });
     for (let i = startAt; i < content.children.length; ++i) {
         let element = content.children[i];
         if (i >= entries.length) {
@@ -266,16 +295,57 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         }
         let minLeft = Math.min(maxLeft, 3);
         let left = element ? Math.max(minLeft, (element as any).branchesOnLeft) : minLeft;
-        element.setAttribute('style', element.getAttribute('style') + ';padding-left:' + (left + 1) * lastXOffset + 'px');
-    }
-    branches.forEach(branch => {
-        branch.path.setAttribute('d', branch.path.cmds + currentY);
-    });
+        const originalStyle = element.getAttribute('style');
+        element.setAttribute('style', originalStyle + ';padding-left:' + (left + 1) * lastXOffset + 'px');
+        try {
+            const pointsAtY = lines.map(points => getPointAtY((i + 1) * logEntryHeight, points));
+            const maxX = Math.max(...pointsAtY.map(p => p.x));
+            element.setAttribute('style', `${originalStyle};padding-left:${maxX + 12}px`);
+        } catch (ex) {
+            console.error('Failed to set padding of commit', ex);
+        }
 
+    }
     // calculate the height
     if (entries.length > 0 && !isNaN(logEntryHeight)) {
         svg.setAttribute('height', (entries.length * logEntryHeight).toString());
     }
+}
+
+type Point = { x: number; y: number };
+
+function getPointAtY(y: number, points: Point[]): Point {
+    y = Math.floor(y);
+    // if the first point has has greater y, then ignore.
+    // I.e. if this branch/line starts after the required y, then ignore it.
+    if (points.length === 0) {
+        return { x: 0, y: 0 };
+    }
+    if (points[0].y > y) {
+        return { x: 0, y: 0 };
+    }
+    // points = points.sort((a, b) => a.y - b.y);
+    return points.reduce<Point>((previous, current) => {
+        if (current.y === y) {
+            return current;
+        }
+        if (current.y > y) {
+            return previous;
+        }
+        return current;
+    }, points[0]);
+}
+function getPointsFromPath(svgPath: string): Point[] {
+    const points: Point[] = [];
+    svgPath = svgPath.trim()
+    svgPath = svgPath.startsWith('M') ? svgPath.substring(1) : svgPath;
+    svgPath.split('L').map(item => item.trim()).forEach(path => {
+        const parts = path.split(' ');
+        const x = parseInt(parts[0], 10);
+        const y = parseInt(parts[1], 10);
+        points.push({ x, y });
+    });
+    return points;
 }
 
 class BrachGraph extends React.Component<BranchGrapProps> {
@@ -288,14 +358,14 @@ class BrachGraph extends React.Component<BranchGrapProps> {
         }
         if (newProps.updateTick === this.props.updateTick) {
             return;
-        }       
+        }
 
         // Hack, first clear before rebuilding.
         // Remember, we will need to support apending results, as opposed to clearing page
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
-        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);        
+        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
     }
-    
+
     private svg: SVGSVGElement;
     render() {
         return (
@@ -308,7 +378,7 @@ function mapStateToProps(state: RootState): BranchGrapProps {
     const hideGraph = (state && state.logEntries) && ((state.logEntries.searchText && state.logEntries.searchText.length > 0) ||
         (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0) ||
         (state.logEntries.author && state.logEntries.author.length > 0) || state.logEntries.isLoading
-        );
+    );
 
     return {
         logEntries: state.logEntries.items,
