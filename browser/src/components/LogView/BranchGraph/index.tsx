@@ -25,6 +25,49 @@ const COLORS = ['#ffab1d', '#fd8c25', '#f36e4a', '#fc6148', '#d75ab6', '#b25ade'
     '#e47b07', '#e36920', '#d34e2a', '#ec3b24', '#ba3d99', '#9d45c9', '#4f5aec', '#615dcf', '#3286cf', '#00abca', '#279227', '#3a980c', '#6c7f00', '#ab8b0a', '#b56427', '#757575',
     '#ff911a', '#fc8120', '#e7623e', '#fa5236', '#ca4da9', '#a74fd3', '#5a68ff', '#6d69db', '#489bd9', '#00bcde', '#36a436', '#47a519', '#798d0a', '#c1a120', '#bf7730', '#8e8e8e'];
 
+type Point = { x: number; y: number };
+
+/**
+ * Plan is to create a Branch class, that will encapsulate:
+ * - Branch color
+ * - Branch information (nodes)
+ * - SVG element (will draw the paths on the Svg) via the PathGenerator class.
+ */
+class PathGenerator {
+    private previousPoint?: Point;
+    private svgPath?: string;
+    public get path() {
+        return this.svgPath;
+    }
+    public addPoint(point: Point) {
+        if (!this.previousPoint || !this.svgPath) {
+            this.addFirstPoint(point);
+        } else if (this.previousPoint.x !== point.x) {
+            // If the x values are not the same, then lets curve the connection.
+            this.connectToLineSmoothly(point);
+        } else {
+            this.connectToLine(point);
+        }
+        this.previousPoint = point;
+    }
+    private addFirstPoint(point: Point) {
+        this.svgPath = `M ${point.x} ${point.y} `;
+    }
+    private connectToLineSmoothly(point: Point) {
+        if (!this.previousPoint) {
+            throw new Error('Previous point not available');
+        }
+        const handle = (point.y - this.previousPoint.y) / 2;
+        const startPoint = `${this.previousPoint.x} ${this.previousPoint.y + handle}`;
+        const controlPoint = `${point.x} ${point.y - handle}`;
+        const endPoint = `${point.x} ${point.y}`;
+        this.svgPath += ` C ${startPoint}, ${controlPoint}, ${endPoint}`;
+    }
+    private connectToLine(point: Point) {
+        this.svgPath += ` L ${point.x} ${point.y}`;
+    }
+}
+
 // tslint:disable
 // TODO: Think about appending (could be very expensive, but could be something worthwhile)
 // Appending could produce a better UX
@@ -274,11 +317,17 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         svgPaths.set(branch.path, svgPath);
     });
 
-    debugger;
     const lines: Point[][] = [];
     svgPaths.forEach((pathOrSvg, svg) => {
         try {
-            lines.push(getPointsFromPath(pathOrSvg));
+            const points = getPointsFromPath(pathOrSvg);
+            lines.push(points);
+
+            // Re-generate the paths with smooth curvy edges.
+            const pathGenerator = new PathGenerator();
+            points.forEach(point => pathGenerator.addPoint(point));
+            svg.setAttribute('d', pathGenerator.path);
+
         } catch (ex) {
             console.error('Failed to generate SVG line path', ex);
         }
@@ -311,8 +360,6 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         svg.setAttribute('height', (entries.length * logEntryHeight).toString());
     }
 }
-
-type Point = { x: number; y: number };
 
 function getPointAtY(y: number, points: Point[]): Point {
     y = Math.floor(y);
