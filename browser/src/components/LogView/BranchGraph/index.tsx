@@ -53,6 +53,9 @@ class PathGenerator {
     private addFirstPoint(point: Point) {
         this.svgPath = `M ${point.x} ${point.y} `;
     }
+    /**
+     * Join two lines using a cubic bezier curve.
+     */
     private connectToLineSmoothly(point: Point) {
         if (!this.previousPoint) {
             throw new Error('Previous point not available');
