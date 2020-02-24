@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import * as ResultActions from '../../../actions/results';
+import { ResultActions } from '../../../actions/results';
 import { RootState, BranchesState } from '../../../reducers/index';
 import { BranchSelection, ISettings } from '../../../types';
 

@@ -8,7 +8,7 @@ import Avatar from './Avatar';
 import { FileEntry } from './FileEntry';
 import { GoX, GoClippy } from 'react-icons/lib/go';
 import { Resizable } from "re-resizable";
-import * as ResultActions from '../../../actions/results';
+import { ResultActions } from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
 
 interface CommitProps {

@@ -19,7 +19,6 @@ import { Logger } from './common/log';
 import { ILogService, IUiService } from './common/types';
 import { OutputPanelLogger } from './common/uiLogger';
 import { UiService } from './common/uiService';
-import { gitHistorySchema } from './constants';
 import { CommitViewFormatter } from './formatters/commitFormatter';
 import { ICommitViewFormatter } from './formatters/types';
 import { ServiceContainer } from './ioc/container';
@@ -29,10 +28,7 @@ import { IServiceContainer } from './ioc/types';
 import { getLogChannel } from './logger';
 import { registerTypes as registerNodeBuilderTypes } from './nodes/serviceRegistry';
 import { registerTypes as registerPlatformTypes } from './platform/serviceRegistry';
-import { ContentProvider } from './server/contentProvider';
 import { HtmlViewer } from './server/htmlViewer';
-import { ServerHost } from './server/serverHost';
-import { IServerHost } from './server/types';
 import { IGitServiceFactory, IOutputChannel } from './types';
 import { registerTypes as registerViewerTypes } from './viewers/serviceRegistry';
 
@@ -67,16 +63,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     setServiceContainer(serviceContainer);
 
     const gitServiceFactory = serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
-    serviceManager.addSingletonInstance(IServerHost, new ServerHost(gitServiceFactory, serviceContainer));
 
     // Register last.
     registerCommandTypes(serviceManager);
 
-    let disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, new ContentProvider(serviceContainer));
-    context.subscriptions.push(disposable);
     context.subscriptions.push(serviceManager.get<IDisposableRegistry>(IDisposableRegistry));
 
     const commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
     commandManager.executeCommand('setContext', 'git.commit.view.show', true);
-    context.subscriptions.push(new HtmlViewer(serviceContainer));
+    context.subscriptions.push(new HtmlViewer(serviceContainer, gitServiceFactory, context.extensionPath));
 }

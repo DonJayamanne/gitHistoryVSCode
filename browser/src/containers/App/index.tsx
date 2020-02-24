@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as ResultActions from '../../actions/results';
+import { ResultActions } from '../../actions/results';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import Commit from '../../components/LogView/Commit';
