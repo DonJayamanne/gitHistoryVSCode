@@ -64,12 +64,14 @@ class PathGenerator {
         }
 
         if (this.points === 1 && point.x > this.previousPoint.x) {
+            // Merge curves, see here https://github.com/DonJayamanne/gitHistoryVSCode/pull/463#issuecomment-590137053
             const handle = Math.abs((point.x - this.previousPoint.x) / 2);
             const startPoint = `${this.previousPoint.x + handle} ${this.previousPoint.y}`;
             const controlPoint = `${point.x} ${this.previousPoint.y}`;
             const endPoint = `${point.x} ${point.y}`;
             this.svgPath += ` C ${startPoint}, ${controlPoint}, ${endPoint}`;
         } else {
+            // Fork curves, see here https://github.com/DonJayamanne/gitHistoryVSCode/pull/463#issue-378655710
             const handle = (point.y - this.previousPoint.y) / 2;
             const startPoint = `${this.previousPoint.x} ${this.previousPoint.y + handle}`;
             const controlPoint = `${point.x} ${point.y - handle}`;
