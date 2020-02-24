@@ -35,7 +35,7 @@ type Point = { x: number; y: number };
  */
 class PathGenerator {
     private previousPoint?: Point;
-    private svgPath?: string;
+    private svgPath: string = '';
     private points: number = 0;
     public get path() {
         return this.svgPath;
@@ -84,49 +84,106 @@ class PathGenerator {
     }
 }
 
+const context: { branchList: Line[]; svg: SVGSVGElement } = {
+    branchList: [],
+    // tslint:disable-next-line: no-any
+    svg: {} as any
+};
+let COLORS = _COLORS.slice();
+
+class Line {
+    public readonly color: string;
+    public readonly svg: SVGPathElement;
+    public get points(): ReadonlyArray<Point> {
+        return this._points;
+    }
+    public get ended(): boolean {
+        return this._ended;
+    }
+    public get lastHash() {
+        return this._lastHash;
+    }
+    public get lastCommit() {
+        return this._lastCommit;
+    }
+    private readonly _points: Point[] = [];
+    private readonly pathGenerator = new PathGenerator();
+    private _lastHash!: Hash;
+    private _lastCommit?: LogEntry;
+    private lastX?: number;
+    private _ended: boolean = false;
+    constructor(public readonly firstCommit: LogEntry, public readonly firstHash: Hash, public readonly wasFictional: boolean) {
+        this.color = COLORS.shift()!;
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        this.svg.setAttribute('style', `stroke:${this.color};fill:none`);
+        context.svg.appendChild(this.svg);
+        this.addHash(firstHash, firstCommit);
+    }
+    public addPoint(point: Point) {
+        this.pathGenerator.addPoint(point);
+    }
+	/**
+	 * Line has ended.
+	 */
+    public end() {
+        this._ended = true;
+        COLORS.push(this.color);
+    }
+    public addX(x: number) {
+        this.lastX = x;
+    }
+    public addY(y: number) {
+        this.pathGenerator.addPoint({ x: this.lastX!, y });
+    }
+    public addHash(hash: Hash, commit: LogEntry) {
+        this._lastHash = hash;
+        this._lastCommit = commit;
+    }
+}
+
+const LineHeight = 30;
+function clearGraph(svg: SVGSVGElement) {
+    currentY = (0 + 0.5) * LineHeight;
+    topMostY = (0 + 0.5) * LineHeight;
+    COLORS = _COLORS.slice();
+    context.branchList = [];
+    context.svg = svg;
+    svgPaths.clear();
+    while (svg.children.length > 0) {
+        svg.removeChild(svg.children[0]);
+    }
+}
+
+
+let currentY = (0 + 0.5) * LineHeight;
+let topMostY = (0 + 0.5) * LineHeight;
+const standardOffset = (0 + 0.5) * LineHeight;
+const svgPaths = new Map<SVGElement, string>();
+const xOffset = 12;
+
 // tslint:disable
 // TODO: Think about appending (could be very expensive, but could be something worthwhile)
 // Appending could produce a better UX
 // Dunno, I think, cuz this way you can see where merges take place, rather than seeing a line vanish off
-function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number, logEntryHeight: number = 60.8, entries: LogEntry[], hideGraph: boolean = false) {
-    while (svg.children.length > 0) {
-        svg.removeChild(svg.children[0]);
-    }
-    if (hideGraph) {
-        for (let i = 0; i < content.children.length; i += 1) {
-            let element = content.children[i];
-            element.setAttribute('style', element.getAttribute('style') + ';padding-left:0px');
-        }
-        svg.style.display = 'none';
-        return;
-    }
+function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number, logEntryHeight: number = 60.8, entries: LogEntry[]) {
     if (startAt === 0) {
         branches = [];
-        branchColor = 0;
     }
+    console.log(`Total = ${entries.length}`);
     svg.style.display = '';
-    const svgPaths = new Map<SVGElement, string>();
     // Draw the graph
     const circleOffset = 0;
-    const standardOffset = (0 + 0.5) * logEntryHeight;
-    let currentY = (0 + 0.5) * logEntryHeight;
-    let topMostY = (0 + 0.5) * logEntryHeight;
-    let maxLeft = 0;
-    let lastXOffset = 12;
-    let maxXOffset = 12;
-    if (startAt === 0) {
-        branchColor = 0;
-    }
-    for (let i = 0; i < startAt; i++) {
-        content.children[i].className = 'hidden';
-    }
+    // for (let i = 0; i < startAt; i++) {
+    // 	content.children[i].className = 'hidden';
+    // }
     // Use this for new orphaned branches
     let circlesToAppend: SVGCircleElement[] = [];
     let fictionalBranches: { path: string, x?: number }[] = [];
-    // let fictionalBranch2;
     let tabbedOnce = false;
     let fictionalBranchesUsed = false;
     let branched = false;
+    const isFirstEver = startAt === 0;
+    startAt = 0;
     for (let i = startAt; i < content.children.length; ++i) {
         if (i >= entries.length) {
             break;
@@ -141,23 +198,30 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
 
         // Find branches to join
         let childCount = 0;
-        let xOffset = 12;
         let removedBranches = 0;
-        let branchFound = i === startAt ? true : false;
-        let padParentCount = 0;
+        // let branchFound = i === startAt ? true : false;
+        let branchFound = isFirstEver;
+        // let padParentCount = 0;
         for (let j = 0; j < branches.length;) {
             let branch = branches[j];
-            if (branch.hash === entry.hash.full) {
+            if (branch.line.lastHash.full === entry.hash.full) {
                 branchFound = true;
                 if (childCount === 0) {
                     // Replace the branch
                     branch.path.setAttribute('d', branch.path.cmds + currentY);
                     svgPaths.set(branch.path, branch.path.cmds + currentY);
                     if (entry.parents.length === 0) {
-                        branches.splice(j, 1);
+                        // This is a parent of a commit, but this doesn't have a parent.
+                        // Hence we branched from here.
                         branched = true;
+                        // Remove from the list of branches as we're done with this.
+                        branch.line.end();
+                        branches.splice(j, 1);
                     } else {
-                        branch.hash = entry.parents[0].full;
+                        // Keep going back until we find a point when we branched.
+                        // I.e. keep connecting the points to form a continuing line.
+                        // branch.hash = entry.parents[0].full;
+                        branch.line.addHash(entry.parents[0], entry);
                     }
                     index = j;
                     ++j;
@@ -168,6 +232,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                     svgPaths.set(branch.path, branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
                     branches.splice(j, 1);
                     branched = true;
+                    branch.line.end();
                     ++removedBranches;
                 }
                 ++childCount;
@@ -188,13 +253,15 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             let parent = entry.parents[j];
             let x = (index + j + 1) * xOffset;
             if (j !== 0 || branches.length === 0) {
-                let svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                svgPaths.set(svgPath, '');
-                ++branchColor;
-                if (branchColor === COLORS.length) {
-                    branchColor = 0;
-                }
-                svgPath.setAttribute('style', 'stroke:' + COLORS[branchColor]);
+                const newBranch = new Line(entry, parent, false);
+                context.branchList.push(newBranch);
+                const svgPath = newBranch.svg;
+                let obj = {
+                    hash: parent.full,
+                    path: svgPath,
+                    wasFictional: false,
+                    line: newBranch
+                };
                 let origX = (index + 1) * xOffset;
                 let origY = currentY === standardOffset ? 0 : currentY;
                 origY = currentY;
@@ -202,12 +269,11 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                     origY = currentY;
                 }
                 (svgPath as any).cmds = 'M ' + origX + ' ' + origY + ' L ' + x + ' ' + (currentY + logEntryHeight / 2) + ' L ' + x + ' ';
-                svg.appendChild(svgPath);
-                let obj = {
-                    hash: parent.full,
-                    path: svgPath,
-                    wasFictional: false
-                };
+                // For debugging (we can see incremental drawing).
+                svgPath.setAttribute('d', 'M ' + origX + ' ' + origY + ' L ' + x + ' ' + (currentY + logEntryHeight / 2));
+                newBranch.addPoint({ x: origX, y: origY });
+                newBranch.addPoint({ x, y: (currentY + logEntryHeight / 2) });
+                newBranch.addX(x);
                 if (fictionalBranches.length === 0 || !fictionalBranchesUsed) {
                     // Re-set the fictional branches if they haven't been used
                     // In case we have a merge as the very first step,
@@ -226,16 +292,11 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                 branchFound = true;
                 branches.splice(index + j, 0, obj);
             }
-            if (!branchFound && i > 0) {
+            if (!branchFound && (isFirstEver && i > 0)) {
                 index = branches.length;
-
-                let svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                svgPaths.set(svgPath, '');
-                ++branchColor;
-                if (branchColor === COLORS.length) {
-                    branchColor = 0;
-                }
-                svgPath.setAttribute('style', 'stroke:' + COLORS[branchColor]);
+                const newBranch = new Line(entry, parent, true);
+                context.branchList.push(newBranch);
+                const svgPath = newBranch.svg;
                 fictionalBranchesUsed = true;
                 let fictionalBranch = fictionalBranches.splice(0, 1)[0];
                 if (entry.isLastCommit && !entry.isThisLastCommitMerged) {
@@ -246,15 +307,16 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
                     xFromFictionalBranch = fictionalBranch.x;
                 }
                 (svgPath as any).cmds = fictionalBranch.path;
+                // For debugging (we can see incremental drawing).
+                svgPath.setAttribute('d', fictionalBranch.path);
                 svg.appendChild(svgPath);
-                let obj = {
-                    hash: parent.full,
+                let obj: LineInfo = {
+                    // hash: parent.full,
                     path: svgPath,
-                    wasFictional: true
+                    wasFictional: true,
+                    line: newBranch
                 };
                 branches.splice(index + j, 0, obj);
-                // We need to padd all parent log entries to take this into account
-                padParentCount += 1;
             }
 
             // Incremental updates for debugging
@@ -271,6 +333,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
             tabBranch = true;
             let branch = branches[j];
             let x = (j + 1) * xOffset;
+            branch.path.setAttribute('d', branch.path.cmds + (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY);
             branch.path.cmds += (currentY - logEntryHeight / 2) + ' L ' + x + ' ' + currentY + ' L ' + x + ' ';
         }
         tabBranch = tabBranch ? tabBranch : (entry.parents.length > 1 || branched);
@@ -307,24 +370,7 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
         svg.appendChild(svgCircle);
         circlesToAppend.push(svgCircle);
 
-        (entryElement as any).branchesOnLeft = Math.max((entryElement as any).branchesOnLeft, branches.length);
-        maxLeft = Math.max(maxLeft, (entryElement as any).branchesOnLeft);
-
         currentY += logEntryHeight;
-        lastXOffset = xOffset;
-        if (maxXOffset < xOffset) {
-            maxXOffset = xOffset;
-        }
-
-        if (padParentCount > 0) {
-            for (let parentElemtnCounter = startAt; parentElemtnCounter <= i; parentElemtnCounter++) {
-                if (parentElemtnCounter >= entries.length) {
-                    break;
-                }
-                let el = content.children[parentElemtnCounter];
-                (el as any).branchesOnLeft += padParentCount;
-            }
-        }
     }
 
     branches.forEach(branch => {
@@ -335,46 +381,36 @@ function drawGitGraph(svg: SVGSVGElement, content: HTMLElement, startAt: number,
 
     const lines: Point[][] = [];
     svgPaths.forEach((pathOrSvg, svg) => {
-        try {
-            const points = getPointsFromPath(pathOrSvg);
-            lines.push(points);
+        const points = getPointsFromPath(pathOrSvg);
+        lines.push(points);
 
-            // Re-generate the paths with smooth curvy edges.
-            const pathGenerator = new PathGenerator();
-            points.forEach(point => pathGenerator.addPoint(point));
-            svg.setAttribute('d', pathGenerator.path);
-
-        } catch (ex) {
-            console.error('Failed to generate SVG line path', ex);
-        }
+        // Re-generate the paths with smooth curvy edges.
+        const pathGenerator = new PathGenerator();
+        points.forEach(point => pathGenerator.addPoint(point));
+        svg.setAttribute('d', pathGenerator.path);
+        console.error(pathGenerator.path);
     });
 
     // Sort all points in lines.
     lines.forEach((points, i) => {
         lines[i] = points.sort((a, b) => a.y - b.y);
     });
-    for (let i = startAt; i < content.children.length; ++i) {
-        let element = content.children[i];
-        if (i >= entries.length) {
-            break;
-        }
-        let minLeft = Math.min(maxLeft, 3);
-        let left = element ? Math.max(minLeft, (element as any).branchesOnLeft) : minLeft;
-        const originalStyle = element.getAttribute('style');
-        element.setAttribute('style', originalStyle + ';padding-left:' + (left + 1) * lastXOffset + 'px');
-        try {
-            const pointsAtY = lines.map(points => getPointAtY((i + 1) * logEntryHeight, points));
-            const maxX = Math.max(...pointsAtY.map(p => p.x));
-            element.setAttribute('style', `${originalStyle};padding-left:${maxX + 12}px`);
-        } catch (ex) {
-            console.error('Failed to set padding of commit', ex);
-        }
+    // for (let i = startAt; i < content.children.length; ++i) {
+    // 	let element = content.children[i];
+    // 	if (i >= entries.length) {
+    // 		break;
+    // 	}
+    // 	// const originalStyle = element.getAttribute('style');
+    // 	const pointsAtY = lines.map(points => getPointAtY((i + 1) * logEntryHeight, points));
+    // 	const maxX = Math.max(...pointsAtY.map(p => p.x));
+    // 	console.log(`${maxX}${element}`);
+    // 	// element.setAttribute('style', `${originalStyle};padding-left:${maxX + 12}px`);
 
-    }
+    // }
     // calculate the height
-    if (entries.length > 0 && !isNaN(logEntryHeight)) {
-        svg.setAttribute('height', (entries.length * logEntryHeight).toString());
-    }
+    // if (entries.length > 0 && !isNaN(logEntryHeight)) {
+    // 	svg.setAttribute('height', (entries.length * logEntryHeight).toString());
+    // }
 }
 
 function getPointAtY(y: number, points: Point[]): Point {
@@ -411,46 +447,18 @@ function getPointsFromPath(svgPath: string): Point[] {
     return points;
 }
 
-class BrachGraph extends React.Component<BranchGrapProps> {
-    componentWillReceiveProps(newProps: BranchGrapProps) {
-    }
-    componentWillUpdate(newProps: BranchGrapProps) {
-        if (newProps.hideGraph) {
-            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, [], true);
-            return;
-        }
-        if (newProps.updateTick === this.props.updateTick) {
-            return;
-        }
+console.log(getPointAtY)
+console.log(clearGraph)
+console.log(drawGitGraph)
+const svg = document.getElementById('commitGraph') as any as SVGSVGElement;
+const items: LogEntry[] = [];
+const mockChildren = { children: items.slice() };
+clearGraph(document.getElementById('commitGraph') as any as SVGSVGElement);
+svg.setAttribute('height', (items.length * LineHeight).toString());
+console.log(`Total Height = ${(items.length * LineHeight).toString()}`);
 
-        // Hack, first clear before rebuilding.
-        // Remember, we will need to support apending results, as opposed to clearing page
-        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
-        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
-    }
-
-    private svg: SVGSVGElement;
-    render() {
-        return (
-            <svg className='commitGraph' ref={(ref) => this.svg = ref} xmlns='http://www.w3.org/2000/svg'></svg>
-        );
-    }
+// Build svg a page at a time with 10 commits each.
+// Proof of how to do it.
+for (let index = 0; index < 100; index++) {
+    drawGitGraph(svg, mockChildren as any as HTMLElement, index * 10, LineHeight, items.slice(index * 10, (index + 1) * 10));
 }
-
-function mapStateToProps(state: RootState): BranchGrapProps {
-    const hideGraph = (state && state.logEntries) && ((state.logEntries.searchText && state.logEntries.searchText.length > 0) ||
-        (state.logEntries.file && state.logEntries.file.fsPath && state.logEntries.file.fsPath.length > 0) ||
-        (state.logEntries.author && state.logEntries.author.length > 0) || state.logEntries.isLoading
-    );
-
-    return {
-        logEntries: state.logEntries.items,
-        hideGraph,
-        itemHeight: state.graph.itemHeight,
-        updateTick: state.graph.updateTick
-    };
-}
-
-export default connect(
-    mapStateToProps
-)(BrachGraph);
