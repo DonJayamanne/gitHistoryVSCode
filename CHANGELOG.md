@@ -1,3 +1,13 @@
+
+## Version 0.5.4
+- Fixed indentation of commits against branching graph @DonJayamanne [#446](https://github.com/DonJayamanne/gitHistoryVSCode/pull/446)
+- Smooth curvy edges in the graphs @DonJayamanne [#463](https://github.com/DonJayamanne/gitHistoryVSCode/pull/463)
+- Fixed CacheRegister expiryTime and properly cache multiple GitService objects [#441](https://github.com/DonJayamanne/gitHistoryVSCode/issues/441)
+- Visualize detached head in Git History view [#167](https://github.com/DonJayamanne/gitHistoryVSCode/issues/167)
+- Dynamic update commit entry when adding/removing tags or branches while showing a loading indicator
+- Filter on exact author name when choosing from dropdown
+- Code cleanup and optimization
+
 ## Version 0.5.3
 - Fixed commit details not correctly parsed when message has several line breaks [#435](https://github.com/DonJayamanne/gitHistoryVSCode/issues/435)
 - Reduced `bundle.js` file size again by replacing FaFilter with GoEye from react-icons [#439](https://github.com/DonJayamanne/gitHistoryVSCode/issues/439)
