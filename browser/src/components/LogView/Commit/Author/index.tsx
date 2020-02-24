@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { ActionedDetails } from '../../../../definitions';
 import { RootState } from '../../../../reducers/index';
-import * as ResultActions from '../../../../actions/results';
+import { ResultActions } from '../../../../actions/results';
 import { GoEye } from 'react-icons/lib/go';
 
 type AuthorProps = {

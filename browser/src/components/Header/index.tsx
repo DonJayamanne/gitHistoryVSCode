@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import * as ResultActions from '../../actions/results';
+import { ResultActions } from '../../actions/results';
 import { RootState, BranchesState } from '../../reducers/index';
 import Author from './author';
 import Branch from './branch';

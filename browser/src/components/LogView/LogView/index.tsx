@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as ResultActions from '../../../actions/results';
+import { ResultActions } from '../../../actions/results';
 import { LogEntries, LogEntry, Ref } from '../../../definitions';
 import { RootState } from '../../../reducers';
 import BranchGraph from '../BranchGraph';

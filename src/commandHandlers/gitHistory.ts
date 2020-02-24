@@ -2,28 +2,17 @@ import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import { ICommandManager } from '../application/types';
-import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { FileCommitDetails } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { FileNode } from '../nodes/types';
-import { IServerHost } from '../server/types';
-import { BranchSelection, IGitServiceFactory } from '../types';
+import { IGitServiceFactory } from '../types';
 import { command } from './registration';
 import { IGitHistoryCommandHandler } from './types';
 
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
-    private _server?: IServerHost;
-    private get server(): IServerHost {
-        if (!this._server) {
-            this._server = this.serviceContainer.get<IServerHost>(IServerHost);
-            this.disposableRegistry.register(this._server);
-        }
-        return this._server;
-    }
     constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
         @inject(ICommandManager) private commandManager: ICommandManager) { }
 
     @command('git.viewFileHistory', IGitHistoryCommandHandler)
@@ -72,30 +61,15 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         const gitServiceFactory = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
 
         const gitService = await gitServiceFactory.createGitService(fileUri);
-        let branchName = await gitService.getCurrentBranch();
-        const gitRoot = await gitService.getGitRoot();
-        const startupInfo = await this.server.start();
+        const gitRoot = gitService.getGitRoot();
 
         const id = gitServiceFactory.getIndex();
 
-        let branchSelection = BranchSelection.Current;
-
-        // check if the current branch is detached
-        const detached = gitService.getDetachedHash();
-        if (!branchName && detached) {
-            branchSelection = BranchSelection.Detached;
-            branchName = detached;
-        }
-
         const queryArgs = [
             `id=${id}`,
-            `port=${startupInfo.port}`,
-            `internalPort=${startupInfo.port - 1}`,
-            `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
-            `branchSelection=${branchSelection}`, 
-            `branchName=${encodeURIComponent(branchName)}`
+            `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`
         ];
-        
+
         const uri = `${previewUri}?${queryArgs.join('&')}`;
 
         let title = `Git History (${path.basename(gitRoot)})`;

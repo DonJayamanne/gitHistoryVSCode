@@ -1,4 +1,3 @@
-import axios, { AxiosProxyConfig } from 'axios';
 import { inject, injectable } from 'inversify';
 import { IStateStore, IStateStoreFactory } from '../../application/types/stateStore';
 import { IServiceContainer } from '../../ioc/types';
@@ -6,9 +5,6 @@ import { Avatar, IGitService } from '../../types';
 import { GitOriginType } from '../repository/types';
 import { BaseAvatarProvider } from './base';
 import { IAvatarProvider } from './types';
-
-// tslint:disable-next-line:no-require-imports no-var-requires
-const { URL } = require('url');
 
 type GithubUserSearchResponseItem = {
     'login': string;
@@ -67,16 +63,7 @@ type GithubUserResponse = {
 
 @injectable()
 export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarProvider {
-    protected readonly httpProxy: string = '';
     private readonly stateStore: IStateStore;
-    private get proxy(): AxiosProxyConfig | undefined {
-        let proxy: AxiosProxyConfig | undefined;
-        if (this.httpProxy.length > 0) {
-            const proxyUri = new URL(this.httpProxy);
-            proxy = { host: proxyUri.hostname, port: proxyUri.port };
-        }
-        return proxy;
-    }
     public constructor(@inject(IServiceContainer) serviceContainer: IServiceContainer) {
         super(serviceContainer, GitOriginType.github);
 
@@ -126,8 +113,8 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
             headers = {'If-Modified-Since': cachedUser.last_modified};
         }
 
-        const proxy = this.proxy;
-        const info = await axios.get(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { proxy, headers })
+        const info = await fetch(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { headers })
+            .then(response => response.json())
             .then((result: { headers: any, data: GithubUserResponse }) => {
                 if (!result.data || (!result.data.name && !result.data.login)) {
                     return;
@@ -152,11 +139,15 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
      * Fetch all constributors from the remote repository through Github API
      * @param repoPath relative repository path
      */
-    private async getContributors(repoPath: string) {
-        const proxy = this.proxy;
-        return axios.get(`https://api.github.com/repos/${repoPath}/contributors`, { proxy, timeout: 8000 })
-            .then((result: { data: GithubUserSearchResponseItem[] }) => {
-                return result.data;
+    private getContributors(repoPath: string) {
+        const controller = new AbortController();
+        const promise = fetch(`https://api.github.com/repos/${repoPath}/contributors`, { signal: controller.signal });
+        setTimeout(() => controller.abort(), 5000);
+
+        return promise
+            .then(response => response.json())
+            .then(data => {
+                return data as GithubUserSearchResponseItem[];
             });
     }
 }
