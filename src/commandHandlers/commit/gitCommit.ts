@@ -32,11 +32,8 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
-        gitService.createTag(newTagName, commit.logEntry.hash.full)
-            .catch(async err => {
-                this.applicationShell.showErrorMessage(err);
-            });
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
+        await gitService.createTag(newTagName, commit.logEntry.hash.full);
     }
 
     @command('git.commit.createBranch', IGitCommitCommandHandler)
@@ -50,23 +47,10 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
-        gitService.createBranch(newBranchName, commit.logEntry.hash.full)
-            .catch(async err => {
-                const currentBranchName = await gitService.getCurrentBranch();
-                if (typeof err === 'string' && currentBranchName !== newBranchName) {
-                    this.applicationShell.showErrorMessage(err);
-                }
-            });
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
+        gitService.createBranch(newBranchName, commit.logEntry.hash.full);
     }
 
-    @command('git.commit.doNewRef', IGitCommitCommandHandler)
-    public async doNewRef(commit: CommitDetails) {
-        const cmd = await this.serviceContainer.get<IUiService>(IUiService).newRefCommitCommandAction(commit);
-        if (cmd) {
-            return cmd.execute();
-        }
-    }
     @command('git.commit.selected', IGitCommitCommandHandler)
     public async onCommitSelected(commit: CommitDetails) {
         const viewer = this.commitViewerFactory.getCommitViewer();

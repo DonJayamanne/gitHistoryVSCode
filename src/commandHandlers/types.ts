@@ -45,7 +45,6 @@ export const IGitCommitCommandHandler = Symbol('IGitCommitCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitCommitCommandHandler extends ICommandHandler {
     doSomethingWithCommit(commit: CommitDetails): Promise<void>;
-    doNewRef(commit: CommitDetails): Promise<void>;
     createTagFromCommit(commit: CommitDetails, newTagName?: string): Promise<void>;
     createBranchFromCommit(commit: CommitDetails, newBranchName?: string): Promise<void>;
     onCommitSelected(commit: CommitDetails): Promise<void>;

@@ -13,7 +13,7 @@ const defaultSettings: ISettings = window['settings'];
 // tslint:disable-next-line:no-any
 const store = configureStore({ 
     settings: defaultSettings, 
-    searchCriteria: {}, graph: {}, 
+    graph: {}, 
     vscode: { theme: document.body.className, locale: window['locale'], configuration: window['configuration'] } });
 
 ReactDOM.render(

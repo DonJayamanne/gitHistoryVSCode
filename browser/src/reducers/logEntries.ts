@@ -4,50 +4,59 @@ import { LogEntry } from '../definitions';
 import { LogEntriesResponse } from '../types';
 import { LogEntriesState } from './';
 
-const initialState: LogEntriesState = { count: 0, isLoading: false, isLoadingCommit: false, items: [], pageIndex: 0 };
+const initialState: LogEntriesState = { count: 0, isLoading: false, isLoadingCommit: undefined, items: [], pageIndex: 0 };
+
+function fixDates(logEntry: LogEntry) {
+    if (logEntry.author && typeof logEntry.author.date === 'string') {
+        logEntry.author.date = new Date(logEntry.author.date);
+    }
+    if (logEntry.committer && typeof logEntry.committer.date === 'string') {
+        logEntry.committer.date = new Date(logEntry.committer.date);
+    }
+}
 
 // tslint:disable-next-line:no-any
 export default handleActions<LogEntriesState, any>({
     [Actions.FETCHED_COMMITS]: (state, action: ReduxActions.Action<LogEntriesResponse>) => {
+        action.payload!.items.forEach(x => {
+            fixDates(x);
+        })
+
         return {
             ...state,
             ...action.payload!,
-            selected: action.payload ? action.payload.selected : undefined,
+            selected: undefined,
             isLoading: false,
-            searchText: action.payload ? action.payload.searchText : undefined,
-            author: action.payload ? action.payload.author : undefined
+            isLoadingCommit: undefined
         };
     },
 
-    [Actions.FETCHED_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
-        const items = state.items.slice();
-        const index = items.findIndex(item => item.hash.full === action.payload.hash.full);
+    [Actions.UPDATE_COMMIT_IN_LIST]:  (state, action: ReduxActions.Action<LogEntry>) => {
+        const index = state.items.findIndex(item => item.hash.full === action.payload.hash.full);
+
         if (index >= 0) {
-            items.splice(index, 1, action.payload);
+            const logEntry = JSON.parse(JSON.stringify(action.payload));
+            fixDates(logEntry);
+            state.items.splice(index, 1, logEntry);
         }
         return {
             ...state,
-            items,
-            isLoadingCommit: false,
+            isLoadingCommit: undefined
+        };
+    },
+    [Actions.FETCHED_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
+        fixDates(action.payload);
+
+        return {
+            ...state,
+            isLoadingCommit: undefined,
             selected: action.payload
         };
     },
 
-    [Actions.IS_FETCHING_COMMIT]: (state, action) => {
-        return { ...state, isLoadingCommit: true } as LogEntriesState;
+    [Actions.IS_FETCHING_COMMIT]: (state, action: ReduxActions.Action<string>) => {
+        return { ...state, isLoadingCommit: action.payload } as LogEntriesState;
     },
-
-    [Actions.CLEAR_RESULTS]: (state, action) => {
-        return { ...state, items: [], count: 0, pageIndex: 0, isLoading: false } as LogEntriesState;
-    },
-
-    [Actions.SELECT_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
-        return { ...state, selected: action.payload } as LogEntriesState;
-    },
-    // tslint:disable-next-line:no-any
-    // [Actions.CLOSE_COMMIT_VIEW]: (state, action: any) => {
-    //     return { ...state, selected: undefined } as LogEntriesState;
-    // },
     // tslint:disable-next-line:no-any
     [Actions.CLEAR_SELECTED_COMMIT]: (state, action: any) => {
         return { ...state, selected: undefined } as LogEntriesState;

@@ -15,9 +15,10 @@ import { GoGitCommit, GoClippy, GoPlus, GoFileSymlinkFile, GoFileSymlinkDirector
 type ResultListProps = {
     logEntry: LogEntry;
     selected?: LogEntry;
+    isLoadingCommit?: string;
     onViewCommit(entry: LogEntry): void;
     onAction(entry: LogEntry, name: string): void;
-    onRefAction(ref: Ref, name: string): void;
+    onRefAction(logEntry: LogEntry, ref: Ref, name: string): void;
 };
 
 class LogEntryView extends React.Component<ResultListProps, {}> {
@@ -25,27 +26,45 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
         super(props, context);
     }
 
+    private isLoading() {
+        return this.props.isLoadingCommit === this.props.logEntry.hash.full;
+    }
+
+    private showLoading() {
+        return (<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="#d4d4d4" >
+                    <circle cx="5" cy="5" r="1">
+                        <animate attributeName="r" begin="0s" dur="1s" values="1;5;1" calcMode="linear" repeatCount="indefinite"/>
+                        <animate attributeName="fill-opacity" begin="0s" dur="1s" values=".3;1;.3" calcMode="linear" repeatCount="indefinite"/>
+                    </circle>   
+                </svg>);
+    }
+
     private renderRemoteRefs() {
         return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.RemoteHead)
-        .map(ref => (<RemoteRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeRemote')} {...ref} />));
+        .map(ref => (<RemoteRef key={ref.name} onRemove={() => this.props.onRefAction(this.props.logEntry, ref, 'removeRemote')} {...ref} />));
     }
 
     private renderHeadRef() {
         return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.Head)
-        .map(ref => (<HeadRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeBranch')} {...ref} />));
+        .map(ref => (<HeadRef key={ref.name} onRemove={() => this.props.onRefAction(this.props.logEntry, ref, 'removeBranch')} {...ref} />));
     }
 
     private renderTagRef() {
         return this.props.logEntry.refs
         .filter(ref => ref.type === RefType.Tag)
-        .map(ref => (<TagRef key={ref.name} onRemove={() => this.props.onRefAction(ref, 'removeTag')} {...ref} />));
+        .map(ref => (<TagRef key={ref.name} onRemove={() => this.props.onRefAction(this.props.logEntry, ref, 'removeTag')} {...ref} />));
     }
 
     public render() {
         const isActive = this.props.logEntry && this.props.selected && this.props.selected.hash.full === this.props.logEntry.hash.full;
-        const cssClassName = `log-entry ${isActive ? 'active' : ''}`;
+        let cssClassName = `log-entry ${isActive ? 'active' : ''}`;
+
+        if (this.isLoading()) {
+            cssClassName += ' loading';
+        }
+
         return (<div className={cssClassName}>
             <div className='media right'>
                 <div className='media-image'>
@@ -92,7 +111,12 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                     </div>
                 </div>
                 <div role='button' className='media-content'>
-                    <div className='commit-subject' onClick={() => this.props.onViewCommit(this.props.logEntry)} title={gitmojify(this.props.logEntry.subject)}>{gitmojify(this.props.logEntry.subject)}</div>
+                    <div className='commit-subject' onClick={() => this.props.onViewCommit(this.props.logEntry)} title={gitmojify(this.props.logEntry.subject)}>
+                        {gitmojify(this.props.logEntry.subject)}
+                        <span style={{ marginLeft: '.5em' }}>
+                            {this.isLoading() ? this.showLoading() : ''}
+                        </span>
+                    </div>
                     <Avatar result={this.props.logEntry.author}></Avatar>
                     <Author result={this.props.logEntry.author}></Author>
                 </div>
@@ -104,6 +128,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
 function mapStateToProps(state: RootState, wrapper: ResultListProps): ResultListProps {
     return {
         ...wrapper,
+        isLoadingCommit: state.logEntries.isLoadingCommit,
         selected: state.logEntries.selected
     };
 }

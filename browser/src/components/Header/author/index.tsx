@@ -3,20 +3,17 @@ import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import * as ResultActions from '../../../actions/results';
 import { AuthorsState, RootState } from '../../../reducers/index';
+import { ISettings } from '../../../types';
 
 interface AuthorProps {
     isLoading?: boolean;
-    author?: string;
+    settings: ISettings
     authors?: AuthorsState;
     lineHistory: boolean;
     selectAuthor(author: string): void;
 }
 
 interface AuthorState {
-    isLoading?: boolean;
-    author?: string;
-    lineHistory: boolean;
-    authors?: AuthorsState;
     searchText?: string;
 }
 
@@ -24,15 +21,12 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
     private searchField: HTMLInputElement;
     constructor(props: AuthorProps) {
         super(props);
-        this.state = { isLoading: props.isLoading, author: props.author, authors: props.authors, lineHistory: props.lineHistory };
+        this.state = { searchText: ''}
         this.searchField = null;
     }
-    public componentWillReceiveProps(nextProps: AuthorProps): void {
-        this.setState({ isLoading: nextProps.isLoading, author: nextProps.author, authors: nextProps.authors, lineHistory: nextProps.lineHistory });
-    }
-    private onSelect = (branch: string) => {
-        const selectedAuthor = branch === '[ALL]' ? '' : branch;
-        this.setState({ isLoading: this.state.isLoading });
+
+    private onSelect = (author: string) => {
+        const selectedAuthor = author === '[ALL]' ? '' : author;
         this.props.selectAuthor(selectedAuthor.trim());
     }
     private onClick = (e: React.MouseEvent<any, MouseEvent>) => {
@@ -46,7 +40,7 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
     
     private getAuthorList() {
         let authors = Array.isArray(this.props.authors) ? this.props.authors : [];
-        const selectedAuthor = !this.props.author || this.props.author === '' ? '[ALL]' : this.props.author;
+        const selectedAuthor = !this.props.settings.authorFilter || this.props.settings.authorFilter === '' ? '[ALL]' : this.props.settings.authorFilter;
 
         if (this.state.searchText) {
             authors = authors.filter(x => x.name.toLowerCase().indexOf( this.state.searchText.toLowerCase() ) !== -1);
@@ -71,9 +65,9 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
             return null;
         }
         
-        const title = !this.props.author || this.props.author === '' ? 'All Authors' : this.props.author;
+        const title = !this.props.settings.authorFilter || this.props.settings.authorFilter === '' ? 'All Authors' : this.props.settings.authorFilter;
 
-        return (<DropdownButton
+        return (<DropdownButton disabled={this.props.isLoading}
             bsStyle='primary'
             bsSize='small'
             title={title}
@@ -83,16 +77,16 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
         >
             <MenuItem eventKey='[ALL]'>All Authors</MenuItem>
             <MenuItem divider />
-            <input ref={x => this.searchField = x} type="text" className='textInput' placeholder="Search.." id="myInput" value={this.state.searchText}  onChange={this.handleSearchChange} />
+            <MenuItem header>
+                <input ref={x => this.searchField = x} type="text" className='textInput' placeholder="Search.." id="myInput" value={this.state.searchText} onChange={this.handleSearchChange} />
+            </MenuItem>
             <MenuItem divider />
             {this.getAuthorList()}
         </DropdownButton>);
     }
 }
 
-function mapStateToProps(state: RootState): AuthorState {
-    const author = (state && state.logEntries.author) ?
-        state.logEntries.author : '';
+function mapStateToProps(state: RootState): AuthorProps {
     const authors = (state && state.authors) ?
         state.authors : [];
     const isLoading = state && state.logEntries && state.logEntries.isLoading;
@@ -100,10 +94,10 @@ function mapStateToProps(state: RootState): AuthorState {
 
     return {
         isLoading,
-        author,
+        settings: state.settings,
         authors,
         lineHistory
-    };
+    } as AuthorProps;
 }
 
 function mapDispatchToProps(dispatch) {

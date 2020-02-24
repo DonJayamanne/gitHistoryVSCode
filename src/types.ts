@@ -7,7 +7,8 @@ import { CommitDetails } from './common/types';
 
 export enum BranchSelection {
     Current = 1,
-    All = 2
+    All = 2,
+    Detached = 3
 }
 export type FsUri = Readonly<{
     scheme: string;
@@ -76,25 +77,19 @@ export type LogEntriesResponse = {
     count: number;
     pageIndex?: number;
     pageSize?: number;
-    branch?: string;
     lineNumber?: number;
-    author?: string;
-    searchText?: string;
-    file?: FsUri;
-    branchSelection?: BranchSelection;
     selected?: LogEntry;
     isLoading?: boolean;
-    isLoadingCommit?: boolean;
+    isLoadingCommit?: string;
 };
 export type LogEntries = {
     items: LogEntry[];
     count: number;
     selected?: LogEntry;
     isLoading?: boolean;
-    isLoadingCommit?: boolean;
+    isLoadingCommit?: string;
 };
 export type LogEntry = {
-    gitRoot: string;
     author?: ActionedDetails;
     committer?: ActionedDetails;
     parents: Hash[];
@@ -134,10 +129,11 @@ export const IGitService = Symbol('IGitService');
 export const IOutputChannel = Symbol('IOutputChannel');
 
 export interface IGitService {
-    getGitRoot(): Promise<string>;
+    getGitRoot(): string;
     getGitRelativePath(file: FsUri): Promise<string>;
     getHeadHashes(): Promise<{ ref?: string; hash?: string }[]>;
     getAuthors(): Promise<ActionedUser[]>;
+    getDetachedHash(): string | undefined;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
@@ -177,8 +173,9 @@ export interface IGitServiceFactory {
 }
 
 export interface ISettings {
-    selectedBranchType?: BranchSelection;
+    branchSelection?: BranchSelection;
     branchName?: string;
+    authorFilter?: string;
     pageIndex?: number;
     searchText?: string;
     file?: string;

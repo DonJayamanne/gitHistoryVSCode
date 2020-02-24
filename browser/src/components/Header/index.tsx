@@ -40,9 +40,9 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         }
     }
     private onClear = () => {
-        this.setState({ isLoading: this.state.isLoading, searchText: '' });
+        this.setState({ isLoading: this.state.isLoading });
         if (!this.state.isLoading) {
-            this.setState({ isLoading: true, searchText: '' });
+            this.setState({ isLoading: true});
             this.props.clearSearch();
         }
     }
@@ -124,8 +124,8 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
 }
 
 function mapStateToProps(state: RootState): HeaderProps {
-    const searchText = (state && state.logEntries.searchText) ?
-        state.logEntries.searchText : '';
+    const searchText = (state && state.settings.searchText) ?
+        state.settings.searchText : '';
     const isLoading = state && state.logEntries && state.logEntries.isLoading;
 
     return {

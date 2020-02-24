@@ -63,16 +63,16 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
         this.props.onViewCommit(logEntry.hash.full);
     }
 
-    public onRefAction = (ref: Ref, name: string) => {
+    public onRefAction = (logEntry: LogEntry, ref: Ref, name: string) => {
         switch (name) {
             case 'removeTag':
-                this.dialog.showConfirm(`Remove tag ${ref.name}?`, `Do you really want to remove the tag ${ref.name}?`, {ref, name});
+                this.dialog.showConfirm(`Remove tag ${ref.name}?`, `Do you really want to remove the tag ${ref.name}?`, {logEntry, ref, name});
                 break;
             case 'removeBranch':
-                this.dialog.showConfirm(`Remove branch ${ref.name}?`, `Do you really want to remove the branch ${ref.name}?`, {ref, name});
+                this.dialog.showConfirm(`Remove branch ${ref.name}?`, `Do you really want to remove the branch ${ref.name}?`, {logEntry, ref, name});
                 break;
             case 'removeRemote':
-                this.dialog.showConfirm(`Remove remote branch ${ref.name}?`, `Do you really want to remove the remote branch ${ref.name}?`, {ref, name});
+                this.dialog.showConfirm(`Remove remote branch ${ref.name}?`, `Do you really want to remove the remote branch ${ref.name}?`, {logEntry, ref, name});
                 break;
         }
     }
@@ -110,7 +110,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
             case 'removeRemote':
             case 'removeBranch':
             case 'removeTag':
-                this.props.actionRef(args.ref, args.name);
+                this.props.actionRef(args.logEntry, args.ref, args.name);
                 break;
         }
     }
@@ -127,7 +127,7 @@ function mapDispatchToProps(dispatch) {
         commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
         actionCommit: (logEntry: LogEntry, name: string, value: string = '') => dispatch(ResultActions.actionCommit(logEntry, name, value)),
-        actionRef: (ref: Ref, name: string) => dispatch(ResultActions.actionRef(ref, name))
+        actionRef: (logEntry: LogEntry, ref: Ref, name: string) => dispatch(ResultActions.actionRef(logEntry, ref, name))
     };
 }
 

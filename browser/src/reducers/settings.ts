@@ -1,12 +1,10 @@
 import { handleActions } from 'redux-actions';
 import * as Actions from '../constants/actions';
 
-const initialState: any = {
-  appendResults: true
-};
+const initialState = {};
 
 export default handleActions<any, any>({
-  [Actions.SET_APPEND_RESULTS]: (state, action) => {
-    return { ...state, appendResults: action.payload };
+  [Actions.UPDATE_SETTINGS]: (state, action) => {
+    return { ...state, ...action.payload };
   }
 }, initialState);

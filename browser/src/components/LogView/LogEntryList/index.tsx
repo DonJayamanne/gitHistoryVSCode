@@ -6,7 +6,7 @@ interface ResultProps {
     logEntries: LogEntry[];
     onViewCommit(entry: LogEntry): void;
     onAction(entry: LogEntry, name: string): void;
-    onRefAction(ref: Ref, name: string): void;
+    onRefAction(logEntry: LogEntry, ref: Ref, name: string): void;
 }
 
 export default class LogEntryList extends React.Component<ResultProps> {

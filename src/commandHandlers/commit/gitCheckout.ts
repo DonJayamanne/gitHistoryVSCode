@@ -16,7 +16,7 @@ export class GitCheckoutCommandHandler implements IGitCheckoutCommandHandler {
     @command('git.commit.checkout', IGitCheckoutCommandHandler)
     public async checkoutCommit(commit: CommitDetails) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.logEntry.gitRoot);
+        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
 
         gitService.checkout(commit.logEntry.hash.full)
             .catch(err => {

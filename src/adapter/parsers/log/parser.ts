@@ -20,7 +20,6 @@ export class LogParser implements ILogParser {
         const committedFiles = this.parserCommittedFiles(gitRepoPath, filesWithNumStat, filesWithNameStatus);
 
         return {
-            gitRoot: gitRepoPath,
             refs: this.refsparser.parse(this.getCommitInfo(logItems, logFormatArgs, CommitInfo.RefsNames)),
             author: this.getAuthorInfo(logItems, logFormatArgs),
             committer: this.getCommitterInfo(logItems, logFormatArgs),

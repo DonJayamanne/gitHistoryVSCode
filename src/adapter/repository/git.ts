@@ -22,7 +22,14 @@ export class Git implements IGitService {
         @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
     }
 
-    public async getGitRoot(): Promise<string> {
+    /**
+     * Used to differentiate between repository being cached using the @cache decorator
+     */
+    public getHashCode(): string {
+        return ':' + this.getGitRoot();
+    }
+
+    public getGitRoot(): string {
         return this.repo.rootUri.fsPath;
     }
     public async getGitRelativePath(file: Uri | FsUri) {
@@ -35,6 +42,11 @@ export class Git implements IGitService {
     public async getHeadHashes(): Promise<{ ref?: string; hash?: string }[]> {
         return this.repo.state.refs.filter(x => x.type <= 1).map(x =>  { return { ref: x.name, hash: x.commit }; });
     }
+
+    public getDetachedHash(): string | undefined {
+        return this.repo.state.HEAD!.name === undefined ? this.repo.state.HEAD!.commit : undefined;
+    }
+
     public async getBranches(): Promise<Branch[]> {
         const currentBranchName = await this.getCurrentBranch();
         const gitRootPath = this.repo.rootUri.fsPath;
@@ -135,10 +147,11 @@ export class Git implements IGitService {
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
+        
         const args = this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber, author);
 
-        const gitRootPathPromise = this.getGitRoot();
-        const outputPromise = this.exec(...args.logArgs);
+        const gitRepoPath = this.getGitRoot();
+        const output = await this.exec(...args.logArgs);
 
         // tslint:disable-next-line:no-suspicious-comment
         // TODO: Disabled due to performance issues https://github.com/DonJayamanne/gitHistoryVSCode/issues/195
@@ -151,7 +164,6 @@ export class Git implements IGitService {
         //         return -1;
         //     });
         const count = -1;
-        const [gitRepoPath, output] = await Promise.all([gitRootPathPromise, outputPromise]);
 
         // Run another git history, but get file stats instead of the changes
         // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);
@@ -170,27 +182,9 @@ export class Git implements IGitService {
         const headHashes = await this.getHeadHashes();
         const headHashesOnly = headHashes.map(item => item.hash);
         // tslint:disable-next-line:prefer-type-cast
-        //const headHashMap = new Map<string, string>(headHashes.map(item => [item.ref, item.hash] as [string, string]));
 
-        items.forEach(async item => {
-            item.gitRoot = gitRepoPath;
-            // Check if this the very last commit of a branch
-            // Just check if this is a head commit (if shows up in 'git show-ref')
-            item.isLastCommit = headHashesOnly.indexOf(item.hash.full) >= 0;
-
-            // Check if this commit has been merged into another branch
-            // Do this only if this is a head commit (we don't care otherwise, only the graph needs it)
-            if (!item.isLastCommit) {
-                return;
-            }
-            /*const refsContainingThisCommit = await this.getRefsContainingCommit(item.hash.full);
-            const hashesOfRefs = refsContainingThisCommit
-                .filter(ref => headHashMap.has(ref))
-                .map(ref => headHashMap.get(ref)!)
-                // tslint:disable-next-line:possible-timing-attack
-                .filter(hash => hash !== item.hash.full);
-            // If we have hashes other than current, then yes it has been merged
-            item.isThisLastCommitMerged = hashesOfRefs.length > 0;*/
+        items.filter(x => headHashesOnly.indexOf(x.hash.full) > -1).forEach(item => {
+            item.isLastCommit = true;
         });
 
         // tslint:disable-next-line:no-suspicious-comment
@@ -207,7 +201,6 @@ export class Git implements IGitService {
         } as LogEntries;
     }
     
-    @cache('IGitService')
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgsForMerge(hash);
@@ -279,6 +272,7 @@ export class Git implements IGitService {
         const fileStatParser = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
         return fileStatParser.parse(gitRootPath, filesWithNumStat.split(/\r?\n/g), filesWithNameStatus.split(/\r?\n/g));
     }
+    
     @cache('IGitService')
     public async getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash> {
         const gitRootPath = await this.getGitRoot();
@@ -310,17 +304,21 @@ export class Git implements IGitService {
     }
 
     public async createBranch(branchName: string, hash: string): Promise<void> {
-        await this.exec('checkout', '-b', branchName, hash);
+        await this.repo.createBranch(branchName, false, hash);
     }
-    public async createTag(tagName: string, hash: string): Promise<void> {
-        await this.exec('tag', '-a', tagName, '-m', tagName, hash);
+
+    public async createTag(tagName: string, hash: string): Promise<any> {
+        return await this.exec('tag', '-a', tagName, '-m', tagName, hash);
     }
+
     public async removeTag(tagName: string) {
         await this.exec('tag', '-d', tagName);
     }
+
     public async removeBranch(branchName: string) {
-        await this.exec('branch', '-D', branchName);
+        await this.repo.deleteBranch(branchName);
     }
+
     public async removeRemoteBranch(remoteBranchName: string) {
         const pathes = remoteBranchName.split('/');
         const remote = pathes.shift() as string;
@@ -328,15 +326,18 @@ export class Git implements IGitService {
 
         await this.repo.push(remote, ':' + branchName);
     }
+
     public async merge(hash: string): Promise<void> {
         await this.exec('merge', hash);
     }
+
     public async rebase(hash: string): Promise<void> {
         await this.exec('rebase', hash);
     }
+    
     private async exec(...args: string[]): Promise<string> {
-        const gitRootPath = await this.getGitRoot();
-        return this.gitCmdExecutor.exec(gitRootPath, ...args);
+        const gitRootPath = this.getGitRoot();
+        return await this.gitCmdExecutor.exec(gitRootPath, ...args);
     }
 
     // how to check if a commit has been merged into any other branch

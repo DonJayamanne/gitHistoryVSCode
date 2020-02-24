@@ -3,39 +3,71 @@ import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import * as ResultActions from '../../../actions/results';
 import { RootState, BranchesState } from '../../../reducers/index';
+import { BranchSelection, ISettings } from '../../../types';
 
 interface BranchProps {
     isLoading?: boolean;
-    branch?: string;
+    settings: ISettings;
     branches?: BranchesState;
-    selectBranch(searchText: string): void;
+    selectBranch(branchName: string, branchSelection: BranchSelection): void;
 }
 
 interface BranchState {
-    isLoading?: boolean;
-    branch?: string;
-    branches?: BranchesState;
-    searchText?: string;
+    title: string;
+    detached: string;
+    searchText: string;
 }
 
 export class Branch extends React.Component<BranchProps, BranchState> {
     private searchField: HTMLInputElement;
     constructor(props: BranchProps) {
         super(props);
-        this.state = { isLoading: props.isLoading, branch: props.branch, branches: props.branches };
+
+        const detachedHash = this.props.settings.branchSelection === BranchSelection.Detached ? this.props.settings.branchName : '';
+
+        this.state = { searchText: '', title: '', detached: detachedHash };
         this.searchField = null;
+   
     }
     public componentWillReceiveProps(nextProps: BranchProps): void {
-        this.setState({ isLoading: nextProps.isLoading, branch: nextProps.branch, branches: nextProps.branches });
+        let title = this.props.settings.branchName;
+
+        if (this.props.settings.branchSelection === BranchSelection.Detached) {
+            title = `[${this.props.settings.branchName.substr(0, 7)}]`;
+        } else  if (this.props.settings.branchSelection === BranchSelection.All) {
+            title = 'All branches';
+        }
+
+        this.setState({ title });
     }
+
     private onSelect = (branch: string) => {
-        const selectedBranch = branch === '[ALL]' ? '' : branch;
-        this.setState({ isLoading: this.state.isLoading });
-        this.props.selectBranch(selectedBranch.trim());
+        let branchSelection = BranchSelection.Current;
+
+        if (branch === '[ALL]') {
+            branchSelection = BranchSelection.All;
+            branch = '';
+        } else if (branch === '[DETACHED]') {
+            branchSelection = BranchSelection.Detached;
+            branch = this.state.detached;
+        }
+        this.props.selectBranch(branch, branchSelection);
+    }
+
+    private getDetached() {
+        const active = this.props.settings.branchSelection === BranchSelection.Detached;
+        if (this.state.detached) {
+            return (<MenuItem active={active} eventKey="[DETACHED]">[{this.state.detached.substr(0, 7)}]</MenuItem>)
+        }
+    }
+
+    private getAll() {
+        const active = this.props.settings.branchSelection === BranchSelection.All
+        return (<MenuItem active={active} eventKey='[ALL]'>All branches</MenuItem>)
     }
 
     private getBranchList() {
-        const selectedBranch = !this.props.branch || this.props.branch === '' ? '[ALL]' : this.props.branch;
+        const selectedBranch = !this.props.settings.branchName ? '[ALL]' : this.props.settings.branchName;
         let branches = Array.isArray(this.props.branches) ? this.props.branches : [];
 
         if (this.state.searchText) {
@@ -66,42 +98,40 @@ export class Branch extends React.Component<BranchProps, BranchState> {
 
     // tslint:disable-next-line:member-ordering
     public render() {
-        const title = !this.props.branch || this.props.branch === '' ? 'All branches' : this.props.branch;
-        
-        return (<DropdownButton
+        return (<DropdownButton disabled={this.props.isLoading}
             bsStyle='primary'
             bsSize='small'
-            title={title}
+            title={this.state.title}
             onSelect={(e) => this.onSelect(e)}
-            onClick={(e) => this.onClick(e)}
-            id='branchSelection'
-        >
-            <MenuItem eventKey='[ALL]'>All branches</MenuItem>
+            onClick={(e => this.onClick(e))}
+            id='branchSelectionId'>
+            {this.getAll()}
+            {this.getDetached()}
             <MenuItem divider />
-            <input ref={x => this.searchField = x} type="text" className='textInput' placeholder="Search.." id="myInput" value={this.state.searchText}  onChange={this.handleSearchChange} />
+            <MenuItem header>
+                <input ref={x => this.searchField = x} type="text" className='textInput' placeholder="Search.." id="myInput" value={this.state.searchText} onChange={this.handleSearchChange} />
+            </MenuItem>
             <MenuItem divider />
             {this.getBranchList()}
         </DropdownButton>);
     }
 }
 
-function mapStateToProps(state: RootState): BranchState {
-    const branch = (state && state.logEntries.branch) ?
-        state.logEntries.branch : '';
+function mapStateToProps(state: RootState): BranchProps {
     const branches = (state && state.branches) ?
         state.branches : [];
     const isLoading = state && state.logEntries && state.logEntries.isLoading;
 
     return {
         isLoading,
-        branch,
+        settings: state.settings,
         branches
-    };
+    } as BranchProps;
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        selectBranch: (text: string) => dispatch(ResultActions.selectBranch(text))
+        selectBranch: (branchName: string, branchSelection: BranchSelection) => dispatch(ResultActions.selectBranch(branchName, branchSelection))
     };
 }
 

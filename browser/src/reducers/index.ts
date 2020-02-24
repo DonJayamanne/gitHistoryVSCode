@@ -1,18 +1,17 @@
 import { routerReducer as routing } from 'react-router-redux';
 import { combineReducers } from 'redux';
-import { ActionedUser, Avatar, Branch, ISettings, LogEntriesResponse } from '../definitions';
+import { ActionedUser, Avatar, ISettings, LogEntriesResponse } from '../definitions';
 import authors from './authors';
 import avatars from './avatars';
 import branches from './branches';
+import settings from './settings';
 import { default as graph, IGraphState } from './graph';
 import logEntries from './logEntries';
-import searchCriteria from './searchCriteria';
-import settings from './settings';
 import vscode, { IVSCodeSettings } from './vscode';
 
 export type LogEntriesState = LogEntriesResponse & {
     isLoading: boolean;
-    isLoadingCommit: boolean;
+    isLoadingCommit?: string;
 };
 
 export type BranchesState = { name: string; current: boolean, remote: string, remoteType: number }[];
@@ -25,14 +24,7 @@ export type RootState = {
     avatars?: AvatarsState;
     authors?: AuthorsState;
     settings?: ISettings;
-    searchCriteria: ISearchCriteria;
     graph: IGraphState;
-}
-export interface ISearchCriteria {
-    selectedBranchType?: Branch;
-    selectedBranchName?: string;
-    pageIndex?: number;
-    searchText?: string;
 }
 
 export default combineReducers<RootState>({
@@ -42,7 +34,6 @@ export default combineReducers<RootState>({
     logEntries,
     branches,
     settings,
-    searchCriteria,
     graph,
     vscode
 } as any);
