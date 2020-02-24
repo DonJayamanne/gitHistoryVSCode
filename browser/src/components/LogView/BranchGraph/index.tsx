@@ -36,6 +36,7 @@ type Point = { x: number; y: number };
 class PathGenerator {
     private previousPoint?: Point;
     private svgPath?: string;
+    private points: number = 0;
     public get path() {
         return this.svgPath;
     }
@@ -49,6 +50,7 @@ class PathGenerator {
             this.connectToLine(point);
         }
         this.previousPoint = point;
+        this.points += 1;
     }
     private addFirstPoint(point: Point) {
         this.svgPath = `M ${point.x} ${point.y} `;
@@ -60,11 +62,20 @@ class PathGenerator {
         if (!this.previousPoint) {
             throw new Error('Previous point not available');
         }
-        const handle = (point.y - this.previousPoint.y) / 2;
-        const startPoint = `${this.previousPoint.x} ${this.previousPoint.y + handle}`;
-        const controlPoint = `${point.x} ${point.y - handle}`;
-        const endPoint = `${point.x} ${point.y}`;
-        this.svgPath += ` C ${startPoint}, ${controlPoint}, ${endPoint}`;
+
+        if (this.points === 1 && point.x > this.previousPoint.x) {
+            const handle = Math.abs((point.x - this.previousPoint.x) / 2);
+            const startPoint = `${this.previousPoint.x + handle} ${this.previousPoint.y}`;
+            const controlPoint = `${point.x} ${this.previousPoint.y}`;
+            const endPoint = `${point.x} ${point.y}`;
+            this.svgPath += ` C ${startPoint}, ${controlPoint}, ${endPoint}`;
+        } else {
+            const handle = (point.y - this.previousPoint.y) / 2;
+            const startPoint = `${this.previousPoint.x} ${this.previousPoint.y + handle}`;
+            const controlPoint = `${point.x} ${point.y - handle}`;
+            const endPoint = `${point.x} ${point.y}`;
+            this.svgPath += ` C ${startPoint}, ${controlPoint}, ${endPoint}`;
+        }
     }
     private connectToLine(point: Point) {
         this.svgPath += ` L ${point.x} ${point.y}`;
