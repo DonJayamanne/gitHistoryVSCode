@@ -45,6 +45,8 @@ export const actionCommit = (logEntry: LogEntry, name: string = '', value: strin
                     break;
             }
             dispatch(updateCommitInList(result.data as LogEntry));
+        }).catch(ex => {
+            dispatch(updateCommitInList(logEntry));
         });
     };
 };
@@ -62,6 +64,8 @@ export const actionRef = (logEntry: LogEntry, ref: Ref, name: string = '') => {
             }
 
             dispatch(getBranches());
+            dispatch(updateCommitInList(logEntry));
+        }).catch(ex => {
             dispatch(updateCommitInList(logEntry));
         });
     };

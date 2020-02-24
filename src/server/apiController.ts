@@ -9,18 +9,21 @@ import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { Avatar, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref, RefType } from '../types';
 import { IApiRouteHandler } from './types';
+import { IApplicationShell } from '../application/types';
 
 // tslint:disable-next-line:no-require-imports no-var-requires
 
 @injectable()
 export class ApiController implements IApiRouteHandler {
     private readonly commitViewer: IGitCommitViewDetailsCommandHandler;
+    private readonly applicationShell: IApplicationShell;
     constructor(private app: Express,
         private gitServiceFactory: IGitServiceFactory,
         private serviceContainer: IServiceContainer,
         private commandManager: ICommandManager) {
 
         this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
+        this.applicationShell = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
 
         this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
         this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
@@ -167,6 +170,7 @@ export class ApiController implements IApiRouteHandler {
             }
             response.status(200).send('');
         } catch (err) {
+            this.applicationShell.showErrorMessage(err);
             response.status(500).send(err);
         }
     }
@@ -204,6 +208,7 @@ export class ApiController implements IApiRouteHandler {
             }
             response.status(200).send(logEntry);
         } catch(err) {
+            this.applicationShell.showErrorMessage(err);
             response.status(500).send(err);
         }
     }

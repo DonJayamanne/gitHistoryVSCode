@@ -304,7 +304,11 @@ export class Git implements IGitService {
     }
 
     public async createBranch(branchName: string, hash: string): Promise<void> {
-        await this.repo.createBranch(branchName, false, hash);
+        try {
+            await this.repo.createBranch(branchName, false, hash);
+        } catch (ex) {
+            throw ex.stderr;
+        }
     }
 
     public async createTag(tagName: string, hash: string): Promise<any> {
@@ -316,7 +320,11 @@ export class Git implements IGitService {
     }
 
     public async removeBranch(branchName: string) {
-        await this.repo.deleteBranch(branchName);
+        try {
+            await this.repo.deleteBranch(branchName);
+        } catch (ex) {
+            throw ex.stderr;
+        }
     }
 
     public async removeRemoteBranch(remoteBranchName: string) {
