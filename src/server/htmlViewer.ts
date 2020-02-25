@@ -1,13 +1,12 @@
 import { inject } from 'inversify';
 import * as querystring from 'query-string';
-import { Disposable, Uri, ViewColumn, WebviewPanel, workspace, env } from 'vscode';
+import { Disposable, Uri, ViewColumn, WebviewPanel, workspace, env, Webview } from 'vscode';
 import { window } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IServiceContainer } from '../ioc/types';
 import { ApiController } from './apiController';
 import { IGitServiceFactory, BranchSelection } from '../types';
 import * as path from 'path';
-import * as fs from 'fs';
 
 export class HtmlViewer {
     private readonly disposable: Disposable[] = [];
@@ -45,8 +44,7 @@ export class HtmlViewer {
         // tslint:disable-next-line:no-any
         const webviewPanel = window.createWebviewPanel('gitLog', title, column, {
             enableScripts: true,
-            retainContextWhenHidden: true,
-            localResourceRoots: [Uri.file(path.join(this.extensionPath,'out', 'browser'))]
+            retainContextWhenHidden: true
          });
         this.htmlView.set(uri.toString(), webviewPanel);
 
@@ -71,22 +69,15 @@ export class HtmlViewer {
             branchSelection
         };
 
-
-        let mappedPathes = {};
-
-        webviewPanel.webview.options.localResourceRoots!.forEach(obj => {
-            const files = fs.readdirSync(obj.fsPath);
-
-            files.forEach(x => {
-                const relPath = path.relative(this.extensionPath, path.join(obj.fsPath, x));
-                mappedPathes[relPath] =  webviewPanel.webview.asWebviewUri(Uri.parse( path.join(obj.fsPath, x)));
-            });
-        });
-
-        webviewPanel.webview.html = this.getHtmlContent(settings, mappedPathes);
+        webviewPanel.webview.html = this.getHtmlContent(webviewPanel.webview, settings);
     }
 
-    private getHtmlContent(settings, mappedPathes) {
+    private getRelativeResource(webview: Webview, relativePath: string) {
+        // @ts-ignore
+        return webview.asWebviewUri(Uri.file( path.join(this.extensionPath, relativePath) ));
+    }
+
+    private getHtmlContent(webview, settings) {
 
         const config = workspace.getConfiguration('gitHistory');
 
@@ -95,7 +86,7 @@ export class HtmlViewer {
             <head>
                 <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
                 <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* vscode-resource: 'unsafe-inline' 'unsafe-eval'; img-src *" />
-                <link rel='stylesheet' type='text/css' href='${mappedPathes['out/browser/bundle.css']}' />
+                <link rel='stylesheet' type='text/css' href='${this.getRelativeResource(webview, 'out/browser/bundle.css')}' />
             <title>Git History</title>
             <script type="text/javascript">
                 window['vscode'] = acquireVsCodeApi();
@@ -106,7 +97,7 @@ export class HtmlViewer {
             </head>
             <body>
                 <div id="root"></div>
-                <script src="${mappedPathes['out/browser/bundle.js']}"></script>
+                <script src="${this.getRelativeResource(webview, 'out/browser/bundle.js')}"></script>
             </body>
         </html>`;
     }
