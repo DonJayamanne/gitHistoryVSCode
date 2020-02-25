@@ -14,8 +14,6 @@ export class ApiController {
         private commandManager: ICommandManager) {
 
         this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
-        this.applicationShell = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
-
         this.webview.onDidReceiveMessage(this.postMessageParser.bind(this))
     }
 
@@ -32,7 +30,7 @@ export class ApiController {
 
         let pageIndex: number | undefined = args.pageIndex ? parseInt(args.pageIndex, 10) : undefined;
 
-        let author: string | undefined = typeof args.author === 'string' ? args.author : undefined;
+        let author: string | undefined = typeof args.authorFilter === 'string' ? args.authorFilter : undefined;
 
         let lineNumber: number | undefined = args.lineNumber ? parseInt(args.lineNumber, 10) : undefined;
 
