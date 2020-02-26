@@ -167,8 +167,8 @@ export interface IGitServiceFactory {
 export interface IPostMessage {
     requestId: string;
     cmd: string;
-    payload: any;
-    error?: any;
+    payload: object;
+    error?: string;
 }
 
 export interface ISettings {
