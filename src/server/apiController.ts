@@ -45,7 +45,7 @@ export class ApiController {
         let searchText = args.searchText;
         searchText = typeof searchText === 'string' && searchText.length === 0 ? undefined : searchText;
 
-        let pageIndex: number | undefined = args.pageIndex ? parseInt(args.pageIndex, 10) : undefined;
+        let pageIndex: number | undefined = args.pageIndex ? parseInt(args.pageIndex, 10) : 0;
 
         let author: string | undefined = typeof args.authorFilter === 'string' ? args.authorFilter : undefined;
 
