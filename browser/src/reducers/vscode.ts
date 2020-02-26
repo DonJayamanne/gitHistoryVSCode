@@ -9,7 +9,6 @@ export type IVSCodeSettings = {
   theme?: string;
   locale?: string;
   configuration?: IConfiguration;
-  api?: any;
 };
 
 

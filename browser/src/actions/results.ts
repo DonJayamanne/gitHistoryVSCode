@@ -3,7 +3,8 @@ import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
 import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry, Ref } from '../definitions';
 import { BranchesState, RootState } from '../reducers';
-import { BranchSelection } from '../types';
+import { BranchSelection, Branch, } from '../types';
+import { post } from '../actions/messagebus';
 
 // tslint:disable:no-any
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
@@ -29,14 +30,25 @@ export namespace ResultActions {
 
             const store = getState();
 
-            store.vscode.api.postMessage({
-                cmd: 'doAction',
-                args: { 
-                    ...store.settings,
-                    logEntry,
-                    name,
-                    value
+            post<LogEntry>('doAction', { 
+                ...store.settings,
+                logEntry,
+                name,
+                value
+            }).then(x => {
+                switch (name) {
+                    case 'reset_soft':
+                    case 'reset_hard':
+                        dispatch(ResultActions.refresh());
+                        break;
+                    case 'newtag':
+                        break;
+                    case 'newbranch':
+                        dispatch(ResultActions.getBranches());
+                        break;
                 }
+        
+                dispatch(updateCommitInList(x));
             });
         };
     };
@@ -46,38 +58,37 @@ export namespace ResultActions {
             dispatch(notifyIsFetchingCommit(logEntry.hash.full));
             const store = getState();
 
-            store.vscode.api.postMessage({
-                cmd: 'doActionRef',
-                args: { 
-                    ...store.settings,
-                    ref,
-                    name,
-                    hash: logEntry.hash.full
-                }
+            post<LogEntry>('doActionRef', { 
+                ...store.settings,
+                ref,
+                name,
+                hash: logEntry.hash.full
+            }).then(x => {        
+                dispatch(ResultActions.getBranches());
+                dispatch(updateCommitInList(x));
             });
         };
     };
-    export const fetchAvatars = async (dispatch: Dispatch<any>, getState: () => RootState) => {
-        const store = getState();
-        store.vscode.api.postMessage({
-            cmd: 'getAvatars',
-            args: { 
+    export const fetchAvatars = () =>  {
+        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+            const store = getState();
+
+            post<Avatar[]>('getAvatars', { 
                 ...store.settings
-            }
-        });
+            }).then(x => {        
+                dispatch(fetchedAvatar(x));
+            });
+        }
     };
     export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => {
         // tslint:disable-next-line:no-any
         return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             const store = getState();
 
-            store.vscode.api.postMessage({
-                cmd: 'selectCommittedFile',
-                args: { 
-                    ...store.settings,
-                    logEntry,
-                    committedFile
-                }
+            post<void>('selectCommittedFile', { 
+                ...store.settings,
+                logEntry,
+                committedFile
             });
         };
     };
@@ -180,91 +191,40 @@ export namespace ResultActions {
 }
 // tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
-    store.vscode.api.postMessage({
-        cmd: 'getLogEntries',
-        args: { 
-            ...store.settings, 
-            pageIndex,
-            pageSize
-        }
+    dispatch(notifyIsLoading());
+    post<LogEntriesResponse>('getLogEntries', { 
+        ...store.settings,
+        pageIndex,
+        pageSize
+    }).then(x => {
+        dispatch(addResults(x));
+        ResultActions.fetchAvatars();
     });
 }
 // tslint:disable-next-line:no-any
 function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
     dispatch(notifyIsFetchingCommit(hash));
-    store.vscode.api.postMessage({
-        cmd: 'getCommit',
-        args: { ...store.settings, hash }
+    post<LogEntry>('getCommit', { 
+        ...store.settings,
+        hash
+    }).then(x => {
+        dispatch(updateCommit(x))
     });
 }
 // tslint:disable-next-line:no-any
 function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
-    store.vscode.api.postMessage({
-        cmd: 'getBranches',
-        args: store.settings
+    post<Branch[]>('getBranches', { 
+        ...store.settings
+    }).then(x => {
+        dispatch(updateBranchList(x))
     });
+
 }
 // tslint:disable-next-line:no-any
 function fetchAuthors(dispatch: Dispatch<any>, store: RootState) {
-    store.vscode.api.postMessage({
-        cmd: 'getAuthors',
-        args: store.settings
+    post<ActionedUser[]>('getAuthors', { 
+        ...store.settings
+    }).then(x => {
+        dispatch(fetchedAuthors(x));
     });
-}
-
-export class PostMessageResult {
-    constructor(private dispatch: Dispatch<any>, private getState: () => RootState) {
-        window.addEventListener('message', this.postMessageParser.bind(this));
-    }
-
-    private postMessageParser = async (event: MessageEvent) => {
-        const message = event.data;
-        await this[message.cmd](message.args, message.error!);
-    }
-
-    // @ts-ignore
-    private getLogEntriesResult = async (args: any, error: any) => {
-        this.dispatch(addResults(args));
-        ResultActions.fetchAvatars(this.dispatch, this.getState);
-    }
-    // @ts-ignore
-    private getBranchesResult = async (args: any, error: any) => {
-        this.dispatch(updateBranchList(args));
-    }
-    // @ts-ignore
-    private getAuthorsResult = async (args: any, error: any) => {
-        this.dispatch(fetchedAuthors(args));
-    }
-    // @ts-ignore
-    private getCommitResult = async (args: any, error: any) => {
-        this.dispatch(updateCommit(args));
-    }
-    // @ts-ignore
-    private getAvatarsResult = async (args: any, error: any) => {
-        if (!args) return;
-        this.dispatch(fetchedAvatar(args as Avatar[]));
-    }
-    // @ts-ignore
-    private doActionResult = async (args: any) => {
-        const name = args.name;
-
-        switch (name) {
-            case 'reset_soft':
-            case 'reset_hard':
-                this.dispatch(ResultActions.refresh());
-                break;
-            case 'newtag':
-                break;
-            case 'newbranch':
-                this.dispatch(ResultActions.getBranches());
-                break;
-        }
-
-        this.dispatch(updateCommitInList(args.logEntry as LogEntry));
-    }
-    // @ts-ignore
-    private doActionRefResult = async (args: any) => {
-        this.dispatch(ResultActions.getBranches());
-        this.dispatch(updateCommitInList(args.logEntry));
-    }
 }

@@ -172,6 +172,13 @@ export interface IGitServiceFactory {
     createGitService(resource?: Uri | string): Promise<IGitService>;
 }
 
+export interface IPostMessage {
+    requestId: string;
+    cmd: string;
+    payload: any;
+    error?: any;
+}
+
 export interface ISettings {
     branchSelection?: BranchSelection;
     branchName?: string;
