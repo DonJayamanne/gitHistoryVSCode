@@ -30,11 +30,11 @@ export class Branch extends React.Component<BranchProps, BranchState> {
    
     }
     public componentWillReceiveProps(nextProps: BranchProps): void {
-        let title = this.props.settings.branchName;
+        let title = nextProps.settings.branchName;
 
-        if (this.props.settings.branchSelection === BranchSelection.Detached) {
-            title = `[${this.props.settings.branchName.substr(0, 7)}]`;
-        } else  if (this.props.settings.branchSelection === BranchSelection.All) {
+        if (nextProps.settings.branchSelection === BranchSelection.Detached) {
+            title = `[${nextProps.settings.branchName.substr(0, 7)}]`;
+        } else  if (nextProps.settings.branchSelection === BranchSelection.All) {
             title = 'All branches';
         }
 
