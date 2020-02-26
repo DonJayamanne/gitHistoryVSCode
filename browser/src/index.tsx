@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { ResultActions, PostMessageResult } from './actions/results';
+import { ResultActions } from './actions/results';
+import { initialize } from './actions/messagebus';
 import App from './containers/App';
 import { ISettings } from './definitions';
 // tslint:disable-next-line:import-name
@@ -17,8 +18,7 @@ const store = configureStore({
     vscode: { 
         theme: document.body.className,
         locale: window['locale'],
-        configuration: window['configuration'],
-        api: window['vscode']
+        configuration: window['configuration']
     } 
 });
 
@@ -34,7 +34,8 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-new PostMessageResult(store.dispatch, store.getState);
+
+initialize(window['vscode']);
 
 store.dispatch(ResultActions.getCommits());
 store.dispatch(ResultActions.getBranches());
