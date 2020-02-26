@@ -1,19 +1,19 @@
 import { inject } from 'inversify';
+import * as path from 'path';
 import * as querystring from 'query-string';
-import { Disposable, Uri, ViewColumn, WebviewPanel, workspace, env, Webview } from 'vscode';
+import { Disposable, env, Uri, ViewColumn, Webview, WebviewPanel, workspace } from 'vscode';
 import { window } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IServiceContainer } from '../ioc/types';
+import { BranchSelection, IGitServiceFactory } from '../types';
 import { ApiController } from './apiController';
-import { IGitServiceFactory, BranchSelection } from '../types';
-import * as path from 'path';
 
 export class HtmlViewer {
     private readonly disposable: Disposable[] = [];
     private readonly commandManager: ICommandManager;
     private readonly htmlView: Map<string, WebviewPanel>;
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer, 
-                @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory, 
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
+                @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
                 private extensionPath: string) {
         this.htmlView = new Map<string, WebviewPanel>();
         this.commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
@@ -30,10 +30,12 @@ export class HtmlViewer {
         if (this.htmlView.has(uri.toString())) {
             // skip recreating a webview, when already exist
             // and reveal it in tab view
+            // tslint:disable-next-line:no-shadowed-variable
             const webviewPanel = this.htmlView.get(uri.toString());
             if (webviewPanel) {
                 webviewPanel.reveal();
             }
+
             return;
         }
 
@@ -59,10 +61,9 @@ export class HtmlViewer {
             apiController.dispose();
         });
 
-        let branchName = await gitService.getCurrentBranch();
-        let branchSelection = BranchSelection.Current;
-        
-        
+        const branchName = await gitService.getCurrentBranch();
+        const branchSelection = BranchSelection.Current;
+
         const settings = {
             id,
             branchName,
@@ -76,7 +77,7 @@ export class HtmlViewer {
 
     private getRelativeResource(webview: Webview, relativePath: string) {
         // @ts-ignore
-        return webview.asWebviewUri(Uri.file( path.join(this.extensionPath, relativePath) ));
+        return webview.asWebviewUri(Uri.file(path.join(this.extensionPath, relativePath)));
     }
 
     private getHtmlContent(webview, settings) {

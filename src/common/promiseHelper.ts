@@ -17,7 +17,7 @@ class DeferredImpl<T> implements IDeferred<T> {
     private _resolved: boolean = false;
     private _rejected: boolean = false;
     private _promise: Promise<T>;
-    // tslint:disable-next-line:no-any
+    // tslint:disable-next-line
     constructor(private scope: any = null) {
         // tslint:disable-next-line:promise-must-complete
         this._promise = new Promise<T>((res, rej) => {
@@ -49,7 +49,7 @@ class DeferredImpl<T> implements IDeferred<T> {
         return this._rejected || this._resolved;
     }
 }
-// tslint:disable-next-line:no-any
+// tslint:disable-next-line
 export function createDeferred<T>(scope: any = null): IDeferred<T> {
     return new DeferredImpl<T>(scope);
 }

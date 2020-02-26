@@ -11,8 +11,8 @@ import { DirectoryNode, FileNode, INodeBuilder, INodeFactory } from './types';
 @injectable()
 export class NodeBuilder implements INodeBuilder {
     constructor(@inject(IFileCommitCommandFactory) private fileCommandFactory: IFileCommitCommandFactory,
-        private nodeFactory: INodeFactory,
-        @inject(IPlatformService) private platform: IPlatformService) {
+                private nodeFactory: INodeFactory,
+                @inject(IPlatformService) private platform: IPlatformService) {
     }
     public buildTree(commit: CommitDetails, committedFiles: CommittedFile[]): (DirectoryNode | FileNode)[] {
         const sortedFiles = committedFiles.sort((a, b) => a.uri.fsPath.toUpperCase() > b.uri.fsPath.toUpperCase() ? 1 : -1);
@@ -42,9 +42,10 @@ export class NodeBuilder implements INodeBuilder {
                 if (index === 0 && !nodeExists) {
                     roots.push(folderNode);
                 }
+
                 return folderNode;
                 // tslint:disable-next-line:no-any
-            }, undefined as any);
+            },                                                                        undefined as any);
             const fileNode = this.nodeFactory.createFileNode(commit, file);
             if (dirNode) {
                 dirNode.children.push(fileNode);
@@ -54,10 +55,12 @@ export class NodeBuilder implements INodeBuilder {
         });
 
         nodes.forEach(node => node.children = this.sortNodes(node.children));
+
         return this.sortNodes(roots);
     }
     public buildList(commit: CommitDetails, committedFiles: CommittedFile[]): FileNode[] {
         const nodes = committedFiles.map(file => this.nodeFactory.createFileNode(commit, file));
+
         return this.sortFileNodes(nodes);
     }
     public async getTreeItem(element: DirectoryNode | FileNode): Promise<DirectoryTreeItem | FileTreeItem> {
@@ -74,6 +77,7 @@ export class NodeBuilder implements INodeBuilder {
         if (treeItem.command) {
             treeItem.command.tooltip = 'sdafasfef.';
         }
+
         return treeItem;
     }
     public async buildFileTreeItem(element: FileNode): Promise<FileTreeItem> {
@@ -101,6 +105,7 @@ export class NodeBuilder implements INodeBuilder {
         }
         treeItem.contextValue = 'file';
         treeItem.command = await this.fileCommandFactory.getDefaultFileCommand(element.data!);
+
         return treeItem;
     }
     private sortNodes(nodes: (DirectoryNode | FileNode)[]): (DirectoryNode | FileNode)[] {

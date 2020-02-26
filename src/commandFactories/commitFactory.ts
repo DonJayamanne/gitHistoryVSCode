@@ -36,6 +36,7 @@ export class CommitCommandFactory implements ICommitCommandFactory {
         return (await Promise.all(commands.map(async cmd => {
             const result = cmd.preExecute();
             const available = typeof result === 'boolean' ? result : await result;
+
             return available ? cmd : undefined;
         })))
             .filter(cmd => !!cmd)

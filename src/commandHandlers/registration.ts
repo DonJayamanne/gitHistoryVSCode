@@ -30,6 +30,7 @@ export function command(commandName: string, serviceIdentifier: interfaces.Servi
     // tslint:disable-next-line:no-function-expression
     return function (_target: ICommandHandler, propertyKey: string, descriptor: TypedPropertyDescriptor<CommandHandler>) {
         CommandHandlerRegister.register(commandName, propertyKey, serviceIdentifier);
+
         return descriptor;
     };
 }

@@ -36,7 +36,7 @@ export class CallContext<T> {
 
 export class BranchDetails {
     constructor(public readonly workspaceFolder: string,
-        public readonly branch: string) { }
+                public readonly branch: string) { }
 }
 
 export class CommitDetails extends BranchDetails {

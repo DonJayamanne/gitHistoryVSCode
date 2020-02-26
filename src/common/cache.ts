@@ -19,6 +19,7 @@ export class CacheRegister implements Disposable {
             }
             storage.delete(key);
         }
+
         return;
     }
     // tslint:disable-next-line:no-any
@@ -83,15 +84,18 @@ export function cache(storageKey: string, arg1?: any, arg2?: any) {
                 return entry.data;
             }
 
-            // tslint:disable-next-line:no-invalid-this
             try {
+                // tslint:disable-next-line:no-invalid-this
                 const result = await oldFn.apply(this, args);
                 CacheRegister.add(innerStorageKey, key, result, expiryMs);
+
                 return result;
             } catch (ex) {
+                // tslint:disable-next-line:no-console
                 console.error(`Error calling ${storageKey}.${propertyKey} from @cache decorator`, ex);
             }
         };
+
         return descriptor;
     };
 }

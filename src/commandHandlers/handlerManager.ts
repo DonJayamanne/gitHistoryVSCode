@@ -7,9 +7,9 @@ import { ICommandHandler, ICommandHandlerManager } from './types';
 
 @injectable()
 export class CommandHandlerManager implements ICommandHandlerManager {
-    constructor( @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
-        @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
+    constructor(@inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
+                @inject(ICommandManager) private commandManager: ICommandManager,
+                @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     public registerHandlers() {
         for (const item of CommandHandlerRegister.getHandlers()) {

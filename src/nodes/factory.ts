@@ -20,6 +20,7 @@ export class ComparisonNodeFactory implements INodeFactory {
     }
     public createFileNode(commit: CommitDetails, committedFile: CommittedFile) {
         const compareCommit = commit as CompareCommitDetails;
+
         return new FileNode(new CompareFileCommitDetails(compareCommit, compareCommit.rightCommit, committedFile));
     }
 }

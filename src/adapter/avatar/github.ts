@@ -77,10 +77,10 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         const contributors = await this.getContributors(remoteRepoWithNoGitSuffix);
 
         const githubUsers = await Promise.all(contributors.map(async user => {
-            return await this.getUserByLogin(user.login);
+            return this.getUserByLogin(user.login);
         }));
 
-        let avatars : Avatar[] = [];
+        const avatars : Avatar[] = [];
 
         githubUsers.forEach(user => {
             if (!user) {
@@ -115,7 +115,8 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
 
         const info = await fetch(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { headers })
             .then(response => response.json())
-            .then((result: { headers: any, data: GithubUserResponse }) => {
+            // tslint:disable-next-line:no-any
+            .then((result: { headers: any; data: GithubUserResponse }) => {
                 if (!result.data || (!result.data.name && !result.data.login)) {
                     return;
                 } else {

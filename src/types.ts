@@ -139,7 +139,7 @@ export interface IGitService {
     reset(hash: string, hard?: boolean): Promise<void>;
     checkout(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
-    createTag(tagName: string, hash: string): Promise<void>;
+    createTag(tagName: string, hash: string): Promise<string>;
     removeTag(tagName: string): Promise<void>;
     removeBranch(tagName: string): Promise<void>;
     removeRemoteBranch(remoteBranchName: string): Promise<void>;

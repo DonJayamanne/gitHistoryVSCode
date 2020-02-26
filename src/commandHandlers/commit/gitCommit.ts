@@ -1,11 +1,11 @@
 import { inject, injectable } from 'inversify';
+import { IApplicationShell } from '../../application/types';
 import { CommitDetails, IUiService } from '../../common/types';
 import { IServiceContainer } from '../../ioc/types';
+import { IGitServiceFactory } from '../../types';
 import { ICommitViewerFactory } from '../../viewers/types';
 import { command } from '../registration';
 import { IGitCommitCommandHandler } from '../types';
-import { IApplicationShell } from '../../application/types';
-import { IGitServiceFactory } from '../../types';
 
 @injectable()
 export class GitCommitCommandHandler implements IGitCommitCommandHandler {
@@ -20,7 +20,7 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
             return cmd.execute();
         }
     }
-    
+
     @command('git.commit.createTag', IGitCommitCommandHandler)
     public async createTagFromCommit(commit: CommitDetails, newTagName?: string) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;

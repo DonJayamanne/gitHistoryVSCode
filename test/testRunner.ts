@@ -90,6 +90,7 @@ function getCoverageOptions(testsRoot: string): ITestRunnerOptions | undefined {
         return undefined;
     }
     const coverConfigPath = path.join(testsRoot, coverageOptions.coverageConfig);
+
     return fs.existsSync(coverConfigPath) ? JSON.parse(fs.readFileSync(coverConfigPath, 'utf8')) : undefined;
 }
 
@@ -103,6 +104,7 @@ class CoverageRunner {
     private get coverage(): { [key: string]: CoverState } {
         if (global[this.coverageVar] === undefined || Object.keys(global[this.coverageVar]).length === 0) {
             console.error('No coverage information was collected, exit without writing coverage information');
+
             return {};
         } else {
             return global[this.coverageVar];

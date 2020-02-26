@@ -21,6 +21,7 @@ export async function createTemporaryFile(extension: string, temporaryDirectory?
 export function formatDate(date: Date) {
     const lang = process.env.language;
     const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+
     return date.toLocaleString(lang, dateOptions);
 }
 

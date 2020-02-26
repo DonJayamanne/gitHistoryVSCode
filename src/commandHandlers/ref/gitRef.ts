@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
-import { IServiceContainer } from '../../ioc/types';
-import { command } from '../registration';
-import { IGitRefCommandHandler } from '../types';
-import { IGitServiceFactory } from '../../types';
 import { IApplicationShell } from '../../application/types';
 import { BranchDetails } from '../../common/types';
+import { IServiceContainer } from '../../ioc/types';
+import { IGitServiceFactory } from '../../types';
+import { command } from '../registration';
+import { IGitRefCommandHandler } from '../types';
 
 @injectable()
 export class GitRefCommandHandler implements IGitRefCommandHandler {

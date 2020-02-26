@@ -18,7 +18,7 @@ export class WorkspaceMementoStore implements IStateStore {
 
 @injectable()
 export class WorkspaceStateStoreFactory implements IStateStoreFactory {
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     public createStore(): IStateStore {
         return new WorkspaceMementoStore(this.serviceContainer.get<Memento>('workspaceMementoStore'));
@@ -27,7 +27,7 @@ export class WorkspaceStateStoreFactory implements IStateStoreFactory {
 
 @injectable()
 export class GlobalStateStoreFactory implements IStateStoreFactory {
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     public createStore(): IStateStore {
         return new WorkspaceMementoStore(this.serviceContainer.get<Memento>('globalMementoStore'));

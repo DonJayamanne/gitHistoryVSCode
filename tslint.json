@@ -25,7 +25,9 @@
             "check-else"
         ],
         "no-parameter-properties": false,
+        "no-object-literal-type-assertion": false,
         "no-reserved-keywords": false,
+        "newline-per-chained-call": false,
         "newline-before-return": false,
         "export-name": false,
         "align": false,
@@ -50,6 +52,7 @@
         "no-string-based-set-timeout": false,
         "no-floating-promises": false,
         "no-empty-interface": false,
+        "interface-name": [false, "never-prefix"],
         "no-bitwise": false,
         "eofline": true,
         "no-implicit-dependencies": false,

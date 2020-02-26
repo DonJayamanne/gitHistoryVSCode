@@ -31,6 +31,7 @@ export class FileStatParser implements IFileStatParser {
             return fileInfo.indexOf(item) === -1 ? undefined : item;
         }, undefined);
         if (!diffSeparator) {
+            // tslint:disable-next-line:no-console
             console.error(`Parsing file movements failed for ${fileInfo}`);
             return;
         }
@@ -43,6 +44,7 @@ export class FileStatParser implements IFileStatParser {
         } else {
             const partWithDifference = fileInfo.substring(startIndex, endIndex + 1);
             if (!partWithDifference.startsWith('{') || !partWithDifference.endsWith('}')) {
+                // tslint:disable-next-line:no-console
                 console.error(`Invalid entry cotaining => for ${fileInfo}`);
                 return;
             }
@@ -51,6 +53,7 @@ export class FileStatParser implements IFileStatParser {
                 .map(part => part.endsWith('}') ? part.substring(0, part.length - 1) : part)
                 .map(part => part.trim());
             if (parts.length !== 2) {
+                // tslint:disable-next-line:no-console
                 console.error(`Invalid number of items after splitting parts of file movements ${fileInfo}`);
             }
 
@@ -67,9 +70,9 @@ export class FileStatParser implements IFileStatParser {
 
     /**
      * Parses a line containing file information returned by `git log --name-stat` and returns just the file names
-     * @param {string} line
-     * @returns {({ original?: string, current: string } | undefined)}
-     * @memberof FileStatParser
+     * @param line line number
+     * @param status status
+     * @returns current file
      */
     private static getNewAndOldFileNameFromNumStatLine(line: string, status: Status): { original?: string; current: string } | undefined {
         const statusParts = line.split('\t');
@@ -82,14 +85,14 @@ export class FileStatParser implements IFileStatParser {
 
     /**
      * Parses a line containing file information returned by `git log --numstat`
-     * @param {string} line
-     * @returns {({ additions?: number, deletions?: number } | undefined)}
-     * @memberof FileStatParser
+     * @param line the stdout line of the command
+     * @returns number of added and removed lines for a file
      */
     private static getAdditionsAndDeletionsFromNumStatLine(line: string): { additions?: number; deletions?: number; fileName: string } | undefined {
         // 0       0       src/client/common/{comms => }/socketCallbackHandler.ts
         const numStatParts = line.split('\t').map(part => part.trim()).filter(part => part.length > 0);
         if (numStatParts.length < 3) {
+            // tslint:disable-next-line:no-console
             console.error(`Failed to identify additions and deletions for line ${line}`);
             return;
         }
@@ -102,9 +105,9 @@ export class FileStatParser implements IFileStatParser {
     }
     /**
      * Parsers the file status
-     * @param {string[]} filesWithNumStat Files returned using `git log --numstat`
-     * @param {string[]} filesWithNameStat Files returned using `git log --name-status`
-     * @returns {CommittedFile[]} An array of committed files
+     * @param filesWithNumStat Files returned using `git log --numstat`
+     * @param filesWithNameStat Files returned using `git log --name-status`
+     * @returns An array of committed files
      */
     public parse(gitRootPath: string, filesWithNumStat: string[], filesWithNameStat: string[]): CommittedFile[] {
         return filesWithNameStat.map((line, index) => {

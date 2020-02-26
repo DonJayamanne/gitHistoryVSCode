@@ -13,7 +13,7 @@ import { IGitHistoryCommandHandler } from './types';
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
     constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommandManager) private commandManager: ICommandManager) { }
+                @inject(ICommandManager) private commandManager: ICommandManager) { }
 
     @command('git.viewFileHistory', IGitHistoryCommandHandler)
     public async viewFileHistory(info?: FileCommitDetails | Uri): Promise<void> {
@@ -39,6 +39,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             }
             fileUri = activeTextEditor.document.uri;
         }
+
         return this.viewHistory(fileUri);
     }
     @command('git.viewLineHistory', IGitHistoryCommandHandler)
@@ -50,6 +51,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         }
         fileUri = activeTextEditor.document.uri;
         const currentLineNumber = activeTextEditor.selection.start.line + 1;
+
         return this.viewHistory(fileUri, currentLineNumber);
     }
     @command('git.viewHistory', IGitHistoryCommandHandler)

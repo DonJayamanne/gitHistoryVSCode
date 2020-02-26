@@ -74,5 +74,5 @@ export interface IDocumentManager {
      * @param options Options to control how the document will be created.
      * @return A promise that resolves to a [document](#TextDocument).
      */
-    openTextDocument(options?: { language?: string; content?: string; }): Thenable<TextDocument>;
+    openTextDocument(options?: { language?: string; content?: string }): Thenable<TextDocument>;
 }

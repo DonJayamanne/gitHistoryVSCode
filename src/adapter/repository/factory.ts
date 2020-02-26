@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
-import { Uri, QuickPickItem } from 'vscode';
+import * as path from 'path';
+import { QuickPickItem, Uri } from 'vscode';
 import { IApplicationShell } from '../../application/types';
 import { IServiceContainer } from '../../ioc/types';
 import { IGitService, IGitServiceFactory } from '../../types';
@@ -8,7 +9,6 @@ import { ILogParser } from '../parsers/types';
 import { Git } from './git';
 import { API } from './git.d';
 import { IGitArgsService } from './types';
-import * as path from 'path';
 
 @injectable()
 export class GitServiceFactory implements IGitServiceFactory {
@@ -29,11 +29,11 @@ export class GitServiceFactory implements IGitServiceFactory {
     }
 
     public getService(index: number) : IGitService {
-        return this.gitServices.get(index.toString())!; 
+        return this.gitServices.get(index.toString())!;
     }
 
     public async repositoryPicker() : Promise<void> {
-        if (this.repoIndex > -1) return;
+        if (this.repoIndex > -1) { return; }
 
         const app = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
         const pickList: QuickPickItem[] = [];
@@ -41,14 +41,14 @@ export class GitServiceFactory implements IGitServiceFactory {
         this.gitApi.repositories.forEach(x => {
             pickList.push({ label: path.basename(x.rootUri.path), detail: x.rootUri.path, description: x.state.HEAD!.name });
         });
-        
+
         const options = {
             canPickMany: false, matchOnDescription: false,
             matchOnDetail: true, placeHolder: 'Select a Git Repository'
         };
         const selectedItem = await app.showQuickPick(pickList, options);
         if (selectedItem) {
-            this.repoIndex = this.gitApi.repositories.findIndex(x => x.rootUri.path == selectedItem.detail);
+            this.repoIndex = this.gitApi.repositories.findIndex(x => x.rootUri.path === selectedItem.detail);
         }
     }
 
@@ -63,7 +63,7 @@ export class GitServiceFactory implements IGitServiceFactory {
                 // show repository picker
                 if (this.repoIndex === -1) {
                     await this.repositoryPicker();
-                } else if(currentIndex > -1 && currentIndex !== this.repoIndex) {
+                } else if (currentIndex > -1 && currentIndex !== this.repoIndex) {
                     this.repoIndex = currentIndex;
                 }
             }
@@ -72,11 +72,12 @@ export class GitServiceFactory implements IGitServiceFactory {
         if (resourceUri) {
             // find the correct repository from the given resource uri
             let i = 0;
-            for(let x of this.gitApi.repositories) {
+            for (const x of this.gitApi.repositories) {
                 if (resourceUri!.fsPath.startsWith(x.rootUri.fsPath) && x.rootUri.fsPath === this.gitApi.repositories[i].rootUri.fsPath) {
                     this.repoIndex = i;
                     break;
                 }
+                // tslint:disable-next-line
                 i++;
             }
         }

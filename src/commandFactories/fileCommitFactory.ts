@@ -15,10 +15,10 @@ import { IFileCommitCommandFactory } from './types';
 
 @injectable()
 export class FileCommitCommandFactory implements IFileCommitCommandFactory {
-    constructor( @inject(IGitFileHistoryCommandHandler) private fileHistoryCommandHandler: IGitFileHistoryCommandHandler,
-        @inject(IGitCompareFileCommandHandler) private fileCompareHandler: IGitCompareFileCommandHandler,
-        @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
+    constructor(@inject(IGitFileHistoryCommandHandler) private fileHistoryCommandHandler: IGitFileHistoryCommandHandler,
+                @inject(IGitCompareFileCommandHandler) private fileCompareHandler: IGitCompareFileCommandHandler,
+                @inject(ICommandManager) private commandManager: ICommandManager,
+                @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
 
     public async createCommands(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails>[]> {
         const commands = [
@@ -57,6 +57,7 @@ export class FileCommitCommandFactory implements IFileCommitCommandFactory {
         })))
             .filter(cmd => !!cmd)
             .map(cmd => cmd!);
+
         return availableCommands.length === 0 ? undefined : availableCommands[0];
     }
 }

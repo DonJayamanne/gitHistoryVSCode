@@ -13,7 +13,7 @@ const currentBranch = '$(git-branch) Current branch';
 export class UiService implements IUiService {
     private selectionActionToken?: CancellationTokenSource;
     constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(IApplicationShell) private application: IApplicationShell) { }
+                @inject(IApplicationShell) private application: IApplicationShell) { }
 
     public async getBranchSelection(): Promise<BranchSelection | undefined> {
         const itemPickList: QuickPickItem[] = [];

@@ -3,10 +3,10 @@ import * as iconv from 'iconv-lite';
 import { injectable, multiInject } from 'inversify';
 import { Writable } from 'stream';
 import { Disposable, extensions } from 'vscode';
-import { IGitCommandExecutor } from './types';
-import { GitExtension } from '../repository/git.d';
 import { StopWatch } from '../../common/stopWatch';
 import { ILogService } from '../../common/types';
+import { GitExtension } from '../repository/git.d';
+import { IGitCommandExecutor } from './types';
 
 const DEFAULT_ENCODING = 'utf8';
 const isWindows = /^win/.test(process.platform);

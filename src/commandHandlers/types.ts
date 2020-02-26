@@ -53,10 +53,8 @@ export interface IGitCommitCommandHandler extends ICommandHandler {
 export const IGitRefCommandHandler = Symbol('IGitRefCommandHandler');
 // tslint:disable-next-line:no-empty-interface
 export interface IGitRefCommandHandler extends ICommandHandler {
-    
+
 }
-
-
 
 export const IGitCommitViewDetailsCommandHandler = Symbol('IGitCommitViewDetailsCommandHandler');
 // tslint:disable-next-line:no-empty-interface

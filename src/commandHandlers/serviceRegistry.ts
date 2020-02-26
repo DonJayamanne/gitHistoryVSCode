@@ -4,7 +4,6 @@ import { GitCompareCommitCommandHandler } from './commit/compare';
 import { GitCompareCommitViewExplorerCommandHandler } from './commit/compareViewExplorer';
 import { GitCheckoutCommandHandler } from './commit/gitCheckout';
 import { GitCherryPickCommandHandler } from './commit/gitCherryPick';
-import { GitRefCommandHandler } from './ref/gitRef';
 import { GitCommitCommandHandler } from './commit/gitCommit';
 import { GitCommitViewDetailsCommandHandler } from './commit/gitCommitDetails';
 import { GitMergeCommandHandler } from './commit/gitMerge';
@@ -15,7 +14,8 @@ import { GitCompareFileCommitCommandHandler } from './fileCommit/fileCompare';
 import { GitFileHistoryCommandHandler } from './fileCommit/fileHistory';
 import { GitHistoryCommandHandler } from './gitHistory';
 import { CommandHandlerManager } from './handlerManager';
-import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitRefCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from './types';
+import { GitRefCommandHandler } from './ref/gitRef';
+import { ICommandHandler, ICommandHandlerManager, IFileCommandHandler, IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCommitViewExplorerCommandHandler, IGitCompareCommandHandler, IGitCompareCommitViewExplorerCommandHandler, IGitCompareFileCommandHandler, IGitFileHistoryCommandHandler, IGitHistoryCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRefCommandHandler, IGitRevertCommandHandler } from './types';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IGitFileHistoryCommandHandler>(IGitFileHistoryCommandHandler, GitFileHistoryCommandHandler);
