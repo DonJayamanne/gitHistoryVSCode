@@ -95,6 +95,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             `branchSelection=${branchSelection}`, 
             `branchName=${encodeURIComponent(branchName)}`
         ];
+
+        if (lineNumber) {
+            queryArgs.push(`line=${lineNumber}`)
+        }
         
         const uri = `${previewUri}?${queryArgs.join('&')}`;
 

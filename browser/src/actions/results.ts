@@ -206,6 +206,10 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
     if (store.settings.file) {
         queryParts.push(`file=${encodeURIComponent(store.settings.file)}`);
     }
+    if (store.settings.lineNumber) {
+        queryParts.push(`lineNumber=${store.settings.lineNumber}`);
+    }
+
     if (store.settings.searchText) {
         queryParts.push(`searchText=${encodeURIComponent(store.settings.searchText)}`);
     }

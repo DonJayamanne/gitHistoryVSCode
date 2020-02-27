@@ -15,6 +15,7 @@ export class ContentProvider implements TextDocumentContentProvider {
         const branchName: string | undefined = query.branchName ? decodeURIComponent(query.branchName as string) : '';
         const branchSelection: BranchSelection = parseInt(query.branchSelection!.toString(), 10) as BranchSelection;
         const file: string = decodeURIComponent(query.file!.toString());
+        const lineNumber: number | undefined = query.line ? parseInt(query.line!.toString(), 10) : undefined;
         const queryArgs = [
             `id=${id}`,
             `branchName=${encodeURIComponent(branchName)}`,
@@ -27,6 +28,7 @@ export class ContentProvider implements TextDocumentContentProvider {
             id,
             branchName,
             file,
+            lineNumber,
             branchSelection
         };
 
