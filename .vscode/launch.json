@@ -34,23 +34,6 @@
 				"${workspaceRoot}/out/**/*.js"
 			],
 			"preLaunchTask": "compile"
-		},
-		{
-			"name": "Launch Tests (with code coverage)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"${workspaceRoot}/src/test",
-				"--extensionDevelopmentPath=${workspaceRoot}",
-				"--extensionTestsPath=${workspaceRoot}/out/test"
-			],
-			"stopOnEntry": false,
-			"sourceMaps": true,
-			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
-			],
-			"preLaunchTask": "compile"
 		}
 	]
 }
