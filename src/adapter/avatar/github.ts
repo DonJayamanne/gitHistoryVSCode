@@ -110,21 +110,18 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         const cachedUser = await this.stateStore.get<GithubUserResponse>(key);
         let headers = {};
 
-        if (cachedUser) {
+        if (cachedUser && cachedUser.lastModified) {
             // Use GitHub API with conditional check on last modified
             // to avoid API request rate limitation
             headers = { 'If-Modified-Since': cachedUser.lastModified };
         }
 
         const info = await fetch(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { headers })
-            .then(response => response.json())
-            .then((result: { headers: any; data: GithubUserResponse }) => {
-                if (!result.data || (!result.data.name && !result.data.login)) {
-                    return;
-                } else {
-                    result.data.lastModified = result.headers['last-modified'];
-                    return result.data;
-                }
+            .then(async (response: any) => {
+                const user: GithubUserResponse = await response.json();
+                user.lastModified = response.headers.get('last-modified');
+
+                return user;
             })
             .catch(() => {
                 // can either be '302 Not Modified' or any other error
@@ -146,10 +143,12 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     private getContributors(repoPath: string) {
         const promise = fetch(`https://api.github.com/repos/${repoPath}/contributors`);
 
-        return promise
-            .then(response => response.json())
-            .then(data => {
-                return data as GithubUserSearchResponseItem[];
-            });
+        return promise.then(async (response: Response) => {
+            if (response.status === 403) {
+                // max API limit exceeded
+                return [] as GithubUserSearchResponseItem[];
+            }
+            return (await response.json()) as GithubUserSearchResponseItem[];
+        });
     }
 }

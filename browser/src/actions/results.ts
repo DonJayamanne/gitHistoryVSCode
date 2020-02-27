@@ -181,7 +181,6 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
         pageSize
     }).then(x => {
         dispatch(addResults(x));
-        ResultActions.fetchAvatars();
     });
 }
 function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {

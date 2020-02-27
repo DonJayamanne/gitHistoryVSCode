@@ -38,3 +38,4 @@ initialize(window['vscode']);
 store.dispatch(ResultActions.getCommits());
 store.dispatch(ResultActions.getBranches());
 store.dispatch(ResultActions.getAuthors());
+store.dispatch(ResultActions.fetchAvatars());
