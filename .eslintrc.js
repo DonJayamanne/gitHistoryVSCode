@@ -10,6 +10,12 @@ module.exports =  {
       sourceType:  'module',  // Allows for the use of imports
     },
     rules:  {
+    "@typescript-eslint/no-non-null-assertion": "off", // allow non-null assertion
+    "@typescript-eslint/interface-name-prefix": "off", // skip interface names which does not start with "I" prefix
+    "@typescript-eslint/no-explicit-any": "off", // allow datatype any
+    "@typescript-eslint/explicit-function-return-type": "off", // ignore missing return types for the time being
+    "@typescript-eslint/no-empty-interface": "off", // allow empty interfaces
+    "@typescript-eslint/ban-ts-ignore": "off", // allow @ts-ignore comment for the time being
       // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
       // e.g. "@typescript-eslint/explicit-function-return-type": "off",
     },
