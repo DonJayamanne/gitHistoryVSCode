@@ -15,6 +15,10 @@ module.exports = {
         path: outPath,
         filename: 'bundle.js',
     },
+    performance: {
+        maxEntrypointSize: 716800,
+        maxAssetSize: 716800
+    },
     target: 'web',
     resolve: {
         extensions: ['.js', '.ts', '.tsx'],
