@@ -40,6 +40,7 @@ export class HtmlViewer {
         const query = querystring.parse(uri.query.toString());
         const id: number = parseInt(query.id!.toString(), 10);
         const file: string = decodeURIComponent(query.file!.toString());
+        const line: number | undefined = query.line ? parseInt(query.line.toString()) : undefined;
 
         // tslint:disable-next-line:no-any
         const webviewPanel = window.createWebviewPanel('gitLog', title, column, {
@@ -66,6 +67,7 @@ export class HtmlViewer {
             id,
             branchName,
             file,
+            line,
             branchSelection
         };
 

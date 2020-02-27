@@ -49,7 +49,7 @@ export class ApiController {
 
         let author: string | undefined = typeof args.authorFilter === 'string' ? args.authorFilter : undefined;
 
-        let lineNumber: number | undefined = args.lineNumber ? parseInt(args.lineNumber, 10) : undefined;
+        let lineNumber: number | undefined = args.line ? parseInt(args.line, 10) : undefined;
 
         let branch = args.branchName;
 
