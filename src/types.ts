@@ -178,7 +178,7 @@ export interface ISettings {
     pageIndex?: number;
     searchText?: string;
     file?: string;
-    lineNumber?: number,
+    line?: number;
     id?: string;
 }
 
