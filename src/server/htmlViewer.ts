@@ -60,8 +60,15 @@ export class HtmlViewer {
             }
         });
 
-        const branchName = await gitService.getCurrentBranch();
-        const branchSelection = BranchSelection.Current;
+        let branchName = await gitService.getCurrentBranch();
+        let branchSelection = BranchSelection.Current;
+
+        // check if the current branch is detached
+        const detached = gitService.getDetachedHash();
+        if (!branchName && detached) {
+            branchSelection = BranchSelection.Detached;
+            branchName = detached;
+        }
 
         const settings = {
             id,
