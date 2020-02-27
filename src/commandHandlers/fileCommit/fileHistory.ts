@@ -46,14 +46,14 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         if (fileCommit.committedFile.status === Status.Deleted) {
             return this.applicationShell.showErrorMessage('File cannot be compared with, as it was deleted').then(() => void 0);
         }
-        if (!await this.fileSystem.fileExistsAsync(fileCommit.committedFile.uri.fsPath)) {
+        if (!await this.fileSystem.fileExistsAsync(fileCommit.committedFile.uri.path)) {
             return this.applicationShell.showErrorMessage('Corresponding workspace file does not exist').then(() => void 0);
         }
 
         const tmpFile = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
-        const fileName = path.basename(fileCommit.committedFile.uri.fsPath);
+        const fileName = path.basename(fileCommit.committedFile.uri.path);
         const title = `${fileName} (Working Tree)`;
-        await this.commandManager.executeCommand('vscode.diff', Uri.file(fileCommit.committedFile.uri.fsPath), Uri.file(tmpFile.fsPath), title, { preview: true });
+        await this.commandManager.executeCommand('vscode.diff', Uri.file(fileCommit.committedFile.uri.path), Uri.file(tmpFile.fsPath), title, { preview: true });
     }
 
     @command('git.commit.FileEntry.CompareAgainstPrevious', IGitFileHistoryCommandHandler)
@@ -68,17 +68,13 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             return this.applicationShell.showErrorMessage('File cannot be compared with previous, as this is a new file').then(() => void 0);
         }
 
-        const tmpFilePromise = gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
-        const previousCommitHashPromise = gitService.getPreviousCommitHashForFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
-
-        const values = await Promise.all([tmpFilePromise, previousCommitHashPromise]);
-        const tmpFile = values[0];
-        const previousCommitHash = values[1];
+        const tmpFile = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
+        const previousCommitHash = await gitService.getPreviousCommitHashForFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
 
         const previousFile = fileCommit.committedFile.oldUri ? fileCommit.committedFile.oldUri : fileCommit.committedFile.uri;
         const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
-        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile.uri.fsPath), hash: fileCommit.logEntry.hash }, { file: Uri.file(previousFile.fsPath), hash: previousCommitHash });
+        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile.uri.path), hash: fileCommit.logEntry.hash }, { file: Uri.file(previousFile.path), hash: previousCommitHash });
         await this.commandManager.executeCommand('vscode.diff', previousTmpFile, tmpFile, title, { preview: true });
     }
     @command('git.commit.FileEntry.ViewPreviousFileContents', IGitFileHistoryCommandHandler)
@@ -113,8 +109,8 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
 
         const [leftFile, rightFile] = await Promise.all([leftFilePromise, rightFilePromise]);
 
-        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile.uri.fsPath), hash: fileCommit.logEntry.hash },
-            { file: Uri.file(fileCommit.committedFile.uri.fsPath), hash: fileCommit.rightCommit.logEntry.hash });
+        const title = this.getComparisonTitle({ file: Uri.file(fileCommit.committedFile.uri.path), hash: fileCommit.logEntry.hash },
+            { file: Uri.file(fileCommit.committedFile.uri.path), hash: fileCommit.rightCommit.logEntry.hash });
 
         await this.commandManager.executeCommand('vscode.diff', leftFile, rightFile, title, { preview: true });
     }
