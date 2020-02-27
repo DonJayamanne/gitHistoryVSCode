@@ -1,3 +1,5 @@
+## Version 0.5.5
+- Fixed line history shows file history instead [#472](https://github.com/DonJayamanne/gitHistoryVSCode/pull/472)
 
 ## Version 0.5.4
 - Fixed indentation of commits against branching graph @DonJayamanne [#446](https://github.com/DonJayamanne/gitHistoryVSCode/pull/446)
