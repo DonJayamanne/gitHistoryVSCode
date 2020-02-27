@@ -1,3 +1,4 @@
+import * as fetch from 'node-fetch';
 import { inject, injectable } from 'inversify';
 import { IStateStore, IStateStoreFactory } from '../../application/types/stateStore';
 import { IServiceContainer } from '../../ioc/types';
@@ -143,9 +144,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
      * @param repoPath relative repository path
      */
     private getContributors(repoPath: string) {
-        const controller = new AbortController();
-        const promise = fetch(`https://api.github.com/repos/${repoPath}/contributors`, { signal: controller.signal });
-        setTimeout(() => controller.abort(), 5000);
+        const promise = fetch(`https://api.github.com/repos/${repoPath}/contributors`);
 
         return promise
             .then(response => response.json())
