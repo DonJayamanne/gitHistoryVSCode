@@ -17,26 +17,26 @@ describe('Adapter Parser File Stat', () => {
         svcContainer.addSingletonInstance(ILogService, TypeMoq.Mock.ofType<ILogService>().object);
     });
     it('Must return the right number of files', () => {
-                const numStatFileLog = ['1       1       package.json',
-            '1       1       src/adapter/ioc.ts',
-            '8       0       src/adapter/parsers/constants.ts',
-            '24      22      src/adapter/parsers/ioc.ts'];
-        const nameStatusFileLog = ['M       package.json',
-            'M       src/adapter/ioc.ts',
-            'A       src/adapter/parsers/constants.ts',
-            'M       src/adapter/parsers/ioc.ts'];
+                const numStatFileLog = ['1\t1\tpackage.json',
+            '1\t1\tsrc/adapter/ioc.ts',
+            '8\t0\tsrc/adapter/parsers/constants.ts',
+            '24\t22\tsrc/adapter/parsers/ioc.ts'];
+        const nameStatusFileLog = ['M\tpackage.json',
+            'M\tsrc/adapter/ioc.ts',
+            'A\tsrc/adapter/parsers/constants.ts',
+            'M\tsrc/adapter/parsers/ioc.ts'];
 
         const parser = new FileStatParser(svcContainer);
         const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
         expect(files).to.have.length(4, 'Incorrect number of entries');
     });
     it('Must have the right number of additions, deletions and right status (using spaces as column separators)', () => {
-                const numStatFileLog = ['1       1       package.json',
-            '8       0       src/adapter/parsers/constants.ts',
-            '24      22      src/adapter/parsers/ioc.ts'];
-        const nameStatusFileLog = ['M       package.json',
-            'A       src/adapter/parsers/constants.ts',
-            'M       src/adapter/parsers/ioc.ts'];
+                const numStatFileLog = ['1\t1\tpackage.json',
+            '8\t0\tsrc/adapter/parsers/constants.ts',
+            '24\t22\tsrc/adapter/parsers/ioc.ts'];
+        const nameStatusFileLog = ['M\tpackage.json',
+            'A\tsrc/adapter/parsers/constants.ts',
+            'M\tsrc/adapter/parsers/ioc.ts'];
 
         const parser = new FileStatParser(svcContainer);
         const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
@@ -51,12 +51,12 @@ describe('Adapter Parser File Stat', () => {
         assert.equal(files[1].status, Status.Added, '1. Incorrect Status');
     });
     it('Must have the right number of additions, deletions and right status (using tabs as column separators)', () => {
-                const numStatFileLog = ['1	1	package.json',
-            '8	0	src/adapter/parsers/constants.ts',
-            '24	22	src/adapter/parsers/ioc.ts'];
-        const nameStatusFileLog = ['M	package.json',
-            'A	src/adapter/parsers/constants.ts',
-            'M	src/adapter/parsers/ioc.ts'];
+        const numStatFileLog = ['1\t1\tpackage.json',
+        '8\t0\tsrc/adapter/parsers/constants.ts',
+        '24\t22\tsrc/adapter/parsers/ioc.ts'];
+    const nameStatusFileLog = ['M\tpackage.json',
+        'A\tsrc/adapter/parsers/constants.ts',
+        'M\tsrc/adapter/parsers/ioc.ts'];
 
         const parser = new FileStatParser(svcContainer);
         const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
@@ -74,12 +74,12 @@ describe('Adapter Parser File Stat', () => {
                 const filePaths = ['package.json',
             path.join('src', 'adapter', 'parsers', 'constants.ts'),
             path.join('src', 'adapter', 'parsers', 'ioc.ts')];
-        const numStatFileLog = [`1       1       ${filePaths[0]}`,
-        `8       0       ${filePaths[1]}`,
-        `24      22      ${filePaths[2]}`];
-        const nameStatusFileLog = [`M       ${filePaths[0]}`,
-        `A       ${filePaths[1]}`,
-        `M       ${filePaths[2]}`];
+        const numStatFileLog = [`1\t1\t${filePaths[0]}`,
+        `8\t0\t${filePaths[1]}`,
+        `24\t22\t${filePaths[2]}`];
+        const nameStatusFileLog = [`M\t${filePaths[0]}`,
+        `A\t${filePaths[1]}`,
+        `M\t${filePaths[2]}`];
 
         const parser = new FileStatParser(svcContainer);
         const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
@@ -89,18 +89,7 @@ describe('Adapter Parser File Stat', () => {
         assert.equal(files[2].uri.fsPath, Uri.file(path.join(gitRootPath, filePaths[2])).fsPath, '2. Incorrect path');
     });
     it('Must correctly identify copied files', () => {
-
-        // src/client/{common/comms => }/Socket Stream.ts
-        // src/client/common/{space in folder => comms}/id Dispenser.ts
-        // src/client/common/space in folder/{idDispenser.ts => id Dispenser.ts}
-        // src/client/common/{comms => space in folder}/SocketStream.ts
-        // src/client/common/{comms => }/socketCallbackHandler.ts
-        // src/client/common/comms/{ => another dir}/id Dispenser.ts
-        // src/{test/autocomplete => client/common/comms/another dir}/base.test.ts
-        // src/{client/common/comms/another dir => }/id Dispenser.ts
-        // src/test/jupyter/{extension.jupyter.comms.jupyterKernelManager.test.ts => jupyterKernelManager.test.ts}
-
-                const filePaths = [
+        const filePaths = [
             'src/client/{common/comms => }/Socket Stream.ts',
             'src/client/common/{space in folder => comms}/id Dispenser.ts',
             'src/client/common/space in folder/{idDispenser.ts => id Dispenser.ts}',
@@ -109,8 +98,8 @@ describe('Adapter Parser File Stat', () => {
             '{client/common/comms/another dir => }/id Dispenser.ts',
             'LICENSE => LICENSEx'
         ];
-        const numStatFileLog = filePaths.map(f => `1 2 ${f}`);
-        const nameStatusFileLog = filePaths.map((f, idx) => `${idx % 2 === 0 ? 'C123' : 'R01'} ${f}`);
+        const numStatFileLog = filePaths.map(f => `1\t2\t${f}`);
+        const nameStatusFileLog = filePaths.map((f, idx) => `${idx % 2 === 0 ? 'C123' : 'R01'}\t${f}`);
 
         const parser = new FileStatParser(svcContainer);
         const files = parser.parse(gitRootPath, numStatFileLog, nameStatusFileLog);
