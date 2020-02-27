@@ -21,10 +21,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         if (info) {
             if (info instanceof FileCommitDetails) {
                 const committedFile = info.committedFile;
-                fileUri = committedFile.uri ? Uri.file(committedFile.uri.fsPath) : Uri.file(committedFile.oldUri!.fsPath);
+                fileUri = committedFile.uri ? Uri.file(committedFile.uri.path) : Uri.file(committedFile.oldUri!.path);
             } else if (info instanceof FileNode) {
                 const committedFile = info.data!.committedFile;
-                fileUri = committedFile.uri ? Uri.file(committedFile.uri.fsPath) : Uri.file(committedFile.oldUri!.fsPath);
+                fileUri = committedFile.uri ? Uri.file(committedFile.uri.path) : Uri.file(committedFile.oldUri!.path);
             } else if (info instanceof Uri) {
                 fileUri = info;
                 // tslint:disable-next-line:no-any
