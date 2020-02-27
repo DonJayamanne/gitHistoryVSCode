@@ -24,7 +24,7 @@ module.exports = {
         extensions: ['.js', '.ts', '.tsx'],
         mainFields: ['main']
     },
-    devtool: 'source-map',
+    devtool: isProduction ? false : 'source-map',
     module: {
         rules: [
             // .ts, .tsx
