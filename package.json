@@ -369,14 +369,14 @@
         "vscode:prepublish": "npm run lint && tsc --skipLibCheck -p ./ && webpack -p --progress",
         "compile": "tsc --skipLibCheck --watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "lint": "tslint --fix 'src/**/*.ts'",
+        "lint": "eslint --fix 'src/**/*.ts'",
         "buildReact": "webpack -p --progress --colors",
         "watchReact": "webpack --progress --colors --watch",
         "precommit": "lint-staged"
     },
     "lint-staged": {
         "src/**/*.ts": [
-            "tslint"
+            "eslint"
         ]
     },
     "devDependencies": {
@@ -397,6 +397,8 @@
         "@types/react-router-dom": "^4.2.0",
         "@types/react-router-redux": "^4.0.51",
         "@types/redux-actions": "^2.2.2",
+        "@typescript-eslint/eslint-plugin": "^2.21.0",
+        "@typescript-eslint/parser": "^2.21.0",
         "awesome-typescript-loader": "5.2.1",
         "bootstrap": "^3.4.1",
         "chai": "^4.1.2",
@@ -404,6 +406,9 @@
         "css-loader": "^0.26.1",
         "debounce": "^1.1.0",
         "decache": "^4.3.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.10.0",
+        "eslint-plugin-prettier": "^3.1.2",
         "extract-loader": "3.1.0",
         "file-loader": "^2.0.0",
         "glob": "^7.1.2",
@@ -413,6 +418,7 @@
         "lint-staged": "^10.0.8",
         "mocha": "2.5.3",
         "node-emoji": "1.10.0",
+        "prettier": "^1.19.1",
         "re-resizable": "6.1.1",
         "react": "^16.0.0",
         "react-bootstrap": "^0.31.5",
@@ -430,12 +436,8 @@
         "source-map-support": "^0.5.0",
         "style-loader": "^0.13.1",
         "ts-node": "^8.6.2",
-        "tslint": "^5.7.0",
-        "tslint-eslint-rules": "5.4.0",
-        "tslint-microsoft-contrib": "6.2.0",
         "typemoq": "^2.1.0",
         "typescript": "^2.6.1",
-        "typescript-formatter": "^6.0.0",
         "vscode": "^1.1.36",
         "webpack": "4.41.2",
         "webpack-cli": "^3.3.10"

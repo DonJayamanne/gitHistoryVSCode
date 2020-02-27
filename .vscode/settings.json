@@ -8,10 +8,11 @@
 		"node_modules/**/*": true
 	},
 	"typescript.tsdk": "./node_modules/typescript/lib",
-	"cSpell.words": [
-		"Newable",
-		"Repo",
-		"commited",
-		"numstat"
-	] // we want to use the TS server from our node_modules folder to control its version
+	"eslint.autoFixOnSave":  true,
+	"eslint.validate":  [
+	  "javascript",
+	  "javascriptreact",
+	  {"language":  "typescript",  "autoFix":  true  },
+	  {"language":  "typescriptreact",  "autoFix":  true  }
+	],
 }
