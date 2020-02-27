@@ -70,6 +70,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`
         ];
 
+        if (lineNumber) {
+            queryArgs.push(`line=${lineNumber}`);
+        }
+
         const uri = `${previewUri}?${queryArgs.join('&')}`;
 
         let title = `Git History (${path.basename(gitRoot)})`;
