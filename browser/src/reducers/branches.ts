@@ -4,7 +4,6 @@ import { BranchesState } from './';
 
 const initialState: BranchesState = [];
 
-// tslint:disable-next-line:no-any
 export default handleActions<BranchesState, any>({
     [Actions.FETCHED_BRANCHES]: (state, action: ReduxActions.Action<BranchesState>) => {
         return [

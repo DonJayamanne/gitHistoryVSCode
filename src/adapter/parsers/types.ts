@@ -21,5 +21,12 @@ export interface IActionDetailsParser {
 }
 export const ILogParser = Symbol('ILogParser');
 export interface ILogParser {
-    parse(gitRepoPath: string, summaryEntry: string, itemEntrySeparator: string, logFormatArgs: string[], filesWithNumStat?: string, filesWithNameStatus?: string): LogEntry;
+    parse(
+        gitRepoPath: string,
+        summaryEntry: string,
+        itemEntrySeparator: string,
+        logFormatArgs: string[],
+        filesWithNumStat?: string,
+        filesWithNameStatus?: string,
+    ): LogEntry;
 }

@@ -11,10 +11,8 @@ describe('Adapter Parser Ref - RemoteHeadParser', () => {
 
     it('null,undefined and empty strings cannot be parsed', () => {
         assert.isFalse(parser.canParse(''), 'Parsing of empty string is not possible');
-        // tslint:disable-next-line:prefer-type-cast no-any
-        assert.isFalse(parser.canParse(null as any), 'Parsing of null is not possible');
-        // tslint:disable-next-line:prefer-type-cast no-any
-        assert.isFalse(parser.canParse(undefined as any), 'Parsing of undefined is not possible');
+                assert.isFalse(parser.canParse(null as any), 'Parsing of null is not possible');
+                assert.isFalse(parser.canParse(undefined as any), 'Parsing of undefined is not possible');
     });
 
     it('refs/remotes/origin/HEAD', () => {

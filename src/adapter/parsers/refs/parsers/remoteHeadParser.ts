@@ -9,10 +9,9 @@ export class RemoteHeadParser implements IRefParser {
         return typeof refContent === 'string' && isRemoteHead(refContent);
     }
     public parse(refContent: string): Ref {
-        // tslint:disable-next-line:no-unnecessary-local-variable
         const ref: Ref = {
             name: getRemoteHeadName(refContent),
-            type: RefType.RemoteHead
+            type: RefType.RemoteHead,
         };
         return ref;
     }

@@ -9,7 +9,9 @@ export class StandardNodeFactory implements INodeFactory {
         return new DirectoryNode(commit, relativePath);
     }
     public createFileNode(commit: CommitDetails, committedFile: CommittedFile) {
-        return new FileNode(new FileCommitDetails(commit.workspaceFolder, commit.branch, commit.logEntry, committedFile));
+        return new FileNode(
+            new FileCommitDetails(commit.workspaceFolder, commit.branch, commit.logEntry, committedFile),
+        );
     }
 }
 

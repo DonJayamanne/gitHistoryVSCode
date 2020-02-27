@@ -15,11 +15,12 @@ export class GitServiceFactory implements IGitServiceFactory {
     private readonly gitServices = new Map<string, IGitService>();
     private gitApi: API;
     private repoIndex: number;
-    constructor(@inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
+    constructor(
+        @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
-        @inject(IServiceContainer) private serviceContainer: IServiceContainer) {
-
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    ) {
         this.gitApi = this.gitCmdExecutor.gitExtension.getAPI(1);
         this.repoIndex = -1;
     }
@@ -28,23 +29,31 @@ export class GitServiceFactory implements IGitServiceFactory {
         return this.repoIndex;
     }
 
-    public getService(index: number) : IGitService {
+    public getService(index: number): IGitService {
         return this.gitServices.get(index.toString())!;
     }
 
-    public async repositoryPicker() : Promise<void> {
-        if (this.repoIndex > -1) { return; }
+    public async repositoryPicker(): Promise<void> {
+        if (this.repoIndex > -1) {
+            return;
+        }
 
         const app = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
         const pickList: QuickPickItem[] = [];
 
         this.gitApi.repositories.forEach(x => {
-            pickList.push({ label: path.basename(x.rootUri.path), detail: x.rootUri.path, description: x.state.HEAD!.name });
+            pickList.push({
+                label: path.basename(x.rootUri.path),
+                detail: x.rootUri.path,
+                description: x.state.HEAD!.name,
+            });
         });
 
         const options = {
-            canPickMany: false, matchOnDescription: false,
-            matchOnDetail: true, placeHolder: 'Select a Git Repository'
+            canPickMany: false,
+            matchOnDescription: false,
+            matchOnDetail: true,
+            placeHolder: 'Select a Git Repository',
         };
         const selectedItem = await app.showQuickPick(pickList, options);
         if (selectedItem) {
@@ -73,17 +82,28 @@ export class GitServiceFactory implements IGitServiceFactory {
             // find the correct repository from the given resource uri
             let i = 0;
             for (const x of this.gitApi.repositories) {
-                if (resourceUri!.fsPath.startsWith(x.rootUri.fsPath) && x.rootUri.fsPath === this.gitApi.repositories[i].rootUri.fsPath) {
+                if (
+                    resourceUri!.fsPath.startsWith(x.rootUri.fsPath) &&
+                    x.rootUri.fsPath === this.gitApi.repositories[i].rootUri.fsPath
+                ) {
                     this.repoIndex = i;
                     break;
                 }
-                // tslint:disable-next-line
                 i++;
             }
         }
 
         if (!this.gitServices.has(this.repoIndex.toString())) {
-            this.gitServices.set(this.repoIndex.toString(), new Git(this.gitApi.repositories[this.repoIndex], this.serviceContainer, this.gitCmdExecutor, this.logParser, this.gitArgsService));
+            this.gitServices.set(
+                this.repoIndex.toString(),
+                new Git(
+                    this.gitApi.repositories[this.repoIndex],
+                    this.serviceContainer,
+                    this.gitCmdExecutor,
+                    this.logParser,
+                    this.gitArgsService,
+                ),
+            );
         }
 
         return this.getService(this.repoIndex);

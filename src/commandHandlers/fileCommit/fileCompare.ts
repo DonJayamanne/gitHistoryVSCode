@@ -11,9 +11,11 @@ import { IGitCompareFileCommandHandler } from '../types';
 export class GitCompareFileCommitCommandHandler implements IGitCompareFileCommandHandler {
     private _previouslySelectedCommit?: FileCommitDetails;
 
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    constructor(
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(IApplicationShell) private application: IApplicationShell) { }
+        @inject(IApplicationShell) private application: IApplicationShell,
+    ) {}
 
     public get selectedCommit(): FileCommitDetails | undefined {
         return this._previouslySelectedCommit;
@@ -33,8 +35,13 @@ export class GitCompareFileCommitCommandHandler implements IGitCompareFileComman
             return;
         }
         const fileCommit = nodeOrFileCommit instanceof FileCommitDetails ? nodeOrFileCommit : nodeOrFileCommit.data!;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(fileCommit.workspaceFolder);
-        const fileDiffs = await gitService.getDifferences(this.selectedCommit.logEntry.hash.full, fileCommit.logEntry.hash.full);
+        const gitService = await this.serviceContainer
+            .get<IGitServiceFactory>(IGitServiceFactory)
+            .createGitService(fileCommit.workspaceFolder);
+        const fileDiffs = await gitService.getDifferences(
+            this.selectedCommit.logEntry.hash.full,
+            fileCommit.logEntry.hash.full,
+        );
         await this.commandManager.executeCommand('git.commit.diff.view', this.selectedCommit!, fileCommit, fileDiffs);
     }
 }

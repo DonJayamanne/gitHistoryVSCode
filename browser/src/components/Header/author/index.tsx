@@ -59,8 +59,7 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
         this.setState({ searchText: e.target.value });
     }
 
-    // tslint:disable-next-line:member-ordering
-    public render() {
+        public render() {
         if (this.props.lineHistory) {
             return null;
         }

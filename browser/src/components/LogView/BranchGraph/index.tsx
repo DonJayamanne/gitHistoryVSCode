@@ -84,7 +84,6 @@ class PathGenerator {
     }
 }
 
-// tslint:disable
 // TODO: Think about appending (could be very expensive, but could be something worthwhile)
 // Appending could produce a better UX
 // Dunno, I think, cuz this way you can see where merges take place, rather than seeing a line vanish off

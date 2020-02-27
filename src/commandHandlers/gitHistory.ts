@@ -12,8 +12,10 @@ import { IGitHistoryCommandHandler } from './types';
 
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
-                @inject(ICommandManager) private commandManager: ICommandManager) { }
+    constructor(
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(ICommandManager) private commandManager: ICommandManager,
+    ) {}
 
     @command('git.viewFileHistory', IGitHistoryCommandHandler)
     public async viewFileHistory(info?: FileCommitDetails | Uri): Promise<void> {
@@ -27,9 +29,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
                 fileUri = committedFile.uri ? Uri.file(committedFile.uri.path) : Uri.file(committedFile.oldUri!.path);
             } else if (info instanceof Uri) {
                 fileUri = info;
-                // tslint:disable-next-line:no-any
             } else if ((info as any).resourceUri) {
-                // tslint:disable-next-line:no-any
                 fileUri = (info as any).resourceUri as Uri;
             }
         } else {
@@ -44,12 +44,12 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
     }
     @command('git.viewLineHistory', IGitHistoryCommandHandler)
     public async viewLineHistory(): Promise<void> {
-        let fileUri: Uri | undefined;
         const activeTextEditor = window.activeTextEditor!;
         if (!activeTextEditor || activeTextEditor.document.isUntitled) {
             return;
         }
-        fileUri = activeTextEditor.document.uri;
+
+        const fileUri: Uri | undefined = activeTextEditor.document.uri;
         const currentLineNumber = activeTextEditor.selection.start.line + 1;
 
         return this.viewHistory(fileUri, currentLineNumber);
@@ -67,10 +67,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
 
         const id = gitServiceFactory.getIndex();
 
-        const queryArgs = [
-            `id=${id}`,
-            `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`
-        ];
+        const queryArgs = [`id=${id}`, `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`];
 
         if (lineNumber) {
             queryArgs.push(`line=${lineNumber}`);

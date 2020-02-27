@@ -11,19 +11,20 @@ import { Avatar, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../ty
 export class ApiController {
     private readonly commitViewer: IGitCommitViewDetailsCommandHandler;
     private readonly applicationShell: IApplicationShell;
-    constructor(private webview: Webview, private gitService: IGitService,
-                private serviceContainer: IServiceContainer,
-                private commandManager: ICommandManager) {
-
-        this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
+    constructor(
+        private webview: Webview,
+        private gitService: IGitService,
+        private serviceContainer: IServiceContainer,
+        private commandManager: ICommandManager,
+    ) {
+        this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(
+            IGitCommitViewDetailsCommandHandler,
+        );
         this.applicationShell = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
 
         this.webview.onDidReceiveMessage(this.postMessageParser.bind(this));
     }
 
-    // tslint:disable-next-line:no-empty member-ordering
-    public dispose() { }
-    // tslint:disable-next-line:no-any
     public async getLogEntries(args: any) {
         let searchText = args.searchText;
         searchText = typeof searchText === 'string' && searchText.length === 0 ? undefined : searchText;
@@ -44,12 +45,20 @@ export class ApiController {
         const filePath: string | undefined = args.file;
         const file = filePath ? Uri.file(filePath) : undefined;
 
-        const entries = await this.gitService.getLogEntries(pageIndex, pageSize, branch, searchText, file, lineNumber, author);
+        const entries = await this.gitService.getLogEntries(
+            pageIndex,
+            pageSize,
+            branch,
+            searchText,
+            file,
+            lineNumber,
+            author,
+        );
 
         return {
             ...entries,
             pageIndex,
-            pageSize
+            pageSize,
         };
     }
     public async getBranches() {
@@ -58,7 +67,6 @@ export class ApiController {
     public async getAuthors() {
         return this.gitService.getAuthors();
     }
-    // tslint:disable-next-line:no-any
     public async getCommit(args: any) {
         const hash: string = args.hash;
 
@@ -76,7 +84,7 @@ export class ApiController {
         if (!originType) {
             this.webview.postMessage({
                 cmd: 'getAvatarsResult',
-                error: 'No origin type found'
+                error: 'No origin type found',
             });
 
             return;
@@ -95,13 +103,11 @@ export class ApiController {
 
         return avatars;
     }
-    // tslint:disable-next-line:no-any
     public async doActionRef(args: any) {
         const actionName = args.name;
         const hash = decodeURIComponent(args.hash);
         const refEntry = args.ref as Ref;
 
-        // tslint:disable-next-line:switch-default
         switch (actionName) {
             case 'removeTag':
                 await this.gitService.removeTag(refEntry.name!);
@@ -115,7 +121,6 @@ export class ApiController {
 
         return this.gitService.getCommit(hash);
     }
-    // tslint:disable-next-line:no-any
     public async doAction(args: any) {
         const gitRoot = this.gitService.getGitRoot();
         const branch = await this.gitService.getCurrentBranch();
@@ -126,7 +131,10 @@ export class ApiController {
 
         switch (actionName) {
             default:
-                await this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
+                await this.commandManager.executeCommand(
+                    'git.commit.doSomething',
+                    new CommitDetails(gitRoot, branch, logEntry),
+                );
                 break;
             case 'newtag':
                 await this.gitService.createTag(value, logEntry.hash.full);
@@ -145,7 +153,6 @@ export class ApiController {
 
         return logEntry;
     }
-    // tslint:disable-next-line:no-any
     public async doSomethingWithCommit(args: any) {
         const gitRoot = this.gitService.getGitRoot();
         const branch = await this.gitService.getCurrentBranch();
@@ -153,12 +160,14 @@ export class ApiController {
 
         this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
     }
-    // tslint:disable-next-line:no-any
     public async selectCommittedFile(args: any) {
         const gitRoot = this.gitService.getGitRoot();
         const branch = await this.gitService.getCurrentBranch();
 
-        this.commandManager.executeCommand('git.commit.file.select', new FileCommitDetails(gitRoot, branch, args.logEntry, args.committedFile));
+        this.commandManager.executeCommand(
+            'git.commit.file.select',
+            new FileCommitDetails(gitRoot, branch, args.logEntry, args.committedFile),
+        );
     }
 
     private postMessageParser = async (message: IPostMessage) => {
@@ -166,14 +175,14 @@ export class ApiController {
             const result = await this[message.cmd].bind(this)(message.payload);
             this.webview.postMessage({
                 requestId: message.requestId,
-                payload: result
+                payload: result,
             });
         } catch (ex) {
             this.applicationShell.showErrorMessage(ex);
             this.webview.postMessage({
                 requestId: message.requestId,
-                error: ex
+                error: ex,
             });
         }
-    }
+    };
 }

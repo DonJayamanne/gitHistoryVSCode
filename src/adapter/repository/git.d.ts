@@ -16,7 +16,7 @@ export interface InputBox {
 export const enum RefType {
     Head,
     RemoteHead,
-    Tag
+    Tag,
 }
 
 export interface Ref {
@@ -76,11 +76,10 @@ export const enum Status {
     DELETED_BY_THEM,
     BOTH_ADDED,
     BOTH_DELETED,
-    BOTH_MODIFIED
+    BOTH_MODIFIED,
 }
 
 export interface Change {
-
     /**
      * Returns either `originalUri` or `renameUri`, depending
      * on whether this change is a rename change. When
@@ -117,7 +116,6 @@ export interface LogOptions {
 }
 
 export interface Repository {
-
     readonly rootUri: Uri;
     readonly inputBox: InputBox;
     readonly state: RepositoryState;
@@ -185,7 +183,6 @@ export interface API {
 }
 
 export interface GitExtension {
-
     readonly enabled: boolean;
     readonly onDidChangeEnablement: Event<boolean>;
 
@@ -236,5 +233,5 @@ export const enum GitErrorCodes {
     CantRebaseMultipleBranches = 'CantRebaseMultipleBranches',
     PatchDoesNotApply = 'PatchDoesNotApply',
     NoPathFound = 'NoPathFound',
-    UnknownPath = 'UnknownPath'
+    UnknownPath = 'UnknownPath',
 }

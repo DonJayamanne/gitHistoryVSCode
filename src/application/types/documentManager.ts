@@ -1,4 +1,3 @@
-// tslint:disable:unified-signatures
 import { TextDocument, TextDocumentShowOptions, TextEditor, Uri, ViewColumn } from 'vscode';
 
 export const IDocumentManager = Symbol('IDocumentManager');

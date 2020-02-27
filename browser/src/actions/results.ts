@@ -6,7 +6,6 @@ import { BranchesState, RootState } from '../reducers';
 import { BranchSelection, Branch, } from '../types';
 import { post } from '../actions/messagebus';
 
-// tslint:disable:no-any
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
 export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
 export const updateCommitInList = createAction<LogEntry>(Actions.UPDATE_COMMIT_IN_LIST);
@@ -24,8 +23,7 @@ export namespace ResultActions {
     export const commitsRendered = createAction<number>(Actions.COMMITS_RENDERED);
 
     export const actionCommit = (logEntry: LogEntry, name: string = '', value: string = '') => {
-        // tslint:disable-next-line:no-any
-        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(notifyIsFetchingCommit(logEntry.hash.full));
 
             const store = getState();
@@ -53,8 +51,7 @@ export namespace ResultActions {
         };
     };
     export const actionRef = (logEntry: LogEntry, ref: Ref, name: string = '') => {
-        // tslint:disable-next-line:no-any
-        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(notifyIsFetchingCommit(logEntry.hash.full));
             const store = getState();
 
@@ -81,8 +78,7 @@ export namespace ResultActions {
         }
     };
     export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => {
-        // tslint:disable-next-line:no-any
-        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             const store = getState();
 
             post<void>('selectCommittedFile', { 
@@ -93,14 +89,12 @@ export namespace ResultActions {
         };
     };
     export const closeCommitView = () => {
-        // tslint:disable-next-line:no-any
-        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             await dispatch(clearCommitSelection());
         };
     };
     export const selectCommit = (hash?: string) => {
-        // tslint:disable-next-line:no-any
-        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             if (hash) {
                 await fetchCommit(dispatch, state, hash);
@@ -110,40 +104,35 @@ export namespace ResultActions {
         };
     };
     export const getNextCommits = () => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             const pageIndex = state.logEntries.pageIndex + 1;
             return fetchCommits(dispatch, state, pageIndex, undefined);
         };
     };
     export const getPreviousCommits = () => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             const pageIndex = state.logEntries.pageIndex - 1;
             return fetchCommits(dispatch, state, pageIndex, undefined);
         };
     };
     export const search = (searchText: string) => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(updateSettings({ searchText }));
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
     export const clearSearch = () => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(updateSettings({ searchText: '', authorFilter: undefined }));
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
     export const selectBranch = (branchName: string, branchSelection: BranchSelection) => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             //state.settings.branchName = branchName;
             dispatch(updateSettings({ branchName, branchSelection }));
             const state = getState();
@@ -151,16 +140,14 @@ export namespace ResultActions {
         };
     };
     export const selectAuthor = (authorName: string) => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(updateSettings({ authorFilter: authorName }));
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
     export const refresh = () => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             // update branches
             fetchBranches(dispatch, state);
@@ -168,28 +155,24 @@ export namespace ResultActions {
         };
     };
     export const getCommits = () => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             return fetchCommits(dispatch, state);
         };
     };
     export const getBranches = () => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             return fetchBranches(dispatch, state);
         };
     };
     export const getAuthors = () => {
-        // tslint:disable-next-line:no-any
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+                return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             return fetchAuthors(dispatch, state);
         };
     };
 }
-// tslint:disable-next-line:no-any
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
     dispatch(notifyIsLoading());
     post<LogEntriesResponse>('getLogEntries', { 
@@ -201,7 +184,6 @@ function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: num
         ResultActions.fetchAvatars();
     });
 }
-// tslint:disable-next-line:no-any
 function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
     dispatch(notifyIsFetchingCommit(hash));
     post<LogEntry>('getCommit', { 
@@ -211,7 +193,6 @@ function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
         dispatch(updateCommit(x))
     });
 }
-// tslint:disable-next-line:no-any
 function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
     post<Branch[]>('getBranches', { 
         ...store.settings
@@ -220,7 +201,6 @@ function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
     });
 
 }
-// tslint:disable-next-line:no-any
 function fetchAuthors(dispatch: Dispatch<any>, store: RootState) {
     post<ActionedUser[]>('getAuthors', { 
         ...store.settings

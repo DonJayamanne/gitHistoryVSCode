@@ -25,8 +25,7 @@ describe('Adapter Parser File Status', () => {
         ['B', Status.Broken], ['T', Status.TypeChanged],
         ['R1234', Status.Renamed]];
         statuses.forEach(status => {
-            // tslint:disable-next-line:no-any prefer-type-cast
-            assert.equal(parser.parse(status[0] as any as string), status[1] as Status, `Status '${status[0]}' not parsed correctly`);
+                        assert.equal(parser.parse(status[0] as any as string), status[1] as Status, `Status '${status[0]}' not parsed correctly`);
         });
     });
 });

@@ -9,8 +9,7 @@ import { RefType } from '../../../../src/types';
 describe('Adapter Parser Ref', () => {
     it('null,undefined and empty strings cannot be parsed', () => {
         const parser = new RefsParser([new HeadRefParser()], [TypeMoq.Mock.ofType<ILogService>().object]);
-        // tslint:disable-next-line:prefer-type-cast no-any
-        assert.lengthOf(parser.parse(null as any), 0, 'Should return an empty list');
+                assert.lengthOf(parser.parse(null as any), 0, 'Should return an empty list');
     });
 
     it('refs/heads/master', () => {

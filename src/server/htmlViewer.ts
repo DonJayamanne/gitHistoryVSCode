@@ -12,9 +12,11 @@ export class HtmlViewer {
     private readonly disposable: Disposable[] = [];
     private readonly commandManager: ICommandManager;
     private readonly htmlView: Map<string, WebviewPanel>;
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
-                @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
-                private extensionPath: string) {
+    constructor(
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
+        private extensionPath: string,
+    ) {
         this.htmlView = new Map<string, WebviewPanel>();
         this.commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
         this.disposable.push(this.commandManager.registerCommand('previewHtml', this.onPreviewHtml));
@@ -25,12 +27,11 @@ export class HtmlViewer {
     }
     private onPreviewHtml = (uri: string, column: ViewColumn, title: string) => {
         this.createHtmlView(Uri.parse(uri), column, title);
-    }
+    };
     private async createHtmlView(uri: Uri, column: ViewColumn, title: string) {
         if (this.htmlView.has(uri.toString())) {
             // skip recreating a webview, when already exist
             // and reveal it in tab view
-            // tslint:disable-next-line:no-shadowed-variable
             const webviewPanel = this.htmlView.get(uri.toString());
             if (webviewPanel) {
                 webviewPanel.reveal();
@@ -44,21 +45,19 @@ export class HtmlViewer {
         const file: string = decodeURIComponent(query.file!.toString());
         const line: number | undefined = query.line ? parseInt(query.line.toString()) : undefined;
 
-        // tslint:disable-next-line:no-any
         const webviewPanel = window.createWebviewPanel('gitLog', title, column, {
             enableScripts: true,
-            retainContextWhenHidden: true
-         });
+            retainContextWhenHidden: true,
+        });
         this.htmlView.set(uri.toString(), webviewPanel);
 
         const gitService = this.gitServiceFactory.getService(id);
-        const apiController = new ApiController(webviewPanel.webview, gitService, this.serviceContainer, this.commandManager);
+        new ApiController(webviewPanel.webview, gitService, this.serviceContainer, this.commandManager);
 
         webviewPanel.onDidDispose(() => {
             if (this.htmlView.has(uri.toString())) {
                 this.htmlView.delete(uri.toString());
             }
-            apiController.dispose();
         });
 
         const branchName = await gitService.getCurrentBranch();
@@ -69,7 +68,7 @@ export class HtmlViewer {
             branchName,
             file,
             line,
-            branchSelection
+            branchSelection,
         };
 
         webviewPanel.webview.html = this.getHtmlContent(webviewPanel.webview, settings);
@@ -81,7 +80,6 @@ export class HtmlViewer {
     }
 
     private getHtmlContent(webview, settings) {
-
         const config = workspace.getConfiguration('gitHistory');
 
         return `<!DOCTYPE html>
@@ -89,7 +87,10 @@ export class HtmlViewer {
             <head>
                 <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
                 <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* vscode-resource: 'unsafe-inline' 'unsafe-eval'; img-src *" />
-                <link rel='stylesheet' type='text/css' href='${this.getRelativeResource(webview, 'out/browser/bundle.css')}' />
+                <link rel='stylesheet' type='text/css' href='${this.getRelativeResource(
+                    webview,
+                    'out/browser/bundle.css',
+                )}' />
             <title>Git History</title>
             <script type="text/javascript">
                 window['vscode'] = acquireVsCodeApi();

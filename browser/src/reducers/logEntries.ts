@@ -15,7 +15,6 @@ function fixDates(logEntry: LogEntry) {
     }
 }
 
-// tslint:disable-next-line:no-any
 export default handleActions<LogEntriesState, any>({
     [Actions.FETCHED_COMMITS]: (state, action: ReduxActions.Action<LogEntriesResponse>) => {
         action.payload!.items.forEach(x => {
@@ -57,8 +56,7 @@ export default handleActions<LogEntriesState, any>({
     [Actions.IS_FETCHING_COMMIT]: (state, action: ReduxActions.Action<string>) => {
         return { ...state, isLoadingCommit: action.payload } as LogEntriesState;
     },
-    // tslint:disable-next-line:no-any
-    [Actions.CLEAR_SELECTED_COMMIT]: (state, action: any) => {
+        [Actions.CLEAR_SELECTED_COMMIT]: (state, action: any) => {
         return { ...state, selected: undefined } as LogEntriesState;
     },
 

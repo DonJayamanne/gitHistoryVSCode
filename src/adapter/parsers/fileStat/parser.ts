@@ -7,8 +7,7 @@ import { IFileStatParser, IFileStatStatusParser } from '../types';
 
 @injectable()
 export class FileStatParser implements IFileStatParser {
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer) {
-    }
+    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer) {}
 
     private static parseFileMovement(fileInfo: string): { original: string; current: string } | undefined {
         // src/client/{common/comms => }/Socket Stream.ts
@@ -31,7 +30,6 @@ export class FileStatParser implements IFileStatParser {
             return fileInfo.indexOf(item) === -1 ? undefined : item;
         }, undefined);
         if (!diffSeparator) {
-            // tslint:disable-next-line:no-console
             console.error(`Parsing file movements failed for ${fileInfo}`);
             return;
         }
@@ -44,16 +42,15 @@ export class FileStatParser implements IFileStatParser {
         } else {
             const partWithDifference = fileInfo.substring(startIndex, endIndex + 1);
             if (!partWithDifference.startsWith('{') || !partWithDifference.endsWith('}')) {
-                // tslint:disable-next-line:no-console
                 console.error(`Invalid entry cotaining => for ${fileInfo}`);
                 return;
             }
-            const parts = partWithDifference.split(diffSeparator)
-                .map(part => part.startsWith('{') ? part.substring(1) : part)
-                .map(part => part.endsWith('}') ? part.substring(0, part.length - 1) : part)
+            const parts = partWithDifference
+                .split(diffSeparator)
+                .map(part => (part.startsWith('{') ? part.substring(1) : part))
+                .map(part => (part.endsWith('}') ? part.substring(0, part.length - 1) : part))
                 .map(part => part.trim());
             if (parts.length !== 2) {
-                // tslint:disable-next-line:no-console
                 console.error(`Invalid number of items after splitting parts of file movements ${fileInfo}`);
             }
 
@@ -74,7 +71,10 @@ export class FileStatParser implements IFileStatParser {
      * @param status status
      * @returns current file
      */
-    private static getNewAndOldFileNameFromNumStatLine(line: string, status: Status): { original?: string; current: string } | undefined {
+    private static getNewAndOldFileNameFromNumStatLine(
+        line: string,
+        status: Status,
+    ): { original?: string; current: string } | undefined {
         const statusParts = line.split('\t');
         const fileName = statusParts[1].trim();
         if (status === Status.Renamed || status === Status.Copied) {
@@ -88,11 +88,15 @@ export class FileStatParser implements IFileStatParser {
      * @param line the stdout line of the command
      * @returns number of added and removed lines for a file
      */
-    private static getAdditionsAndDeletionsFromNumStatLine(line: string): { additions?: number; deletions?: number; fileName: string } | undefined {
+    private static getAdditionsAndDeletionsFromNumStatLine(
+        line: string,
+    ): { additions?: number; deletions?: number; fileName: string } | undefined {
         // 0       0       src/client/common/{comms => }/socketCallbackHandler.ts
-        const numStatParts = line.split('\t').map(part => part.trim()).filter(part => part.length > 0);
+        const numStatParts = line
+            .split('\t')
+            .map(part => part.trim())
+            .filter(part => part.length > 0);
         if (numStatParts.length < 3) {
-            // tslint:disable-next-line:no-console
             console.error(`Failed to identify additions and deletions for line ${line}`);
             return;
         }
@@ -110,39 +114,43 @@ export class FileStatParser implements IFileStatParser {
      * @returns An array of committed files
      */
     public parse(gitRootPath: string, filesWithNumStat: string[], filesWithNameStat: string[]): CommittedFile[] {
-        return filesWithNameStat.map((line, index) => {
-            if (line.trim().length === 0 && filesWithNumStat.length > index && filesWithNumStat[index].trim().length === 0) {
-                return;
-            }
-            const numStatParts = FileStatParser.getAdditionsAndDeletionsFromNumStatLine(filesWithNumStat[index]);
-            const additions = numStatParts ? numStatParts.additions : undefined;
-            const deletions = numStatParts ? numStatParts.deletions : undefined;
+        return filesWithNameStat
+            .map((line, index) => {
+                if (
+                    line.trim().length === 0 &&
+                    filesWithNumStat.length > index &&
+                    filesWithNumStat[index].trim().length === 0
+                ) {
+                    return;
+                }
+                const numStatParts = FileStatParser.getAdditionsAndDeletionsFromNumStatLine(filesWithNumStat[index]);
+                const additions = numStatParts ? numStatParts.additions : undefined;
+                const deletions = numStatParts ? numStatParts.deletions : undefined;
 
-            const statusParts = line.split('\t');
-            const statusCode = statusParts[0].trim();
-            const statusParser = this.serviceContainer.get<IFileStatStatusParser>(IFileStatStatusParser);
-            if (!statusParser.canParse(statusCode)) {
-                return;
-            }
-            const status = statusParser.parse(statusCode)!;
-            const currentAndOriginalFile = FileStatParser.getNewAndOldFileNameFromNumStatLine(line, status)!;
-            const oldRelativePath = currentAndOriginalFile ? currentAndOriginalFile.original : undefined;
-            const relativePath = currentAndOriginalFile.current;
-            const oldUri = oldRelativePath ? Uri.file(path.join(gitRootPath, oldRelativePath)) : undefined;
+                const statusParts = line.split('\t');
+                const statusCode = statusParts[0].trim();
+                const statusParser = this.serviceContainer.get<IFileStatStatusParser>(IFileStatStatusParser);
+                if (!statusParser.canParse(statusCode)) {
+                    return;
+                }
+                const status = statusParser.parse(statusCode)!;
+                const currentAndOriginalFile = FileStatParser.getNewAndOldFileNameFromNumStatLine(line, status)!;
+                const oldRelativePath = currentAndOriginalFile ? currentAndOriginalFile.original : undefined;
+                const relativePath = currentAndOriginalFile.current;
+                const oldUri = oldRelativePath ? Uri.file(path.join(gitRootPath, oldRelativePath)) : undefined;
 
-            // tslint:disable-next-line:no-unnecessary-local-variable
-            const fileInfo: CommittedFile = {
-                additions,
-                deletions,
-                status,
-                relativePath,
-                oldRelativePath,
-                uri: Uri.file(path.join(gitRootPath, relativePath)),
-                oldUri
-            };
+                const fileInfo: CommittedFile = {
+                    additions,
+                    deletions,
+                    status,
+                    relativePath,
+                    oldRelativePath,
+                    uri: Uri.file(path.join(gitRootPath, relativePath)),
+                    oldUri,
+                };
 
-            return fileInfo;
-        })
+                return fileInfo;
+            })
             .filter(commitFile => commitFile !== undefined)
             .map(commitFile => commitFile!);
     }

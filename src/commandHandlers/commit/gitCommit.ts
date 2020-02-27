@@ -9,9 +9,11 @@ import { IGitCommitCommandHandler } from '../types';
 
 @injectable()
 export class GitCommitCommandHandler implements IGitCommitCommandHandler {
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    constructor(
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
-        @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
+        @inject(IApplicationShell) private applicationShell: IApplicationShell,
+    ) {}
 
     @command('git.commit.doSomething', IGitCommitCommandHandler)
     public async doSomethingWithCommit(commit: CommitDetails) {
@@ -26,13 +28,18 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
         const msg = 'Tag name';
         const description = 'Please provide a tag name';
-        newTagName = (typeof newTagName !== 'string' || newTagName.trim().length === 0) ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description }) : newTagName;
+        newTagName =
+            typeof newTagName !== 'string' || newTagName.trim().length === 0
+                ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description })
+                : newTagName;
 
         if (typeof newTagName !== 'string' || newTagName.length === 0) {
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
+        const gitService = await this.serviceContainer
+            .get<IGitServiceFactory>(IGitServiceFactory)
+            .createGitService(commit.workspaceFolder);
         await gitService.createTag(newTagName, commit.logEntry.hash.full);
     }
 
@@ -41,13 +48,18 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
         const msg = 'Branch name';
         const description = 'Please provide a branch name';
-        newBranchName = (typeof newBranchName !== 'string' || newBranchName.trim().length === 0) ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description }) : newBranchName;
+        newBranchName =
+            typeof newBranchName !== 'string' || newBranchName.trim().length === 0
+                ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description })
+                : newBranchName;
 
         if (typeof newBranchName !== 'string' || newBranchName.length === 0) {
             return;
         }
 
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
+        const gitService = await this.serviceContainer
+            .get<IGitServiceFactory>(IGitServiceFactory)
+            .createGitService(commit.workspaceFolder);
         gitService.createBranch(newBranchName, commit.logEntry.hash.full);
     }
 

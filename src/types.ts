@@ -8,13 +8,13 @@ import { CommitDetails } from './common/types';
 export enum BranchSelection {
     Current = 1,
     All = 2,
-    Detached = 3
+    Detached = 3,
 }
 
 export enum RefType {
     Head,
     RemoteHead,
-    Tag
+    Tag,
 }
 export type Ref = {
     type: RefType;
@@ -115,7 +115,7 @@ export enum Status {
     Unmerged,
     Unknown,
     Broken,
-    TypeChanged
+    TypeChanged,
 }
 export const IGitService = Symbol('IGitService');
 export const IOutputChannel = Symbol('IOutputChannel');
@@ -129,7 +129,15 @@ export interface IGitService {
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
-    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: Uri, lineNumber?: number, author?: string): Promise<LogEntries>;
+    getLogEntries(
+        pageIndex?: number,
+        pageSize?: number,
+        branch?: string,
+        searchText?: string,
+        file?: Uri,
+        lineNumber?: number,
+        author?: string,
+    ): Promise<LogEntries>;
     getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
     revertCommit(hash: string): Promise<void>;
@@ -199,5 +207,5 @@ export enum CommitInfo {
     TreeFullHash,
     TreeShortHash,
     Subject,
-    NewLine
+    NewLine,
 }

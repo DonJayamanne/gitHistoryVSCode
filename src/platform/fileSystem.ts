@@ -11,7 +11,7 @@ import { IFileSystem, IPlatformService } from './types';
 
 @injectable()
 export class FileSystem implements IFileSystem {
-    constructor(@inject(IPlatformService) private platformService: IPlatformService) { }
+    constructor(@inject(IPlatformService) private platformService: IPlatformService) {}
 
     public get directorySeparatorChar(): string {
         return path.sep;
@@ -30,11 +30,11 @@ export class FileSystem implements IFileSystem {
     }
 
     public fileExistsAsync(filePath: string): Promise<boolean> {
-        return this.objectExistsAsync(filePath, (stats) => stats.isFile());
+        return this.objectExistsAsync(filePath, stats => stats.isFile());
     }
 
     public directoryExistsAsync(filePath: string): Promise<boolean> {
-        return this.objectExistsAsync(filePath, (stats) => stats.isDirectory());
+        return this.objectExistsAsync(filePath, stats => stats.isDirectory());
     }
 
     public createDirectoryAsync(directoryPath: string): Promise<void> {
@@ -43,7 +43,6 @@ export class FileSystem implements IFileSystem {
 
     public getSubDirectoriesAsync(rootDir: string): Promise<string[]> {
         return new Promise<string[]>(resolve => {
-            // tslint:disable-next-line:non-literal-fs-path
             fs.readdir(rootDir, (error, files) => {
                 if (error) {
                     return resolve([]);
@@ -52,12 +51,10 @@ export class FileSystem implements IFileSystem {
                 files.forEach(name => {
                     const fullPath = path.join(rootDir, name);
                     try {
-                        // tslint:disable-next-line:non-literal-fs-path
                         if (fs.statSync(fullPath).isDirectory()) {
                             subDirs.push(fullPath);
                         }
-                        // tslint:disable-next-line:no-empty
-                    } catch (ex) { }
+                    } catch (ex) {}
                 });
                 resolve(subDirs);
             });

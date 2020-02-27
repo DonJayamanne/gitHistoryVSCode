@@ -6,7 +6,7 @@ import * as fs from 'fs';
 export enum Architecture {
     Unknown = 1,
     x86 = 2,
-    x64 = 3
+    x64 = 3,
 }
 
 export const IPlatformService = Symbol('IPlatformService');

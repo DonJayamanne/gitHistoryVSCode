@@ -6,12 +6,10 @@ import { ResultActions } from './actions/results';
 import { initialize } from './actions/messagebus';
 import App from './containers/App';
 import { ISettings } from './definitions';
-// tslint:disable-next-line:import-name
 import configureStore from './store';
 
 const defaultSettings: ISettings = window['settings'];
 
-// tslint:disable-next-line:no-any
 const store = configureStore({ 
     settings: defaultSettings, 
     graph: {}, 

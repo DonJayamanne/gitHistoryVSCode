@@ -7,9 +7,10 @@ import { IRefParser } from './types';
 
 @injectable()
 export class RefsParser implements IRefsParser {
-    constructor( @multiInject(IRefParser) private parsers: IRefParser[],
-        @multiInject(ILogService) private loggers: ILogService[]) {
-    }
+    constructor(
+        @multiInject(IRefParser) private parsers: IRefParser[],
+        @multiInject(ILogService) private loggers: ILogService[],
+    ) {}
 
     /**
      * Parses refs returned by the following two commands
@@ -20,7 +21,8 @@ export class RefsParser implements IRefsParser {
      * @returns A reference which can either be a branch, tag or origin
      */
     public parse(refContent: string): Ref[] {
-        return (refContent || '').split(',')
+        return (refContent || '')
+            .split(',')
             .map(ref => ref.trim())
             .filter(line => line.length > 0)
             .map(ref => {

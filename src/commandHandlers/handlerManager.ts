@@ -7,23 +7,25 @@ import { ICommandHandler, ICommandHandlerManager } from './types';
 
 @injectable()
 export class CommandHandlerManager implements ICommandHandlerManager {
-    constructor(@inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
-                @inject(ICommandManager) private commandManager: ICommandManager,
-                @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
+    constructor(
+        @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
+        @inject(ICommandManager) private commandManager: ICommandManager,
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    ) {}
 
     public registerHandlers() {
         for (const item of CommandHandlerRegister.getHandlers()) {
             const serviceIdentifier = item[0];
             const handlers = item[1];
             const target = this.serviceContainer.get<ICommandHandler>(serviceIdentifier);
-            handlers.forEach(handlerInfo => this.registerCommand(handlerInfo.commandName, handlerInfo.handlerMethodName, target));
+            handlers.forEach(handlerInfo =>
+                this.registerCommand(handlerInfo.commandName, handlerInfo.handlerMethodName, target),
+            );
         }
     }
 
     private registerCommand(commandName: string, handlerMethodName: string, target: ICommandHandler) {
-        // tslint:disable-next-line:no-any
         const handler = target[handlerMethodName] as (...args: any[]) => void;
-        // tslint:disable-next-line:no-any
         const disposable = this.commandManager.registerCommand(commandName, (...args: any[]) => {
             handler.apply(target, args);
         });

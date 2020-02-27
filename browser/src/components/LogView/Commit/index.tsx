@@ -77,7 +77,6 @@ class Commit extends React.Component<CommitProps, CommitState> {
         const resizing = { top: true, right: false, bottom: false, left: false, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false };
 
         return (
-            // tslint:disable-next-line:react-this-binding-issue
             <Resizable className='details-view-cnt' defaultSize={ContainerStyle} minHeight={90} maxHeight='50%' enable={resizing}>
                 <div id='detail-view'>
                     <div className='authorAndCommitInfoContainer'>

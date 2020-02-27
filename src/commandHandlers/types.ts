@@ -2,18 +2,14 @@ import { CommitDetails, CompareFileCommitDetails, FileCommitDetails } from '../c
 
 export const ICommandHandler = Symbol('ICommandHandler');
 
-export interface ICommandHandler {
-}
+export interface ICommandHandler {}
 
 export const IGitHistoryCommandHandler = Symbol('IGitHistoryCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitHistoryCommandHandler extends ICommandHandler {
-    // tslint:disable-next-line:no-any
     viewHistory(x: any): Promise<void>;
 }
 
 export const IGitFileHistoryCommandHandler = Symbol('IGitFileHistoryCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitFileHistoryCommandHandler extends ICommandHandler {
     doSomethingWithFile(fileCommit: FileCommitDetails): Promise<void>;
     viewFile(fileCommit: FileCommitDetails): Promise<void>;
@@ -23,26 +19,21 @@ export interface IGitFileHistoryCommandHandler extends ICommandHandler {
 }
 
 export const IGitCommitViewExplorerCommandHandler = Symbol('IGitCommitViewExplorerCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitCommitViewExplorerCommandHandler extends ICommandHandler {
     hideCommitView(commit: CommitDetails | undefined): Promise<void>;
     showCommitView(commit: CommitDetails | undefined): Promise<void>;
 }
 
 export const IFileCommandHandler = Symbol('IFileCommandHandler');
-// tslint:disable-next-line:no-empty-interface
-export interface IFileCommandHandler extends ICommandHandler {
-}
+export type IFileCommandHandler = ICommandHandler;
 
 export const IGitCompareCommitViewExplorerCommandHandler = Symbol('IGitCompareCommitViewExplorerCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitCompareCommitViewExplorerCommandHandler extends ICommandHandler {
     hide(): Promise<void>;
     show(): Promise<void>;
 }
 
 export const IGitCommitCommandHandler = Symbol('IGitCommitCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitCommitCommandHandler extends ICommandHandler {
     doSomethingWithCommit(commit: CommitDetails): Promise<void>;
     createTagFromCommit(commit: CommitDetails, newTagName?: string): Promise<void>;
@@ -51,26 +42,20 @@ export interface IGitCommitCommandHandler extends ICommandHandler {
 }
 
 export const IGitRefCommandHandler = Symbol('IGitRefCommandHandler');
-// tslint:disable-next-line:no-empty-interface
-export interface IGitRefCommandHandler extends ICommandHandler {
-
-}
+export type IGitRefCommandHandler = ICommandHandler;
 
 export const IGitCommitViewDetailsCommandHandler = Symbol('IGitCommitViewDetailsCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitCommitViewDetailsCommandHandler extends ICommandHandler {
     viewDetails(commit: CommitDetails): Promise<void>;
     viewCommitTree(commit: CommitDetails): Promise<void>;
 }
 
 export const IGitCherryPickCommandHandler = Symbol('IGitCherryPickCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitCherryPickCommandHandler extends ICommandHandler {
     cherryPickCommit(commit: CommitDetails): Promise<void>;
 }
 
 export const IGitCheckoutCommandHandler = Symbol('IGitCheckoutCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitCheckoutCommandHandler extends ICommandHandler {
     checkoutCommit(commit: CommitDetails): Promise<void>;
 }
@@ -86,13 +71,11 @@ export interface IGitRebaseCommandHandler extends ICommandHandler {
 }
 
 export const IGitRevertCommandHandler = Symbol('IGitRevertCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitRevertCommandHandler extends ICommandHandler {
     revertCommit(commit: CommitDetails, showPrompt?: boolean): Promise<void>;
 }
 
 export const IGitCompareCommandHandler = Symbol('IGitCompareCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitCompareCommandHandler extends ICommandHandler {
     readonly selectedCommit?: CommitDetails;
     select(fileCommit: CommitDetails): Promise<void>;
@@ -100,7 +83,6 @@ export interface IGitCompareCommandHandler extends ICommandHandler {
 }
 
 export const IGitCompareFileCommandHandler = Symbol('IGitCompareFileCommandHandler');
-// tslint:disable-next-line:no-empty-interface
 export interface IGitCompareFileCommandHandler extends ICommandHandler {
     readonly selectedCommit?: FileCommitDetails;
     select(fileCommit: FileCommitDetails): Promise<void>;

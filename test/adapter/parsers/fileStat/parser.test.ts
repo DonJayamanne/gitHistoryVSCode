@@ -9,19 +9,15 @@ import { ILogService } from '../../../../src/common/types';
 import { Status } from '../../../../src/types';
 import { TestServiceContainer } from '../../../mocks';
 
-// tslint:disable-next-line:max-func-body-length
 describe('Adapter Parser File Stat', () => {
-    // tslint:disable-next-line:mocha-no-side-effect-code
-    const gitRootPath = path.join('src', 'adapter');
-    // tslint:disable-next-line:mocha-no-side-effect-code
-    const svcContainer = new TestServiceContainer();
+        const gitRootPath = path.join('src', 'adapter');
+        const svcContainer = new TestServiceContainer();
     before(() => {
         svcContainer.add(IFileStatStatusParser, FileStatStatusParser);
         svcContainer.addSingletonInstance(ILogService, TypeMoq.Mock.ofType<ILogService>().object);
     });
     it('Must return the right number of files', () => {
-        // tslint:disable-next-line:no-multiline-string
-        const numStatFileLog = ['1       1       package.json',
+                const numStatFileLog = ['1       1       package.json',
             '1       1       src/adapter/ioc.ts',
             '8       0       src/adapter/parsers/constants.ts',
             '24      22      src/adapter/parsers/ioc.ts'];
@@ -35,8 +31,7 @@ describe('Adapter Parser File Stat', () => {
         expect(files).to.have.length(4, 'Incorrect number of entries');
     });
     it('Must have the right number of additions, deletions and right status (using spaces as column separators)', () => {
-        // tslint:disable-next-line:no-multiline-string
-        const numStatFileLog = ['1       1       package.json',
+                const numStatFileLog = ['1       1       package.json',
             '8       0       src/adapter/parsers/constants.ts',
             '24      22      src/adapter/parsers/ioc.ts'];
         const nameStatusFileLog = ['M       package.json',
@@ -56,8 +51,7 @@ describe('Adapter Parser File Stat', () => {
         assert.equal(files[1].status, Status.Added, '1. Incorrect Status');
     });
     it('Must have the right number of additions, deletions and right status (using tabs as column separators)', () => {
-        // tslint:disable-next-line:no-multiline-string
-        const numStatFileLog = ['1	1	package.json',
+                const numStatFileLog = ['1	1	package.json',
             '8	0	src/adapter/parsers/constants.ts',
             '24	22	src/adapter/parsers/ioc.ts'];
         const nameStatusFileLog = ['M	package.json',
@@ -77,8 +71,7 @@ describe('Adapter Parser File Stat', () => {
         assert.equal(files[1].status, Status.Added, '1. Incorrect Status');
     });
     it('Must have the right paths', () => {
-        // tslint:disable-next-line:no-multiline-string
-        const filePaths = ['package.json',
+                const filePaths = ['package.json',
             path.join('src', 'adapter', 'parsers', 'constants.ts'),
             path.join('src', 'adapter', 'parsers', 'ioc.ts')];
         const numStatFileLog = [`1       1       ${filePaths[0]}`,
@@ -107,8 +100,7 @@ describe('Adapter Parser File Stat', () => {
         // src/{client/common/comms/another dir => }/id Dispenser.ts
         // src/test/jupyter/{extension.jupyter.comms.jupyterKernelManager.test.ts => jupyterKernelManager.test.ts}
 
-        // tslint:disable-next-line:no-multiline-string
-        const filePaths = [
+                const filePaths = [
             'src/client/{common/comms => }/Socket Stream.ts',
             'src/client/common/{space in folder => comms}/id Dispenser.ts',
             'src/client/common/space in folder/{idDispenser.ts => id Dispenser.ts}',

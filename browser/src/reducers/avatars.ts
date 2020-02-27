@@ -5,7 +5,6 @@ import { AvatarsState } from './index';
 
 const initialState: AvatarsState = [];
 
-// tslint:disable-next-line:no-any
 export default handleActions<AvatarsState, any>({
     [Actions.FETCHED_AVATARS]: (state, action: ReduxActions.Action<Avatar[]>) => {
         return [

@@ -96,8 +96,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         }
     }
 
-    // tslint:disable-next-line:member-ordering
-    public render() {
+        public render() {
         return (<header>
             <input className={'textInput'} type="text" value={this.state.searchText} placeholder="Enter term and press enter to search" onKeyDown={this.handleKeyDown} onChange={this.handleSearchChange} />
             <Button

@@ -43,13 +43,13 @@ export class GitArgsService implements IGitArgsService {
     }
 
     public getLogArgs(
-        pageIndex: number = 0,
-        pageSize: number = 100,
-        branch: string = '',
-        searchText: string = '',
+        pageIndex = 0,
+        pageSize = 100,
+        branch = '',
+        searchText = '',
         relativeFilePath?: string,
         lineNumber?: number,
-        author?: string
+        author?: string,
     ): GitLogArgs {
         const allBranches = branch.trim().length === 0;
         const currentBranch = branch.trim() === '*';
@@ -70,7 +70,7 @@ export class GitArgsService implements IGitArgsService {
             ...authorArgs,
             ...lineArgs,
             '--full-history',
-            `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`
+            `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`,
         ];
         const counterArgs = ['log', ...authorArgs, ...lineArgs, '--full-history', `--format=${LOG_ENTRY_SEPARATOR}%h`];
 
@@ -91,7 +91,7 @@ export class GitArgsService implements IGitArgsService {
             '--date-order',
             '--decorate=full',
             `--skip=${pageIndex * pageSize}`,
-            `--max-count=${pageSize}`
+            `--max-count=${pageSize}`,
         );
         counterArgs.push('--date-order', '--decorate=full');
 

@@ -35,8 +35,7 @@ export default class LogEntryList extends React.Component<ResultProps> {
                     onViewCommit={this.props.onViewCommit} />
         );
         return (
-            // tslint:disable-next-line:react-this-binding-issue
-            <div ref={(ref) => this.ref = ref}>
+                        <div ref={(ref) => this.ref = ref}>
                 {results}
             </div>
         );

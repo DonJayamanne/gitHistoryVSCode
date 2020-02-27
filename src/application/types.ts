@@ -17,7 +17,11 @@ export interface IApplicationShell {
      * @param items A set of items that will be rendered as actions in the message.
      * @return A thenable that resolves to the selected item or `undefined` when being dismissed.
      */
-    showInformationMessage(message: string, options: vscode.MessageOptions, ...items: string[]): Thenable<string | undefined>;
+    showInformationMessage(
+        message: string,
+        options: vscode.MessageOptions,
+        ...items: string[]
+    ): Thenable<string | undefined>;
 
     /**
      * Show an information message.
@@ -40,7 +44,11 @@ export interface IApplicationShell {
      * @param items A set of items that will be rendered as actions in the message.
      * @return A thenable that resolves to the selected item or `undefined` when being dismissed.
      */
-    showInformationMessage<T extends vscode.MessageItem>(message: string, options: vscode.MessageOptions, ...items: T[]): Thenable<T | undefined>;
+    showInformationMessage<T extends vscode.MessageItem>(
+        message: string,
+        options: vscode.MessageOptions,
+        ...items: T[]
+    ): Thenable<T | undefined>;
 
     /**
      * Show a warning message.
@@ -63,7 +71,11 @@ export interface IApplicationShell {
      * @param items A set of items that will be rendered as actions in the message.
      * @return A thenable that resolves to the selected item or `undefined` when being dismissed.
      */
-    showWarningMessage(message: string, options: vscode.MessageOptions, ...items: string[]): Thenable<string | undefined>;
+    showWarningMessage(
+        message: string,
+        options: vscode.MessageOptions,
+        ...items: string[]
+    ): Thenable<string | undefined>;
 
     /**
      * Show a warning message.
@@ -86,7 +98,11 @@ export interface IApplicationShell {
      * @param items A set of items that will be rendered as actions in the message.
      * @return A thenable that resolves to the selected item or `undefined` when being dismissed.
      */
-    showWarningMessage<T extends vscode.MessageItem>(message: string, options: vscode.MessageOptions, ...items: T[]): Thenable<T | undefined>;
+    showWarningMessage<T extends vscode.MessageItem>(
+        message: string,
+        options: vscode.MessageOptions,
+        ...items: T[]
+    ): Thenable<T | undefined>;
 
     /**
      * Show an error message.
@@ -132,7 +148,11 @@ export interface IApplicationShell {
      * @param items A set of items that will be rendered as actions in the message.
      * @return A thenable that resolves to the selected item or `undefined` when being dismissed.
      */
-    showErrorMessage<T extends vscode.MessageItem>(message: string, options: vscode.MessageOptions, ...items: T[]): Thenable<T | undefined>;
+    showErrorMessage<T extends vscode.MessageItem>(
+        message: string,
+        options: vscode.MessageOptions,
+        ...items: T[]
+    ): Thenable<T | undefined>;
 
     /**
      * Shows a selection list.
@@ -142,7 +162,11 @@ export interface IApplicationShell {
      * @param token A token that can be used to signal cancellation.
      * @return A promise that resolves to the selection or `undefined`.
      */
-    showQuickPick(items: string[] | Thenable<string[]>, options?: vscode.QuickPickOptions, token?: vscode.CancellationToken): Thenable<string | undefined>;
+    showQuickPick(
+        items: string[] | Thenable<string[]>,
+        options?: vscode.QuickPickOptions,
+        token?: vscode.CancellationToken,
+    ): Thenable<string | undefined>;
 
     /**
      * Shows a selection list.
@@ -152,7 +176,11 @@ export interface IApplicationShell {
      * @param token A token that can be used to signal cancellation.
      * @return A promise that resolves to the selected item or `undefined`.
      */
-    showQuickPick<T extends vscode.QuickPickItem>(items: T[] | Thenable<T[]>, options?: vscode.QuickPickOptions, token?: vscode.CancellationToken): Thenable<T | undefined>;
+    showQuickPick<T extends vscode.QuickPickItem>(
+        items: T[] | Thenable<T[]>,
+        options?: vscode.QuickPickOptions,
+        token?: vscode.CancellationToken,
+    ): Thenable<T | undefined>;
 
     /**
      * Shows a file open dialog to the user which allows to select a file
@@ -184,13 +212,6 @@ export interface IApplicationShell {
      * @return A promise that resolves to a string the user provided or to `undefined` in case of dismissal.
      */
     showInputBox(options?: vscode.InputBoxOptions, token?: vscode.CancellationToken): Thenable<string | undefined>;
-
-    /**
-     * Opens URL in a default browser.
-     *
-     * @param url Url to open.
-     */
-    openUrl(url: string): void;
 }
 
 export { ICommandManager } from './types/commandManager';

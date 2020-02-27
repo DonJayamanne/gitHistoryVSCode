@@ -16,6 +16,8 @@ module.exports =  {
     "@typescript-eslint/explicit-function-return-type": "off", // ignore missing return types for the time being
     "@typescript-eslint/no-empty-interface": "off", // allow empty interfaces
     "@typescript-eslint/ban-ts-ignore": "off", // allow @ts-ignore comment for the time being
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-use-before-define": "off",
       // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
       // e.g. "@typescript-eslint/explicit-function-return-type": "off",
     },

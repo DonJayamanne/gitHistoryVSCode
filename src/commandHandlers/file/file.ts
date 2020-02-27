@@ -7,8 +7,10 @@ import { isTextFile } from './mimeTypes';
 
 @injectable()
 export class FileCommandHandler implements IFileCommandHandler {
-    constructor( @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(IDocumentManager) private documentManager: IDocumentManager) { }
+    constructor(
+        @inject(ICommandManager) private commandManager: ICommandManager,
+        @inject(IDocumentManager) private documentManager: IDocumentManager,
+    ) {}
 
     @command('git.openFileInViewer', IFileCommandHandler)
     public async openFile(file: Uri): Promise<void> {

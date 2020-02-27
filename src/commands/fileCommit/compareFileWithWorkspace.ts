@@ -6,7 +6,11 @@ import { IFileSystem } from '../../platform/types';
 import { BaseFileCommitCommand } from '../baseFileCommitCommand';
 
 export class CompareFileWithWorkspaceCommand extends BaseFileCommitCommand {
-    constructor(fileCommit: FileCommitDetails, private handler: IGitFileHistoryCommandHandler, private serviceContainer: IServiceContainer) {
+    constructor(
+        fileCommit: FileCommitDetails,
+        private handler: IGitFileHistoryCommandHandler,
+        private serviceContainer: IServiceContainer,
+    ) {
         super(fileCommit);
         this.setTitle('$(git-compare) Compare against workspace file');
         this.setCommand('git.commit.FileEntry.CompareAgainstWorkspace');

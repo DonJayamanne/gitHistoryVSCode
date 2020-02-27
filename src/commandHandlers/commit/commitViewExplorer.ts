@@ -7,8 +7,10 @@ import { IGitCommitViewExplorerCommandHandler } from '../types';
 
 @injectable()
 export class GitCommitViewExplorerCommandHandler implements IGitCommitViewExplorerCommandHandler {
-    constructor( @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory) { }
+    constructor(
+        @inject(ICommandManager) private commandManager: ICommandManager,
+        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+    ) {}
 
     @command('git.commit.view.hide', IGitCommitViewExplorerCommandHandler)
     public async hideCommitView(_commit: CommitDetails) {

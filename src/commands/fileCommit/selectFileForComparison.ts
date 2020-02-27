@@ -10,7 +10,6 @@ export class SelectFileForComparison extends BaseFileCommitCommand {
         this.setCommandArguments([fileCommit]);
     }
     public async preExecute(): Promise<boolean> {
-        // tslint:disable-next-line:no-suspicious-comment
         // TODO: Not completed
         return false;
     }
