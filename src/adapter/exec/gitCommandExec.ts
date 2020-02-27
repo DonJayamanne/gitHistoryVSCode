@@ -3,10 +3,10 @@ import * as iconv from 'iconv-lite';
 import { injectable, multiInject } from 'inversify';
 import { Writable } from 'stream';
 import { Disposable, extensions } from 'vscode';
-import { IGitCommandExecutor } from './types';
-import { GitExtension } from '../repository/git.d';
 import { StopWatch } from '../../common/stopWatch';
 import { ILogService } from '../../common/types';
+import { GitExtension } from '../repository/git.d';
+import { IGitCommandExecutor } from './types';
 
 const DEFAULT_ENCODING = 'utf8';
 const isWindows = /^win/.test(process.platform);
@@ -23,10 +23,12 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         this.gitExecutablePath = gitApi.git.path;
     }
     public async exec(cwd: string, ...args: string[]): Promise<string>;
-    // tslint:disable-next-line:unified-signatures
     public async exec(options: { cwd: string; shell?: boolean }, ...args: string[]): Promise<string>;
-    public async exec(options: { cwd: string; encoding: 'binary' }, destination: Writable, ...args: string[]): Promise<void>;
-    // tslint:disable-next-line:no-any
+    public async exec(
+        options: { cwd: string; encoding: 'binary' },
+        destination: Writable,
+        ...args: string[]
+    ): Promise<void>;
     public async exec(options: any, ...args: any[]): Promise<any> {
         let gitPath = this.gitExecutablePath;
         gitPath = isWindows ? gitPath.replace(/\\/g, '/') : gitPath;
@@ -55,7 +57,6 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         const errBuffers: Buffer[] = [];
         on(gitShow.stderr, 'data', (data: Buffer) => errBuffers.push(data));
 
-        // tslint:disable-next-line:no-any
         return new Promise<any>((resolve, reject) => {
             gitShow.once('close', () => {
                 if (errBuffers.length > 0) {

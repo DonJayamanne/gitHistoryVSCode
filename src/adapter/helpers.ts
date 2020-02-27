@@ -1,8 +1,6 @@
 import { EnumEx } from '../common/enumHelper';
 import { CommitInfo } from '../types';
-// tslint:disable-next-line:no-stateless-class no-unnecessary-class
 export class Helpers {
-    // tslint:disable-next-line:function-name
     public static GetLogArguments() {
         const args: string[] = [];
         for (const item of EnumEx.getValues<CommitInfo>(CommitInfo)) {
@@ -13,7 +11,6 @@ export class Helpers {
 
         return args;
     }
-    // tslint:disable-next-line:function-name
     public static GetCommitInfoFormatCode(info: CommitInfo): string {
         switch (info) {
             case CommitInfo.FullHash: {

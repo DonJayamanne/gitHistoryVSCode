@@ -2,7 +2,6 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
-// tslint:disable:no-require-imports no-var-requires import-name no-function-expression no-any prefer-template no-console no-var-self
 // Most of the source is in node_modules/vscode/lib/testrunner.js
 
 'use strict';
@@ -59,15 +58,13 @@ export function configure(mochaOpts: MochaSetupOptions, coverageOpts?: { coverag
 
 export function run(testsRoot: string, callback: TestCallback): void {
     // Enable source map support.
-    // tslint:disable-next-line:no-implicit-dependencies
-    require('source-map-support').install();
+        require('source-map-support').install();
 
     // Check whether code coverage is enabled.
     const options = getCoverageOptions(testsRoot);
     if (options && options.enabled) {
         // Setup coverage pre-test, including post-test hook to report.
-        // tslint:disable-next-line:no-use-before-declare
-        const coverageRunner = new CoverageRunner(options, testsRoot, callback);
+                const coverageRunner = new CoverageRunner(options, testsRoot, callback);
         coverageRunner.setupCoverage();
     }
 
@@ -90,6 +87,7 @@ function getCoverageOptions(testsRoot: string): ITestRunnerOptions | undefined {
         return undefined;
     }
     const coverConfigPath = path.join(testsRoot, coverageOptions.coverageConfig);
+
     return fs.existsSync(coverConfigPath) ? JSON.parse(fs.readFileSync(coverConfigPath, 'utf8')) : undefined;
 }
 
@@ -103,6 +101,7 @@ class CoverageRunner {
     private get coverage(): { [key: string]: CoverState } {
         if (global[this.coverageVar] === undefined || Object.keys(global[this.coverageVar]).length === 0) {
             console.error('No coverage information was collected, exit without writing coverage information');
+
             return {};
         } else {
             return global[this.coverageVar];
@@ -137,8 +136,7 @@ class CoverageRunner {
         });
 
         // Create a match function - taken from the run-with-cover.js in istanbul.
-        // tslint:disable-next-line:no-implicit-dependencies
-        const decache = require('decache');
+                const decache = require('decache');
         const fileMap = new Set<string>();
         srcFiles
             .map(file => path.join(sourceRoot, file))

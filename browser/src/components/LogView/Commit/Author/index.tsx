@@ -11,7 +11,6 @@ type AuthorProps = {
     selectAuthor(author: string): void;
 };
 
-// tslint:disable-next-line:function-name
 function Author(props: AuthorProps) {
     return (<div className='commit-author'>
         <span role='button' style={{fontSize: '130%', marginRight: '0.2em'}} className='btnx hint--right hint--rounded hint--bounce' aria-label='Filter by author'>

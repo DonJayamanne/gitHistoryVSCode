@@ -96,8 +96,7 @@ export class Branch extends React.Component<BranchProps, BranchState> {
         this.setState({ searchText: e.target.value });
     }
 
-    // tslint:disable-next-line:member-ordering
-    public render() {
+        public render() {
         return (<DropdownButton disabled={this.props.isLoading}
             bsStyle='primary'
             bsSize='small'

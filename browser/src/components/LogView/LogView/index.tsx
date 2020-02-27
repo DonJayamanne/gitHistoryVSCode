@@ -15,15 +15,13 @@ type LogViewProps = {
     actionRef: typeof ResultActions.actionRef;
 };
 
-// tslint:disable-next-line:no-empty-interface
 interface LogViewState {
 }
 
 class LogView extends React.Component<LogViewProps, LogViewState> {
     private ref: React.RefObject<LogEntryList>;
     private dialog: Dialog;
-    // tslint:disable-next-line:no-any
-    constructor(props?: LogViewProps, context?: any) {
+        constructor(props?: LogViewProps, context?: any) {
         super(props, context);
         // this.state = { height: '', width: '', itemHeight: 0 };
         this.ref = React.createRef<LogEntryList>();
@@ -46,8 +44,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
 
     public render() {
         return (
-            // tslint:disable-next-line:react-this-binding-issue
-            <div className='log-view' id='scrollCnt'>
+                        <div className='log-view' id='scrollCnt'>
                 <BranchGraph></BranchGraph>
                 <LogEntryList ref={this.ref} logEntries={this.props.logEntries.items}
                     onAction={this.onAction}

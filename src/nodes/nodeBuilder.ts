@@ -10,12 +10,15 @@ import { DirectoryNode, FileNode, INodeBuilder, INodeFactory } from './types';
 
 @injectable()
 export class NodeBuilder implements INodeBuilder {
-    constructor(@inject(IFileCommitCommandFactory) private fileCommandFactory: IFileCommitCommandFactory,
+    constructor(
+        @inject(IFileCommitCommandFactory) private fileCommandFactory: IFileCommitCommandFactory,
         private nodeFactory: INodeFactory,
-        @inject(IPlatformService) private platform: IPlatformService) {
-    }
+        @inject(IPlatformService) private platform: IPlatformService,
+    ) {}
     public buildTree(commit: CommitDetails, committedFiles: CommittedFile[]): (DirectoryNode | FileNode)[] {
-        const sortedFiles = committedFiles.sort((a, b) => a.uri.fsPath.toUpperCase() > b.uri.fsPath.toUpperCase() ? 1 : -1);
+        const sortedFiles = committedFiles.sort((a, b) =>
+            a.uri.fsPath.toUpperCase() > b.uri.fsPath.toUpperCase() ? 1 : -1,
+        );
         const commitFileDetails = new Map<string, CommittedFile>();
         sortedFiles.forEach(item => commitFileDetails.set(item.uri.fsPath, item));
 
@@ -42,8 +45,8 @@ export class NodeBuilder implements INodeBuilder {
                 if (index === 0 && !nodeExists) {
                     roots.push(folderNode);
                 }
+
                 return folderNode;
-                // tslint:disable-next-line:no-any
             }, undefined as any);
             const fileNode = this.nodeFactory.createFileNode(commit, file);
             if (dirNode) {
@@ -53,11 +56,13 @@ export class NodeBuilder implements INodeBuilder {
             }
         });
 
-        nodes.forEach(node => node.children = this.sortNodes(node.children));
+        nodes.forEach(node => (node.children = this.sortNodes(node.children)));
+
         return this.sortNodes(roots);
     }
     public buildList(commit: CommitDetails, committedFiles: CommittedFile[]): FileNode[] {
         const nodes = committedFiles.map(file => this.nodeFactory.createFileNode(commit, file));
+
         return this.sortFileNodes(nodes);
     }
     public async getTreeItem(element: DirectoryNode | FileNode): Promise<DirectoryTreeItem | FileTreeItem> {
@@ -74,6 +79,7 @@ export class NodeBuilder implements INodeBuilder {
         if (treeItem.command) {
             treeItem.command.tooltip = 'sdafasfef.';
         }
+
         return treeItem;
     }
     public async buildFileTreeItem(element: FileNode): Promise<FileTreeItem> {
@@ -101,46 +107,39 @@ export class NodeBuilder implements INodeBuilder {
         }
         treeItem.contextValue = 'file';
         treeItem.command = await this.fileCommandFactory.getDefaultFileCommand(element.data!);
+
         return treeItem;
     }
     private sortNodes(nodes: (DirectoryNode | FileNode)[]): (DirectoryNode | FileNode)[] {
-        let directoryNodes = nodes
-            .filter(node => node instanceof DirectoryNode)
-            .map(node => node as DirectoryNode);
-        let fileNodes = nodes
-            .filter(node => node instanceof FileNode)
-            .map(node => node as FileNode);
+        let directoryNodes = nodes.filter(node => node instanceof DirectoryNode).map(node => node as DirectoryNode);
+        let fileNodes = nodes.filter(node => node instanceof FileNode).map(node => node as FileNode);
 
         if (this.platform.isWindows) {
-            directoryNodes = directoryNodes.sort((a, b) => a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1);
-            fileNodes = fileNodes.sort((a, b) => a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1);
+            directoryNodes = directoryNodes.sort((a, b) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1));
+            fileNodes = fileNodes.sort((a, b) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1));
         } else {
-            directoryNodes = directoryNodes.sort((a, b) => a.label > b.label ? 1 : -1);
-            fileNodes = fileNodes.sort((a, b) => a.label > b.label ? 1 : -1);
+            directoryNodes = directoryNodes.sort((a, b) => (a.label > b.label ? 1 : -1));
+            fileNodes = fileNodes.sort((a, b) => (a.label > b.label ? 1 : -1));
         }
 
         return this.sortDirectoryNodes(directoryNodes).concat(this.sortFileNodes(fileNodes));
     }
     private sortDirectoryNodes(nodes: DirectoryNode[]): DirectoryNode[] {
-        const directoryNodes = nodes
-            .filter(node => node instanceof DirectoryNode)
-            .map(node => node);
+        const directoryNodes = nodes.filter(node => node instanceof DirectoryNode).map(node => node);
 
         if (this.platform.isWindows) {
-            return directoryNodes.sort((a, b) => a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1);
+            return directoryNodes.sort((a, b) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1));
         } else {
-            return directoryNodes.sort((a, b) => a.label > b.label ? 1 : -1);
+            return directoryNodes.sort((a, b) => (a.label > b.label ? 1 : -1));
         }
     }
     private sortFileNodes(nodes: FileNode[]): FileNode[] {
-        const fileNodes = nodes
-            .filter(node => node instanceof FileNode)
-            .map(node => node);
+        const fileNodes = nodes.filter(node => node instanceof FileNode).map(node => node);
 
         if (this.platform.isWindows) {
-            return fileNodes.sort((a, b) => a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1);
+            return fileNodes.sort((a, b) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1));
         } else {
-            return fileNodes.sort((a, b) => a.label > b.label ? 1 : -1);
+            return fileNodes.sort((a, b) => (a.label > b.label ? 1 : -1));
         }
     }
 }

@@ -14,7 +14,9 @@ export class ActionDetailsParser implements IActionDetailsParser {
         const time = parseInt(unixTime, 10);
         const date = new Date(time * 1000);
         return {
-            date, email, name
+            date,
+            email,
+            name,
         };
     }
 }

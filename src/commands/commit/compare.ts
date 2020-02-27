@@ -6,7 +6,9 @@ export class CompareCommand extends BaseCommitCommand {
     constructor(commit: CommitDetails, private handler: IGitCompareCommandHandler) {
         super(commit);
         if (handler.selectedCommit) {
-            const committer = `${commit.logEntry.author!.name} <${commit.logEntry.author!.email}> on ${commit.logEntry.author!.date!.toLocaleString()}`;
+            const committer = `${commit.logEntry.author!.name} <${
+                commit.logEntry.author!.email
+            }> on ${commit.logEntry.author!.date!.toLocaleString()}`;
             this.setTitle(`$(git-compare) Compare with ${handler.selectedCommit!.logEntry.hash.short}, ${committer}`);
             this.setDetail(commit.logEntry.subject);
         }

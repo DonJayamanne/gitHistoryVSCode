@@ -27,7 +27,7 @@ export abstract class AbstractCommitNode<T> implements INode<T> {
     public get resource() {
         return this._resource;
     }
-    constructor(public readonly data: T | undefined) { }
+    constructor(public readonly data: T | undefined) {}
     protected setLabel(value: string) {
         this._label = value;
     }

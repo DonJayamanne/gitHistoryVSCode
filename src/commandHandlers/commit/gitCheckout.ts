@@ -9,20 +9,23 @@ import { IGitCheckoutCommandHandler } from '../types';
 
 @injectable()
 export class GitCheckoutCommandHandler implements IGitCheckoutCommandHandler {
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    constructor(
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
-        @inject(IApplicationShell) private applicationShell: IApplicationShell) { }
+        @inject(IApplicationShell) private applicationShell: IApplicationShell,
+    ) {}
 
     @command('git.commit.checkout', IGitCheckoutCommandHandler)
     public async checkoutCommit(commit: CommitDetails) {
         commit = commit ? commit : this.commitViewerFactory.getCommitViewer().selectedCommit;
-        const gitService = await this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory).createGitService(commit.workspaceFolder);
+        const gitService = await this.serviceContainer
+            .get<IGitServiceFactory>(IGitServiceFactory)
+            .createGitService(commit.workspaceFolder);
 
-        gitService.checkout(commit.logEntry.hash.full)
-            .catch(err => {
-                if (typeof err === 'string') {
-                    this.applicationShell.showErrorMessage(err);
-                }
-            });
+        gitService.checkout(commit.logEntry.hash.full).catch(err => {
+            if (typeof err === 'string') {
+                this.applicationShell.showErrorMessage(err);
+            }
+        });
     }
 }

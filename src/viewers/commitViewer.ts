@@ -12,22 +12,24 @@ import { ICommitViewer } from './types';
 
 @injectable()
 export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNode | FileNode> {
-    private registered: boolean = false;
+    private registered = false;
     private commit?: CommitDetails;
     private _onDidChangeTreeData = new EventEmitter<DirectoryNode | FileNode>();
-    private fileView: boolean = false;
+    private fileView = false;
     public get onDidChangeTreeData(): Event<DirectoryNode | FileNode> {
         return this._onDidChangeTreeData.event;
     }
     public get selectedCommit(): Readonly<CommitDetails> {
         return this.commit!;
     }
-    constructor(@inject(IOutputChannel) private outputChannel: OutputChannel,
+    constructor(
+        @inject(IOutputChannel) private outputChannel: OutputChannel,
         @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,
         @inject(ICommandManager) private commandManager: ICommandManager,
         private nodeBuilder: INodeBuilder,
-        private treeId: string, private visibilityContextVariable: string) {
-    }
+        private treeId: string,
+        private visibilityContextVariable: string,
+    ) {}
     public showCommitTree(commit: CommitDetails) {
         this.commit = commit;
 
@@ -61,18 +63,25 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
             const isEmptyPath = fileDirectory === path.sep;
             treeItem.label = `${element.label} ${isEmptyPath ? '' : '•'} ${isEmptyPath ? '' : fileDirectory}`.trim();
         }
+
         return treeItem;
     }
     public async getChildren(element?: DirectoryNode | FileNode | undefined): Promise<(DirectoryNode | FileNode)[]> {
         if (!element) {
-            // tslint:disable-next-line:no-suspicious-comment
             // TODO: HACK
-            const committedFiles = this.treeId === 'commitViewProvider' ? this.commit!.logEntry.committedFiles! : (this.commit as CompareCommitDetails).committedFiles;
-            return this.fileView ? this.nodeBuilder.buildList(this.commit!, committedFiles) : this.nodeBuilder.buildTree(this.commit!, committedFiles);
+            const committedFiles =
+                this.treeId === 'commitViewProvider'
+                    ? this.commit!.logEntry.committedFiles!
+                    : (this.commit as CompareCommitDetails).committedFiles;
+
+            return this.fileView
+                ? this.nodeBuilder.buildList(this.commit!, committedFiles)
+                : this.nodeBuilder.buildTree(this.commit!, committedFiles);
         }
         if (element instanceof DirectoryNode) {
             return (element as DirectoryNode).children;
         }
+
         return [];
     }
 }

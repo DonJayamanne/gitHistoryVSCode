@@ -16,7 +16,15 @@ export interface IGitArgsService {
     getCommitWithNumStatArgsForMerge(hash: string): string[];
     getCommitNameStatusArgsForMerge(hash: string): string[];
     getObjectHashArgs(object: string): string[];
-    getLogArgs(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, relativeFilePath?: string, lineNumber?: number, author?: string): GitLogArgs;
+    getLogArgs(
+        pageIndex?: number,
+        pageSize?: number,
+        branch?: string,
+        searchText?: string,
+        relativeFilePath?: string,
+        lineNumber?: number,
+        author?: string,
+    ): GitLogArgs;
     getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[];
     getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[];
     getPreviousCommitHashForFileArgs(hash: string, file: string): string[];
@@ -27,5 +35,5 @@ export enum GitOriginType {
     github = 2,
     bitbucket = 3,
     tfs = 4,
-    vsts = 5
+    vsts = 5,
 }

@@ -6,7 +6,7 @@ import { Uri } from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
-import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry } from '../../types';
+import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry, Ref } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
@@ -16,17 +16,19 @@ import { IGitArgsService } from './types';
 
 @injectable()
 export class Git implements IGitService {
-    constructor(private repo: Repository, @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    constructor(
+        private repo: Repository,
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
-        @inject(IGitArgsService) private gitArgsService: IGitArgsService) {
-    }
+        @inject(IGitArgsService) private gitArgsService: IGitArgsService,
+    ) {}
 
     /**
      * Used to differentiate between repository being cached using the @cache decorator
      */
     public getHashCode(): string {
-        return ':' + this.getGitRoot();
+        return `:${this.getGitRoot()}`;
     }
 
     public getGitRoot(): string {
@@ -40,7 +42,11 @@ export class Git implements IGitService {
         return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
     }
     public async getHeadHashes(): Promise<{ ref?: string; hash?: string }[]> {
-        return this.repo.state.refs.filter(x => x.type <= 1).map(x =>  { return { ref: x.name, hash: x.commit }; });
+        return this.repo.state.refs
+            .filter(x => x.type <= 1)
+            .map(x => {
+                return { ref: x.name, hash: x.commit };
+            });
     }
 
     public getDetachedHash(): string | undefined {
@@ -52,20 +58,20 @@ export class Git implements IGitService {
         const gitRootPath = this.repo.rootUri.fsPath;
         const localBranches = this.repo.state.refs.filter(x => x.type === 0);
 
-        return await Promise.all(localBranches.map(async x => {
-            // tslint:disable-next-line:no-object-literal-type-assertion
+        return Promise.all(
+            localBranches.map(async x => {
+                const originUrl = await this.getOriginUrl(x.name);
+                const originType = await this.getOriginType(originUrl);
 
-            let originUrl = await this.getOriginUrl(x.name);
-            let originType = await this.getOriginType(originUrl);
-
-            return {
-                gitRoot: gitRootPath,
-                name: x.name,
-                remote: originUrl,
-                remoteType: originType,
-                current: currentBranchName === x.name
-            } as Branch;
-        }));
+                return {
+                    gitRoot: gitRootPath,
+                    name: x.name,
+                    remote: originUrl,
+                    remoteType: originType,
+                    current: currentBranchName === x.name,
+                } as Branch;
+            }),
+        );
     }
     public async getCurrentBranch(): Promise<string> {
         return this.repo.state.HEAD!.name || '';
@@ -76,7 +82,8 @@ export class Git implements IGitService {
         const authorArgs = this.gitArgsService.getAuthorsArgs();
         const authors = await this.exec(...authorArgs);
         const dict = new Set<string>();
-        return authors.split(/\r?\n/g)
+        return authors
+            .split(/\r?\n/g)
             .map(line => line.trim())
             .filter(line => line.trim().length > 0)
             .map(line => line.substring(line.indexOf('\t') + 1))
@@ -85,7 +92,7 @@ export class Git implements IGitService {
                 if (indexOfEmailSeparator === -1) {
                     return {
                         name: line.trim(),
-                        email: ''
+                        email: '',
                     };
                 } else {
                     const nameParts = line.split('<');
@@ -93,7 +100,7 @@ export class Git implements IGitService {
                     const email = nameParts[0].substring(0, nameParts[0].length - 1).trim();
                     return {
                         name,
-                        email
+                        email,
                     };
                 }
             })
@@ -104,9 +111,9 @@ export class Git implements IGitService {
                 dict.add(item.name);
                 return true;
             })
-            .sort((a, b) => a.name > b.name ? 1 : -1);
+            .sort((a, b) => (a.name > b.name ? 1 : -1));
     }
-    
+
     public async getOriginType(url?: string): Promise<GitOriginType | undefined> {
         if (!url) {
             url = await this.getOriginUrl();
@@ -126,7 +133,7 @@ export class Git implements IGitService {
         if (!branchName) {
             branchName = await this.getCurrentBranch();
         }
-        
+
         const branch = await this.repo.getBranch(branchName);
 
         if (branch.upstream) {
@@ -137,37 +144,38 @@ export class Git implements IGitService {
         return '';
     }
     public async getRefsContainingCommit(hash: string): Promise<string[]> {
-        // tslint:disable-next-line:possible-timing-attack
         return this.repo.state.refs.filter(x => x.commit === hash).map(x => x.name || '');
     }
-    public async getLogEntries(pageIndex: number = 0, pageSize: number = 0, branch: string = '', searchText: string = '', file?: Uri, lineNumber?: number, author?: string): Promise<LogEntries> {
+    public async getLogEntries(
+        pageIndex = 0,
+        pageSize = 0,
+        branch = '',
+        searchText = '',
+        file?: Uri,
+        lineNumber?: number,
+        author?: string,
+    ): Promise<LogEntries> {
         if (pageSize <= 0) {
-            // tslint:disable-next-line:no-parameter-reassignment
             const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
         const relativePath = file ? await this.getGitRelativePath(file) : undefined;
-        
-        const args = this.gitArgsService.getLogArgs(pageIndex, pageSize, branch, searchText, relativePath, lineNumber, author);
+
+        const args = this.gitArgsService.getLogArgs(
+            pageIndex,
+            pageSize,
+            branch,
+            searchText,
+            relativePath,
+            lineNumber,
+            author,
+        );
 
         const gitRepoPath = this.getGitRoot();
         const output = await this.exec(...args.logArgs);
 
-        // tslint:disable-next-line:no-suspicious-comment
-        // TODO: Disabled due to performance issues https://github.com/DonJayamanne/gitHistoryVSCode/issues/195
-        // // Since we're using find and wc (shell commands, we need to execute the command in a shell)
-        // const countOutputPromise = this.execInShell(...args.counterArgs)
-        //     .then(countValue => parseInt(countValue.trim(), 10))
-        //     .catch(ex => {
-        //         console.error('Git History: Failed to get commit count');
-        //         console.error(ex);
-        //         return -1;
-        //     });
         const count = -1;
 
-        // Run another git history, but get file stats instead of the changes
-        // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);
-        // const entriesWithFileModeChanges = outputWithFileModeChanges.split(LOG_ENTRY_SEPARATOR);
         const items = output
             .split(LOG_ENTRY_SEPARATOR)
             .map(entry => {
@@ -177,19 +185,27 @@ export class Git implements IGitService {
                 return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS);
             })
             .filter(logEntry => logEntry !== undefined)
-            .map(logEntry => logEntry!);
+            .map(logEntry => {
+                // fill the refs from native git extension
+                logEntry!.refs = this.repo.state.refs
+                    .filter(x => x.commit === logEntry!.hash.full)
+                    .map(x => {
+                        return { type: x.type as any, name: x.name } as Ref;
+                    });
+
+                return logEntry!;
+            });
 
         const headHashes = await this.getHeadHashes();
         const headHashesOnly = headHashes.map(item => item.hash);
-        // tslint:disable-next-line:prefer-type-cast
 
-        items.filter(x => headHashesOnly.indexOf(x.hash.full) > -1).forEach(item => {
-            item.isLastCommit = true;
-        });
+        items
+            .filter(x => headHashesOnly.indexOf(x.hash.full) > -1)
+            .forEach(item => {
+                item.isLastCommit = true;
+            });
 
-        // tslint:disable-next-line:no-suspicious-comment
         // @ts-ignore
-        // tslint:disable-next-line:no-object-literal-type-assertion
         return {
             items,
             count,
@@ -197,10 +213,10 @@ export class Git implements IGitService {
             file,
             pageIndex,
             pageSize,
-            searchText
+            searchText,
         } as LogEntries;
     }
-    
+
     public async getCommit(hash: string): Promise<LogEntry | undefined> {
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgsForMerge(hash);
@@ -208,7 +224,9 @@ export class Git implements IGitService {
         const gitRootPath = await this.getGitRoot();
         const commitOutput = await this.exec(...commitArgs);
 
-        const filesWithNumStat = commitOutput.slice(commitOutput.lastIndexOf(ITEM_ENTRY_SEPARATOR) + ITEM_ENTRY_SEPARATOR.length);
+        const filesWithNumStat = commitOutput.slice(
+            commitOutput.lastIndexOf(ITEM_ENTRY_SEPARATOR) + ITEM_ENTRY_SEPARATOR.length,
+        );
         const filesWithNameStatus = await this.exec(...nameStatusArgs);
 
         const entries = commitOutput
@@ -217,7 +235,14 @@ export class Git implements IGitService {
                 if (entry.trim().length === 0) {
                     return undefined;
                 }
-                return this.logParser.parse(gitRootPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS, filesWithNumStat, filesWithNameStatus);
+                return this.logParser.parse(
+                    gitRootPath,
+                    entry,
+                    ITEM_ENTRY_SEPARATOR,
+                    LOG_FORMAT_ARGS,
+                    filesWithNumStat,
+                    filesWithNameStatus,
+                );
             })
             .filter(entry => entry !== undefined)
             .map(entry => entry!);
@@ -239,15 +264,15 @@ export class Git implements IGitService {
                 }
 
                 try {
-                    const tmpFilePath = path.join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`).replace(/\\/g, '/');
+                    const tmpFilePath = path
+                        .join(path.dirname(tmpPath), `${hash}${new Date().getTime()}${path.basename(tmpPath)}`)
+                        .replace(/\\/g, '/');
                     const tmpFile = path.join(tmpFilePath, path.basename(filePath));
                     await fs.ensureDir(tmpFilePath);
                     await fs.writeFile(tmpFile, content);
                     resolve(Uri.file(tmpFile));
                 } catch (ex) {
-                    // tslint:disable-next-line:no-console
                     console.error('Git History: failed to get file contents (again)');
-                    // tslint:disable-next-line:no-console
                     console.error(ex);
                     reject(ex);
                 }
@@ -272,18 +297,21 @@ export class Git implements IGitService {
         const fileStatParser = this.serviceContainer.get<IFileStatParser>(IFileStatParser);
         return fileStatParser.parse(gitRootPath, filesWithNumStat.split(/\r?\n/g), filesWithNameStatus.split(/\r?\n/g));
     }
-    
+
     @cache('IGitService')
     public async getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash> {
         const gitRootPath = await this.getGitRoot();
         const relativeFilePath = path.relative(gitRootPath, file.path);
         const args = this.gitArgsService.getPreviousCommitHashForFileArgs(hash, relativeFilePath);
         const output = await this.exec(...args);
-        const hashes = output.split(/\r?\n/g).filter(item => item.length > 0)[0].split('-');
+        const hashes = output
+            .split(/\r?\n/g)
+            .filter(item => item.length > 0)[0]
+            .split('-');
 
         return {
             short: hashes[1],
-            full: hashes[0]
+            full: hashes[0],
         };
     }
 
@@ -291,11 +319,11 @@ export class Git implements IGitService {
         await this.exec('cherry-pick', hash);
     }
 
-    public async reset(hash: string, hard: boolean = false) : Promise<void> {
+    public async reset(hash: string, hard = false): Promise<void> {
         await this.exec('reset', hard ? '--hard' : '--soft', hash);
     }
 
-    public async checkout(hash: string) : Promise<void> {
+    public async checkout(hash: string): Promise<void> {
         await this.exec('checkout', hash);
     }
 
@@ -311,8 +339,8 @@ export class Git implements IGitService {
         }
     }
 
-    public async createTag(tagName: string, hash: string): Promise<any> {
-        return await this.exec('tag', '-a', tagName, '-m', tagName, hash);
+    public async createTag(tagName: string, hash: string): Promise<string> {
+        return this.exec('tag', '-a', tagName, '-m', tagName, hash);
     }
 
     public async removeTag(tagName: string) {
@@ -332,7 +360,7 @@ export class Git implements IGitService {
         const remote = pathes.shift() as string;
         const branchName = pathes.join('/');
 
-        await this.repo.push(remote, ':' + branchName);
+        await this.repo.push(remote, `:${branchName}`);
     }
 
     public async merge(hash: string): Promise<void> {
@@ -342,10 +370,10 @@ export class Git implements IGitService {
     public async rebase(hash: string): Promise<void> {
         await this.exec('rebase', hash);
     }
-    
+
     private async exec(...args: string[]): Promise<string> {
         const gitRootPath = this.getGitRoot();
-        return await this.gitCmdExecutor.exec(gitRootPath, ...args);
+        return this.gitCmdExecutor.exec(gitRootPath, ...args);
     }
 
     // how to check if a commit has been merged into any other branch

@@ -1,6 +1,4 @@
-// tslint:disable-next-line:no-any
 if ((Reflect as any).metadata === undefined) {
-    // tslint:disable-next-line:no-require-imports no-var-requires
     require('reflect-metadata');
 }
 
@@ -36,7 +34,6 @@ let cont: Container;
 let serviceManager: ServiceManager;
 let serviceContainer: ServiceContainer;
 
-// tslint:disable-next-line:no-any
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
     cont = new Container();
     serviceManager = new ServiceManager(cont);
@@ -44,10 +41,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 
     cont.bind<IServiceContainer>(IServiceContainer).toConstantValue(serviceContainer);
 
-    cont.bind<ILogService>(ILogService).to(Logger).inSingletonScope();
-    cont.bind<ILogService>(ILogService).to(OutputPanelLogger).inSingletonScope(); // .whenTargetNamed('Viewer');
-    cont.bind<IUiService>(IUiService).to(UiService).inSingletonScope();
-    cont.bind<ICommitViewFormatter>(ICommitViewFormatter).to(CommitViewFormatter).inSingletonScope();
+    cont.bind<ILogService>(ILogService)
+        .to(Logger)
+        .inSingletonScope();
+    cont.bind<ILogService>(ILogService)
+        .to(OutputPanelLogger)
+        .inSingletonScope(); // .whenTargetNamed('Viewer');
+    cont.bind<IUiService>(IUiService)
+        .to(UiService)
+        .inSingletonScope();
+    cont.bind<ICommitViewFormatter>(ICommitViewFormatter)
+        .to(CommitViewFormatter)
+        .inSingletonScope();
     cont.bind<OutputChannel>(IOutputChannel).toConstantValue(getLogChannel());
     cont.bind<Memento>('globalMementoStore').toConstantValue(context.globalState);
     cont.bind<Memento>('workspaceMementoStore').toConstantValue(context.workspaceState);

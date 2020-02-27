@@ -1,9 +1,5 @@
-import { ActionedDetails, CommittedFile, LogEntry, Ref, Status } from '../../types';
+import { ActionedDetails, CommittedFile, LogEntry, Status } from '../../types';
 
-export const IRefsParser = Symbol('IRefsParser');
-export interface IRefsParser {
-    parse(refsContent: string): Ref[];
-}
 export const IFileStatParser = 'IFileStatParser'; // Symbol('IFileStatParser');
 
 export interface IFileStatParser {
@@ -21,5 +17,12 @@ export interface IActionDetailsParser {
 }
 export const ILogParser = Symbol('ILogParser');
 export interface ILogParser {
-    parse(gitRepoPath: string, summaryEntry: string, itemEntrySeparator: string, logFormatArgs: string[], filesWithNumStat?: string, filesWithNameStatus?: string): LogEntry;
+    parse(
+        gitRepoPath: string,
+        summaryEntry: string,
+        itemEntrySeparator: string,
+        logFormatArgs: string[],
+        filesWithNumStat?: string,
+        filesWithNameStatus?: string,
+    ): LogEntry;
 }

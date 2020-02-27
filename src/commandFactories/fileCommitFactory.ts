@@ -15,10 +15,12 @@ import { IFileCommitCommandFactory } from './types';
 
 @injectable()
 export class FileCommitCommandFactory implements IFileCommitCommandFactory {
-    constructor( @inject(IGitFileHistoryCommandHandler) private fileHistoryCommandHandler: IGitFileHistoryCommandHandler,
+    constructor(
+        @inject(IGitFileHistoryCommandHandler) private fileHistoryCommandHandler: IGitFileHistoryCommandHandler,
         @inject(IGitCompareFileCommandHandler) private fileCompareHandler: IGitCompareFileCommandHandler,
         @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(IServiceContainer) private serviceContainer: IServiceContainer) { }
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    ) {}
 
     public async createCommands(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails>[]> {
         const commands = [
@@ -27,36 +29,47 @@ export class FileCommitCommandFactory implements IFileCommitCommandFactory {
             new CompareFileWithPreviousCommand(fileCommit, this.fileHistoryCommandHandler),
             new SelectFileForComparison(fileCommit, this.fileCompareHandler),
             new CompareFileCommand(fileCommit, this.fileCompareHandler),
-            new ViewFileHistoryCommand(fileCommit, this.commandManager)
+            new ViewFileHistoryCommand(fileCommit, this.commandManager),
         ];
 
-        return (await Promise.all(commands.map(async cmd => {
-            return await cmd.preExecute() ? cmd : undefined;
-        })))
+        return (
+            await Promise.all(
+                commands.map(async cmd => {
+                    return (await cmd.preExecute()) ? cmd : undefined;
+                }),
+            )
+        )
             .filter(cmd => !!cmd)
             .map(cmd => cmd!);
     }
-    public async getDefaultFileCommand(fileCommit: FileCommitDetails | CompareFileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
+    public async getDefaultFileCommand(
+        fileCommit: FileCommitDetails | CompareFileCommitDetails,
+    ): Promise<ICommand<FileCommitDetails> | undefined> {
         const commands: ICommand<FileCommitDetails>[] = [];
 
         if (fileCommit instanceof CompareFileCommitDetails) {
             commands.push(
                 new CompareFileWithAcrossCommitCommand(fileCommit, this.fileHistoryCommandHandler),
                 new ViewFileCommand(fileCommit, this.fileHistoryCommandHandler),
-                new ViewPreviousFileCommand(fileCommit, this.fileHistoryCommandHandler)
+                new ViewPreviousFileCommand(fileCommit, this.fileHistoryCommandHandler),
             );
         } else {
             commands.push(
                 new CompareFileWithPreviousCommand(fileCommit, this.fileHistoryCommandHandler),
                 new ViewFileCommand(fileCommit, this.fileHistoryCommandHandler),
-                new ViewPreviousFileCommand(fileCommit, this.fileHistoryCommandHandler)
+                new ViewPreviousFileCommand(fileCommit, this.fileHistoryCommandHandler),
             );
         }
-        const availableCommands = (await Promise.all(commands.map(async cmd => {
-            return await cmd.preExecute() ? cmd : undefined;
-        })))
+        const availableCommands = (
+            await Promise.all(
+                commands.map(async cmd => {
+                    return (await cmd.preExecute()) ? cmd : undefined;
+                }),
+            )
+        )
             .filter(cmd => !!cmd)
             .map(cmd => cmd!);
+
         return availableCommands.length === 0 ? undefined : availableCommands[0];
     }
 }

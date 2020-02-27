@@ -8,7 +8,7 @@ import { IAvatarProvider } from './types';
 
 @injectable()
 export class GravatarAvatarProvider extends BaseAvatarProvider implements IAvatarProvider {
-    public constructor( @inject(IServiceContainer) serviceContainer: IServiceContainer) {
+    public constructor(@inject(IServiceContainer) serviceContainer: IServiceContainer) {
         super(serviceContainer, GitOriginType.any);
     }
     protected async getAvatarsImplementation(repository: IGitService): Promise<Avatar[]> {
@@ -20,7 +20,7 @@ export class GravatarAvatarProvider extends BaseAvatarProvider implements IAvata
                 url: '',
                 avatarUrl: gravatar.url(user.email, { protocol: 'https' }),
                 name: user.name,
-                email: user.email
+                email: user.email,
             };
         });
     }

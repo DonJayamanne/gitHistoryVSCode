@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Uri, SourceControlInputBox, Event, CancellationToken } from 'vscode';
+import { CancellationToken, Event, SourceControlInputBox, Uri } from 'vscode';
 
 export interface Git {
     readonly path: string;
@@ -16,7 +16,7 @@ export interface InputBox {
 export const enum RefType {
     Head,
     RemoteHead,
-    Tag
+    Tag,
 }
 
 export interface Ref {
@@ -76,11 +76,10 @@ export const enum Status {
     DELETED_BY_THEM,
     BOTH_ADDED,
     BOTH_DELETED,
-    BOTH_MODIFIED
+    BOTH_MODIFIED,
 }
 
 export interface Change {
-
     /**
      * Returns either `originalUri` or `renameUri`, depending
      * on whether this change is a rename change. When
@@ -111,28 +110,24 @@ export interface RepositoryUIState {
     readonly onDidChange: Event<void>;
 }
 
-/**
- * Log options.
- */
 export interface LogOptions {
-    /** Max number of log entries to retrieve. If not specified, the default is 32. */
+    // Max number of log entries to retrieve. If not specified, the default is 32.
     readonly maxEntries?: number;
 }
 
 export interface Repository {
-
     readonly rootUri: Uri;
     readonly inputBox: InputBox;
     readonly state: RepositoryState;
     readonly ui: RepositoryUIState;
 
-    getConfigs(): Promise<{ key: string; value: string; }[]>;
+    getConfigs(): Promise<{ key: string; value: string }[]>;
     getConfig(key: string): Promise<string>;
     setConfig(key: string, value: string): Promise<string>;
     getGlobalConfig(key: string): Promise<string>;
 
-    getObjectDetails(treeish: string, path: string): Promise<{ mode: string, object: string, size: number }>;
-    detectObjectType(object: string): Promise<{ mimetype: string, encoding?: string }>;
+    getObjectDetails(treeish: string, path: string): Promise<{ mode: string; object: string; size: number }>;
+    detectObjectType(object: string): Promise<{ mimetype: string; encoding?: string }>;
     buffer(ref: string, path: string): Promise<Buffer>;
     show(ref: string, path: string): Promise<string>;
     getCommit(ref: string): Promise<Commit>;
@@ -188,7 +183,6 @@ export interface API {
 }
 
 export interface GitExtension {
-
     readonly enabled: boolean;
     readonly onDidChangeEnablement: Event<boolean>;
 

@@ -20,17 +20,14 @@ type AppProps = {
     search: typeof ResultActions.search;
 } & typeof ResultActions;
 
-// tslint:disable-next-line:no-empty-interface
 interface AppState {
 }
 
 class App extends React.Component<AppProps, AppState> {
-    // tslint:disable-next-line:no-any
-    constructor(props?: AppProps, context?: any) {
+        constructor(props?: AppProps, context?: any) {
         super(props, context);
     }
-    // tslint:disable-next-line:no-empty
-    public componentWillMount() {
+        public componentWillMount() {
     }
     public render() {
         const { children } = this.props;

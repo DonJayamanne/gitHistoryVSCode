@@ -1,15 +1,13 @@
 import { ICommand } from '../common/types';
 
 export abstract class BaseCommand<T> implements ICommand<T> {
-    // tslint:disable-next-line:no-any no-banned-terms
     private _arguments: any[] = [];
-    // tslint:disable-next-line:no-banned-terms
     public get arguments() {
         return this._arguments;
     }
-    private _command: string = '';
-    private _title: string = '';
-    private _description: string = '';
+    private _command = '';
+    private _title = '';
+    private _description = '';
     private _detail?: string;
     private _tooltip?: string;
     public get command() {
@@ -30,7 +28,7 @@ export abstract class BaseCommand<T> implements ICommand<T> {
     public get tooltip() {
         return this._tooltip;
     }
-    constructor(public readonly data: T) { }
+    constructor(public readonly data: T) {}
     public abstract execute();
     public async preExecute(): Promise<boolean> {
         return true;
@@ -41,7 +39,6 @@ export abstract class BaseCommand<T> implements ICommand<T> {
     protected setCommand(value: string) {
         this._command = value;
     }
-    // tslint:disable-next-line:no-any
     protected setCommandArguments(args: any[]) {
         this._arguments = args;
     }

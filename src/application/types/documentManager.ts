@@ -1,4 +1,3 @@
-// tslint:disable:unified-signatures
 import { TextDocument, TextDocumentShowOptions, TextEditor, Uri, ViewColumn } from 'vscode';
 
 export const IDocumentManager = Symbol('IDocumentManager');
@@ -74,5 +73,5 @@ export interface IDocumentManager {
      * @param options Options to control how the document will be created.
      * @return A promise that resolves to a [document](#TextDocument).
      */
-    openTextDocument(options?: { language?: string; content?: string; }): Thenable<TextDocument>;
+    openTextDocument(options?: { language?: string; content?: string }): Thenable<TextDocument>;
 }
