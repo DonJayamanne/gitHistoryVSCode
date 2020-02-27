@@ -2,12 +2,11 @@ import { inject, injectable } from 'inversify';
 import { IServiceContainer } from '../../../ioc/types';
 import { CommitInfo, CommittedFile, LogEntry } from '../../../types';
 import { Helpers } from '../../helpers';
-import { IActionDetailsParser, IFileStatParser, ILogParser, IRefsParser } from '../types';
+import { IActionDetailsParser, IFileStatParser, ILogParser } from '../types';
 
 @injectable()
 export class LogParser implements ILogParser {
     constructor(
-        @inject(IRefsParser) private refsparser: IRefsParser,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IActionDetailsParser) private actionDetailsParser: IActionDetailsParser,
     ) {}
@@ -33,7 +32,7 @@ export class LogParser implements ILogParser {
         const committedFiles = this.parserCommittedFiles(gitRepoPath, filesWithNumStat, filesWithNameStatus);
 
         return {
-            refs: this.refsparser.parse(this.getCommitInfo(logItems, logFormatArgs, CommitInfo.RefsNames)),
+            refs: [],
             author: this.getAuthorInfo(logItems, logFormatArgs),
             committer: this.getCommitterInfo(logItems, logFormatArgs),
             body: this.getCommitInfo(logItems, logFormatArgs, CommitInfo.Body),

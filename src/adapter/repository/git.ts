@@ -6,7 +6,7 @@ import { Uri } from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
-import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry } from '../../types';
+import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry, Ref } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
@@ -174,20 +174,8 @@ export class Git implements IGitService {
         const gitRepoPath = this.getGitRoot();
         const output = await this.exec(...args.logArgs);
 
-        // TODO: Disabled due to performance issues https://github.com/DonJayamanne/gitHistoryVSCode/issues/195
-        // // Since we're using find and wc (shell commands, we need to execute the command in a shell)
-        // const countOutputPromise = this.execInShell(...args.counterArgs)
-        //     .then(countValue => parseInt(countValue.trim(), 10))
-        //     .catch(ex => {
-        //         console.error('Git History: Failed to get commit count');
-        //         console.error(ex);
-        //         return -1;
-        //     });
         const count = -1;
 
-        // Run another git history, but get file stats instead of the changes
-        // const outputWithFileModeChanges = await this.exec(args.fileStatArgs);
-        // const entriesWithFileModeChanges = outputWithFileModeChanges.split(LOG_ENTRY_SEPARATOR);
         const items = output
             .split(LOG_ENTRY_SEPARATOR)
             .map(entry => {
@@ -197,7 +185,16 @@ export class Git implements IGitService {
                 return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS);
             })
             .filter(logEntry => logEntry !== undefined)
-            .map(logEntry => logEntry!);
+            .map(logEntry => {
+                // fill the refs from native git extension
+                logEntry!.refs = this.repo.state.refs
+                    .filter(x => x.commit === logEntry!.hash.full)
+                    .map(x => {
+                        return { type: x.type as any, name: x.name } as Ref;
+                    });
+
+                return logEntry!;
+            });
 
         const headHashes = await this.getHeadHashes();
         const headHashesOnly = headHashes.map(item => item.hash);
