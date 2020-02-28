@@ -15,9 +15,22 @@ module.exports = {
         path: outPath,
         filename: 'bundle.js',
     },
-    performance: {
-        maxEntrypointSize: 716800,
-        maxAssetSize: 716800
+    optimization: {
+        namedChunks: true,
+        splitChunks: {
+            cacheGroups: {
+                react: {
+                    test: /[\\/]node_modules[\\/](react|react-is|react-dom|react-icons|scheduler)[\\/]/,
+                    name: 'react',
+                    chunks: 'all',
+                },
+                redux: {
+                    test: /[\\/]node_modules[\\/](redux|redux-actions)[\\/]/,
+                    name: 'redux',
+                    chunks: 'all',
+                },
+            }
+        },
     },
     target: 'web',
     resolve: {

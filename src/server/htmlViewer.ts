@@ -110,6 +110,8 @@ export class HtmlViewer {
             <body>
                 <div id="root"></div>
                 <script src="${this.getRelativeResource(webview, 'out/browser/bundle.js')}"></script>
+                <script src="${this.getRelativeResource(webview, 'out/browser/react.bundle.js')}"></script>
+                <script src="${this.getRelativeResource(webview, 'out/browser/redux.bundle.js')}"></script>
             </body>
         </html>`;
     }
