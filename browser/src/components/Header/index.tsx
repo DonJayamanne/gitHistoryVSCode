@@ -6,7 +6,7 @@ import { RootState, BranchesState } from '../../reducers/index';
 import Author from './author';
 import Branch from './branch';
 import { ISettings } from '../../types';
-import { GoMarkGithub, GoBrowser } from 'react-icons/lib/go';
+import { GoMarkGithub, GoBrowser } from 'react-icons/go';
 
 interface HeaderProps {
     isLoading?: boolean;

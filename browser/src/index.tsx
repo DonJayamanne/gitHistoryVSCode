@@ -35,7 +35,7 @@ ReactDOM.render(
 
 initialize(window['vscode']);
 
-store.dispatch(ResultActions.getCommits());
-store.dispatch(ResultActions.getBranches());
-store.dispatch(ResultActions.getAuthors());
-store.dispatch(ResultActions.fetchAvatars());
+store.dispatch<any>(ResultActions.getCommits());
+store.dispatch<any>(ResultActions.getBranches());
+store.dispatch<any>(ResultActions.getAuthors());
+store.dispatch<any>(ResultActions.fetchAvatars());

@@ -9,7 +9,7 @@ import { gitmojify } from '../gitmojify';
 import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
 import TagRef from '../Refs/Tag';
-import { GoGitCommit, GoClippy, GoPlus, GoFileSymlinkFile, GoFileSymlinkDirectory } from 'react-icons/lib/go';
+import { GoGitCommit, GoClippy, GoPlus, GoFileSymlinkFile, GoFileSymlinkDirectory } from 'react-icons/go';
 
 
 type ResultListProps = {

@@ -154,10 +154,11 @@ export namespace ResultActions {
             return fetchCommits(dispatch, state, undefined, undefined);
         };
     };
-    export const getCommits = () => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+
+    export function getCommits() {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
-            return fetchCommits(dispatch, state);
+            fetchCommits(dispatch, state);
         };
     };
     export const getBranches = () => {
