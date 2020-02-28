@@ -4,33 +4,19 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // variables
 var isProduction = process.argv.indexOf('-p') >= 0;
-var sourcePath = path.join(__dirname, './browser/src');
-var outPath = path.join(__dirname, './out/browser');
 
-module.exports = {
+var browserSourcePath = path.join(__dirname, './browser/src');
+var serverSourcePath = path.join(__dirname, './src');
+
+var outPath = path.join(__dirname, './dist');
+
+const browser = {
     mode: isProduction ? 'production' : 'development',
-    context: sourcePath,
+    context: browserSourcePath,
     entry: ['./index.tsx', './main.css'],
     output: {
-        path: outPath,
+        path: path.join(outPath, 'browser'),
         filename: 'bundle.js',
-    },
-    optimization: {
-        namedChunks: true,
-        splitChunks: {
-            cacheGroups: {
-                react: {
-                    test: /[\\/]node_modules[\\/](react|react-is|react-dom|react-icons|scheduler)[\\/]/,
-                    name: 'react',
-                    chunks: 'all',
-                },
-                redux: {
-                    test: /[\\/]node_modules[\\/](redux|redux-actions)[\\/]/,
-                    name: 'redux',
-                    chunks: 'all',
-                },
-            }
-        },
     },
     target: 'web',
     resolve: {
@@ -73,3 +59,38 @@ module.exports = {
         ])
     ]
 };
+
+const server = {
+    mode: isProduction ? 'production' : 'development',
+    context: serverSourcePath,
+    entry: ['./extension.ts'],
+    output: {
+        path: path.join(outPath, 'src'),
+        filename: 'extension.js',
+        libraryTarget: 'commonjs2',
+        devtoolModuleFilenameTemplate: '[absoluteResourcePath]'
+    },
+    target: 'node',
+    resolve: {
+        extensions: ['.js', '.ts']
+    },
+    devtool: isProduction ? false : 'source-map',
+    externals: {
+        vscode: 'commonjs vscode' // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+    },
+    module: {
+        rules: [
+            {
+                test: /\.ts$/,
+                exclude: /node_modules/,
+                use: [
+                {
+                    loader: 'ts-loader'
+                }
+                ]
+            }
+        ]
+    }
+};
+
+module.exports = [browser, server]

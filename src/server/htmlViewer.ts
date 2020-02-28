@@ -88,7 +88,6 @@ export class HtmlViewer {
 
     private getHtmlContent(webview, settings) {
         const config = workspace.getConfiguration('gitHistory');
-
         return `<!DOCTYPE html>
         <html>
             <head>
@@ -96,7 +95,7 @@ export class HtmlViewer {
                 <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* vscode-resource: 'unsafe-inline' 'unsafe-eval'; img-src * vscode-resource:" />
                 <link rel='stylesheet' type='text/css' href='${this.getRelativeResource(
                     webview,
-                    'out/browser/bundle.css',
+                    'dist/browser/bundle.css',
                 )}' />
             <title>Git History</title>
             <script type="text/javascript">
@@ -109,9 +108,7 @@ export class HtmlViewer {
             </head>
             <body>
                 <div id="root"></div>
-                <script src="${this.getRelativeResource(webview, 'out/browser/bundle.js')}"></script>
-                <script src="${this.getRelativeResource(webview, 'out/browser/react.bundle.js')}"></script>
-                <script src="${this.getRelativeResource(webview, 'out/browser/redux.bundle.js')}"></script>
+                <script src="${this.getRelativeResource(webview, 'dist/browser/bundle.js')}"></script>
             </body>
         </html>`;
     }

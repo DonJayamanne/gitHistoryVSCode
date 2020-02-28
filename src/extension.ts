@@ -1,6 +1,4 @@
-if ((Reflect as any).metadata === undefined) {
-    require('reflect-metadata');
-}
+import 'reflect-metadata';
 
 import { Container } from 'inversify';
 import * as vscode from 'vscode';
