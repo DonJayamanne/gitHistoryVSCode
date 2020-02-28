@@ -34,7 +34,7 @@
             "problemMatcher": [
                 "$eslint-stylish"
             ]
-        }
+        },
         {
             "type": "npm",
             "script": "lint-staged",
