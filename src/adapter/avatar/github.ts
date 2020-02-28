@@ -77,7 +77,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
         const remoteRepoWithNoGitSuffix = remoteRepoPath.replace(/\.git\/?$/, '');
         const contributors = await this.getContributors(remoteRepoWithNoGitSuffix);
 
-        const githubUsers = await Promise.all(
+        const githubUsers: any[] = await Promise.all(
             contributors.map(async user => {
                 return this.getUserByLogin(user.login);
             }),
