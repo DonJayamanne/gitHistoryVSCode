@@ -71,6 +71,7 @@ const server = {
         devtoolModuleFilenameTemplate: '[absoluteResourcePath]'
     },
     target: 'node',
+    node: false,
     resolve: {
         extensions: ['.js', '.ts']
     },
