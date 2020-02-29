@@ -24,19 +24,6 @@
         },
         {
             "type": "npm",
-            "script": "watch",
-            "isBackground": true,
-            "problemMatcher": "$tsc-watch"
-        },
-        {
-            "type": "gulp",
-            "task": "hygiene",
-            "problemMatcher": [
-                "$eslint-stylish"
-            ]
-        },
-        {
-            "type": "npm",
             "script": "lint-staged",
             "problemMatcher": [
                 "$eslint-stylish"
