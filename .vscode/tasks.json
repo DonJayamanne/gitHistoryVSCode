@@ -16,80 +16,45 @@
     },
     "tasks": [
         {
-            "label": "compile",
             "type": "npm",
-            "script": "compile",
-            "group": "build",
-            "isBackground": true,
+            "script": "lint",
             "problemMatcher": [
-                "$tsc-watch",
                 "$eslint-stylish"
             ]
         },
         {
             "type": "npm",
-            "script": "lint",
-            "problemMatcher": ["$eslint-stylish"]
-        },
-        {
-            "type": "npm",
-            "script": "watch",
-            "isBackground": true,
-            "problemMatcher": "$tsc-watch"
-        },
-        {
-            "type": "gulp",
-            "task": "hygiene",
-            "problemMatcher": ["$eslint-stylish"]
-        },
-        {
-            "type": "npm",
-            "script": "watchReact",
-            "group": "build",
-            "isBackground": true,
-            "problemMatcher": [
-                {
-                    "fileLocation": "relative",
-                    "pattern": [
-                        {
-                            "regexp": "ERROR in \\[at-loader\\] ([^:]*):(\\d+):(\\d+)",
-                            "file": 1,
-                            "line": 2,
-                            "column": 3
-                        },
-                        {
-                            "regexp": "TS(.*)",
-                            "message": 1
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "npm",
-            "script": "buildReact",
-            "problemMatcher": [
-                {
-                    "fileLocation": "relative",
-                    "pattern": [
-                        {
-                            "regexp": "ERROR in \\[at-loader\\] ([^:]*):(\\d+):(\\d+)",
-                            "file": 1,
-                            "line": 2,
-                            "column": 3
-                        },
-                        {
-                            "regexp": "TS(.*)",
-                            "message": 1
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "npm",
             "script": "lint-staged",
-            "problemMatcher": ["$eslint-stylish"]
+            "problemMatcher": [
+                "$eslint-stylish"
+            ]
+        },
+        {
+            "label": "webpack-dev",
+            "type": "npm",
+            "isBackground": true,
+            "script": "webpack-dev",
+            "problemMatcher": [
+                {
+                    "pattern": [
+                        {
+                            "regexp": ".",
+                            "file": 1,
+                            "location": 2,
+                            "message": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": {
+                            "regexp": "webpack is watching the files"
+                        },
+                        "endsPattern": {
+                            "regexp": "Entrypoint main = extension.js"
+                        }
+                    }
+                }
+            ]
         }
     ]
 }

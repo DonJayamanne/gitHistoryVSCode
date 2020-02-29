@@ -3,7 +3,6 @@ import { Uri } from 'vscode';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { CommittedFile } from '../types';
 import { DirectoryTreeItem, FileTreeItem } from './treeNodes';
-import { INode } from './types';
 
 export interface INode<T> {
     /**

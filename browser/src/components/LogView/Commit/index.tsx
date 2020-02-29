@@ -6,7 +6,7 @@ import { RootState } from '../../../reducers';
 import Author from './Author';
 import Avatar from './Avatar';
 import { FileEntry } from './FileEntry';
-import { GoX, GoClippy } from 'react-icons/lib/go';
+import { GoX, GoClippy } from 'react-icons/go';
 import { Resizable } from "re-resizable";
 import { ResultActions } from '../../../actions/results';
 import { gitmojify } from '../gitmojify';

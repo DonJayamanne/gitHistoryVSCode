@@ -10,7 +10,6 @@ import * as glob from 'glob';
 import * as istanbul from 'istanbul';
 import * as Mocha from 'mocha';
 import * as path from 'path';
-import { MochaSetupOptions } from 'vscode/lib/testrunner';
 const remapIstanbul = require('remap-istanbul');
 
 interface ITestRunnerOptions {
@@ -51,7 +50,7 @@ let mocha = new Mocha(<any>{
 
 let coverageOptions: { coverageConfig: string } | undefined;
 
-export function configure(mochaOpts: MochaSetupOptions, coverageOpts?: { coverageConfig: string }): void {
+export function configure(mochaOpts: Mocha.MochaOptions, coverageOpts?: { coverageConfig: string }): void {
     mocha = new Mocha(mochaOpts);
     coverageOptions = coverageOpts;
 }
