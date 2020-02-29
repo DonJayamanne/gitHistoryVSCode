@@ -33,7 +33,7 @@
         "onCommand:git.viewLineHistory",
         "onCommand:git.viewHistory"
     ],
-    "main": "./out/src/extension",
+    "main": "./dist/src/extension",
     "contributes": {
         "views": {
             "explorer": [
@@ -367,11 +367,11 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run lint && tsc --skipLibCheck -p ./ && webpack -p --progress",
-        "compile": "tsc --skipLibCheck --watch -p ./",
+        "test-compile": "tsc --skipLibCheck --watch -p ./",
+        "webpack": "webpack -p --progress --colors",
+        "webpack-dev": "webpack --progress --colors --watch",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "lint": "eslint --fix 'src/**/*.ts'",
-        "buildReact": "webpack -p --progress --colors",
-        "watchReact": "webpack --progress --colors --watch",
         "precommit": "lint-staged"
     },
     "lint-staged": {
@@ -400,6 +400,7 @@
         "@typescript-eslint/eslint-plugin": "^2.21.0",
         "@typescript-eslint/parser": "^2.21.0",
         "awesome-typescript-loader": "5.2.1",
+        "ts-loader": "^6.2.1",
         "bootstrap": "^3.4.1",
         "chai": "^4.1.2",
         "copy-webpack-plugin": "^5.1.1",

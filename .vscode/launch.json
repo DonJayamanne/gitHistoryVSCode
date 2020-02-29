@@ -14,9 +14,9 @@
             "smartStep": true,
 			"sourceMaps": true,
 			"outFiles": [
-				"${workspaceRoot}/out/**/*.js"
+				"${workspaceRoot}/dist/**/*.js"
 			],
-			"preLaunchTask": "compile"
+			"preLaunchTask": "webpack-dev"
 		},
 		{
 			"name": "Launch Tests",
@@ -33,7 +33,7 @@
 			"outFiles": [
 				"${workspaceRoot}/out/**/*.js"
 			],
-			"preLaunchTask": "compile"
+			"preLaunchTask": "npm: test-compile"
 		}
 	]
 }
