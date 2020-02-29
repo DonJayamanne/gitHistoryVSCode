@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-const resourcesPath = path.join(__dirname, '..', '..', '..', 'resources');
+const resourcesPath = path.join(__dirname, '..', '..', 'resources');
 
 export const FolderIcon = {
     dark: path.join(resourcesPath, 'darkTheme', 'folder.svg'),
