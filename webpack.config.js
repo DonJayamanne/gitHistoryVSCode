@@ -1,4 +1,5 @@
 var path = require('path');
+var fs = require('fs-extra');
 
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -9,6 +10,9 @@ var browserSourcePath = path.join(__dirname, './browser/src');
 var serverSourcePath = path.join(__dirname, './src');
 
 var outPath = path.join(__dirname, './dist');
+
+// cleanup dist directory
+fs.emptyDirSync(outPath);
 
 const browser = {
     mode: isProduction ? 'production' : 'development',
