@@ -3,6 +3,7 @@
 - Updated package dependencies and removed gulp [#471](https://github.com/DonJayamanne/gitHistoryVSCode/pull/471)
 - Use webpack to also bundle the server sources [#474](https://github.com/DonJayamanne/gitHistoryVSCode/pull/474)
 - Use node-fetch to request github api
+- Fixed page counter and pagingation issues [#475](https://github.com/DonJayamanne/gitHistoryVSCode/pull/475)
 - Code optimization and correction
 
 ## Version 0.5.5
