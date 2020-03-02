@@ -6,8 +6,10 @@ import { IGitCompareCommitViewExplorerCommandHandler } from '../types';
 
 @injectable()
 export class GitCompareCommitViewExplorerCommandHandler implements IGitCompareCommitViewExplorerCommandHandler {
-    constructor( @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory) { }
+    constructor(
+        @inject(ICommandManager) private commandManager: ICommandManager,
+        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+    ) {}
 
     @command('git.commit.compare.view.hide', IGitCompareCommitViewExplorerCommandHandler)
     public async hide() {

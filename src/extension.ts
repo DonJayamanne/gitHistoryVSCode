@@ -1,6 +1,6 @@
-// tslint:disable-next-line:no-any
+// This line should always be right on top.
+// Other extensions use this, re-importing will cause data stored by this to wipe out data in other extensions using this same package.
 if ((Reflect as any).metadata === undefined) {
-    // tslint:disable-next-line:no-require-imports no-var-requires
     require('reflect-metadata');
 }
 
@@ -19,7 +19,6 @@ import { Logger } from './common/log';
 import { ILogService, IUiService } from './common/types';
 import { OutputPanelLogger } from './common/uiLogger';
 import { UiService } from './common/uiService';
-import { gitHistorySchema } from './constants';
 import { CommitViewFormatter } from './formatters/commitFormatter';
 import { ICommitViewFormatter } from './formatters/types';
 import { ServiceContainer } from './ioc/container';
@@ -29,10 +28,7 @@ import { IServiceContainer } from './ioc/types';
 import { getLogChannel } from './logger';
 import { registerTypes as registerNodeBuilderTypes } from './nodes/serviceRegistry';
 import { registerTypes as registerPlatformTypes } from './platform/serviceRegistry';
-import { ContentProvider } from './server/contentProvider';
 import { HtmlViewer } from './server/htmlViewer';
-import { ServerHost } from './server/serverHost';
-import { IServerHost } from './server/types';
 import { IGitServiceFactory, IOutputChannel } from './types';
 import { registerTypes as registerViewerTypes } from './viewers/serviceRegistry';
 
@@ -40,7 +36,6 @@ let cont: Container;
 let serviceManager: ServiceManager;
 let serviceContainer: ServiceContainer;
 
-// tslint:disable-next-line:no-any
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
     cont = new Container();
     serviceManager = new ServiceManager(cont);
@@ -48,10 +43,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 
     cont.bind<IServiceContainer>(IServiceContainer).toConstantValue(serviceContainer);
 
-    cont.bind<ILogService>(ILogService).to(Logger).inSingletonScope();
-    cont.bind<ILogService>(ILogService).to(OutputPanelLogger).inSingletonScope(); // .whenTargetNamed('Viewer');
-    cont.bind<IUiService>(IUiService).to(UiService).inSingletonScope();
-    cont.bind<ICommitViewFormatter>(ICommitViewFormatter).to(CommitViewFormatter).inSingletonScope();
+    cont.bind<ILogService>(ILogService)
+        .to(Logger)
+        .inSingletonScope();
+    cont.bind<ILogService>(ILogService)
+        .to(OutputPanelLogger)
+        .inSingletonScope(); // .whenTargetNamed('Viewer');
+    cont.bind<IUiService>(IUiService)
+        .to(UiService)
+        .inSingletonScope();
+    cont.bind<ICommitViewFormatter>(ICommitViewFormatter)
+        .to(CommitViewFormatter)
+        .inSingletonScope();
     cont.bind<OutputChannel>(IOutputChannel).toConstantValue(getLogChannel());
     cont.bind<Memento>('globalMementoStore').toConstantValue(context.globalState);
     cont.bind<Memento>('workspaceMementoStore').toConstantValue(context.workspaceState);
@@ -67,16 +70,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     setServiceContainer(serviceContainer);
 
     const gitServiceFactory = serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
-    serviceManager.addSingletonInstance(IServerHost, new ServerHost(gitServiceFactory, serviceContainer));
 
     // Register last.
     registerCommandTypes(serviceManager);
 
-    let disposable = vscode.workspace.registerTextDocumentContentProvider(gitHistorySchema, new ContentProvider(serviceContainer));
-    context.subscriptions.push(disposable);
     context.subscriptions.push(serviceManager.get<IDisposableRegistry>(IDisposableRegistry));
 
     const commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
     commandManager.executeCommand('setContext', 'git.commit.view.show', true);
-    context.subscriptions.push(new HtmlViewer(serviceContainer));
+    context.subscriptions.push(new HtmlViewer(serviceContainer, gitServiceFactory, context.extensionPath));
 }

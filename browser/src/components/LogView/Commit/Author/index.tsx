@@ -2,8 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { ActionedDetails } from '../../../../definitions';
 import { RootState } from '../../../../reducers/index';
-import * as ResultActions from '../../../../actions/results';
-import { GoEye } from 'react-icons/lib/go';
+import { ResultActions } from '../../../../actions/results';
+import { GoEye } from 'react-icons/go';
 
 type AuthorProps = {
     result: ActionedDetails;
@@ -11,7 +11,6 @@ type AuthorProps = {
     selectAuthor(author: string): void;
 };
 
-// tslint:disable-next-line:function-name
 function Author(props: AuthorProps) {
     return (<div className='commit-author'>
         <span role='button' style={{fontSize: '130%', marginRight: '0.2em'}} className='btnx hint--right hint--rounded hint--bounce' aria-label='Filter by author'>

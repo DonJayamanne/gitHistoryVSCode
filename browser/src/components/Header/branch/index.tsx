@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import * as ResultActions from '../../../actions/results';
+import { ResultActions } from '../../../actions/results';
 import { RootState, BranchesState } from '../../../reducers/index';
 import { BranchSelection, ISettings } from '../../../types';
 
@@ -30,11 +30,11 @@ export class Branch extends React.Component<BranchProps, BranchState> {
    
     }
     public componentWillReceiveProps(nextProps: BranchProps): void {
-        let title = this.props.settings.branchName;
+        let title = nextProps.settings.branchName;
 
-        if (this.props.settings.branchSelection === BranchSelection.Detached) {
-            title = `[${this.props.settings.branchName.substr(0, 7)}]`;
-        } else  if (this.props.settings.branchSelection === BranchSelection.All) {
+        if (nextProps.settings.branchSelection === BranchSelection.Detached) {
+            title = `[${nextProps.settings.branchName.substr(0, 7)}]`;
+        } else  if (nextProps.settings.branchSelection === BranchSelection.All) {
             title = 'All branches';
         }
 
@@ -96,8 +96,7 @@ export class Branch extends React.Component<BranchProps, BranchState> {
         this.setState({ searchText: e.target.value });
     }
 
-    // tslint:disable-next-line:member-ordering
-    public render() {
+        public render() {
         return (<DropdownButton disabled={this.props.isLoading}
             bsStyle='primary'
             bsSize='small'

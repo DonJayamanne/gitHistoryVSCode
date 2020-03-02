@@ -5,7 +5,7 @@ import { IFileStatStatusParser } from '../types';
 
 @injectable()
 export class FileStatStatusParser implements IFileStatStatusParser {
-    constructor( @multiInject(ILogService) private loggers: ILogService[]) { }
+    constructor(@multiInject(ILogService) private loggers: ILogService[]) {}
     public canParse(status: string): boolean {
         const parsedStatus = this.parse(status);
         return parsedStatus !== undefined && parsedStatus !== null;

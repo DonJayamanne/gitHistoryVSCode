@@ -1,6 +1,6 @@
 import { Ref } from '../../../definitions';
 import * as React from 'react';
-import { GoTag, GoX } from 'react-icons/lib/go';
+import { GoTag, GoX } from 'react-icons/go';
 
 export default function TagRef(props: Ref) {
     return (<div className='commit-tag-container'>

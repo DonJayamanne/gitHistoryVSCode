@@ -5,5 +5,5 @@ export const IAvatarProvider = Symbol('IAvatarProvider');
 
 export interface IAvatarProvider {
     supported(remoteRepo: GitOriginType): boolean;
-    getAvatars(repository: IGitService) : Promise<Avatar[]>;
+    getAvatars(repository: IGitService): Promise<Avatar[]>;
 }

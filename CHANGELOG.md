@@ -1,3 +1,10 @@
+## Version 0.6.0
+- Replaced express with postMessage [#469](https://github.com/DonJayamanne/gitHistoryVSCode/pull/469) [#451](https://github.com/DonJayamanne/gitHistoryVSCode/issues/451)
+- Updated package dependencies and removed gulp [#471](https://github.com/DonJayamanne/gitHistoryVSCode/pull/471)
+- Use webpack to also bundle the server sources [#474](https://github.com/DonJayamanne/gitHistoryVSCode/pull/474)
+- Use node-fetch to request github api
+- Code optimization and correction
+
 ## Version 0.5.5
 - Fixed line history shows file history instead [#472](https://github.com/DonJayamanne/gitHistoryVSCode/pull/472)
 

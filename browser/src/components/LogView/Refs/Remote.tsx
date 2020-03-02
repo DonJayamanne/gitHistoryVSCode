@@ -1,6 +1,6 @@
 import { Ref } from '../../../definitions';
 import * as React from 'react';
-import { GoGitBranch, GoX } from 'react-icons/lib/go';
+import { GoGitBranch, GoX } from 'react-icons/go';
 
 export default function RemoteRef(props: Ref) {
     return (<div className='commit-remote-container'>

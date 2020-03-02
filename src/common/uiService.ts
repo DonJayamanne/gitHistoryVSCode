@@ -12,26 +12,35 @@ const currentBranch = '$(git-branch) Current branch';
 @injectable()
 export class UiService implements IUiService {
     private selectionActionToken?: CancellationTokenSource;
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(IApplicationShell) private application: IApplicationShell) { }
+    constructor(
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(IApplicationShell) private application: IApplicationShell,
+    ) {}
 
     public async getBranchSelection(): Promise<BranchSelection | undefined> {
         const itemPickList: QuickPickItem[] = [];
         itemPickList.push({ label: currentBranch, description: '' });
         itemPickList.push({ label: allBranches, description: '' });
-        const modeChoice = await this.application.showQuickPick(itemPickList, { placeHolder: 'Show history for...', matchOnDescription: true });
+        const modeChoice = await this.application.showQuickPick(itemPickList, {
+            placeHolder: 'Show history for...',
+            matchOnDescription: true,
+        });
         if (!modeChoice) {
             return;
         }
 
         return modeChoice.label === allBranches ? BranchSelection.All : BranchSelection.Current;
     }
-    public async selectFileCommitCommandAction(fileCommit: FileCommitDetails): Promise<ICommand<FileCommitDetails> | undefined> {
+    public async selectFileCommitCommandAction(
+        fileCommit: FileCommitDetails,
+    ): Promise<ICommand<FileCommitDetails> | undefined> {
         if (this.selectionActionToken) {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
-        const commands = await this.serviceContainer.get<IFileCommitCommandFactory>(IFileCommitCommandFactory).createCommands(fileCommit);
+        const commands = await this.serviceContainer
+            .get<IFileCommitCommandFactory>(IFileCommitCommandFactory)
+            .createCommands(fileCommit);
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 
         return this.application.showQuickPick(commands, options);
@@ -41,7 +50,9 @@ export class UiService implements IUiService {
             this.selectionActionToken.cancel();
         }
         this.selectionActionToken = new CancellationTokenSource();
-        const commands = await this.serviceContainer.get<ICommitCommandFactory>(ICommitCommandFactory).createCommands(commit);
+        const commands = await this.serviceContainer
+            .get<ICommitCommandFactory>(ICommitCommandFactory)
+            .createCommands(commit);
         const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
 
         return this.application.showQuickPick(commands, options);

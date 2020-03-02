@@ -11,7 +11,7 @@ import { IFileSystem, IPlatformService } from './types';
 
 @injectable()
 export class FileSystem implements IFileSystem {
-    constructor( @inject(IPlatformService) private platformService: IPlatformService) { }
+    constructor(@inject(IPlatformService) private platformService: IPlatformService) {}
 
     public get directorySeparatorChar(): string {
         return path.sep;
@@ -23,17 +23,18 @@ export class FileSystem implements IFileSystem {
                 if (error) {
                     return resolve(false);
                 }
+
                 return resolve(statCheck(stats));
             });
         });
     }
 
     public fileExistsAsync(filePath: string): Promise<boolean> {
-        return this.objectExistsAsync(filePath, (stats) => stats.isFile());
+        return this.objectExistsAsync(filePath, stats => stats.isFile());
     }
 
     public directoryExistsAsync(filePath: string): Promise<boolean> {
-        return this.objectExistsAsync(filePath, (stats) => stats.isDirectory());
+        return this.objectExistsAsync(filePath, stats => stats.isDirectory());
     }
 
     public createDirectoryAsync(directoryPath: string): Promise<void> {
@@ -53,8 +54,7 @@ export class FileSystem implements IFileSystem {
                         if (fs.statSync(fullPath).isDirectory()) {
                             subDirs.push(fullPath);
                         }
-                        // tslint:disable-next-line:no-empty
-                    } catch (ex) { }
+                    } catch (ex) {}
                 });
                 resolve(subDirs);
             });

@@ -2,8 +2,7 @@ import * as vscode from 'vscode';
 
 let outInfoChannel: vscode.OutputChannel;
 let outLogChannel: vscode.OutputChannel;
-// tslint:disable-next-line:no-backbone-get-set-outside-model
-const logLevel = <string>vscode.workspace.getConfiguration('gitHistory').get('logLevel');
+const logLevel = vscode.workspace.getConfiguration('gitHistory').get('logLevel') as string;
 
 function getInfoChannel() {
     if (outInfoChannel === undefined) {
@@ -19,11 +18,10 @@ export function getLogChannel() {
     return outLogChannel;
 }
 
-// tslint:disable-next-line:no-any
 export function logError(error: any) {
     getLogChannel().appendLine(`[Error-${getTimeAndms()}] ${error.toString()}`.replace(/(\r\n|\n|\r)/gm, ''));
     getLogChannel().show();
-    vscode.window.showErrorMessage('There was an error, please view details in the \'Git History Log\' output window');
+    vscode.window.showErrorMessage("There was an error, please view details in the 'Git History Log' output window");
 }
 
 export function logInfo(message: string) {

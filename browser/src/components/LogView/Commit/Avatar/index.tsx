@@ -8,7 +8,6 @@ type AvatarProps = {
     avatars: AvatarsState;
 };
 
-// tslint:disable-next-line:function-name
 function Avatar(props: AvatarProps) {
     let avatarUrl = '';
     if (props.result) {

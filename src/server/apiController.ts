@@ -1,255 +1,188 @@
-import { Express, Request, Response } from 'express';
-import { injectable } from 'inversify';
-import { Uri } from 'vscode';
+import { Uri, Webview } from 'vscode';
 import { IAvatarProvider } from '../adapter/avatar/types';
 import { GitOriginType } from '../adapter/repository/index';
+import { IApplicationShell } from '../application/types';
 import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { Avatar, CommittedFile, IGitService, IGitServiceFactory, LogEntries, LogEntriesResponse, LogEntry, Ref, RefType } from '../types';
-import { IApiRouteHandler } from './types';
-import { IApplicationShell } from '../application/types';
+import { Avatar, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
 
-// tslint:disable-next-line:no-require-imports no-var-requires
-
-@injectable()
-export class ApiController implements IApiRouteHandler {
+export class ApiController {
     private readonly commitViewer: IGitCommitViewDetailsCommandHandler;
     private readonly applicationShell: IApplicationShell;
-    constructor(private app: Express,
-        private gitServiceFactory: IGitServiceFactory,
+    constructor(
+        private webview: Webview,
+        private gitService: IGitService,
         private serviceContainer: IServiceContainer,
-        private commandManager: ICommandManager) {
-
-        this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(IGitCommitViewDetailsCommandHandler);
+        private commandManager: ICommandManager,
+    ) {
+        this.commitViewer = this.serviceContainer.get<IGitCommitViewDetailsCommandHandler>(
+            IGitCommitViewDetailsCommandHandler,
+        );
         this.applicationShell = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
 
-        this.app.get('/log', this.handleRequest(this.getLogEntries.bind(this)));
-        this.app.get('/branches', this.handleRequest(this.getBranches.bind(this)));
-        this.app.post('/action/:name?', this.handleRequest(this.doAction.bind(this)));
-        this.app.post('/actionref/:name?', this.handleRequest(this.doActionRef.bind(this)));
-        this.app.get('/log/:hash', this.handleRequest(this.getCommit.bind(this)));
-        this.app.post('/log/:hash', this.handleRequest(this.doSomethingWithCommit.bind(this)));
-        this.app.post('/log/:hash/committedFile', this.handleRequest(this.selectCommittedFile.bind(this)));
-        this.app.post('/avatars', this.handleRequest(this.getAvatars.bind(this)));
-        this.app.get('/authors', this.handleRequest(this.getAuthors.bind(this)));
+        this.webview.onDidReceiveMessage(this.postMessageParser.bind(this));
     }
-    // tslint:disable-next-line:no-empty member-ordering
-    public dispose() { }
-    // tslint:disable-next-line:cyclomatic-complexity member-ordering max-func-body-length
-    public getLogEntries = async (request: Request, response: Response) => {
-        let searchText = request.query.searchText;
+
+    public async getLogEntries(args: any) {
+        let searchText = args.searchText;
         searchText = typeof searchText === 'string' && searchText.length === 0 ? undefined : searchText;
 
-        let pageIndex: number | undefined = request.query.pageIndex ? parseInt(request.query.pageIndex, 10) : undefined;
+        const pageIndex: number | undefined = args.pageIndex ? parseInt(args.pageIndex, 10) : 0;
 
-        let author: string | undefined = typeof request.query.author === 'string' ? request.query.author : undefined;
+        const author: string | undefined = typeof args.authorFilter === 'string' ? args.authorFilter : undefined;
 
-        let lineNumber: number | undefined = request.query.lineNumber ? parseInt(request.query.lineNumber, 10) : undefined;
+        const lineNumber: number | undefined = args.line ? parseInt(args.line, 10) : undefined;
 
-        let branch = request.query.branch;
+        const branch = args.branchName;
 
-        let pageSize: number | undefined = request.query.pageSize ? parseInt(request.query.pageSize, 10) : undefined;
+        let pageSize: number | undefined = args.pageSize ? parseInt(args.pageSize, 10) : undefined;
         // When getting history for a line, then always get 10 pages, cuz `git log -L` also spits out the diff, hence slow
         if (typeof lineNumber === 'number') {
             pageSize = 10;
         }
-        const filePath: string | undefined = request.query.file;
-        let file = filePath ? Uri.file(filePath) : undefined;
+        const filePath: string | undefined = args.file;
+        const file = filePath ? Uri.file(filePath) : undefined;
 
-        let promise: Promise<LogEntries>;
-            
-        // @ts-ignore
-        promise = (await this.getRepository(decodeURIComponent(request.query.id)))
-            .getLogEntries(pageIndex, pageSize, branch, searchText, file, lineNumber, author)
-            .then(data => {
-                // tslint:disable-next-line:no-unnecessary-local-variable
-                // @ts-ignore
-                const entriesResponse: LogEntriesResponse = {
-                    ...data,
-                    pageIndex,
-                    pageSize,
-                };
-                return entriesResponse;
-            });
+        const entries = await this.gitService.getLogEntries(
+            pageIndex,
+            pageSize,
+            branch,
+            searchText,
+            file,
+            lineNumber,
+            author,
+        );
 
-        try {
-            const data = await promise;
-            response.send(data);
-        } catch (err) {
-            response.status(500).send(err);
-        }
-    }
-    // tslint:disable-next-line:cyclomatic-complexity
-    public getBranches = async (request: Request, response: Response) => {
-        const id: string = decodeURIComponent(request.query.id);
-        
-        try {
-            const branches = await (await this.getRepository(id)).getBranches();
-            response.send(branches);
-        }catch (err) {
-            response.status(500).send(err);
-        }
-    }
-    public getAuthors = async (request: Request, response: Response) => {
-        const id: string = decodeURIComponent(request.query.id);
-        (await this.getRepository(id))
-            .getAuthors()
-            .then(data => response.send(data))
-            .catch(err => response.status(500).send(err));
-    }
-
-    public getCommit = async (request: Request, response: Response) => {
-        const id: string = decodeURIComponent(request.query.id);
-        const hash: string = request.params.hash;
-
-        const gitService = await this.getRepository(id);
-        const gitRoot = await gitService.getGitRoot();
-        const branch = await gitService.getCurrentBranch();
-        
-        try {
-            let commitPromise = await gitService.getCommit(hash);
-
-            this.commitViewer.viewCommitTree(new CommitDetails(gitRoot, branch, commitPromise as LogEntry));	
-
-            response.send(commitPromise);
-        } catch (err) {
-            response.status(500).send(err);
-        }
-    }
-
-    // tslint:disable-next-line:no-any
-    public getAvatars = async (request: Request, response: Response): Promise<any | void> => {
-        const id: string = decodeURIComponent(request.query.id);
-        //const users = request.body as ActionedUser[];
-        try {
-            const gitService = await this.getRepository(id);
-            const originType = await gitService.getOriginType();
-            if (!originType) {
-                return response.send();
-            }
-            const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
-            const provider = providers.find(item => item.supported(originType));
-            const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
-
-            let avatars: Avatar[];
-
-            if (provider) {
-                avatars = await provider.getAvatars(gitService);
-            } else {
-                avatars = await genericProvider.getAvatars(gitService);
-            }
-
-            response.send(avatars);
-        } catch (err) {
-            response.status(500).send(err);
-        }
-    }
-    
-    public doActionRef = async (request: Request, response: Response) => {
-        const id: string = decodeURIComponent(request.query.id);
-
-        const gitService = await this.getRepository(id);
-
-        const actionName = request.param('name');
-        //const hash = decodeURIComponent(request.query.hash);
-        const refEntry = request.body as Ref;
-        
-        try {
-            switch (actionName) {
-                case 'removeTag':
-                    await gitService.removeTag(refEntry.name!);
-                    break;
-                case 'removeBranch':
-                    await gitService.removeBranch(refEntry.name!);
-                    break;
-                case 'removeRemote':
-                    await gitService.removeRemoteBranch(refEntry.name!);
-                    break;
-            }
-            response.status(200).send('');
-        } catch (err) {
-            this.applicationShell.showErrorMessage(err);
-            response.status(500).send(err);
-        }
-    }
-
-    public doAction = async (request: Request, response: Response) => {
-        const id: string = decodeURIComponent(request.query.id);
-
-        const gitService = await this.getRepository(id);
-        const gitRoot = await gitService.getGitRoot();
-        const branch = await gitService.getCurrentBranch();
-
-        const actionName = request.param('name');
-        const value = decodeURIComponent(request.query.value);
-        const logEntry = request.body as LogEntry;
-
-        try {
-            switch (actionName) {
-                default:
-                    await this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
-                    break;
-                case 'newtag':
-                    await gitService.createTag(value, logEntry.hash.full);
-                    logEntry.refs.push({ type: RefType.Tag, name: value });
-                    break;
-                case 'newbranch':
-                    await gitService.createBranch(value, logEntry.hash.full);
-                    logEntry.refs.push({ type: RefType.Head, name: value });
-                    break;
-                case 'reset_hard':
-                    await gitService.reset(logEntry.hash.full, true);
-                    break;
-                case 'reset_soft':
-                    await gitService.reset(logEntry.hash.full);
-                    break;
-            }
-            response.status(200).send(logEntry);
-        } catch(err) {
-            this.applicationShell.showErrorMessage(err);
-            response.status(500).send(err);
-        }
-    }
-
-    public doSomethingWithCommit = async (request: Request, response: Response) => {
-        response.status(200).send('');
-        const id: string = decodeURIComponent(request.query.id);
-
-        const gitService = await this.getRepository(id);
-        const gitRoot = await gitService.getGitRoot();
-        const branch = await gitService.getCurrentBranch();
-
-        const logEntry = request.body as LogEntry;
-        this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
-    }
-
-    public selectCommittedFile = async (request: Request, response: Response) => {
-        response.status(200).send('');
-        const id: string = decodeURIComponent(request.query.id);
-
-        const gitService = await this.getRepository(id);
-        const gitRoot = await gitService.getGitRoot();
-        const branch = await gitService.getCurrentBranch();
-
-        const body = request.body as { logEntry: LogEntry; committedFile: CommittedFile };
-
-        this.commandManager.executeCommand('git.commit.file.select', new FileCommitDetails(gitRoot, branch, body.logEntry, body.committedFile));
-    }
-    // tslint:disable-next-line:no-any
-    private handleRequest = (handler: (request: Request, response: Response) => void) => {
-        return async (request: Request, response: Response) => {
-            try {
-                // tslint:disable-next-line:await-promise
-                await handler(request, response);
-            } catch (err) {
-                response.status(500).send(err);
-            }
+        return {
+            ...entries,
+            pageIndex,
+            pageSize,
         };
     }
-    private async getRepository(id: string): Promise<IGitService> {
-        const index = parseInt(id);
-        return this.gitServiceFactory.getService(index);
+    public async getBranches() {
+        return this.gitService.getBranches();
     }
+    public async getAuthors() {
+        return this.gitService.getAuthors();
+    }
+    public async getCommit(args: any) {
+        const hash: string = args.hash;
+
+        const gitRoot = this.gitService.getGitRoot();
+        const branch = await this.gitService.getCurrentBranch();
+
+        const commit = await this.gitService.getCommit(hash);
+        this.commitViewer.viewCommitTree(new CommitDetails(gitRoot, branch, commit as LogEntry));
+
+        return commit;
+    }
+
+    public async getAvatars() {
+        const originType = await this.gitService.getOriginType();
+        if (!originType) {
+            this.webview.postMessage({
+                cmd: 'getAvatarsResult',
+                error: 'No origin type found',
+            });
+
+            return;
+        }
+        const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
+        const provider = providers.find(item => item.supported(originType));
+        const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
+
+        let avatars: Avatar[];
+
+        if (provider) {
+            avatars = await provider.getAvatars(this.gitService);
+        } else {
+            avatars = await genericProvider.getAvatars(this.gitService);
+        }
+
+        return avatars;
+    }
+    public async doActionRef(args: any) {
+        const actionName = args.name;
+        const hash = decodeURIComponent(args.hash);
+        const refEntry = args.ref as Ref;
+
+        switch (actionName) {
+            case 'removeTag':
+                await this.gitService.removeTag(refEntry.name!);
+                break;
+            case 'removeBranch':
+                await this.gitService.removeBranch(refEntry.name!);
+                break;
+            case 'removeRemote':
+                await this.gitService.removeRemoteBranch(refEntry.name!);
+        }
+
+        return this.gitService.getCommit(hash);
+    }
+    public async doAction(args: any) {
+        const gitRoot = this.gitService.getGitRoot();
+        const branch = await this.gitService.getCurrentBranch();
+
+        const actionName = args.name;
+        const value: string = decodeURIComponent(args.value);
+        const logEntry: LogEntry = args.logEntry;
+
+        switch (actionName) {
+            default:
+                await this.commandManager.executeCommand(
+                    'git.commit.doSomething',
+                    new CommitDetails(gitRoot, branch, logEntry),
+                );
+                break;
+            case 'newtag':
+                await this.gitService.createTag(value, logEntry.hash.full);
+                logEntry.refs.push({ type: RefType.Tag, name: value });
+                break;
+            case 'newbranch':
+                await this.gitService.createBranch(value, logEntry.hash.full);
+                logEntry.refs.push({ type: RefType.Head, name: value });
+                break;
+            case 'reset_hard':
+                await this.gitService.reset(logEntry.hash.full, true);
+                break;
+            case 'reset_soft':
+                await this.gitService.reset(logEntry.hash.full);
+        }
+
+        return logEntry;
+    }
+    public async doSomethingWithCommit(args: any) {
+        const gitRoot = this.gitService.getGitRoot();
+        const branch = await this.gitService.getCurrentBranch();
+        const logEntry = args.logEntry as LogEntry;
+
+        this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
+    }
+    public async selectCommittedFile(args: any) {
+        const gitRoot = this.gitService.getGitRoot();
+        const branch = await this.gitService.getCurrentBranch();
+
+        this.commandManager.executeCommand(
+            'git.commit.file.select',
+            new FileCommitDetails(gitRoot, branch, args.logEntry, args.committedFile),
+        );
+    }
+
+    private postMessageParser = async (message: IPostMessage) => {
+        try {
+            const result = await this[message.cmd].bind(this)(message.payload);
+            this.webview.postMessage({
+                requestId: message.requestId,
+                payload: result,
+            });
+        } catch (ex) {
+            this.applicationShell.showErrorMessage(ex);
+            this.webview.postMessage({
+                requestId: message.requestId,
+                error: ex,
+            });
+        }
+    };
 }

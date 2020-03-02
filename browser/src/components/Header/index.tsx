@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import * as ResultActions from '../../actions/results';
+import { ResultActions } from '../../actions/results';
 import { RootState, BranchesState } from '../../reducers/index';
 import Author from './author';
 import Branch from './branch';
 import { ISettings } from '../../types';
-import { GoMarkGithub, GoBrowser } from 'react-icons/lib/go';
+import { GoMarkGithub, GoBrowser } from 'react-icons/go';
 
 interface HeaderProps {
     isLoading?: boolean;
@@ -96,8 +96,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         }
     }
 
-    // tslint:disable-next-line:member-ordering
-    public render() {
+        public render() {
         return (<header>
             <input className={'textInput'} type="text" value={this.state.searchText} placeholder="Enter term and press enter to search" onKeyDown={this.handleKeyDown} onChange={this.handleSearchChange} />
             <Button

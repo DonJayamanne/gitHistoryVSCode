@@ -2,29 +2,20 @@ import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import { ICommandManager } from '../application/types';
-import { IDisposableRegistry } from '../application/types/disposableRegistry';
 import { FileCommitDetails } from '../common/types';
 import { previewUri } from '../constants';
 import { IServiceContainer } from '../ioc/types';
 import { FileNode } from '../nodes/types';
-import { IServerHost } from '../server/types';
-import { BranchSelection, IGitServiceFactory } from '../types';
+import { IGitServiceFactory } from '../types';
 import { command } from './registration';
 import { IGitHistoryCommandHandler } from './types';
 
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
-    private _server?: IServerHost;
-    private get server(): IServerHost {
-        if (!this._server) {
-            this._server = this.serviceContainer.get<IServerHost>(IServerHost);
-            this.disposableRegistry.register(this._server);
-        }
-        return this._server;
-    }
-    constructor(@inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
-        @inject(ICommandManager) private commandManager: ICommandManager) { }
+    constructor(
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(ICommandManager) private commandManager: ICommandManager,
+    ) {}
 
     @command('git.viewFileHistory', IGitHistoryCommandHandler)
     public async viewFileHistory(info?: FileCommitDetails | Uri): Promise<void> {
@@ -32,15 +23,13 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         if (info) {
             if (info instanceof FileCommitDetails) {
                 const committedFile = info.committedFile;
-                fileUri = committedFile.uri ? Uri.file(committedFile.uri.fsPath) : Uri.file(committedFile.oldUri!.fsPath);
+                fileUri = committedFile.uri ? Uri.file(committedFile.uri.path) : Uri.file(committedFile.oldUri!.path);
             } else if (info instanceof FileNode) {
                 const committedFile = info.data!.committedFile;
-                fileUri = committedFile.uri ? Uri.file(committedFile.uri.fsPath) : Uri.file(committedFile.oldUri!.fsPath);
+                fileUri = committedFile.uri ? Uri.file(committedFile.uri.path) : Uri.file(committedFile.oldUri!.path);
             } else if (info instanceof Uri) {
                 fileUri = info;
-                // tslint:disable-next-line:no-any
             } else if ((info as any).resourceUri) {
-                // tslint:disable-next-line:no-any
                 fileUri = (info as any).resourceUri as Uri;
             }
         } else {
@@ -50,17 +39,19 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             }
             fileUri = activeTextEditor.document.uri;
         }
+
         return this.viewHistory(fileUri);
     }
     @command('git.viewLineHistory', IGitHistoryCommandHandler)
     public async viewLineHistory(): Promise<void> {
-        let fileUri: Uri | undefined;
         const activeTextEditor = window.activeTextEditor!;
         if (!activeTextEditor || activeTextEditor.document.isUntitled) {
             return;
         }
-        fileUri = activeTextEditor.document.uri;
+
+        const fileUri: Uri | undefined = activeTextEditor.document.uri;
         const currentLineNumber = activeTextEditor.selection.start.line + 1;
+
         return this.viewHistory(fileUri, currentLineNumber);
     }
     @command('git.viewHistory', IGitHistoryCommandHandler)
@@ -72,34 +63,16 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         const gitServiceFactory = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
 
         const gitService = await gitServiceFactory.createGitService(fileUri);
-        let branchName = await gitService.getCurrentBranch();
-        const gitRoot = await gitService.getGitRoot();
-        const startupInfo = await this.server.start();
+        const gitRoot = gitService.getGitRoot();
 
         const id = gitServiceFactory.getIndex();
 
-        let branchSelection = BranchSelection.Current;
-
-        // check if the current branch is detached
-        const detached = gitService.getDetachedHash();
-        if (!branchName && detached) {
-            branchSelection = BranchSelection.Detached;
-            branchName = detached;
-        }
-
-        const queryArgs = [
-            `id=${id}`,
-            `port=${startupInfo.port}`,
-            `internalPort=${startupInfo.port - 1}`,
-            `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`,
-            `branchSelection=${branchSelection}`, 
-            `branchName=${encodeURIComponent(branchName)}`
-        ];
+        const queryArgs = [`id=${id}`, `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`];
 
         if (lineNumber) {
-            queryArgs.push(`line=${lineNumber}`)
+            queryArgs.push(`line=${lineNumber}`);
         }
-        
+
         const uri = `${previewUri}?${queryArgs.join('&')}`;
 
         let title = `Git History (${path.basename(gitRoot)})`;

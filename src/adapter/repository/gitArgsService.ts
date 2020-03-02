@@ -6,8 +6,6 @@ import { GitLogArgs, IGitArgsService } from './types';
 
 @injectable()
 export class GitArgsService implements IGitArgsService {
-    constructor(private isWindows: boolean = /^win/.test(process.platform)) {}
-
     public getCommitArgs(hash: string): string[] {
         return ['show', LOG_FORMAT, '--decorate=full', '--numstat', hash];
     }
@@ -43,13 +41,13 @@ export class GitArgsService implements IGitArgsService {
     }
 
     public getLogArgs(
-        pageIndex: number = 0,
-        pageSize: number = 100,
-        branch: string = '',
-        searchText: string = '',
+        pageIndex = 0,
+        pageSize = 100,
+        branch = '',
+        searchText = '',
         relativeFilePath?: string,
         lineNumber?: number,
-        author?: string
+        author?: string,
     ): GitLogArgs {
         const allBranches = branch.trim().length === 0;
         const currentBranch = branch.trim() === '*';
@@ -70,9 +68,9 @@ export class GitArgsService implements IGitArgsService {
             ...authorArgs,
             ...lineArgs,
             '--full-history',
-            `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`
+            `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`,
         ];
-        const counterArgs = ['log', ...authorArgs, ...lineArgs, '--full-history', `--format=${LOG_ENTRY_SEPARATOR}%h`];
+        const counterArgs = ['rev-list', ...authorArgs, '--full-history'];
 
         if (searchText && searchText.length > 0) {
             searchText
@@ -91,15 +89,14 @@ export class GitArgsService implements IGitArgsService {
             '--date-order',
             '--decorate=full',
             `--skip=${pageIndex * pageSize}`,
-            `--max-count=${pageSize}`
+            `--max-count=${pageSize}`,
         );
-        counterArgs.push('--date-order', '--decorate=full');
 
         // Don't use `--all`, cuz that will result in stashes `ref/stash` being included included in the logs.
         if (allBranches && lineArgs.length === 0) {
             logArgs.push('--branches', '--tags', '--remotes');
             fileStatArgs.push('--branches', '--tags', '--remotes');
-            counterArgs.push('--branches', '--tags', '--remotes');
+            counterArgs.push('--all');
         }
 
         if (specificBranch && lineArgs.length === 0) {
@@ -113,21 +110,16 @@ export class GitArgsService implements IGitArgsService {
             const formattedPath = relativeFilePath.indexOf(' ') > 0 ? `"${relativeFilePath}"` : relativeFilePath;
             logArgs.push('--follow', '--', formattedPath);
             fileStatArgs.push('--follow', '--', formattedPath);
-            counterArgs.push('--follow', '--', formattedPath);
+            counterArgs.push('--', formattedPath);
         } else {
             if (specificBranch && lineArgs.length === 0) {
                 logArgs.push('--');
                 fileStatArgs.push('--');
-                counterArgs.push('--');
             }
         }
 
         // Count only the number of lines in the log
-        if (this.isWindows) {
-            counterArgs.push('|', 'find', '/c', '/v', '""');
-        } else {
-            counterArgs.push('|', 'wc', '-l');
-        }
+        counterArgs.push('--count');
 
         return { logArgs, fileStatArgs, counterArgs };
     }

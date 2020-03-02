@@ -7,16 +7,24 @@ import { IGitCommitViewDetailsCommandHandler } from '../types';
 
 @injectable()
 export class GitCommitViewDetailsCommandHandler implements IGitCommitViewDetailsCommandHandler {
-    constructor( @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommandManager) private commandManager: ICommandManager) { }
+    constructor(
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+        @inject(ICommandManager) private commandManager: ICommandManager,
+    ) {}
 
     public async viewDetails(commit: CommitDetails) {
         await this.commandManager.executeCommand('setContext', 'git.commit.selected', true);
-        this.serviceContainer.get<ICommitViewerFactory>(ICommitViewerFactory).getCommitViewer().showCommit(commit);
+        this.serviceContainer
+            .get<ICommitViewerFactory>(ICommitViewerFactory)
+            .getCommitViewer()
+            .showCommit(commit);
     }
 
     public async viewCommitTree(commit: CommitDetails) {
         await this.commandManager.executeCommand('setContext', 'git.commit.selected', true);
-        this.serviceContainer.get<ICommitViewerFactory>(ICommitViewerFactory).getCommitViewer().showCommitTree(commit);
+        this.serviceContainer
+            .get<ICommitViewerFactory>(ICommitViewerFactory)
+            .getCommitViewer()
+            .showCommitTree(commit);
     }
 }

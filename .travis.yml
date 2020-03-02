@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - 8
+  - 10
 os:
   - linux
 addons:
@@ -13,11 +13,4 @@ install:
   - yarn
 
 script:
-  - yarn run clean
   - yarn run vscode:prepublish
-  - if [ $TRAVIS_ENABLE_COVERAGE == "true" ]; then
-        yarn run cover:enable;
-    fi
-  - if [ $TRAVIS_ENABLE_COVERAGE == "true" ]; then
-        yarn run cover:upload;
-    fi

@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
-import { Uri, QuickPickItem } from 'vscode';
+import * as path from 'path';
+import { QuickPickItem, Uri } from 'vscode';
 import { IApplicationShell } from '../../application/types';
 import { IServiceContainer } from '../../ioc/types';
 import { IGitService, IGitServiceFactory } from '../../types';
@@ -8,18 +9,18 @@ import { ILogParser } from '../parsers/types';
 import { Git } from './git';
 import { API } from './git.d';
 import { IGitArgsService } from './types';
-import * as path from 'path';
 
 @injectable()
 export class GitServiceFactory implements IGitServiceFactory {
     private readonly gitServices = new Map<string, IGitService>();
     private gitApi: API;
     private repoIndex: number;
-    constructor(@inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
+    constructor(
+        @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
-        @inject(IServiceContainer) private serviceContainer: IServiceContainer) {
-
+        @inject(IServiceContainer) private serviceContainer: IServiceContainer,
+    ) {
         this.gitApi = this.gitCmdExecutor.gitExtension.getAPI(1);
         this.repoIndex = -1;
     }
@@ -28,27 +29,35 @@ export class GitServiceFactory implements IGitServiceFactory {
         return this.repoIndex;
     }
 
-    public getService(index: number) : IGitService {
-        return this.gitServices.get(index.toString())!; 
+    public getService(index: number): IGitService {
+        return this.gitServices.get(index.toString())!;
     }
 
-    public async repositoryPicker() : Promise<void> {
-        if (this.repoIndex > -1) return;
+    public async repositoryPicker(): Promise<void> {
+        if (this.repoIndex > -1) {
+            return;
+        }
 
         const app = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
         const pickList: QuickPickItem[] = [];
 
         this.gitApi.repositories.forEach(x => {
-            pickList.push({ label: path.basename(x.rootUri.path), detail: x.rootUri.path, description: x.state.HEAD!.name });
+            pickList.push({
+                label: path.basename(x.rootUri.path),
+                detail: x.rootUri.path,
+                description: x.state.HEAD!.name,
+            });
         });
-        
+
         const options = {
-            canPickMany: false, matchOnDescription: false,
-            matchOnDetail: true, placeHolder: 'Select a Git Repository'
+            canPickMany: false,
+            matchOnDescription: false,
+            matchOnDetail: true,
+            placeHolder: 'Select a Git Repository',
         };
         const selectedItem = await app.showQuickPick(pickList, options);
         if (selectedItem) {
-            this.repoIndex = this.gitApi.repositories.findIndex(x => x.rootUri.path == selectedItem.detail);
+            this.repoIndex = this.gitApi.repositories.findIndex(x => x.rootUri.path === selectedItem.detail);
         }
     }
 
@@ -63,7 +72,7 @@ export class GitServiceFactory implements IGitServiceFactory {
                 // show repository picker
                 if (this.repoIndex === -1) {
                     await this.repositoryPicker();
-                } else if(currentIndex > -1 && currentIndex !== this.repoIndex) {
+                } else if (currentIndex > -1 && currentIndex !== this.repoIndex) {
                     this.repoIndex = currentIndex;
                 }
             }
@@ -72,8 +81,11 @@ export class GitServiceFactory implements IGitServiceFactory {
         if (resourceUri) {
             // find the correct repository from the given resource uri
             let i = 0;
-            for(let x of this.gitApi.repositories) {
-                if (resourceUri!.fsPath.startsWith(x.rootUri.fsPath) && x.rootUri.fsPath === this.gitApi.repositories[i].rootUri.fsPath) {
+            for (const x of this.gitApi.repositories) {
+                if (
+                    resourceUri!.fsPath.startsWith(x.rootUri.fsPath) &&
+                    x.rootUri.fsPath === this.gitApi.repositories[i].rootUri.fsPath
+                ) {
                     this.repoIndex = i;
                     break;
                 }
@@ -82,7 +94,16 @@ export class GitServiceFactory implements IGitServiceFactory {
         }
 
         if (!this.gitServices.has(this.repoIndex.toString())) {
-            this.gitServices.set(this.repoIndex.toString(), new Git(this.gitApi.repositories[this.repoIndex], this.serviceContainer, this.gitCmdExecutor, this.logParser, this.gitArgsService));
+            this.gitServices.set(
+                this.repoIndex.toString(),
+                new Git(
+                    this.gitApi.repositories[this.repoIndex],
+                    this.serviceContainer,
+                    this.gitCmdExecutor,
+                    this.logParser,
+                    this.gitArgsService,
+                ),
+            );
         }
 
         return this.getService(this.repoIndex);

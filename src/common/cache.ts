@@ -1,14 +1,10 @@
 import { Disposable } from 'vscode';
 
-// tslint:disable:no-any
-
 const MAX_CACHE_ITEMS = 50;
-// tslint:disable-next-line:no-any
 type CacheStore = Map<string, { expiryTime?: number; data: any }>;
 const CacheItemUsageFrequency: Map<string, number> = new Map<string, number>();
 const CacheStores = new Map<string, CacheStore>();
 
-// tslint:disable-next-line:no-stateless-class
 export class CacheRegister implements Disposable {
     public static get<T>(storageKey: string, key: string): { data: T } | undefined {
         const storage = CacheStores.get(storageKey)!;
@@ -19,16 +15,15 @@ export class CacheRegister implements Disposable {
             }
             storage.delete(key);
         }
+
         return;
     }
-    // tslint:disable-next-line:no-any
     public static add<T>(storageKey: string, key: string, data: T, expiryMs?: number): void {
         if (!CacheStores.has(storageKey)) {
             CacheStores.set(storageKey, new Map<string, { expiryTime?: number; data: any }>());
         }
         const storage = CacheStores.get(storageKey)!;
         const counter = CacheItemUsageFrequency.has(key) ? CacheItemUsageFrequency.get(key)! : 0;
-        // tslint:disable-next-line:no-increment-decrement
         CacheItemUsageFrequency.set(key, counter + 1);
         const expiryTime = typeof expiryMs === 'number' ? new Date().getTime() + expiryMs : undefined;
         storage.set(key, { data, expiryTime });
@@ -56,42 +51,37 @@ export class CacheRegister implements Disposable {
     }
 }
 
-// tslint:disable-next-line:no-any
 type Fn = (...args: any[]) => any;
 
 export function cache(storageKey: string): any;
-// tslint:disable-next-line:unified-signatures
 export function cache(storageKey: string, expiryMs: number): any;
-// tslint:disable-next-line:unified-signatures
 export function cache(storageKey: string, cacheKeyPrefix: string): any;
-// tslint:disable-next-line:unified-signatures
 export function cache(storageKey: string, cacheKeyPrefix: string, expiryMs: number): any;
 export function cache(storageKey: string, arg1?: any, arg2?: any) {
-    // tslint:disable-next-line:no-any function-name no-function-expression
-    return function (_target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<Fn>) {
+    return function(_target: Record<string, any>, propertyKey: string, descriptor: TypedPropertyDescriptor<Fn>) {
         const oldFn = descriptor.value!;
-        // tslint:disable-next-line:no-any
-        descriptor.value = async function (...args: any[]) {
-            const expiryMs = typeof arg1 === 'number' ? arg1 : (typeof arg2 === 'number' ? arg2 : -1);
-            const cacheKeyPrefix = typeof arg1 === 'string' ? arg1 : (typeof arg2 === 'string' ? arg2 : '');
+        descriptor.value = async function(...args: any[]) {
+            const expiryMs = typeof arg1 === 'number' ? arg1 : typeof arg2 === 'number' ? arg2 : -1;
+            const cacheKeyPrefix = typeof arg1 === 'string' ? arg1 : typeof arg2 === 'string' ? arg2 : '';
 
-            // tslint:disable-next-line:no-invalid-this no-parameter-reassignment
-            const innerStorageKey = typeof this.getHashCode === 'function' ? `${storageKey}${this.getHashCode()}` : storageKey;
+            const innerStorageKey =
+                typeof this.getHashCode === 'function' ? `${storageKey}${this.getHashCode()}` : storageKey;
             const key = `${innerStorageKey}.${cacheKeyPrefix}.${propertyKey}.${JSON.stringify(args)}`;
             const entry = CacheRegister.get(innerStorageKey, key)!;
             if (entry) {
                 return entry.data;
             }
 
-            // tslint:disable-next-line:no-invalid-this
             try {
                 const result = await oldFn.apply(this, args);
                 CacheRegister.add(innerStorageKey, key, result, expiryMs);
+
                 return result;
             } catch (ex) {
                 console.error(`Error calling ${storageKey}.${propertyKey} from @cache decorator`, ex);
             }
         };
+
         return descriptor;
     };
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as ResultActions from '../../actions/results';
+import { ResultActions } from '../../actions/results';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import Commit from '../../components/LogView/Commit';
@@ -20,17 +20,14 @@ type AppProps = {
     search: typeof ResultActions.search;
 } & typeof ResultActions;
 
-// tslint:disable-next-line:no-empty-interface
 interface AppState {
 }
 
 class App extends React.Component<AppProps, AppState> {
-    // tslint:disable-next-line:no-any
-    constructor(props?: AppProps, context?: any) {
+        constructor(props?: AppProps, context?: any) {
         super(props, context);
     }
-    // tslint:disable-next-line:no-empty
-    public componentWillMount() {
+        public componentWillMount() {
     }
     public render() {
         const { children } = this.props;

@@ -3,7 +3,6 @@ import { Uri } from 'vscode';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { CommittedFile } from '../types';
 import { DirectoryTreeItem, FileTreeItem } from './treeNodes';
-import { INode } from './types';
 
 export interface INode<T> {
     /**
@@ -27,7 +26,7 @@ export abstract class AbstractCommitNode<T> implements INode<T> {
     public get resource() {
         return this._resource;
     }
-    constructor(public readonly data: T | undefined) { }
+    constructor(public readonly data: T | undefined) {}
     protected setLabel(value: string) {
         this._label = value;
     }

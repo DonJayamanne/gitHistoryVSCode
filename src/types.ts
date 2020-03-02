@@ -8,21 +8,13 @@ import { CommitDetails } from './common/types';
 export enum BranchSelection {
     Current = 1,
     All = 2,
-    Detached = 3
+    Detached = 3,
 }
-export type FsUri = Readonly<{
-    scheme: string;
-    authority: string;
-    path: string;
-    query: string;
-    fragment: string;
-    fsPath: string;
-}>;
 
 export enum RefType {
     Head,
     RemoteHead,
-    Tag
+    Tag,
 }
 export type Ref = {
     type: RefType;
@@ -43,8 +35,8 @@ export type Branch = {
 };
 
 export type CommittedFile = {
-    uri: FsUri;
-    oldUri?: FsUri;
+    uri: Uri;
+    oldUri?: Uri;
     oldRelativePath?: string;
     relativePath: string;
     status: Status;
@@ -63,7 +55,7 @@ export type Avatar = {
     email: string;
     url?: string;
     avatarUrl?: string;
-    avatarFilePath?: FsUri;
+    avatarFilePath?: Uri;
 };
 export type ActionedUser = {
     name: string;
@@ -123,31 +115,39 @@ export enum Status {
     Unmerged,
     Unknown,
     Broken,
-    TypeChanged
+    TypeChanged,
 }
 export const IGitService = Symbol('IGitService');
 export const IOutputChannel = Symbol('IOutputChannel');
 
 export interface IGitService {
     getGitRoot(): string;
-    getGitRelativePath(file: FsUri): Promise<string>;
+    getGitRelativePath(file: Uri): Promise<string>;
     getHeadHashes(): Promise<{ ref?: string; hash?: string }[]>;
     getAuthors(): Promise<ActionedUser[]>;
     getDetachedHash(): string | undefined;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
     getRefsContainingCommit(hash: string): Promise<string[]>;
-    getLogEntries(pageIndex?: number, pageSize?: number, branch?: string, searchText?: string, file?: FsUri, lineNumber?: number, author?: string): Promise<LogEntries>;
-    getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
+    getLogEntries(
+        pageIndex?: number,
+        pageSize?: number,
+        branch?: string,
+        searchText?: string,
+        file?: Uri,
+        lineNumber?: number,
+        author?: string,
+    ): Promise<LogEntries>;
+    getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
     revertCommit(hash: string): Promise<void>;
-    getCommitFile(hash: string, file: FsUri | string): Promise<FsUri>;
+    getCommitFile(hash: string, file: Uri | string): Promise<Uri>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
     cherryPick(hash: string): Promise<void>;
     reset(hash: string, hard?: boolean): Promise<void>;
     checkout(hash: string): Promise<void>;
     createBranch(branchName: string, hash: string): Promise<void>;
-    createTag(tagName: string, hash: string): Promise<void>;
+    createTag(tagName: string, hash: string): Promise<string>;
     removeTag(tagName: string): Promise<void>;
     removeBranch(tagName: string): Promise<void>;
     removeRemoteBranch(remoteBranchName: string): Promise<void>;
@@ -172,6 +172,13 @@ export interface IGitServiceFactory {
     createGitService(resource?: Uri | string): Promise<IGitService>;
 }
 
+export interface IPostMessage {
+    requestId: string;
+    cmd: string;
+    payload: object;
+    error?: string;
+}
+
 export interface ISettings {
     branchSelection?: BranchSelection;
     branchName?: string;
@@ -179,7 +186,7 @@ export interface ISettings {
     pageIndex?: number;
     searchText?: string;
     file?: string;
-    lineNumber?: number,
+    line?: number;
     id?: string;
 }
 
@@ -200,5 +207,5 @@ export enum CommitInfo {
     TreeFullHash,
     TreeShortHash,
     Subject,
-    NewLine
+    NewLine,
 }

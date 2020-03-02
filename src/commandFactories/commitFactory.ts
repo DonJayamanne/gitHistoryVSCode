@@ -1,5 +1,13 @@
 import { inject, injectable } from 'inversify';
-import { IGitCheckoutCommandHandler, IGitCherryPickCommandHandler, IGitCommitViewDetailsCommandHandler, IGitCompareCommandHandler, IGitMergeCommandHandler, IGitRebaseCommandHandler, IGitRevertCommandHandler } from '../commandHandlers/types';
+import {
+    IGitCheckoutCommandHandler,
+    IGitCherryPickCommandHandler,
+    IGitCommitViewDetailsCommandHandler,
+    IGitCompareCommandHandler,
+    IGitMergeCommandHandler,
+    IGitRebaseCommandHandler,
+    IGitRevertCommandHandler,
+} from '../commandHandlers/types';
 import { CheckoutCommand } from '../commands/commit/checkout';
 import { CherryPickCommand } from '../commands/commit/cherryPick';
 import { CompareCommand } from '../commands/commit/compare';
@@ -20,7 +28,8 @@ export class CommitCommandFactory implements ICommitCommandFactory {
         @inject(IGitMergeCommandHandler) private mergeHandler: IGitMergeCommandHandler,
         @inject(IGitRebaseCommandHandler) private rebaseHandler: IGitRebaseCommandHandler,
         @inject(IGitRevertCommandHandler) private revertHandler: IGitRevertCommandHandler,
-        @inject(IGitCommitViewDetailsCommandHandler) private viewChangeLogHandler: IGitCommitViewDetailsCommandHandler) { }
+        @inject(IGitCommitViewDetailsCommandHandler) private viewChangeLogHandler: IGitCommitViewDetailsCommandHandler,
+    ) {}
     public async createCommands(commit: CommitDetails): Promise<ICommand<CommitDetails>[]> {
         const commands: ICommand<CommitDetails>[] = [
             new CherryPickCommand(commit, this.cherryPickHandler),
@@ -30,14 +39,19 @@ export class CommitCommandFactory implements ICommitCommandFactory {
             new RevertCommand(commit, this.revertHandler),
             new CompareCommand(commit, this.compareHandler),
             new MergeCommand(commit, this.mergeHandler),
-            new RebaseCommand(commit, this.rebaseHandler)
+            new RebaseCommand(commit, this.rebaseHandler),
         ];
 
-        return (await Promise.all(commands.map(async cmd => {
-            const result = cmd.preExecute();
-            const available = typeof result === 'boolean' ? result : await result;
-            return available ? cmd : undefined;
-        })))
+        return (
+            await Promise.all(
+                commands.map(async cmd => {
+                    const result = cmd.preExecute();
+                    const available = typeof result === 'boolean' ? result : await result;
+
+                    return available ? cmd : undefined;
+                }),
+            )
+        )
             .filter(cmd => !!cmd)
             .map(cmd => cmd!);
     }

@@ -11,7 +11,6 @@ export class CreateBranchCommand extends BaseCommitCommand {
         // this.setDetail(commit.logEntry.subject);
         this.setCommand('git.commit.createBranch');
         this.setCommandArguments([commit]);
-
     }
     public execute() {
         this.handler.createBranchFromCommit(this.data);

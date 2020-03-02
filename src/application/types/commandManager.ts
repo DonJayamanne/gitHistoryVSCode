@@ -1,10 +1,8 @@
-// tslint:disable:no-any
 import { Disposable, TextEditor, TextEditorEdit } from 'vscode';
 
 export const ICommandManager = Symbol('ICommandManager');
 
 export interface ICommandManager {
-
     /**
      * Registers a command that can be invoked via a keyboard shortcut,
      * a menu item, an action, or directly.
@@ -33,7 +31,11 @@ export interface ICommandManager {
      * @param thisArg The `this` context used when invoking the handler function.
      * @return Disposable which unregisters this command on disposal.
      */
-    registerTextEditorCommand(command: string, callback: (textEditor: TextEditor, edit: TextEditorEdit, ...args: any[]) => void, thisArg?: any): Disposable;
+    registerTextEditorCommand(
+        command: string,
+        callback: (textEditor: TextEditor, edit: TextEditorEdit, ...args: any[]) => void,
+        thisArg?: any,
+    ): Disposable;
 
     /**
      * Executes the command denoted by the given command identifier.

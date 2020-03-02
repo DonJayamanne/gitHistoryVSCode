@@ -2,19 +2,23 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import * as ResultActions from './actions/results';
+import { ResultActions } from './actions/results';
+import { initialize } from './actions/messagebus';
 import App from './containers/App';
 import { ISettings } from './definitions';
-// tslint:disable-next-line:import-name
 import configureStore from './store';
 
 const defaultSettings: ISettings = window['settings'];
 
-// tslint:disable-next-line:no-any
 const store = configureStore({ 
     settings: defaultSettings, 
     graph: {}, 
-    vscode: { theme: document.body.className, locale: window['locale'], configuration: window['configuration'] } });
+    vscode: { 
+        theme: document.body.className,
+        locale: window['locale'],
+        configuration: window['configuration']
+    } 
+});
 
 ReactDOM.render(
     <div>
@@ -28,6 +32,10 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-store.dispatch(ResultActions.getCommits());
-store.dispatch(ResultActions.getBranches());
-store.dispatch(ResultActions.getAuthors());
+
+initialize(window['vscode']);
+
+store.dispatch<any>(ResultActions.getCommits());
+store.dispatch<any>(ResultActions.getBranches());
+store.dispatch<any>(ResultActions.getAuthors());
+store.dispatch<any>(ResultActions.fetchAvatars());

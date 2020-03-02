@@ -6,9 +6,9 @@ import { RootState } from '../../../reducers';
 import Author from './Author';
 import Avatar from './Avatar';
 import { FileEntry } from './FileEntry';
-import { GoX, GoClippy } from 'react-icons/lib/go';
+import { GoX, GoClippy } from 'react-icons/go';
 import { Resizable } from "re-resizable";
-import * as ResultActions from '../../../actions/results';
+import { ResultActions } from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
 
 interface CommitProps {
@@ -77,7 +77,6 @@ class Commit extends React.Component<CommitProps, CommitState> {
         const resizing = { top: true, right: false, bottom: false, left: false, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false };
 
         return (
-            // tslint:disable-next-line:react-this-binding-issue
             <Resizable className='details-view-cnt' defaultSize={ContainerStyle} minHeight={90} maxHeight='50%' enable={resizing}>
                 <div id='detail-view'>
                     <div className='authorAndCommitInfoContainer'>

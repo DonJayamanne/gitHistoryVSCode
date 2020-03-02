@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import * as ResultActions from '../../../actions/results';
+import { ResultActions } from '../../../actions/results';
 import { AuthorsState, RootState } from '../../../reducers/index';
 import { ISettings } from '../../../types';
 
@@ -59,8 +59,7 @@ export class Author extends React.Component<AuthorProps, AuthorState> {
         this.setState({ searchText: e.target.value });
     }
 
-    // tslint:disable-next-line:member-ordering
-    public render() {
+        public render() {
         if (this.props.lineHistory) {
             return null;
         }

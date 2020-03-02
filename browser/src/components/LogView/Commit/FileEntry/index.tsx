@@ -38,7 +38,7 @@ export class FileEntry extends React.Component<FileEntryProps> {
         }
         const style = {
             marginLeft: '0.3em',
-            backgroundImage:  `url('${window['server_url']}icons/${theme}/${icon}')`,
+            backgroundImage:  `url('vscode-resource://file//${window['extensionPath']}/resources/icons/${theme}/${icon}')`,
             display: 'inline-block',
             height: '0.9em',
             width: '0.9em',

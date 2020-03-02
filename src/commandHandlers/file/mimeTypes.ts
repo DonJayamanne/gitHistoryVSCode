@@ -52,7 +52,7 @@ const mapExtToMediaMimes: MapExtToMediaMimes = {
     '.wmv': 'video/x-ms-wmv',
     '.flv': 'video/x-flv',
     '.avi': 'video/x-msvideo',
-    '.movie': 'video/x-sgi-movie'
+    '.movie': 'video/x-sgi-movie',
 };
 
 export function isTextFile(file: Uri): boolean {

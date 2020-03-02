@@ -1,6 +1,14 @@
-// tslint:disable:no-redundant-jsdoc
-
-import { CancellationToken, ConfigurationChangeEvent, Event, FileSystemWatcher, GlobPattern, Uri, WorkspaceConfiguration, WorkspaceFolder, WorkspaceFoldersChangeEvent } from 'vscode';
+import {
+    CancellationToken,
+    ConfigurationChangeEvent,
+    Event,
+    FileSystemWatcher,
+    GlobPattern,
+    Uri,
+    WorkspaceConfiguration,
+    WorkspaceFolder,
+    WorkspaceFoldersChangeEvent,
+} from 'vscode';
 
 export const IWorkspaceService = Symbol('IWorkspace');
 
@@ -52,7 +60,12 @@ export interface IWorkspaceService {
      * @param ignoreDeleteEvents Ignore when files have been deleted.
      * @return A new file system watcher instance.
      */
-    createFileSystemWatcher(globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean): FileSystemWatcher;
+    createFileSystemWatcher(
+        globPattern: GlobPattern,
+        ignoreCreateEvents?: boolean,
+        ignoreChangeEvents?: boolean,
+        ignoreDeleteEvents?: boolean,
+    ): FileSystemWatcher;
 
     /**
      * Find files across all [workspace folders](#workspace.workspaceFolders) in the workspace.
@@ -68,7 +81,12 @@ export interface IWorkspaceService {
      * @return A thenable that resolves to an array of resource identifiers. Will return no results if no
      * [workspace folders](#workspace.workspaceFolders) are opened.
      */
-    findFiles(include: GlobPattern, exclude?: GlobPattern, maxResults?: number, token?: CancellationToken): Thenable<Uri[]>;
+    findFiles(
+        include: GlobPattern,
+        exclude?: GlobPattern,
+        maxResults?: number,
+        token?: CancellationToken,
+    ): Thenable<Uri[]>;
 
     /**
      * Get a workspace configuration object.
