@@ -115,7 +115,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
                 bsSize='small'
                 disabled={this.state.isLoading}
                 onClick={this.onRefresh}>Refresh</Button>
-            <span style={{display: 'inline-block', marginLeft: '1em', fontSize: '130%', verticalAlign: 'middle'}}>
+            <span className={'links'}>
                 {this.remoteLink()}
             </span>
         </header>);

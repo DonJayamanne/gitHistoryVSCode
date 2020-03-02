@@ -138,9 +138,6 @@ div.appRoot {
 	margin-bottom: 0px;
 	display: flex;
 	justify-content: flex-end;
-}
-
-.log-entry .media-image > div.buttons > div {
 	background-color: var(--vscode-scrollbarSlider-background);
 	padding: .3em .5em .3em 0em;
 	font-size: 75%;
@@ -156,6 +153,7 @@ div.appRoot {
 	font-size: 115%;
 	margin-right: .1em;
 	margin-top: -2px;
+	vertical-align: middle;
 }
 
 .log-entry .media-image > div.buttons .hash {
@@ -191,6 +189,10 @@ div.appRoot {
 	display: block;
 	text-overflow: ellipsis;
 	overflow: hidden;
+}
+
+.commit-author svg {
+	vertical-align: middle;
 }
 
 .commit-author .timestamp {
@@ -278,6 +280,17 @@ header {
 
 header input, header button {
     margin: 0.2em;
+}
+
+header .links svg {
+	vertical-align: middle;
+}
+
+header .links {
+	display: inline-block;
+	margin-left: 1em;
+	font-size: 130%;
+	vertical-align: middle;
 }
 
 /* Navigation*/
@@ -447,6 +460,10 @@ div.details-view-cnt .commit-notes:empty {
 
 #detail-view div.actions > .textInput {
 	width: unset;
+}
+
+#detail-view div.actions svg {
+	vertical-align: middle;
 }
 
 .diff-row {

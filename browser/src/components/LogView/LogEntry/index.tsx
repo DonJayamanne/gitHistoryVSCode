@@ -74,40 +74,38 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                         {this.renderTagRef()}
                     </div>
                     <div className='buttons'>
-                        <div>
-                            <CopyToClipboard text={this.props.logEntry.hash.full}>
-                            <span className='btnx hash clipboard hint--left hint--rounded hint--bounce' aria-label="Copy hash to clipboard">
-                                {this.props.logEntry.hash.short}&nbsp;
-                                <GoClippy></GoClippy>
-                            </span>
-                            </CopyToClipboard>
-                            &nbsp;
-                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Soft reset to this commit'>
-                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'reset_soft')}>
-                                    <GoFileSymlinkFile></GoFileSymlinkFile>Soft
-                                </a>
-                            </span>
-                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Hard reset to this commit'>
-                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'reset_hard')}>
-                                    <GoFileSymlinkDirectory></GoFileSymlinkDirectory>Hard
-                                </a>
-                            </span>
-                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new tag'>
-                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'newtag')}>
-                                    <GoPlus></GoPlus>Tag
-                                </a>
-                            </span>
-                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new branch from here'>
-                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'newbranch')}>
-                                    <GoPlus></GoPlus>Branch
-                                </a>
-                            </span>
-                            <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
-                                <a role='button' onClick={() => this.props.onAction(this.props.logEntry, '')}>
-                                    <GoGitCommit></GoGitCommit>More
-                                </a>
-                            </span>
-                        </div>
+                        <CopyToClipboard text={this.props.logEntry.hash.full}>
+                        <span className='btnx hash clipboard hint--left hint--rounded hint--bounce' aria-label="Copy hash to clipboard">
+                            {this.props.logEntry.hash.short}&nbsp;
+                            <GoClippy></GoClippy>
+                        </span>
+                        </CopyToClipboard>
+                        &nbsp;
+                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Soft reset to this commit'>
+                            <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'reset_soft')}>
+                                <GoFileSymlinkFile></GoFileSymlinkFile>Soft
+                            </a>
+                        </span>
+                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Hard reset to this commit'>
+                            <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'reset_hard')}>
+                                <GoFileSymlinkDirectory></GoFileSymlinkDirectory>Hard
+                            </a>
+                        </span>
+                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new tag'>
+                            <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'newtag')}>
+                                <GoPlus></GoPlus>Tag
+                            </a>
+                        </span>
+                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Create a new branch from here'>
+                            <a role='button' onClick={() => this.props.onAction(this.props.logEntry, 'newbranch')}>
+                                <GoPlus></GoPlus>Branch
+                            </a>
+                        </span>
+                        <span role='button' className='btnx hint--left hint--rounded hint--bounce' aria-label='Cherry pick, Compare, etc'>
+                            <a role='button' onClick={() => this.props.onAction(this.props.logEntry, '')}>
+                                <GoGitCommit></GoGitCommit>More
+                            </a>
+                        </span>
                     </div>
                 </div>
                 <div role='button' className='media-content'>
