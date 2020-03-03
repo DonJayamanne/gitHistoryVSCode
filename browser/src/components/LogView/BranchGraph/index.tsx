@@ -411,21 +411,20 @@ function getPointsFromPath(svgPath: string): Point[] {
 }
 
 class BrachGraph extends React.Component<BranchGrapProps> {
-    componentWillReceiveProps(newProps: BranchGrapProps) {
-    }
-    componentWillUpdate(newProps: BranchGrapProps) {
-        if (newProps.hideGraph) {
-            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, [], true);
+
+    componentDidUpdate(prevProps: BranchGrapProps) {
+        if (this.props.hideGraph) {
+            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, [], true);
             return;
         }
-        if (newProps.updateTick === this.props.updateTick) {
+        if (prevProps.updateTick === this.props.updateTick) {
             return;
         }
 
         // Hack, first clear before rebuilding.
         // Remember, we will need to support apending results, as opposed to clearing page
-        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, []);
-        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, newProps.itemHeight, newProps.logEntries);
+        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, []);
+        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, this.props.logEntries);
     }
 
     private svg: SVGSVGElement;

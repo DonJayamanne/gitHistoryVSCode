@@ -36,17 +36,15 @@ class Commit extends React.Component<CommitProps, CommitState> {
         this.state = { searchText: ''};
     }
 
-    public componentDidUpdate() {
-        // componentDidUpdate
+    public componentDidUpdate(prevProps: CommitProps) {
+        if (prevProps.selectedEntry && this.props.selectedEntry && this.props.selectedEntry !== prevProps.selectedEntry) {
+            this.setState({ searchText: '' });
+        }
+        
         this.ref.focus();
     }
 
     public componentDidMount() {
-        // componentDidMount
-        this.setState({ searchText: '' });
-    }
-
-    componentWillReceiveProps(nextProps: CommitProps): void {
         this.setState({ searchText: '' });
     }
 

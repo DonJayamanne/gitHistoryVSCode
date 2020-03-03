@@ -29,7 +29,8 @@ export class Branch extends React.Component<BranchProps, BranchState> {
         this.searchField = null;
    
     }
-    public componentWillReceiveProps(nextProps: BranchProps): void {
+
+    static getDerivedStateFromProps(nextProps, prevState){
         let title = nextProps.settings.branchName;
 
         if (nextProps.settings.branchSelection === BranchSelection.Detached) {
@@ -38,8 +39,8 @@ export class Branch extends React.Component<BranchProps, BranchState> {
             title = 'All branches';
         }
 
-        this.setState({ title });
-    }
+        return { title };
+     }
 
     private onSelect = (branch: string) => {
         let branchSelection = BranchSelection.Current;
