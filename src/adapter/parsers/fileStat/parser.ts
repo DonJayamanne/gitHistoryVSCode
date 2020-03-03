@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { Uri } from 'vscode';
 import { IServiceContainer } from '../../../ioc/types';
-import { CommittedFile, Status } from '../../../types';
+import { CommittedFile, Status, FsUri } from '../../../types';
 import { IFileStatParser, IFileStatStatusParser } from '../types';
 
 @injectable()
@@ -137,7 +137,9 @@ export class FileStatParser implements IFileStatParser {
                 const currentAndOriginalFile = FileStatParser.getNewAndOldFileNameFromNumStatLine(line, status)!;
                 const oldRelativePath = currentAndOriginalFile ? currentAndOriginalFile.original : undefined;
                 const relativePath = currentAndOriginalFile.current;
-                const oldUri = oldRelativePath ? Uri.file(path.join(gitRootPath, oldRelativePath)) : undefined;
+                const oldUri = oldRelativePath
+                    ? (Uri.file(path.join(gitRootPath, oldRelativePath)) as FsUri)
+                    : undefined;
 
                 const fileInfo: CommittedFile = {
                     additions,
@@ -145,9 +147,15 @@ export class FileStatParser implements IFileStatParser {
                     status,
                     relativePath,
                     oldRelativePath,
-                    uri: Uri.file(path.join(gitRootPath, relativePath)),
+                    uri: Uri.file(path.join(gitRootPath, relativePath)) as FsUri,
                     oldUri,
                 };
+
+                fileInfo.uri.path = fileInfo.uri.fsPath;
+
+                if (fileInfo.oldUri) {
+                    fileInfo.oldUri.path = fileInfo.oldUri.fsPath;
+                }
 
                 return fileInfo;
             })

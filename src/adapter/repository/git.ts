@@ -6,7 +6,7 @@ import { Uri } from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
-import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry, Ref } from '../../types';
+import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry, Ref, FsUri } from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
@@ -251,7 +251,7 @@ export class Git implements IGitService {
     }
 
     @cache('IGitService')
-    public async getCommitFile(hash: string, file: Uri | string): Promise<Uri> {
+    public async getCommitFile(hash: string, file: FsUri | string): Promise<Uri> {
         //const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.path.toString();
 
@@ -299,7 +299,7 @@ export class Git implements IGitService {
     }
 
     @cache('IGitService')
-    public async getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash> {
+    public async getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash> {
         const gitRootPath = await this.getGitRoot();
         const relativeFilePath = path.relative(gitRootPath, file.path);
         const args = this.gitArgsService.getPreviousCommitHashForFileArgs(hash, relativeFilePath);

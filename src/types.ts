@@ -11,6 +11,15 @@ export enum BranchSelection {
     Detached = 3,
 }
 
+export type FsUri = {
+    scheme: string;
+    authority: string;
+    path: string;
+    query: string;
+    fragment: string;
+    fsPath: string;
+};
+
 export enum RefType {
     Head,
     RemoteHead,
@@ -35,8 +44,8 @@ export type Branch = {
 };
 
 export type CommittedFile = {
-    uri: Uri;
-    oldUri?: Uri;
+    uri: FsUri;
+    oldUri?: FsUri;
     oldRelativePath?: string;
     relativePath: string;
     status: Status;
@@ -138,10 +147,10 @@ export interface IGitService {
         lineNumber?: number,
         author?: string,
     ): Promise<LogEntries>;
-    getPreviousCommitHashForFile(hash: string, file: Uri): Promise<Hash>;
+    getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
     getCommit(hash: string): Promise<LogEntry | undefined>;
     revertCommit(hash: string): Promise<void>;
-    getCommitFile(hash: string, file: Uri | string): Promise<Uri>;
+    getCommitFile(hash: string, file: FsUri | string): Promise<Uri>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
     cherryPick(hash: string): Promise<void>;
     reset(hash: string, hard?: boolean): Promise<void>;
