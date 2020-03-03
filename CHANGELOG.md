@@ -1,3 +1,6 @@
+## Version 0.6.1
+- Fixed [#478](https://github.com/DonJayamanne/gitHistoryVSCode/issues/478)
+
 ## Version 0.6.0
 - Replaced express with postMessage [#469](https://github.com/DonJayamanne/gitHistoryVSCode/pull/469) [#451](https://github.com/DonJayamanne/gitHistoryVSCode/issues/451)
 - Updated package dependencies and removed gulp [#471](https://github.com/DonJayamanne/gitHistoryVSCode/pull/471)
