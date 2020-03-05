@@ -27,8 +27,7 @@ class App extends React.Component<AppProps, AppState> {
         constructor(props?: AppProps, context?: any) {
         super(props, context);
     }
-        public componentWillMount() {
-    }
+    
     public render() {
         const { children } = this.props;
         const canGoForward = this.props.logEntries.count === -1 || (this.props.logEntries.pageIndex + 1) * this.props.configuration.pageSize < this.props.logEntries.count;

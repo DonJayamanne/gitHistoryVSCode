@@ -29,9 +29,9 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         this.state = { isLoading: props.isLoading, searchText: props.searchText };
     }
 
-    componentWillReceiveProps(nextProps: HeaderProps): void {
-        this.setState({ isLoading: nextProps.isLoading, searchText: nextProps.searchText });
-    }
+    static getDerivedStateFromProps(nextProps, prevState){
+        return { isLoading: nextProps.isLoading };
+     }
 
     private onSearch = () => {
         if (!this.state.isLoading) {
