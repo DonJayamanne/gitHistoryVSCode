@@ -12,4 +12,4 @@ jobs:
       with:
         node-version: '10.x'
     - run: npm install
-    - run: npm run lint
+    - run: npm run vscode:prepublish
