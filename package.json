@@ -371,7 +371,8 @@
         "webpack": "webpack -p --progress --colors",
         "webpack-dev": "webpack --progress --colors --watch",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "lint": "eslint --fix 'src/**/*.ts'",
+        "lint": "eslint 'src/**/*.ts'",
+        "fix": "eslint --fix 'src/**/*.ts'",
         "precommit": "lint-staged"
     },
     "lint-staged": {
