@@ -1,0 +1,14 @@
+{
+    "ignoreIssuesWith": [
+        "wontfix",
+        "duplicate",
+        "hide-release"
+    ],
+    "template": {
+        "issue": "- {{name}} [{{text}}]({{url}})",
+    },
+    "groupBy": {
+        "Enhancements:": ["enhancement", "enhancement-ui", "enhancement-ui-filter", "enhancement-ui-data"],
+        "Bug Fixes:": ["bug"]
+    }
+}

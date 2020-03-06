@@ -14,7 +14,12 @@ jobs:
         with:
           node-version: '10.x'
       - run: npm install github-release-notes -g
-      - run: gren release -d --data-source commits
+      - run: gren release -d
         env:
           GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: gren changelog --override
+        env:
+          GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: cat CHANGELOG.md
+        
         
