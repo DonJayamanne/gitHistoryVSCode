@@ -138,6 +138,9 @@ div.appRoot {
 	margin-bottom: 0px;
 	display: flex;
 	justify-content: flex-end;
+}
+
+.log-entry .media-image > div.buttons > div {
 	background-color: var(--vscode-scrollbarSlider-background);
 	padding: .3em .5em .3em 0em;
 	font-size: 75%;
