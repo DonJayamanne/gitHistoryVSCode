@@ -174,7 +174,11 @@ export class Git implements IGitService {
         const gitRepoPath = this.getGitRoot();
         const output = await this.exec(...args.logArgs);
 
-        const count = parseInt(await this.exec(...args.counterArgs));
+        let count = -1;
+
+        if (!lineNumber) {
+            count = parseInt(await this.exec(...args.counterArgs));
+        }
 
         const items = output
             .split(LOG_ENTRY_SEPARATOR)

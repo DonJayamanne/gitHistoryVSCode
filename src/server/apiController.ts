@@ -39,6 +39,8 @@ export class ApiController {
 
         let pageSize: number | undefined = args.pageSize ? parseInt(args.pageSize, 10) : undefined;
         // When getting history for a line, then always get 10 pages, cuz `git log -L` also spits out the diff, hence slow
+        // with  git cli version 2.22 "git log -s" may be used to suppress patch output.
+        // See https://github.com/git/git/commit/9f607cd09c4c953d76de4bd18ba1c9bf6cf383cd
         if (typeof lineNumber === 'number') {
             pageSize = 10;
         }
