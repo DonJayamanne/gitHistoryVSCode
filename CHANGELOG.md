@@ -2,6 +2,7 @@
 - Fixed deprecated react methods [#480](https://github.com/DonJayamanne/gitHistoryVSCode/pull/480)
 - Applied PR [#483](https://github.com/DonJayamanne/gitHistoryVSCode/pull/483)
 - Added PR validator using Github actions [#481](https://github.com/DonJayamanne/gitHistoryVSCode/pull/481)
+- Fixed references not updating and disappearing [#484](https://github.com/DonJayamanne/gitHistoryVSCode/pull/484)
 
 ## Version 0.6.1
 - Fixed [#478](https://github.com/DonJayamanne/gitHistoryVSCode/issues/478)
