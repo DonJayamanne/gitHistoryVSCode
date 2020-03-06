@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { LogEntry, Ref } from '../../../definitions';
-import LogEntryView from '../LogEntry';
+
+import Chip from '@material-ui/core/Chip';
+import TableCell from '@material-ui/core/TableCell';
+import { AutoSizer, Column, Table } from 'react-virtualized';
 
 interface ResultProps {
     logEntries: LogEntry[];
@@ -9,22 +12,90 @@ interface ResultProps {
     onRefAction(logEntry: LogEntry, ref: Ref, name: string): void;
 }
 
-export default class LogEntryList extends React.Component<ResultProps> {
-    public ref: HTMLDivElement;
-    public render() {
-        if (!Array.isArray(this.props.logEntries)) {
-            return null;
-        }
+interface LogEntriesState {
+    headerHeight: number;
+    rowHeight: number;
+}
 
-        const results = this.props.logEntries.map(entry => (
-            <LogEntryView
-                key={entry.hash.full}
-                logEntry={entry}
-                onAction={this.props.onAction}
-                onRefAction={this.props.onRefAction}
-                onViewCommit={this.props.onViewCommit}
-            />
-        ));
-        return <div ref={ref => (this.ref = ref)}>{results}</div>;
+export default class LogEntryVirtualizedTable extends React.Component<ResultProps, LogEntriesState> {
+    private columns: any;
+
+    constructor(props?: ResultProps, context?: any) {
+        super(props, context);
+
+        this.state = { headerHeight: 48, rowHeight: 48 };
+        this.columns = [
+            {
+                width: 200,
+                label: 'Subject',
+                dataKey: 'subject',
+            },
+            {
+                width: 200,
+                label: 'Created',
+                dataKey: 'date',
+            }
+        ];
+    }
+
+    headerRenderer = ({ label, columnIndex }) => {
+        return (
+            <TableCell
+                component="div"
+                variant="head"
+                style={{ height: this.state.headerHeight }}
+                align={this.columns[columnIndex].numeric || false ? 'right' : 'left'}
+            >
+                <span>{label}</span>
+            </TableCell>
+        );
+    };
+
+    cellRenderer = ({ cellData, columnIndex }) => {
+        return (
+            <TableCell
+                component="div"
+                variant="body"
+                style={{ height: this.state.rowHeight }}
+                align={(columnIndex != null && this.columns[columnIndex].numeric) || false ? 'right' : 'left'}
+            >
+                <Chip label="Basic" component="a" href="#chip" />
+                {cellData}
+            </TableCell>
+        );
+    };
+
+    render() {
+        return (
+            <AutoSizer>
+                {({ height, width }) => (
+                    <Table
+                        height={height}
+                        width={width}
+                        rowHeight={60}
+                        gridStyle={{ direction: 'inherit' }}
+                        headerHeight={this.state.headerHeight}
+                        {...this.props}
+                    >
+                        {this.columns.map(({ dataKey, ...other }, index) => {
+                            return (
+                                <Column
+                                    key={dataKey}
+                                    headerRenderer={headerProps =>
+                                        this.headerRenderer({
+                                            ...headerProps,
+                                            columnIndex: index,
+                                        })
+                                    }
+                                    cellRenderer={this.cellRenderer}
+                                    dataKey={dataKey}
+                                    {...other}
+                                />
+                            );
+                        })}
+                    </Table>
+                )}
+            </AutoSizer>
+        );
     }
 }

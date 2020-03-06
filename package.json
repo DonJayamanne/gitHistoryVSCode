@@ -504,6 +504,8 @@
         "webpack-cli": "^3.3.11"
     },
     "dependencies": {
+        "@material-ui/core": "latest",
+        "react-virtualized": "latest",
         "event-stream": "4.0.1",
         "fs-extra": "^8.1.0",
         "gravatar": "^1.8.1",
