@@ -1,4 +1,5 @@
 ## Version 0.6.2
+- Fixed deprecated react methods [#480](https://github.com/DonJayamanne/gitHistoryVSCode/pull/480)
 - Applied PR [#483](https://github.com/DonJayamanne/gitHistoryVSCode/pull/483)
 
 ## Version 0.6.1
