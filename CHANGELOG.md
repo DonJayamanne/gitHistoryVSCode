@@ -1,3 +1,6 @@
+## Version 0.6.2
+- Applied PR [#483](https://github.com/DonJayamanne/gitHistoryVSCode/pull/483)
+
 ## Version 0.6.1
 - Fixed [#478](https://github.com/DonJayamanne/gitHistoryVSCode/issues/478)
 
