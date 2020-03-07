@@ -152,6 +152,11 @@ export class Git implements IGitService {
         this.refHashesMap.clear();
 
         const tags = this.repo.state.refs.filter(x => x.type === RefType.Tag);
+
+        if (tags.length === 0) {
+            return;
+        }
+
         const tagNames = tags.map(x => {
             // use the dereferenced hash for annotated tags
             // this also works for non annotated tags
