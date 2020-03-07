@@ -10,12 +10,13 @@ import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, Log
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
-import { Repository } from './git.d';
+import { Repository, RefType } from './git.d';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
 
 @injectable()
 export class Git implements IGitService {
+    private refHashesMap: Map<string, string> = new Map<string, string>();
     constructor(
         private repo: Repository,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
@@ -143,9 +144,38 @@ export class Git implements IGitService {
 
         return '';
     }
-    public async getRefsContainingCommit(hash: string): Promise<string[]> {
-        return this.repo.state.refs.filter(x => x.commit === hash).map(x => x.name || '');
+
+    /**
+     * Used to load dereferenced hashes for (annotation) tags
+     */
+    private async loadDereferenceHashes() {
+        this.refHashesMap.clear();
+
+        const tags = this.repo.state.refs.filter(x => x.type === RefType.Tag);
+        const tagNames = tags.map(x => {
+            // use the dereferenced hash for annotated tags
+            // this also works for non annotated tags
+            return x.name! + '^{}';
+        });
+
+        const result = await this.exec(...['rev-parse', ...tagNames]);
+
+        result
+            .trim()
+            .split(/\r\n|\n/)
+            .forEach((x, i) => {
+                this.refHashesMap.set(tags[i].name!, x);
+            });
     }
+
+    public getRefsContainingCommit(hash: string): Ref[] {
+        return this.repo.state.refs
+            .filter(x => (x.type === RefType.Tag && this.refHashesMap.get(x.name!) === hash) || x.commit === hash)
+            .map(x => {
+                return { type: x.type as any, name: x.name } as Ref;
+            });
+    }
+
     public async getLogEntries(
         pageIndex = 0,
         pageSize = 0,
@@ -180,6 +210,8 @@ export class Git implements IGitService {
             count = parseInt(await this.exec(...args.counterArgs));
         }
 
+        await this.loadDereferenceHashes();
+
         const items = output
             .split(LOG_ENTRY_SEPARATOR)
             .map(entry => {
@@ -191,12 +223,7 @@ export class Git implements IGitService {
             .filter(logEntry => logEntry !== undefined)
             .map(logEntry => {
                 // fill the refs from native git extension
-                logEntry!.refs = this.repo.state.refs
-                    .filter(x => x.commit === logEntry!.hash.full)
-                    .map(x => {
-                        return { type: x.type as any, name: x.name } as Ref;
-                    });
-
+                logEntry!.refs = this.getRefsContainingCommit(logEntry!.hash.full);
                 return logEntry!;
             });
 
@@ -221,7 +248,7 @@ export class Git implements IGitService {
         } as LogEntries;
     }
 
-    public async getCommit(hash: string): Promise<LogEntry | undefined> {
+    public async getCommit(hash: string, withRefs = false): Promise<LogEntry | undefined> {
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgsForMerge(hash);
 
@@ -251,7 +278,14 @@ export class Git implements IGitService {
             .filter(entry => entry !== undefined)
             .map(entry => entry!);
 
-        return entries.length > 0 ? entries[0] : undefined;
+        if (entries.length > 0) {
+            if (withRefs) {
+                entries[0].refs = this.getRefsContainingCommit(hash);
+            }
+            return entries[0];
+        }
+
+        return undefined;
     }
 
     @cache('IGitService')
@@ -344,11 +378,15 @@ export class Git implements IGitService {
     }
 
     public async createTag(tagName: string, hash: string): Promise<string> {
-        return this.exec('tag', '-a', tagName, '-m', tagName, hash);
+        const result = await this.exec('tag', '-a', tagName, '-m', tagName, hash);
+        // force git extension API to update repository refs
+        await this.repo.status();
+        return result;
     }
 
     public async removeTag(tagName: string) {
         await this.exec('tag', '-d', tagName);
+        this.refHashesMap.delete(tagName);
     }
 
     public async removeBranch(branchName: string) {

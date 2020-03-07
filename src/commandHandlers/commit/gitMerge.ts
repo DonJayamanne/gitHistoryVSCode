@@ -23,9 +23,11 @@ export class GitMergeCommandHandler implements IGitMergeCommandHandler {
             .createGitService(commit.workspaceFolder);
         const currentBranch = await gitService.getCurrentBranch();
 
-        const commitBranches = (await gitService.getRefsContainingCommit(commit.logEntry.hash.full)).filter(
-            value => value.length > 0,
-        );
+        const commitBranches = gitService
+            .getRefsContainingCommit(commit.logEntry.hash.full)
+            .filter(value => value.name!.length > 0)
+            .map(x => x.name!);
+
         const branchMsg = `Choose the commit/branch to merge into ${currentBranch}`;
         const rev = await this.applicationShell.showQuickPick([commit.logEntry.hash.full, ...commitBranches], {
             placeHolder: branchMsg,

@@ -121,7 +121,7 @@ export class ApiController {
                 await this.gitService.removeRemoteBranch(refEntry.name!);
         }
 
-        return this.gitService.getCommit(hash);
+        return this.gitService.getCommit(hash, true);
     }
     public async doAction(args: any) {
         const gitRoot = this.gitService.getGitRoot();

@@ -137,7 +137,7 @@ export interface IGitService {
     getDetachedHash(): string | undefined;
     getBranches(): Promise<Branch[]>;
     getCurrentBranch(): Promise<string>;
-    getRefsContainingCommit(hash: string): Promise<string[]>;
+    getRefsContainingCommit(hash: string): Ref[];
     getLogEntries(
         pageIndex?: number,
         pageSize?: number,
@@ -148,7 +148,7 @@ export interface IGitService {
         author?: string,
     ): Promise<LogEntries>;
     getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash>;
-    getCommit(hash: string): Promise<LogEntry | undefined>;
+    getCommit(hash: string, withRefs?: boolean): Promise<LogEntry | undefined>;
     revertCommit(hash: string): Promise<void>;
     getCommitFile(hash: string, file: FsUri | string): Promise<Uri>;
     getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]>;
