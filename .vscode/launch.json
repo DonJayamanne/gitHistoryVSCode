@@ -1,39 +1,37 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
-	"version": "0.1.0",
-	"configurations": [
-		{
-			"name": "Launch Extension",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceRoot}"
-			],
-			"stopOnEntry": false,
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "name": "Launch Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
+            "stopOnEntry": false,
             "smartStep": true,
-			"sourceMaps": true,
-			"outFiles": [
-				"${workspaceRoot}/dist/**/*.js"
-			],
-			"preLaunchTask": "webpack-dev"
-		},
-		{
-			"name": "Launch Tests",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"${workspaceRoot}/src/test",
-				"--extensionDevelopmentPath=${workspaceRoot}",
-				"--extensionTestsPath=${workspaceRoot}/out/test"
-			],
-			"stopOnEntry": false,
-			"sourceMaps": true,
-			"outFiles": [
-				"${workspaceRoot}/out/**/*.js"
-			],
-			"preLaunchTask": "npm: test-compile"
-		}
-	]
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*.js"
+            ],
+            "preLaunchTask": "webpack-dev"
+        },
+        {
+            "name": "Launch Unit Tests",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--inspect-brk",
+                "${workspaceRoot}/node_modules/.bin/jest",
+                "--runInBand",
+                "--config",
+                "${workspaceRoot}/jest.config.js"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
 }

@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import { ActionDetailsParser } from '../../../src/adapter/parsers/actionDetails/parser';
 
 describe('Adapter ActionedDetails Parser', () => {
-    it('Information is returned correctly', () => {
+    test('Information is returned correctly', () => {
         const name = `Don Jayamanne ${new Date().getTime()}`;
         const email = `don.jayamanne@yahoo.com ${new Date().getTime()}`;
         const date = new Date();

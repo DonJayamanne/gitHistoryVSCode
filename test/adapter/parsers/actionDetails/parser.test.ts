@@ -2,8 +2,7 @@ import { expect } from 'chai';
 import { ActionDetailsParser } from '../../../../src/adapter/parsers/actionDetails/parser';
 
 describe('Adapter Parser ActionDetails', () => {
-
-    it('Information is returned correctly', () => {
+    test('Information is returned correctly', () => {
         const date = new Date();
         const name = `Don Jayamanne ${date.getTime()}`;
         const email = `don.jayamanne@yahoo.com ${date.getTime()}`;
@@ -14,7 +13,7 @@ describe('Adapter Parser ActionDetails', () => {
         expect(info.date.toLocaleDateString()).is.equal(date.toLocaleDateString(), 'time is incorrect');
     });
 
-    it('Undefined is returned if information is empty', () => {
+    test('Undefined is returned if information is empty', () => {
         const info = new ActionDetailsParser().parse('', '', '')!;
         expect(info).to.be.an('undefined', 'Action details must be undefined');
     });
