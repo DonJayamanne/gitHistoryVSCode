@@ -13,3 +13,4 @@ jobs:
         node-version: '10.x'
     - run: npm install
     - run: npm run vscode:prepublish
+    - run: npm run test
