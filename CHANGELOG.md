@@ -2,6 +2,8 @@
 - Fixed deprecated react methods [#480](https://github.com/DonJayamanne/gitHistoryVSCode/pull/480)
 - Applied PR [#483](https://github.com/DonJayamanne/gitHistoryVSCode/pull/483)
 - Added PR validator using Github actions [#481](https://github.com/DonJayamanne/gitHistoryVSCode/pull/481)
+- Fixed line history shows empty list [#486](https://github.com/DonJayamanne/gitHistoryVSCode/issues/486)
+- Auto fix eslint issues and add recommended extensions [#488](https://github.com/DonJayamanne/gitHistoryVSCode/pull/488)
 - Fixed references not updating and disappearing [#484](https://github.com/DonJayamanne/gitHistoryVSCode/pull/484)
 
 ## Version 0.6.1
