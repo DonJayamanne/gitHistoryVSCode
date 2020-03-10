@@ -19,4 +19,8 @@ module.exports = {
     // See ./build/postInstall.js
     reporters: ['jest-standard-reporter'],
     useStderr: true,
+    // Ensure it dies properly on CI (test step didn't exit).
+    forceExit: true,
+    // Ensure it dies properly on CI (test step didn't exit).
+    detectOpenHandles: true,
 };
