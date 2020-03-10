@@ -1,7 +1,7 @@
 import { Writable } from 'stream';
 import { API } from '../repository/git.d';
 
-export const IGitCommandExecutor = Symbol('IGitCommandExecutor');
+export const IGitCommandExecutor = Symbol.for('IGitCommandExecutor');
 
 export interface IGitCommandExecutor {
     readonly gitApi: Promise<API>;

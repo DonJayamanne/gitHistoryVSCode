@@ -8,7 +8,7 @@ export type ServiceIdentifier<T> = string | symbol | Newable<T> | Abstract<T>;
 
 export type ClassType<T> = new (...args: any[]) => T;
 
-export const IServiceManager = Symbol('IServiceManager');
+export const IServiceManager = Symbol.for('IServiceManager');
 
 export interface IServiceManager {
     add<T>(serviceIdentifier: ServiceIdentifier<T>, constructor: ClassType<T>, name?: string | number | symbol): void;
@@ -26,7 +26,7 @@ export interface IServiceManager {
     getAll<T>(serviceIdentifier: ServiceIdentifier<T>, name?: string | number | symbol): T[];
 }
 
-export const IServiceContainer = Symbol('IServiceContainer');
+export const IServiceContainer = Symbol.for('IServiceContainer');
 export interface IServiceContainer {
     get<T>(serviceIdentifier: ServiceIdentifier<T>, name?: string | number | symbol): T;
     getAll<T>(serviceIdentifier: ServiceIdentifier<T>, name?: string | number | symbol): T[];

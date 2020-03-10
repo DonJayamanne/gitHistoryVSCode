@@ -126,8 +126,8 @@ export enum Status {
     Broken,
     TypeChanged,
 }
-export const IGitService = Symbol('IGitService');
-export const IOutputChannel = Symbol('IOutputChannel');
+export const IGitService = Symbol.for('IGitService');
+export const IOutputChannel = Symbol.for('IOutputChannel');
 
 export interface IGitService {
     getGitRoot(): string;
@@ -172,7 +172,7 @@ export type CommitComparison = {
     differences: CommittedFile[];
 };
 
-export const IGitServiceFactory = Symbol('IGitServiceFactory');
+export const IGitServiceFactory = Symbol.for('IGitServiceFactory');
 
 export interface IGitServiceFactory {
     getIndex(): number;

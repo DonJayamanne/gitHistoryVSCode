@@ -9,7 +9,7 @@ export enum Architecture {
     x64 = 3,
 }
 
-export const IPlatformService = Symbol('IPlatformService');
+export const IPlatformService = Symbol.for('IPlatformService');
 export interface IPlatformService {
     isWindows: boolean;
     isMac: boolean;
@@ -18,7 +18,7 @@ export interface IPlatformService {
     pathVariableName: 'Path' | 'PATH';
 }
 
-export const IFileSystem = Symbol('IFileSystem');
+export const IFileSystem = Symbol.for('IFileSystem');
 export interface IFileSystem {
     directorySeparatorChar: string;
     objectExistsAsync(path: string, statCheck: (s: fs.Stats) => boolean): Promise<boolean>;
