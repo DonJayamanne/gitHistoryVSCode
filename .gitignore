@@ -12,3 +12,4 @@ npm-debug.log
 **/.mypy_cache/**
 !yarn.lock
 coverage/
+temp/**

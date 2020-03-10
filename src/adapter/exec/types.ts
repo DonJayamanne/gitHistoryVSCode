@@ -1,10 +1,10 @@
 import { Writable } from 'stream';
-import { GitExtension } from '../repository/git.d';
+import { API } from '../repository/git.d';
 
 export const IGitCommandExecutor = Symbol.for('IGitCommandExecutor');
 
 export interface IGitCommandExecutor {
-    gitExtension: GitExtension;
+    readonly gitApi: Promise<API>;
     exec(cwd: string, ...args: string[]): Promise<string>;
     exec(options: { cwd: string; shell?: boolean }, ...args: string[]): Promise<string>;
     exec(

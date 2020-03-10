@@ -13,7 +13,7 @@ import { IGitArgsService } from './types';
 @injectable()
 export class GitServiceFactory implements IGitServiceFactory {
     private readonly gitServices = new Map<string, IGitService>();
-    private gitApi: API;
+    private readonly gitApi: Promise<API>;
     private repoIndex: number;
     constructor(
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
@@ -21,7 +21,7 @@ export class GitServiceFactory implements IGitServiceFactory {
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
     ) {
-        this.gitApi = this.gitCmdExecutor.gitExtension.getAPI(1);
+        this.gitApi = this.gitCmdExecutor.gitApi;
         this.repoIndex = -1;
     }
 
@@ -40,8 +40,8 @@ export class GitServiceFactory implements IGitServiceFactory {
 
         const app = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
         const pickList: QuickPickItem[] = [];
-
-        this.gitApi.repositories.forEach(x => {
+        const gitApi = await this.gitApi;
+        gitApi.repositories.forEach(x => {
             pickList.push({
                 label: path.basename(x.rootUri.path),
                 detail: x.rootUri.path,
@@ -57,18 +57,18 @@ export class GitServiceFactory implements IGitServiceFactory {
         };
         const selectedItem = await app.showQuickPick(pickList, options);
         if (selectedItem) {
-            this.repoIndex = this.gitApi.repositories.findIndex(x => x.rootUri.path === selectedItem.detail);
+            this.repoIndex = gitApi.repositories.findIndex(x => x.rootUri.path === selectedItem.detail);
         }
     }
 
     public async createGitService(resource?: Uri | string): Promise<IGitService> {
         const resourceUri = typeof resource === 'string' ? Uri.file(resource) : resource;
-
+        const gitApi = await this.gitApi;
         if (!resourceUri) {
-            if (this.repoIndex === -1 && this.gitApi.repositories.length === 1) {
+            if (this.repoIndex === -1 && gitApi.repositories.length === 1) {
                 this.repoIndex = 0;
             } else {
-                const currentIndex = this.gitApi.repositories.findIndex(x => x.ui.selected);
+                const currentIndex = gitApi.repositories.findIndex(x => x.ui.selected);
                 // show repository picker
                 if (this.repoIndex === -1) {
                     await this.repositoryPicker();
@@ -81,10 +81,10 @@ export class GitServiceFactory implements IGitServiceFactory {
         if (resourceUri) {
             // find the correct repository from the given resource uri
             let i = 0;
-            for (const x of this.gitApi.repositories) {
+            for (const x of gitApi.repositories) {
                 if (
                     resourceUri!.fsPath.startsWith(x.rootUri.fsPath) &&
-                    x.rootUri.fsPath === this.gitApi.repositories[i].rootUri.fsPath
+                    x.rootUri.fsPath === gitApi.repositories[i].rootUri.fsPath
                 ) {
                     this.repoIndex = i;
                     break;
@@ -97,7 +97,7 @@ export class GitServiceFactory implements IGitServiceFactory {
             this.gitServices.set(
                 this.repoIndex.toString(),
                 new Git(
-                    this.gitApi.repositories[this.repoIndex],
+                    gitApi.repositories[this.repoIndex],
                     this.serviceContainer,
                     this.gitCmdExecutor,
                     this.logParser,
