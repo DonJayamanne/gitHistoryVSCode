@@ -22,7 +22,16 @@ export class GitCommandExecutor implements IGitCommandExecutor {
             if (!extension?.isActive) {
                 await extension?.activate();
             }
-            resolve(extension!.exports.getAPI(1));
+            const api = extension!.exports.getAPI(1);
+            // Wait for the API to get initialized.
+            api.onDidChangeState(() => {
+                if (api.state === 'initialized') {
+                    resolve(extension!.exports.getAPI(1));
+                }
+            });
+            if (api.state === 'initialized') {
+                resolve(extension!.exports.getAPI(1));
+            }
         });
         this.gitExecutablePath = this.gitApi.then(api => api.git.path);
     }
