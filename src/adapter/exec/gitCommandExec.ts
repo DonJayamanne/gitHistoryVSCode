@@ -4,7 +4,7 @@ import { injectable, multiInject } from 'inversify';
 import { Writable } from 'stream';
 import { extensions } from 'vscode';
 import { IGitCommandExecutor } from './types';
-import { GitExtension } from '../repository/git.d';
+import { GitExtension, API } from '../repository/git.d';
 import { StopWatch } from '../../common/stopWatch';
 import { ILogService } from '../../common/types';
 
@@ -13,22 +13,26 @@ const isWindows = /^win/.test(process.platform);
 
 @injectable()
 export class GitCommandExecutor implements IGitCommandExecutor {
-    public gitExtension: GitExtension;
-    private gitExecutablePath: string;
+    public gitApi: Promise<API>;
+    private gitExecutablePath: Promise<string>;
 
     constructor(@multiInject(ILogService) private loggers: ILogService[]) {
-        this.gitExtension = extensions.getExtension<GitExtension>('vscode.git')!.exports;
-
-        const gitApi = this.gitExtension.getAPI(1);
-        this.gitExecutablePath = gitApi.git.path;
+        this.gitApi = new Promise(async resolve => {
+            const extension = extensions.getExtension<GitExtension>('vscode.git');
+            if (!extension?.isActive) {
+                await extension?.activate();
+            }
+            resolve(extension!.exports.getAPI(1));
+        });
+        this.gitExecutablePath = this.gitApi.then(api => api.git.path);
     }
     public exec(cwd: string, ...args: string[]): Promise<string>;
     // tslint:disable-next-line:unified-signatures
     public exec(options: { cwd: string; shell?: boolean }, ...args: string[]): Promise<string>;
     public exec(options: { cwd: string; encoding: 'binary' }, destination: Writable, ...args: string[]): Promise<void>;
     // tslint:disable-next-line:no-any
-    public exec(options: any, ...args: any[]): Promise<any> {
-        let gitPath = this.gitExecutablePath;
+    public async exec(options: any, ...args: any[]): Promise<any> {
+        let gitPath = await this.gitExecutablePath;
         gitPath = isWindows ? gitPath.replace(/\\/g, '/') : gitPath;
         const childProcOptions = typeof options === 'string' ? { cwd: options, encoding: DEFAULT_ENCODING } : options;
         if (typeof childProcOptions.encoding !== 'string' || childProcOptions.encoding.length === 0) {
