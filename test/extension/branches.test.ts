@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { Uri, extensions } from 'vscode';
-import { cloneRepo, checkoutRemotes as checkoutRemote, createBranch, changeBranch } from './repoSetup';
+import { changeBranch, setupDefaultRepo } from './repoSetup';
 import { IServiceManager } from '../../src/ioc/types';
 import { IGitServiceFactory } from '../../src/types';
 import * as path from 'path';
@@ -13,20 +13,7 @@ describe('Branches', () => {
     const localPath = path.join(tempRepoFolder, 'test_gitHistory');
 
     beforeAll(async () => {
-        await cloneRepo(repoPath);
-
-        await checkoutRemote(repoPath, 'origin', 'WIP');
-        await checkoutRemote(repoPath, 'origin', 'addBranchTests');
-        await checkoutRemote(repoPath, 'origin', 'addTests');
-        await checkoutRemote(repoPath, 'origin', 'curvyGraphs');
-        await checkoutRemote(repoPath, 'origin', 'jest');
-        await checkoutRemote(repoPath, 'origin', 'part1FixStartup');
-        await checkoutRemote(repoPath, 'origin', 'replace-webserver-with-postmessage');
-
-        await createBranch(repoPath, 'localBranch1');
-        await createBranch(repoPath, 'localBranch2');
-        await createBranch(repoPath, 'localBranch3');
-        await changeBranch(repoPath, 'master');
+        await setupDefaultRepo();
 
         const extension = extensions.getExtension('donjayamanne.githistory');
         if (!extension?.isActive) {

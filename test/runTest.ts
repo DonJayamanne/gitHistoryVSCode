@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import { runTests } from 'vscode-test';
 import { extensionRootPath, tempRepoFolder } from './common';
+import { setupDefaultRepo } from './extension/repoSetup';
 
 async function main() {
     try {
@@ -13,6 +14,9 @@ async function main() {
         // Passed to --extensionTestsPath
         const extensionTestsPath = path.resolve(__dirname, './extension/testRunner');
         fs.mkdirpSync(path.join(tempRepoFolder, 'test_gitHistory'));
+
+        await setupDefaultRepo();
+
         // Download VS Code, unzip it and run the integration test
         await runTests({
             extensionDevelopmentPath,
