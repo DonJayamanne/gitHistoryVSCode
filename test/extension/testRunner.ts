@@ -1,8 +1,9 @@
 import * as jest from 'jest';
 import * as path from 'path';
+import { AggregatedResult } from '@jest/test-result';
 
 const extensionRoot = path.join(__dirname, '..', '..', '..');
-
+type Output = { results: AggregatedResult };
 export function run(): Promise<void> {
     // jest doesn't seem to provide a way to inject global/dynamic imports.
     // Basically if we have a `require`, jest assumes that it is a module on disc.
@@ -17,9 +18,18 @@ export function run(): Promise<void> {
     return new Promise((resolve, reject) => {
         jest.runCLI(jestConfig, [extensionRoot])
             .catch(error => {
-                console.log('Tests failed', error);
+                console.error('Calling jest.runCLI failed', error);
                 reject(error);
             })
-            .then(() => resolve());
+            .then(output => {
+                if (!output) {
+                    return resolve();
+                }
+                const results = output as Output;
+                if (results.results.numFailedTestSuites || results.results.numFailedTests) {
+                    return reject();
+                }
+                resolve();
+            });
     });
 }

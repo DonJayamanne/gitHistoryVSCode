@@ -7,7 +7,7 @@
         ],
         "module": "commonjs",
         "moduleResolution": "node",
-        "outDir": "out",
+        "outDir": "dist",
         "sourceMap": true,
         "target": "es6",
         "experimentalDecorators": true,
@@ -26,6 +26,7 @@
         "./node_modules",
         "./node_modules/@types",
         "/node_modules/@types/**/*",
+        "./temp/**/*",
         ".vscode-test",
         "browser",
         "browser/src/**/*"

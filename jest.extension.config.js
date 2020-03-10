@@ -4,10 +4,10 @@ const path = require('path');
 module.exports = {
     testEnvironment: 'node',
     // Be specific, as we don't want mocks from other test suites messing this up.
-    roots: [path.join(__dirname, 'out/test/extension')],
+    roots: [path.join(__dirname, 'dist/test/extension')],
     moduleFileExtensions: ['js'],
-    testMatch: [path.join(__dirname, 'out/test/extension/**/*.test.js')],
-    setupFiles: [path.join(__dirname, 'out/test/setup.js')],
+    testMatch: [path.join(__dirname, 'dist/test/extension/**/*.test.js')],
+    setupFiles: [path.join(__dirname, 'dist/test/setup.js')],
     collectCoverage: true,
     verbose: true,
     debug: true,

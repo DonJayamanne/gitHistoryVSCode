@@ -13,7 +13,7 @@ import { IGitArgsService } from './types';
 @injectable()
 export class GitServiceFactory implements IGitServiceFactory {
     private readonly gitServices = new Map<string, IGitService>();
-    private readonly gitApi: Promise<API>;
+    public readonly gitApi: Promise<API>;
     private repoIndex: number;
     constructor(
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
