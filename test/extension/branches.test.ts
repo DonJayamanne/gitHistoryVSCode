@@ -145,5 +145,5 @@ describe('Branches', () => {
         const currentBranch = await gitService.getCurrentBranch();
 
         assert.equal(currentBranch, 'localBranch1');
-    }, 10_000);
+    }, 5_000);
 });
