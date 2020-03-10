@@ -1,8 +1,8 @@
 import { assert } from 'chai';
 import * as TypeMoq from 'typemoq';
-import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatStatus/parser';
-import { ILogService } from '../../../../src/common/types';
-import { Status } from '../../../../src/types';
+import { FileStatStatusParser } from '../../../../../src/adapter/parsers/fileStatStatus/parser';
+import { ILogService } from '../../../../../src/common/types';
+import { Status } from '../../../../../src/types';
 
 describe('Adapter Parser File Status', () => {
     test('Ensure status can be parsed correctly', () => {

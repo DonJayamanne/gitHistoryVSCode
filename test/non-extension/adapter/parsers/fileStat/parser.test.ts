@@ -2,12 +2,12 @@ import { assert, expect } from 'chai';
 import * as path from 'path';
 import * as TypeMoq from 'typemoq';
 import { Uri } from 'vscode';
-import { FileStatParser } from '../../../../src/adapter/parsers/fileStat/parser';
-import { FileStatStatusParser } from '../../../../src/adapter/parsers/fileStatStatus/parser';
-import { IFileStatStatusParser } from '../../../../src/adapter/parsers/types';
-import { ILogService } from '../../../../src/common/types';
-import { Status } from '../../../../src/types';
-import { TestServiceContainer } from '../../../mocks';
+import { FileStatParser } from '../../../../../src/adapter/parsers/fileStat/parser';
+import { FileStatStatusParser } from '../../../../../src/adapter/parsers/fileStatStatus/parser';
+import { IFileStatStatusParser } from '../../../../../src/adapter/parsers/types';
+import { ILogService } from '../../../../../src/common/types';
+import { Status } from '../../../../../src/types';
+import { TestServiceContainer } from '../../../../mocks';
 
 describe('Adapter Parser File Stat', () => {
     const gitRootPath = path.join('src', 'adapter');
