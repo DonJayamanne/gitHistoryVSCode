@@ -1,6 +1,6 @@
 import { LogEntry } from '../types';
 
-export const ICommitViewFormatter = Symbol('ICommitViewFormatter');
+export const ICommitViewFormatter = Symbol.for('ICommitViewFormatter');
 
 export interface ICommitViewFormatter {
     format(logEntry: LogEntry): string;

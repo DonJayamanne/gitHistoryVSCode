@@ -1,6 +1,6 @@
 import { TextDocument, TextDocumentShowOptions, TextEditor, Uri, ViewColumn } from 'vscode';
 
-export const IDocumentManager = Symbol('IDocumentManager');
+export const IDocumentManager = Symbol.for('IDocumentManager');
 
 export interface IDocumentManager {
     /**

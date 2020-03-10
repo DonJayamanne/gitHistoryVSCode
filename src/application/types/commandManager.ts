@@ -1,6 +1,6 @@
 import { Disposable, TextEditor, TextEditorEdit } from 'vscode';
 
-export const ICommandManager = Symbol('ICommandManager');
+export const ICommandManager = Symbol.for('ICommandManager');
 
 export interface ICommandManager {
     /**

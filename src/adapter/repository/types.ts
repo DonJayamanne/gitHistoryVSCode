@@ -5,7 +5,7 @@ export type GitLogArgs = {
     fileStatArgs: string[];
     counterArgs: string[];
 };
-export const IGitArgsService = Symbol('IGitArgsService');
+export const IGitArgsService = Symbol.for('IGitArgsService');
 
 export interface IGitArgsService {
     getAuthorsArgs(): string[];

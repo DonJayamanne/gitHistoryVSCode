@@ -10,7 +10,7 @@ import {
     WorkspaceFoldersChangeEvent,
 } from 'vscode';
 
-export const IWorkspaceService = Symbol('IWorkspace');
+export const IWorkspaceService = Symbol.for('IWorkspace');
 
 export interface IWorkspaceService {
     /**
