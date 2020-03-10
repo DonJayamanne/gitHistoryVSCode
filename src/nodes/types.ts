@@ -53,14 +53,14 @@ export class FileNode extends AbstractCommitNode<FileCommitDetails> {
     }
 }
 
-export const INodeFactory = Symbol('INodeFactory');
+export const INodeFactory = Symbol.for('INodeFactory');
 
 export interface INodeFactory {
     createDirectoryNode(commit: CommitDetails, relativePath: string): DirectoryNode;
     createFileNode(commit: CommitDetails, committedFile: CommittedFile): FileNode;
 }
 
-export const INodeBuilder = Symbol('INodeBuilder');
+export const INodeBuilder = Symbol.for('INodeBuilder');
 
 export interface INodeBuilder {
     buildTree(commit: CommitDetails, committedFiles: CommittedFile[]): (DirectoryNode | FileNode)[];

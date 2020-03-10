@@ -4,7 +4,7 @@ export interface IStateStore {
     get<T>(key: string): Promise<T | undefined>;
 }
 
-export const IStateStoreFactory = Symbol('IStateStoreFactory');
+export const IStateStoreFactory = Symbol.for('IStateStoreFactory');
 export const GlobalStateStore = 'global';
 export const WorkspaceStateStore = 'workspace';
 

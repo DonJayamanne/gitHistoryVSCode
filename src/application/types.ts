@@ -4,7 +4,7 @@
 
 import * as vscode from 'vscode';
 
-export const IApplicationShell = Symbol('IApplicationShell');
+export const IApplicationShell = Symbol.for('IApplicationShell');
 export interface IApplicationShell {
     showInformationMessage(message: string, ...items: string[]): Thenable<string | undefined>;
 

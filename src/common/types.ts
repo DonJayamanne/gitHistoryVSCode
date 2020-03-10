@@ -1,7 +1,7 @@
 import { Command } from 'vscode';
 import { BranchSelection, CommittedFile, LogEntry } from '../types';
 
-export const ILogService = Symbol('ILogService');
+export const ILogService = Symbol.for('ILogService');
 
 export interface ILogService {
     log(...args: any[]): void;
@@ -9,7 +9,7 @@ export interface ILogService {
     error(...args: any[]): void;
 }
 
-export const IUiService = Symbol('IUiService');
+export const IUiService = Symbol.for('IUiService');
 
 export interface IUiService {
     getBranchSelection(): Promise<BranchSelection | undefined>;
