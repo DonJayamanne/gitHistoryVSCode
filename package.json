@@ -29,9 +29,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:git.viewFileHistory",
-        "onCommand:git.viewLineHistory",
-        "onCommand:git.viewHistory"
+        "*"
     ],
     "main": "./dist/src/extension",
     "contributes": {
