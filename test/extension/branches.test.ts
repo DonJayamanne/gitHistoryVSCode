@@ -4,7 +4,7 @@ import { changeBranch, setupDefaultRepo } from './repoSetup';
 import { IServiceManager } from '../../src/ioc/types';
 import { IGitServiceFactory } from '../../src/types';
 import * as path from 'path';
-import { tempRepoFolder } from '../common';
+import { tempRepoFolder, waitForCondition } from '../common';
 import { GitServiceFactory } from '../../src/adapter/repository/factory';
 
 const repoPath = 'https://github.com/DonJayamanne/test_gitHistory.git';
@@ -120,17 +120,21 @@ describe('Branches', () => {
         assert.deepEqual(branches, expectedBranches);
     }, 1_000);
     test('Return current branch', async () => {
+        await changeBranch(repoPath, 'localBranch1');
+
         const factory = serviceManager.get<GitServiceFactory>(IGitServiceFactory);
-        const gitApi = await factory.gitApi;
         const gitService = await factory.createGitService(Uri.file(localPath));
 
-        // Wait for api to detect the change.
-        await Promise.all([
-            changeBranch(repoPath, 'localBranch1'),
-            new Promise(resolve => gitApi.repositories[0].state.onDidChange(() => resolve())),
-        ]);
-        const currentBranch = await gitService.getCurrentBranch();
+        let currentBranch = '';
+        async function isBranchCorrect() {
+            currentBranch = await gitService.getCurrentBranch();
+            return currentBranch === 'localBranch1';
+        }
 
-        assert.equal(currentBranch, 'localBranch1');
-    }, 5_000);
+        // Wait for git API (VSC Api) to detect this change.
+        // Tried using `change` event, however that didn't seem to work either (not always).
+        // 1s wasn't enough!
+        const errorMessage = `Current branch is ${currentBranch}, but should be localBranch1`;
+        await waitForCondition(isBranchCorrect, 5_000, errorMessage);
+    }, 10_000);
 });
