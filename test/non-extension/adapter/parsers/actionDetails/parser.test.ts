@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { ActionDetailsParser } from '../../../../src/adapter/parsers/actionDetails/parser';
+import { ActionDetailsParser } from '../../../../../src/adapter/parsers/actionDetails/parser';
 
 describe('Adapter Parser ActionDetails', () => {
     test('Information is returned correctly', () => {

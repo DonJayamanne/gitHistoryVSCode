@@ -30,6 +30,14 @@
             ]
         },
         {
+            "type": "npm",
+            "label": "test-compile",
+            "script": "test-compile",
+            "problemMatcher": [
+                "$tsc-watch"
+            ]
+        },
+        {
             "label": "webpack-dev",
             "type": "npm",
             "isBackground": true,

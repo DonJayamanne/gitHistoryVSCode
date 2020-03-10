@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { ActionDetailsParser } from '../../../src/adapter/parsers/actionDetails/parser';
+import { ActionDetailsParser } from '../../../../src/adapter/parsers/actionDetails/parser';
 
 describe('Adapter ActionedDetails Parser', () => {
     test('Information is returned correctly', () => {

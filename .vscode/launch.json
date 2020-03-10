@@ -16,7 +16,10 @@
             "outFiles": [
                 "${workspaceRoot}/dist/**/*.js"
             ],
-            "preLaunchTask": "webpack-dev"
+            "preLaunchTask": "webpack-dev",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         },
         {
             "name": "Launch Unit Tests",
@@ -31,7 +34,29 @@
                 "${workspaceRoot}/jest.config.js"
             ],
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "internalConsoleOptions": "neverOpen",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "name": "Run Extension Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/extension/testRunner"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/test/**/*.js"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "internalConsoleOptions": "openOnSessionStart",
+            "preLaunchTask": "test-compile"
         }
     ]
 }

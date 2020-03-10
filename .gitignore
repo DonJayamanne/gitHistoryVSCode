@@ -7,6 +7,7 @@ node_modules
 **/testFiles/**/.cache/**
 *.noseids
 .vscode-test
+coverage/**
 __pycache__
 npm-debug.log
 **/.mypy_cache/**
