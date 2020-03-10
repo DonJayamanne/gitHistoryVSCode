@@ -4,7 +4,7 @@ import { cloneRepo, checkoutRemotes as checkoutRemote, createBranch, changeBranc
 import { IServiceManager } from '../../src/ioc/types';
 import { IGitServiceFactory } from '../../src/types';
 import * as path from 'path';
-import { tempRepoFolder, noop, sleep } from '../common';
+import { tempRepoFolder } from '../common';
 import { GitServiceFactory } from '../../src/adapter/repository/factory';
 
 const repoPath = 'https://github.com/DonJayamanne/test_gitHistory.git';
@@ -144,6 +144,6 @@ describe('Branches', () => {
         ]);
         const currentBranch = await gitService.getCurrentBranch();
 
-        assert.equal(currentBranch, '1localBranch1');
+        assert.equal(currentBranch, 'localBranch1');
     }, 10_000);
 });
