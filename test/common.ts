@@ -7,7 +7,6 @@ export const tempRepoFolder = path.join(extensionRootPath, 'temp', 'testing');
 export const noop = () => {
     //Noop.
 };
-
 export const sleep = (timeout: number) => new Promise(resolve => setTimeout(resolve, timeout));
 fs.mkdirpSync(tempFolder);
 fs.mkdirpSync(tempRepoFolder);

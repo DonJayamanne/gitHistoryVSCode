@@ -38,7 +38,6 @@ async function doesBranchExist(repoPath: string, branchName: string): Promise<bo
 export async function checkoutRemote(repoPath: string, remote: string, branchName: string) {
     await cloneRepo(repoPath);
     if (await doesBranchExist(repoPath, branchName)) {
-        console.error('Branch exists');
         return;
     }
     const localPath = getLocalPath(repoPath);
