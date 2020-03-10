@@ -14,3 +14,11 @@ jobs:
     - run: npm install
     - run: npm run vscode:prepublish
     - run: npm run test
+    - name: Compile
+      run: tsc --skipLibCheck -p ./
+    - name: Start xvfb
+      run: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+    - name: Run extension tests
+      env:
+        DISPLAY: ':99.0'
+      run: npm run test-extension
