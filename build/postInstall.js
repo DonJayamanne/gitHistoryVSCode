@@ -23,7 +23,7 @@ function fixReportWriter() {
     const oldContents = fs.readFileSync(fileToFix).toString();
     const newContents = oldContents.replace(/this.err\(/g, 'console.error(').replace(/this.out\(/g, 'console.log(');
 
-    if (newContents !== oldContents && oldContents.includes('console.error(') && oldContents.includes('console.log(')) {
+    if (newContents === oldContents && oldContents.includes('console.error(') && oldContents.includes('console.log(')) {
         return;
     }
     if (newContents === oldContents) {

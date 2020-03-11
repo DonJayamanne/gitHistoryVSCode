@@ -1,8 +1,11 @@
 import * as jest from 'jest';
+import * as fs from 'fs-extra';
 import * as path from 'path';
+import { AggregatedResult } from '@jest/test-result';
+import { tempRepoFolder } from '../common';
 
 const extensionRoot = path.join(__dirname, '..', '..', '..');
-
+type Output = { results: AggregatedResult };
 export function run(): Promise<void> {
     // jest doesn't seem to provide a way to inject global/dynamic imports.
     // Basically if we have a `require`, jest assumes that it is a module on disc.
@@ -17,9 +20,22 @@ export function run(): Promise<void> {
     return new Promise((resolve, reject) => {
         jest.runCLI(jestConfig, [extensionRoot])
             .catch(error => {
-                console.log('Tests failed', error);
+                delete (process as any).__VSCODE;
+                console.error('Calling jest.runCLI failed', error);
                 reject(error);
             })
-            .then(() => resolve());
+            .then(output => {
+                delete (process as any).__VSCODE;
+                if (!output) {
+                    return resolve();
+                }
+                const results = output as Output;
+                if (results.results.numFailedTestSuites || results.results.numFailedTests) {
+                    // Do not reject, VSC does not exit gracefully, hence test job hangs.
+                    // We don't want that, specially on CI.
+                    fs.appendFileSync(path.join(tempRepoFolder, 'tests.failed'), 'failed');
+                }
+                resolve();
+            });
     });
 }

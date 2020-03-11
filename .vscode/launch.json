@@ -45,15 +45,21 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                // Ensure this folder exists.
+                "${workspaceFolder}/temp/testing/test_gitHistory",
+                "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/out/test/extension/testRunner"
+                "--extensionTestsPath=${workspaceFolder}/dist/test/extension/testRunner"
             ],
             "outFiles": [
-                "${workspaceFolder}/out/test/**/*.js"
+                "${workspaceFolder}/dist/test/**/*.js"
             ],
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "env": {
+                "IS_TEST_MODE": "1"
+            },
             "sourceMaps": true,
             "internalConsoleOptions": "openOnSessionStart",
             "preLaunchTask": "test-compile"

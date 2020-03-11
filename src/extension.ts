@@ -75,8 +75,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     registerCommandTypes(serviceManager);
 
     context.subscriptions.push(serviceManager.get<IDisposableRegistry>(IDisposableRegistry));
+    context.subscriptions.push(serviceManager.get<IDisposableRegistry>(IDisposableRegistry));
 
     const commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
     commandManager.executeCommand('setContext', 'git.commit.view.show', true);
     context.subscriptions.push(new HtmlViewer(serviceContainer, gitServiceFactory, context.extensionPath));
+
+    // When running tests, we need access to DI Container.
+    if (process.env.IS_TEST_MODE) {
+        return { serviceManager };
+    }
 }
