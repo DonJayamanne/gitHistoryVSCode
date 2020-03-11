@@ -11,7 +11,7 @@ export class WorkspaceMementoStore implements IStateStore {
     public async set<T>(key: string, data: T): Promise<void> {
         await this.store.update(key, data);
     }
-    public async get<T>(key: string): Promise<T | undefined> {
+    public get<T>(key: string): T | undefined {
         return this.store.get(key);
     }
 }

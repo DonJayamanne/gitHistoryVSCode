@@ -13,17 +13,24 @@ import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './co
 import { Repository, RefType } from './git.d';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
+import { GitBranchesService } from './gitBranchService';
+import { GitRemoteService } from './gitRemoteService';
 
 @injectable()
 export class Git implements IGitService {
     private refHashesMap: Map<string, string> = new Map<string, string>();
+    private readonly branchesService: GitBranchesService;
+    private readonly remotesService: GitRemoteService;
     constructor(
         private repo: Repository,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
-    ) {}
+    ) {
+        this.remotesService = new GitRemoteService(repo, this.gitCmdExecutor);
+        this.branchesService = new GitBranchesService(repo, this.remotesService);
+    }
 
     /**
      * Used to differentiate between repository being cached using the @cache decorator
@@ -55,24 +62,7 @@ export class Git implements IGitService {
     }
 
     public async getBranches(): Promise<Branch[]> {
-        const currentBranchName = await this.getCurrentBranch();
-        const gitRootPath = this.repo.rootUri.fsPath;
-        const localBranches = this.repo.state.refs.filter(x => x.type === 0);
-
-        return Promise.all(
-            localBranches.map(async x => {
-                const originUrl = await this.getOriginUrl(x.name);
-                const originType = await this.getOriginType(originUrl);
-
-                return {
-                    gitRoot: gitRootPath,
-                    name: x.name,
-                    remote: originUrl,
-                    remoteType: originType,
-                    current: currentBranchName === x.name,
-                } as Branch;
-            }),
-        );
+        return this.branchesService.getBranches();
     }
     public async getCurrentBranch(): Promise<string> {
         return this.repo.state.HEAD!.name || '';
@@ -116,33 +106,11 @@ export class Git implements IGitService {
     }
 
     public async getOriginType(url?: string): Promise<GitOriginType | undefined> {
-        if (!url) {
-            url = await this.getOriginUrl();
-        }
-
-        if (url.indexOf('github.com') > 0) {
-            return GitOriginType.github;
-        } else if (url.indexOf('bitbucket') > 0) {
-            return GitOriginType.bitbucket;
-        } else if (url.indexOf('visualstudio') > 0) {
-            return GitOriginType.vsts;
-        }
-        return undefined;
+        return this.remotesService.getOriginType(url);
     }
 
     public async getOriginUrl(branchName?: string): Promise<string> {
-        if (!branchName) {
-            branchName = await this.getCurrentBranch();
-        }
-
-        const branch = await this.repo.getBranch(branchName);
-
-        if (branch.upstream) {
-            const remoteIndex = this.repo.state.remotes.findIndex(x => x.name === branch.upstream!.remote);
-            return this.repo.state.remotes[remoteIndex].fetchUrl || '';
-        }
-
-        return '';
+        return this.remotesService.getOriginUrl(branchName);
     }
 
     /**

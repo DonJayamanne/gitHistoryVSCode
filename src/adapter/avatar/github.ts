@@ -107,7 +107,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     private async getUserByLogin(loginName: string) {
         const key = `GitHub:User:${loginName}`;
 
-        const cachedUser = await this.stateStore.get<GithubUserResponse>(key);
+        const cachedUser = this.stateStore.get<GithubUserResponse>(key);
         let headers = {};
 
         if (cachedUser && cachedUser.lastModified) {

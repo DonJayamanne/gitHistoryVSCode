@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import { Uri, extensions } from 'vscode';
 import { changeBranch, setupDefaultRepo, createBranch, createTag, getLocalPath, resetRepo } from './repoSetup';
 import { IServiceManager } from '../../src/ioc/types';
-import { IGitServiceFactory } from '../../src/types';
+import { IGitServiceFactory, IGitService } from '../../src/types';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { waitForCondition, noop } from '../common';
@@ -112,26 +112,36 @@ describe('Branches', () => {
         await Promise.all([resetRepo(repoPath), fs.unlink(path.join(localPath, 'iot')).catch(noop)]);
     });
 
+    async function assertCurrentBranch(gitService: IGitService, expectedBranch: string) {
+        let currentBranch = '';
+        async function isBranchCorrect() {
+            currentBranch = await gitService.getCurrentBranch();
+            return currentBranch === `heads/${expectedBranch}` || currentBranch === expectedBranch;
+        }
+
+        // Wait for git API (VSC Api) to detect this change.
+        // Tried using `change` event, however that didn't seem to work either (not always).
+        // 1s wasn't enough!
+        const errorMessage = `Current branch is ${currentBranch}, but should be localBranch1`;
+        await waitForCondition(isBranchCorrect, 5_000, errorMessage);
+    }
+
     test('Return all branches', async () => {
         const factory = serviceManager.get<IGitServiceFactory>(IGitServiceFactory);
         const gitService = await factory.createGitService(Uri.file(localPath));
 
         await changeBranch(repoPath, 'master');
 
-        const branches = (await gitService.getBranches()).map(item => ({
-            gitRoot: localPath,
-            name: item.name,
-        }));
+        const branches = await gitService.getBranches();
 
         expect(branches.length).toBeGreaterThanOrEqual(expectedBranches.length);
-        // We might have a few extra branches created during tests.
+        // We might have a few extra branches created during tests, so exclude those.
         const branchesToMatch = branches.filter(branch => expectedBranches.find(item => item.name === branch.name));
-        // Compare only name and gitRoot for now.
         assert.deepEqual(
             branchesToMatch,
             expectedBranches.map(item => ({
+                ...item,
                 gitRoot: localPath,
-                name: item.name,
             })),
         );
     }, 1_000);
@@ -141,17 +151,7 @@ describe('Branches', () => {
         const factory = serviceManager.get<GitServiceFactory>(IGitServiceFactory);
         const gitService = await factory.createGitService(Uri.file(localPath));
 
-        let currentBranch = '';
-        async function isBranchCorrect() {
-            currentBranch = await gitService.getCurrentBranch();
-            return currentBranch === 'localBranch1';
-        }
-
-        // Wait for git API (VSC Api) to detect this change.
-        // Tried using `change` event, however that didn't seem to work either (not always).
-        // 1s wasn't enough!
-        const errorMessage = `Current branch is ${currentBranch}, but should be localBranch1`;
-        await waitForCondition(isBranchCorrect, 5_000, errorMessage);
+        await assertCurrentBranch(gitService, 'localBranch1');
     }, 10_000);
     test('Get branches when repo has file, tag and branch with the same name (Issue 499)', async () => {
         const commonNameAcrossAll = 'iot';
@@ -163,20 +163,10 @@ describe('Branches', () => {
         const factory = serviceManager.get<GitServiceFactory>(IGitServiceFactory);
         const gitService = await factory.createGitService(Uri.file(localPath));
 
-        let currentBranch = '';
-        async function isBranchCorrect() {
-            currentBranch = await gitService.getCurrentBranch();
-            return currentBranch === `heads/${commonNameAcrossAll}` || currentBranch === commonNameAcrossAll;
-        }
-
         const branches = await gitService.getBranches();
         expect(branches.length).toBeGreaterThanOrEqual(11);
 
-        // Wait for git API (VSC Api) to detect this change.
-        // Tried using `change` event, however that didn't seem to work either (not always).
-        // 1s wasn't enough!
-        const errorMessage = `Current branch is ${currentBranch}, but should be ${commonNameAcrossAll}`;
-        await waitForCondition(isBranchCorrect, 5_000, errorMessage);
+        await assertCurrentBranch(gitService, commonNameAcrossAll);
 
         const logEntries = await gitService.getLogEntries(0, 100, commonNameAcrossAll);
         assert.isOk(logEntries);
