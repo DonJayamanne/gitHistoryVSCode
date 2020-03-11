@@ -14,7 +14,7 @@ export function getRepoName(repoPath: string) {
     return path.basename(repoPath, '.git');
 }
 
-function getLocalPath(repoPath: string) {
+export function getLocalPath(repoPath: string) {
     return path.join(tempRepoFolder, getRepoName(repoPath));
 }
 /**
@@ -50,6 +50,20 @@ export async function createBranch(repoPath: string, branchName: string) {
     }
     const localPath = getLocalPath(repoPath);
     await simplegit(localPath).checkoutLocalBranch(branchName);
+}
+export async function resetRepo(repoPath: string) {
+    await cloneRepo(repoPath);
+    const localPath = getLocalPath(repoPath);
+    await simplegit(localPath).reset('hard');
+}
+export async function createTag(repoPath: string, tagName: string) {
+    await cloneRepo(repoPath);
+    const localPath = getLocalPath(repoPath);
+    const tagNames = await simplegit(localPath).tags();
+    if (tagNames.all.includes(tagName)) {
+        return;
+    }
+    await simplegit(localPath).addTag(tagName);
 }
 export async function changeBranch(repoPath: string, branchName: string) {
     await cloneRepo(repoPath);
