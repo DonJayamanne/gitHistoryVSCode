@@ -92,6 +92,9 @@ export class GitArgsService implements IGitArgsService {
             `--max-count=${pageSize}`,
         );
 
+        // Count only the number of lines in the log
+        counterArgs.push('--count');
+
         // Don't use `--all`, cuz that will result in stashes `ref/stash` being included included in the logs.
         if (allBranches && lineArgs.length === 0) {
             logArgs.push('--branches', '--tags', '--remotes');
@@ -111,15 +114,11 @@ export class GitArgsService implements IGitArgsService {
             logArgs.push('--follow', '--', formattedPath);
             fileStatArgs.push('--follow', '--', formattedPath);
             counterArgs.push('--', formattedPath);
-        } else {
-            if (specificBranch && lineArgs.length === 0) {
-                logArgs.push('--');
-                fileStatArgs.push('--');
-            }
+        } else if (specificBranch && lineArgs.length === 0) {
+            logArgs.push('--');
+            fileStatArgs.push('--');
+            counterArgs.push('--');
         }
-
-        // Count only the number of lines in the log
-        counterArgs.push('--count');
 
         return { logArgs, fileStatArgs, counterArgs };
     }
