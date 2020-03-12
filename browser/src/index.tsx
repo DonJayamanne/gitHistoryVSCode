@@ -10,28 +10,26 @@ import configureStore from './store';
 
 const defaultSettings: ISettings = window['settings'];
 
-const store = configureStore({ 
-    settings: defaultSettings, 
-    graph: {}, 
-    vscode: { 
+const store = configureStore({
+    settings: defaultSettings,
+    graph: {},
+    vscode: {
         theme: document.body.className,
         locale: window['locale'],
-        configuration: window['configuration']
-    } 
+        configuration: window['configuration'],
+    },
 });
 
 ReactDOM.render(
     <div>
         <Provider store={store}>
             <Router>
-                <Route component={App}>
-                </Route>
+                <Route component={App}></Route>
             </Router>
         </Provider>
     </div>,
-    document.getElementById('root')
+    document.getElementById('root'),
 );
-
 
 initialize(window['vscode']);
 

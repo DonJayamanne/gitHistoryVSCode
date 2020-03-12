@@ -5,11 +5,11 @@ import { AvatarsState } from './index';
 
 const initialState: AvatarsState = [];
 
-export default handleActions<AvatarsState, any>({
-    [Actions.FETCHED_AVATARS]: (state, action: ReduxActions.Action<Avatar[]>) => {
-        return [
-            ...state,
-            ...action.payload
-        ];
-    }
-}, initialState);
+export default handleActions<AvatarsState, any>(
+    {
+        [Actions.FETCHED_AVATARS]: (state, action: ReduxActions.Action<Avatar[]>) => {
+            return [...state, ...action.payload];
+        },
+    },
+    initialState,
+);

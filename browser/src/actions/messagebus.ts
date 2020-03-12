@@ -1,7 +1,16 @@
-const vsc = {postMessage: (message: any) => {}};
+const vsc = {
+    postMessage: (message: any) => {
+        /*Noop*/
+    },
+};
 
 function uuid() {
-    return '_' + Math.random().toString(36).substr(2, 9);
+    return (
+        '_' +
+        Math.random()
+            .toString(36)
+            .substr(2, 9)
+    );
 }
 
 function createPromiseFromMessageEvent(requestId): Promise<any> {
@@ -17,18 +26,18 @@ function createPromiseFromMessageEvent(requestId): Promise<any> {
                 }
             }
         };
-    
+
         window.addEventListener('message', handleEvent);
     });
 }
 
-export function post<T>(cmd: string, payload: any): Promise<T>{
+export function post<T>(cmd: string, payload: any): Promise<T> {
     const requestId = uuid();
 
     vsc.postMessage({
         requestId,
         cmd,
-        payload
+        payload,
     });
 
     return createPromiseFromMessageEvent(requestId);
