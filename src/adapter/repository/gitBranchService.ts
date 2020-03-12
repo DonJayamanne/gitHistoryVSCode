@@ -3,7 +3,6 @@ import { Branch } from '../../types';
 import { GitRemoteService } from './gitRemoteService';
 import { sendTelemetryEvent, sendTelemetryWhenDone } from '../../common/telemetry';
 import { sha256 } from 'hash.js';
-import { StopWatch } from '../../common/stopWatch';
 
 /**
  * A way to get branches fast.
