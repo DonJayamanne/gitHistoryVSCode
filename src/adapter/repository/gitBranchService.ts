@@ -1,6 +1,9 @@
 import { Repository, RefType } from './git.d';
 import { Branch } from '../../types';
 import { GitRemoteService } from './gitRemoteService';
+import { sendTelemetryEvent, sendTelemetryWhenDone } from '../../common/telemetry';
+import { sha256 } from 'hash.js';
+import { StopWatch } from '../../common/stopWatch';
 
 /**
  * A way to get branches fast.
@@ -12,6 +15,7 @@ import { GitRemoteService } from './gitRemoteService';
  * If always ok, then we can remove fallback completely.
  */
 export class GitBranchesService {
+    private telemetryOfBrancCountSent = new Set<string>();
     constructor(private readonly repo: Repository, private readonly remoteService: GitRemoteService) {}
     private get currentBranch(): string {
         return this.repo.state.HEAD!.name || '';
@@ -22,14 +26,30 @@ export class GitBranchesService {
             .filter(item => item.type === RefType.Head && !!item.name)
             .map(item => item.name!);
 
+        if (!this.telemetryOfBrancCountSent.has(this.repo.rootUri.fsPath)) {
+            this.telemetryOfBrancCountSent.add(this.repo.rootUri.fsPath);
+            sendTelemetryEvent('BRANCH_COUNT', undefined, {
+                count: localBranches.length,
+                repo: sha256()
+                    .update(this.repo.rootUri.fsPath)
+                    .digest('hex'),
+            });
+        }
+
         let branches: Branch[] = [];
 
         // 1. Fast method.
         // If we have at least one branch with remotes, then we know it works.
-        const branchesWithRemotes = await this.remoteService.getBranchesWithRemotes();
-        if (branchesWithRemotes.length > 0) {
+        const branchesWithRemotes = await this.remoteService
+            .getBranchesWithRemotes()
+            .then(items => ({ branches: items, success: true }))
+            .catch(() => {
+                sendTelemetryEvent('FAILED_TO_GET_BRANCHES_WITH_REMOTES');
+                return { branches: [], success: false };
+            });
+        if (branchesWithRemotes.success) {
             const indexedBranches = new Map<string, Branch>();
-            branchesWithRemotes.forEach(item => indexedBranches.set(item.name, item));
+            branchesWithRemotes.branches.forEach(item => indexedBranches.set(item.name, item));
 
             branches = localBranches.map(branchName => {
                 if (indexedBranches.get(branchName)) {
@@ -47,7 +67,7 @@ export class GitBranchesService {
             });
         } else {
             // 2. This is a fallback mechanism.
-            branches = await Promise.all(
+            const branchesPromise = Promise.all(
                 localBranches.map(async branchName => {
                     const originUrl = await this.remoteService.getOriginUrl(branchName);
                     const originType = await this.remoteService.getOriginType(originUrl);
@@ -61,6 +81,9 @@ export class GitBranchesService {
                     } as Branch;
                 }),
             );
+
+            sendTelemetryWhenDone('GET_BRANCHES_FALLBACK', branchesPromise);
+            branches = await branchesPromise;
         }
 
         return this.fixBranches(branches);

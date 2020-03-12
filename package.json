@@ -454,6 +454,7 @@
         "event-stream": "4.0.1",
         "fs-extra": "^8.1.0",
         "gravatar": "^1.6.0",
+        "hash.js": "^1.1.7",
         "iconv-lite": "^0.5.1",
         "inversify": "^5.0.1",
         "query-string": "^6.11.0",

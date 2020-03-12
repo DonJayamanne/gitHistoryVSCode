@@ -2,12 +2,14 @@ import { Repository } from './git.d';
 import { Branch } from '../../types';
 import { IGitCommandExecutor } from '..';
 import { GitOriginType } from '.';
+import { captureTelemetry } from '../../common/telemetry';
 
 export class GitRemoteService {
     constructor(private readonly repo: Repository, private readonly gitCmdExecutor: IGitCommandExecutor) {}
     private get currentBranch(): string {
         return this.repo.state.HEAD!.name || '';
     }
+    @captureTelemetry()
     public async getBranchesWithRemotes(): Promise<Branch[]> {
         const gitRootPath = this.repo.rootUri.fsPath;
         const branches: Branch[] = [];
@@ -73,6 +75,7 @@ export class GitRemoteService {
         return undefined;
     }
 
+    @captureTelemetry()
     public async getOriginUrl(branchName?: string): Promise<string> {
         branchName = branchName || this.currentBranch;
 

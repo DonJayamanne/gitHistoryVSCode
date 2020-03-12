@@ -205,4 +205,12 @@ export interface IEventNamePropertyMapping {
      * Total time taken to activate extension.
      */
     ACTIVATED: never | undefined;
+    /**
+     * Tracks branch count per repo (hash of repo).
+     * Useful in determining how we get information for branches.
+     * More branches we have more careful we need to be in getting info (could end up using a lot of resources).
+     */
+    BRANCH_COUNT: { count: number; repo: string };
+    FAILED_TO_GET_BRANCHES_WITH_REMOTES: undefined | never;
+    GET_BRANCHES_FALLBACK: undefined | never;
 }
