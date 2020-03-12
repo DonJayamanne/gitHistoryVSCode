@@ -60,7 +60,6 @@ export function sendTelemetryEvent<P extends IEventNamePropertyMapping, E extend
     }
     const customProperties: Record<string, string> = {};
     if (properties) {
-        // tslint:disable-next-line:prefer-type-cast no-any
         const data = properties as any;
         Object.getOwnPropertyNames(data).forEach(prop => {
             if (data[prop] === undefined || data[prop] === null) {
@@ -68,8 +67,7 @@ export function sendTelemetryEvent<P extends IEventNamePropertyMapping, E extend
             }
             try {
                 // If there are any errors in serializing one property, ignore that and move on.
-                // Else nothign will be sent.
-                // tslint:disable-next-line:prefer-type-cast no-any  no-unsafe-any
+                // Else nothing will be sent.
                 (customProperties as any)[prop] =
                     typeof data[prop] === 'string'
                         ? data[prop]
@@ -84,51 +82,39 @@ export function sendTelemetryEvent<P extends IEventNamePropertyMapping, E extend
     reporter.sendTelemetryEvent((eventName as any) as string, customProperties, measures);
 }
 
-// tslint:disable-next-line:no-any function-name
 export function captureTelemetry<P extends IEventNamePropertyMapping, E extends keyof P>(
-    eventName: E,
+    eventName?: E,
     properties?: P[E],
     captureDuration = true,
-    failureEventName?: E,
 ) {
-    // tslint:disable-next-line:no-function-expression no-any
-    return function(_target: Record<string, any>, _propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
+    return function(target: Record<string, any>, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
+        // If event name is not provided, assume method/property name of class.
+        const className =
+            target && (target as Record<string, any>).constructor && (target as Record<string, any>).constructor
+                ? (target as Record<string, any>).constructor.name
+                : '';
+        const telememtryEvent = eventName || (`${className || ''}.${propertyKey}` as any);
         const originalMethod = descriptor.value;
-        // tslint:disable-next-line:no-function-expression no-any
         descriptor.value = function(...args: any[]) {
             if (!captureDuration) {
-                sendTelemetryEvent(eventName, undefined, properties);
-                // tslint:disable-next-line:no-invalid-this
+                sendTelemetryEvent(telememtryEvent, undefined, properties);
                 return originalMethod.apply(this, args);
             }
 
             const stopWatch = new StopWatch();
-            // tslint:disable-next-line:no-invalid-this no-use-before-declare no-unsafe-any
             const result = originalMethod.apply(this, args);
 
             // If method being wrapped returns a promise then wait for it.
-            // tslint:disable-next-line:no-unsafe-any
             if (result && typeof result.then === 'function' && typeof result.catch === 'function') {
-                // tslint:disable-next-line:prefer-type-cast
                 (result as Promise<void>)
-                    .then(data => {
-                        sendTelemetryEvent(eventName, stopWatch.elapsedTime, properties);
-                        return data;
-                    })
-                    // tslint:disable-next-line:promise-function-async
+                    .then(() => sendTelemetryEvent(telememtryEvent, stopWatch.elapsedTime, properties))
                     .catch(ex => {
-                        // tslint:disable-next-line:no-any
                         properties = properties || ({} as any);
                         (properties as any).failed = true;
-                        sendTelemetryEvent(
-                            failureEventName ? failureEventName : eventName,
-                            stopWatch.elapsedTime,
-                            properties,
-                            ex,
-                        );
+                        sendTelemetryEvent(telememtryEvent, stopWatch.elapsedTime, properties, ex);
                     });
             } else {
-                sendTelemetryEvent(eventName, stopWatch.elapsedTime, properties);
+                sendTelemetryEvent(telememtryEvent, stopWatch.elapsedTime, properties);
             }
 
             return result;
@@ -138,7 +124,6 @@ export function captureTelemetry<P extends IEventNamePropertyMapping, E extends 
     };
 }
 
-// function sendTelemetryWhenDone<T extends IDSMappings, K extends keyof T>(eventName: K, properties?: T[K]);
 export function sendTelemetryWhenDone<P extends IEventNamePropertyMapping, E extends keyof P>(
     eventName: E,
     promise: Promise<any> | Thenable<any>,
@@ -147,22 +132,12 @@ export function sendTelemetryWhenDone<P extends IEventNamePropertyMapping, E ext
 ) {
     stopWatch = stopWatch ? stopWatch : new StopWatch();
     if (typeof promise.then === 'function') {
-        // tslint:disable-next-line:prefer-type-cast no-any
         (promise as Promise<any>).then(
-            data => {
-                // tslint:disable-next-line:no-non-null-assertion
-                sendTelemetryEvent(eventName, stopWatch!.elapsedTime, properties);
-                return data;
-                // tslint:disable-next-line:promise-function-async
-            },
-            ex => {
-                // tslint:disable-next-line:no-non-null-assertion
-                sendTelemetryEvent(eventName, stopWatch!.elapsedTime, properties, ex);
-                return Promise.reject(ex);
-            },
+            () => sendTelemetryEvent(eventName, stopWatch!.elapsedTime, properties),
+            ex => sendTelemetryEvent(eventName, stopWatch!.elapsedTime, properties, ex),
         );
     } else {
-        throw new Error('Method is neither a Promise nor a Theneable');
+        console.error(new Error('Method is neither a Promise nor a Theneable'));
     }
 }
 
@@ -172,7 +147,7 @@ function sanitizeFilename(filename: string): string {
         return '<hidden_no_extension_root>';
     }
     if (filename.startsWith(extensionPath)) {
-        filename = `<pvsc>${filename.substring(extensionPath.length)}`;
+        filename = `<githistory>${filename.substring(extensionPath.length)}`;
     } else {
         // We don't really care about files outside our extension.
         filename = `<hidden>${pathSep}${pathBasename(filename)}`;
@@ -203,8 +178,8 @@ function getStackTrace(ex: Error): string {
             trace += '\n\tat <anonymous>';
         }
     }
-    // Ensure we always use `/` as path seperators.
-    // This way stack traces (with relative paths) comming from different OS will always look the same.
+    // Ensure we always use `/` as path separators.
+    // This way stack traces (with relative paths) coming from different OS will always look the same.
     return trace.trim().replace(/\\/g, '/');
 }
 

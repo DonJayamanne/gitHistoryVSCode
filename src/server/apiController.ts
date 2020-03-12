@@ -7,6 +7,7 @@ import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { Avatar, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
+import { captureTelemetry } from '../common/telemetry';
 
 export class ApiController {
     private readonly commitViewer: IGitCommitViewDetailsCommandHandler;
@@ -81,6 +82,7 @@ export class ApiController {
         return commit;
     }
 
+    @captureTelemetry()
     public async getAvatars() {
         const originType = await this.gitService.getOriginType();
         if (!originType) {
@@ -162,6 +164,7 @@ export class ApiController {
 
         this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
     }
+    @captureTelemetry()
     public async selectCommittedFile(args: any) {
         const gitRoot = this.gitService.getGitRoot();
         const branch = await this.gitService.getCurrentBranch();
