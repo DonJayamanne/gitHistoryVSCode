@@ -1,15 +1,15 @@
-var path = require('path');
-var fs = require('fs-extra');
+const path = require('path');
+const fs = require('fs-extra');
 
-var CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // variables
-var isProduction = process.argv.indexOf('-p') >= 0;
+const isProduction = process.argv.indexOf('-p') >= 0;
 
-var browserSourcePath = path.join(__dirname, './browser/src');
-var serverSourcePath = path.join(__dirname, './src');
+const browserSourcePath = path.join(__dirname, './browser/src');
+const serverSourcePath = path.join(__dirname, './src');
 
-var outPath = path.join(__dirname, './dist');
+const outPath = path.join(__dirname, './dist');
 
 // cleanup dist directory
 fs.emptyDirSync(outPath);
@@ -25,7 +25,7 @@ const browser = {
     target: 'web',
     resolve: {
         extensions: ['.js', '.ts', '.tsx'],
-        mainFields: ['main']
+        mainFields: ['main'],
     },
     devtool: isProduction ? false : 'source-map',
     module: {
@@ -36,8 +36,8 @@ const browser = {
                 loader: 'awesome-typescript-loader?',
                 options: {
                     module: 'es6',
-                    configFileName: './browser/tsconfig.json'
-                }
+                    configFileName: './browser/tsconfig.json',
+                },
             },
             // scss
             {
@@ -47,21 +47,21 @@ const browser = {
                         loader: 'file-loader',
                         options: {
                             name: 'bundle.css',
-                        }
+                        },
                     },
                     'extract-loader',
-                    'css-loader?-url'
-                ]
-            }
+                    'css-loader?-url',
+                ],
+            },
         ],
     },
     plugins: [
         new CopyWebpackPlugin([
             {
-                from: 'index.ejs'
-            }
-        ])
-    ]
+                from: 'index.ejs',
+            },
+        ]),
+    ],
 };
 
 const server = {
@@ -72,16 +72,18 @@ const server = {
         path: path.join(outPath, 'src'),
         filename: 'extension.js',
         libraryTarget: 'commonjs2',
-        devtoolModuleFilenameTemplate: '[absoluteResourcePath]'
+        devtoolModuleFilenameTemplate: '[absoluteResourcePath]',
     },
     target: 'node',
-    node: false,
+    node: {
+        __dirname: false,
+    },
     resolve: {
-        extensions: ['.js', '.ts']
+        extensions: ['.js', '.ts'],
     },
     devtool: isProduction ? false : 'source-map',
     externals: {
-        vscode: 'commonjs vscode' // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+        vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     },
     module: {
         rules: [
@@ -89,13 +91,13 @@ const server = {
                 test: /\.ts$/,
                 exclude: /node_modules/,
                 use: [
-                {
-                    loader: 'ts-loader'
-                }
-                ]
-            }
-        ]
-    }
+                    {
+                        loader: 'ts-loader',
+                    },
+                ],
+            },
+        ],
+    },
 };
 
-module.exports = [browser, server]
+module.exports = [browser, server];
