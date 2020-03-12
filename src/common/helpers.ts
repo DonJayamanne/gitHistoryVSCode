@@ -38,3 +38,9 @@ export async function asyncFilter<T>(arr: T[], callback): Promise<T[]> {
         i => i !== undefined,
     ) as T[];
 }
+
+export const sleep = (timeout: number) => new Promise(resolve => setTimeout(resolve, timeout));
+
+export function noop() {
+    //Noop.
+}

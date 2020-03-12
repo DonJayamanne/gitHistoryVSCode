@@ -1,4 +1,5 @@
 import { Disposable } from 'vscode';
+import { disableCaching } from './constants';
 
 const MAX_CACHE_ITEMS = 50;
 type CacheStore = Map<string, { expiryTime?: number; data: any }>;
@@ -7,6 +8,9 @@ const CacheStores = new Map<string, CacheStore>();
 
 export class CacheRegister implements Disposable {
     public static get<T>(storageKey: string, key: string): { data: T } | undefined {
+        if (disableCaching) {
+            return;
+        }
         const storage = CacheStores.get(storageKey)!;
         if (storage && storage.has(key)) {
             const entry = storage.get(key)!;

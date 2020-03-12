@@ -27,7 +27,7 @@ export abstract class BaseAvatarProvider implements IAvatarProvider {
         const remoteUrl = await repository.getOriginUrl();
         const key = `Git:Avatars:${remoteUrl}`;
 
-        const cachedAvatars = await this.avatarStateStore.get<AvatarResponse>(key);
+        const cachedAvatars = this.avatarStateStore.get<AvatarResponse>(key);
 
         const retry =
             cacheExpiration === 0 ||
