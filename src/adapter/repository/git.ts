@@ -146,7 +146,6 @@ export class Git implements IGitService {
             });
     }
 
-    @captureTelemetry()
     public getRefsContainingCommit(hash: string): Ref[] {
         return this.repo.state.refs
             .filter(x => (x.type === RefType.Tag && this.refHashesMap.get(x.name!) === hash) || x.commit === hash)
