@@ -12,9 +12,14 @@ type AuthorProps = {
 };
 
 function Author(props: AuthorProps) {
+    function selectAuthor(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+        event.preventDefault();
+        event.stopPropagation();
+        props.selectAuthor(props.result.name);
+    }
     return (<div className='commit-author'>
         <span role='button' style={{fontSize: '130%', marginRight: '0.2em'}} className='btnx hint--right hint--rounded hint--bounce' aria-label='Filter by author'>
-            <a role='button' onClick={() => props.selectAuthor(props.result.name)}>
+            <a role='button' onClick={selectAuthor}>
                 <GoEye></GoEye>
             </a>
         </span>
