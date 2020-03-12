@@ -15,6 +15,7 @@ import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
 import { GitBranchesService } from './gitBranchService';
 import { GitRemoteService } from './gitRemoteService';
+import { captureTelemetry } from '../../common/telemetry';
 
 @injectable()
 export class Git implements IGitService {
@@ -61,6 +62,7 @@ export class Git implements IGitService {
         return this.repo.state.HEAD!.name === undefined ? this.repo.state.HEAD!.commit : undefined;
     }
 
+    @captureTelemetry()
     public async getBranches(): Promise<Branch[]> {
         return this.branchesService.getBranches();
     }
@@ -69,6 +71,7 @@ export class Git implements IGitService {
     }
 
     @cache('IGitService', 60 * 1000)
+    @captureTelemetry()
     public async getAuthors(): Promise<ActionedUser[]> {
         const authorArgs = this.gitArgsService.getAuthorsArgs();
         const authors = await this.exec(...authorArgs);
@@ -105,10 +108,12 @@ export class Git implements IGitService {
             .sort((a, b) => (a.name > b.name ? 1 : -1));
     }
 
+    @captureTelemetry()
     public async getOriginType(url?: string): Promise<GitOriginType | undefined> {
         return this.remotesService.getOriginType(url);
     }
 
+    @captureTelemetry()
     public async getOriginUrl(branchName?: string): Promise<string> {
         return this.remotesService.getOriginUrl(branchName);
     }
@@ -149,6 +154,7 @@ export class Git implements IGitService {
             });
     }
 
+    @captureTelemetry()
     public async getLogEntries(
         pageIndex = 0,
         pageSize = 0,
@@ -221,6 +227,7 @@ export class Git implements IGitService {
         } as LogEntries;
     }
 
+    @captureTelemetry()
     public async getCommit(hash: string, withRefs = false): Promise<LogEntry | undefined> {
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgsForMerge(hash);
@@ -262,6 +269,7 @@ export class Git implements IGitService {
     }
 
     @cache('IGitService')
+    @captureTelemetry()
     public async getCommitFile(hash: string, file: FsUri | string): Promise<Uri> {
         //const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.path.toString();
@@ -292,6 +300,7 @@ export class Git implements IGitService {
     }
 
     @cache('IGitService')
+    @captureTelemetry()
     public async getDifferences(hash1: string, hash2: string): Promise<CommittedFile[]> {
         const numStartArgs = this.gitArgsService.getDiffCommitWithNumStatArgs(hash1, hash2);
         const nameStatusArgs = this.gitArgsService.getDiffCommitNameStatusArgs(hash1, hash2);
@@ -310,6 +319,7 @@ export class Git implements IGitService {
     }
 
     @cache('IGitService')
+    @captureTelemetry()
     public async getPreviousCommitHashForFile(hash: string, file: FsUri): Promise<Hash> {
         const gitRootPath = await this.getGitRoot();
         const relativeFilePath = path.relative(gitRootPath, file.path);
@@ -326,22 +336,27 @@ export class Git implements IGitService {
         };
     }
 
+    @captureTelemetry()
     public async cherryPick(hash: string): Promise<void> {
         await this.exec('cherry-pick', hash);
     }
 
+    @captureTelemetry()
     public async reset(hash: string, hard = false): Promise<void> {
         await this.exec('reset', hard ? '--hard' : '--soft', hash);
     }
 
+    @captureTelemetry()
     public async checkout(hash: string): Promise<void> {
         await this.exec('checkout', hash);
     }
 
+    @captureTelemetry()
     public async revertCommit(hash: string): Promise<void> {
         await this.exec('revert', '--no-edit', hash);
     }
 
+    @captureTelemetry()
     public async createBranch(branchName: string, hash: string): Promise<void> {
         try {
             await this.repo.createBranch(branchName, false, hash);
@@ -350,6 +365,7 @@ export class Git implements IGitService {
         }
     }
 
+    @captureTelemetry()
     public async createTag(tagName: string, hash: string): Promise<string> {
         const result = await this.exec('tag', '-a', tagName, '-m', tagName, hash);
         // force git extension API to update repository refs
@@ -357,11 +373,13 @@ export class Git implements IGitService {
         return result;
     }
 
+    @captureTelemetry()
     public async removeTag(tagName: string) {
         await this.exec('tag', '-d', tagName);
         this.refHashesMap.delete(tagName);
     }
 
+    @captureTelemetry()
     public async removeBranch(branchName: string) {
         try {
             await this.repo.deleteBranch(branchName);
@@ -370,6 +388,7 @@ export class Git implements IGitService {
         }
     }
 
+    @captureTelemetry()
     public async removeRemoteBranch(remoteBranchName: string) {
         const pathes = remoteBranchName.split('/');
         const remote = pathes.shift() as string;
@@ -378,10 +397,12 @@ export class Git implements IGitService {
         await this.repo.push(remote, `:${branchName}`);
     }
 
+    @captureTelemetry()
     public async merge(hash: string): Promise<void> {
         await this.exec('merge', hash);
     }
 
+    @captureTelemetry()
     public async rebase(hash: string): Promise<void> {
         await this.exec('rebase', hash);
     }

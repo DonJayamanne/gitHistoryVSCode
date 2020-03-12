@@ -4,8 +4,8 @@
 'use strict';
 
 export class StopWatch {
-    private started: number = Date.now();
+    private started = new Date().getTime();
     public get elapsedTime() {
-        return Date.now() - this.started;
+        return new Date().getTime() - this.started;
     }
 }

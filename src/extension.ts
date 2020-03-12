@@ -31,12 +31,21 @@ import { registerTypes as registerPlatformTypes } from './platform/serviceRegist
 import { HtmlViewer } from './server/htmlViewer';
 import { IGitServiceFactory, IOutputChannel } from './types';
 import { registerTypes as registerViewerTypes } from './viewers/serviceRegistry';
+import { getTelemetryReporter, sendTelemetryEvent } from './common/telemetry';
+import { StopWatch } from './common/stopWatch';
+import { extensionRoot } from './constants';
 
 let cont: Container;
 let serviceManager: ServiceManager;
 let serviceContainer: ServiceContainer;
 
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
+    extensionRoot.path = context.extensionPath;
+    const stopwatch = new StopWatch();
+    const telemetryReporter = getTelemetryReporter();
+    if (telemetryReporter) {
+        context.subscriptions.push(telemetryReporter);
+    }
     cont = new Container();
     serviceManager = new ServiceManager(cont);
     serviceContainer = new ServiceContainer(cont);
@@ -80,6 +89,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
     const commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
     commandManager.executeCommand('setContext', 'git.commit.view.show', true);
     context.subscriptions.push(new HtmlViewer(serviceContainer, gitServiceFactory, context.extensionPath));
+
+    sendTelemetryEvent('ACTIVATED', stopwatch.elapsedTime);
 
     // When running tests, we need access to DI Container.
     if (process.env.IS_TEST_MODE) {
