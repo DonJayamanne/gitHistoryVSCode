@@ -11,11 +11,16 @@ type AvatarProps = {
 function Avatar(props: AvatarProps) {
     let avatarUrl = '';
     if (props.result) {
-        const avatar = props.avatars.find(item => item.name === props.result.name || item.login === props.result.name || item.email === props.result.email);
+        const avatar = props.avatars.find(
+            item =>
+                item.name === props.result.name ||
+                item.login === props.result.name ||
+                item.email === props.result.email,
+        );
         avatarUrl = avatar ? avatar.avatarUrl : '';
     }
     if (avatarUrl) {
-        return (<img className='avatar' alt='User' src={avatarUrl} />);
+        return <img className="avatar" alt="User" src={avatarUrl} />;
     } else {
         return null;
     }
@@ -24,10 +29,8 @@ function Avatar(props: AvatarProps) {
 function mapStateToProps(state: RootState, wrapper: { result: ActionedDetails }) {
     return {
         avatars: state.avatars,
-        result: wrapper.result
+        result: wrapper.result,
     };
 }
 
-export default connect(
-    mapStateToProps
-)(Avatar);
+export default connect(mapStateToProps)(Avatar);

@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
 import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry, Ref } from '../definitions';
 import { BranchesState, RootState } from '../reducers';
-import { BranchSelection, Branch, } from '../types';
+import { BranchSelection, Branch } from '../types';
 import { post } from '../actions/messagebus';
 
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
@@ -19,20 +19,21 @@ export const notifyIsFetchingCommit = createAction<string>(Actions.IS_FETCHING_C
 export const fetchedAvatar = createAction<Avatar[]>(Actions.FETCHED_AVATARS);
 export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHORS);
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ResultActions {
     export const commitsRendered = createAction<number>(Actions.COMMITS_RENDERED);
 
-    export const actionCommit = (logEntry: LogEntry, name: string = '', value: string = '') => {
-                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+    export const actionCommit = (logEntry: LogEntry, name = '', value = '') => {
+        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(notifyIsFetchingCommit(logEntry.hash.full));
 
             const store = getState();
 
-            post<LogEntry>('doAction', { 
+            post<LogEntry>('doAction', {
                 ...store.settings,
                 logEntry,
                 name,
-                value
+                value,
             }).then(x => {
                 switch (name) {
                     case 'reset_soft':
@@ -45,56 +46,56 @@ export namespace ResultActions {
                         dispatch(ResultActions.getBranches());
                         break;
                 }
-        
+
                 dispatch(updateCommitInList(x));
             });
         };
     };
-    export const actionRef = (logEntry: LogEntry, ref: Ref, name: string = '') => {
-                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+    export const actionRef = (logEntry: LogEntry, ref: Ref, name = '') => {
+        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(notifyIsFetchingCommit(logEntry.hash.full));
             const store = getState();
 
-            post<LogEntry>('doActionRef', { 
+            post<LogEntry>('doActionRef', {
                 ...store.settings,
                 ref,
                 name,
-                hash: logEntry.hash.full
-            }).then(x => {        
+                hash: logEntry.hash.full,
+            }).then(x => {
                 dispatch(ResultActions.getBranches());
                 dispatch(updateCommitInList(x));
             });
         };
     };
-    export const fetchAvatars = () =>  {
+    export const fetchAvatars = () => {
         return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             const store = getState();
 
-            post<Avatar[]>('getAvatars', { 
-                ...store.settings
-            }).then(x => {        
+            post<Avatar[]>('getAvatars', {
+                ...store.settings,
+            }).then(x => {
                 dispatch(fetchedAvatar(x));
             });
-        }
+        };
     };
     export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => {
-                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             const store = getState();
 
-            post<void>('selectCommittedFile', { 
+            post<void>('selectCommittedFile', {
                 ...store.settings,
                 logEntry,
-                committedFile
+                committedFile,
             });
         };
     };
     export const closeCommitView = () => {
-                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             await dispatch(clearCommitSelection());
         };
     };
     export const selectCommit = (hash?: string) => {
-                return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             if (hash) {
                 await fetchCommit(dispatch, state, hash);
@@ -104,35 +105,35 @@ export namespace ResultActions {
         };
     };
     export const getNextCommits = () => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             const pageIndex = state.logEntries.pageIndex + 1;
             return fetchCommits(dispatch, state, pageIndex, undefined);
         };
     };
     export const getPreviousCommits = () => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             const pageIndex = state.logEntries.pageIndex - 1;
             return fetchCommits(dispatch, state, pageIndex, undefined);
         };
     };
     export const search = (searchText: string) => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(updateSettings({ searchText }));
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
     export const clearSearch = () => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(updateSettings({ searchText: '', authorFilter: undefined }));
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
     export const selectBranch = (branchName: string, branchSelection: BranchSelection) => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             //state.settings.branchName = branchName;
             dispatch(updateSettings({ branchName, branchSelection }));
             const state = getState();
@@ -140,14 +141,14 @@ export namespace ResultActions {
         };
     };
     export const selectAuthor = (authorName: string) => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(updateSettings({ authorFilter: authorName }));
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
     export const refresh = () => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             // update branches
             fetchBranches(dispatch, state);
@@ -160,15 +161,15 @@ export namespace ResultActions {
             const state = getState();
             fetchCommits(dispatch, state);
         };
-    };
+    }
     export const getBranches = () => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             return fetchBranches(dispatch, state);
         };
     };
     export const getAuthors = () => {
-                return (dispatch: Dispatch<any>, getState: () => RootState) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
             return fetchAuthors(dispatch, state);
         };
@@ -176,34 +177,33 @@ export namespace ResultActions {
 }
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
     dispatch(notifyIsLoading());
-    post<LogEntriesResponse>('getLogEntries', { 
+    post<LogEntriesResponse>('getLogEntries', {
         ...store.settings,
         pageIndex,
-        pageSize
+        pageSize,
     }).then(x => {
         dispatch(addResults(x));
     });
 }
 function fetchCommit(dispatch: Dispatch<any>, store: RootState, hash: string) {
     dispatch(notifyIsFetchingCommit(hash));
-    post<LogEntry>('getCommit', { 
+    post<LogEntry>('getCommit', {
         ...store.settings,
-        hash
+        hash,
     }).then(x => {
-        dispatch(updateCommit(x))
+        dispatch(updateCommit(x));
     });
 }
 function fetchBranches(dispatch: Dispatch<any>, store: RootState) {
-    post<Branch[]>('getBranches', { 
-        ...store.settings
+    post<Branch[]>('getBranches', {
+        ...store.settings,
     }).then(x => {
-        dispatch(updateBranchList(x))
+        dispatch(updateBranchList(x));
     });
-
 }
 function fetchAuthors(dispatch: Dispatch<any>, store: RootState) {
-    post<ActionedUser[]>('getAuthors', { 
-        ...store.settings
+    post<ActionedUser[]>('getAuthors', {
+        ...store.settings,
     }).then(x => {
         dispatch(fetchedAuthors(x));
     });

@@ -4,10 +4,11 @@ import { AuthorsState } from './';
 
 const initialState: AuthorsState = [];
 
-export default handleActions<AuthorsState, any>({
-    [Actions.FETCHED_AUTHORS]: (state, action: ReduxActions.Action<AuthorsState>) => {
-        return [
-            ...action.payload
-        ];
-    }
-}, initialState);
+export default handleActions<AuthorsState, any>(
+    {
+        [Actions.FETCHED_AUTHORS]: (state, action: ReduxActions.Action<AuthorsState>) => {
+            return [...action.payload];
+        },
+    },
+    initialState,
+);

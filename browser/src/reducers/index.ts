@@ -14,7 +14,7 @@ export type LogEntriesState = LogEntriesResponse & {
     isLoadingCommit?: string;
 };
 
-export type BranchesState = { name: string; current: boolean, remote: string, remoteType: number }[];
+export type BranchesState = { name: string; current: boolean; remote: string; remoteType: number }[];
 export type AuthorsState = ActionedUser[];
 export type AvatarsState = Avatar[];
 export type RootState = {
@@ -25,7 +25,7 @@ export type RootState = {
     authors?: AuthorsState;
     settings?: ISettings;
     graph: IGraphState;
-}
+};
 
 export default combineReducers<RootState>({
     routing,
@@ -35,5 +35,5 @@ export default combineReducers<RootState>({
     branches,
     settings,
     graph,
-    vscode
+    vscode,
 } as any);

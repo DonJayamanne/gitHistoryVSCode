@@ -20,48 +20,50 @@ type AppProps = {
     search: typeof ResultActions.search;
 } & typeof ResultActions;
 
-interface AppState {
-}
+interface AppState {}
 
 class App extends React.Component<AppProps, AppState> {
-        constructor(props?: AppProps, context?: any) {
+    constructor(props?: AppProps, context?: any) {
         super(props, context);
     }
-    
+
     public render() {
         const { children } = this.props;
-        const canGoForward = this.props.logEntries.count === -1 || (this.props.logEntries.pageIndex + 1) * this.props.configuration.pageSize < this.props.logEntries.count;
+        const canGoForward =
+            this.props.logEntries.count === -1 ||
+            (this.props.logEntries.pageIndex + 1) * this.props.configuration.pageSize < this.props.logEntries.count;
         return (
-            <div className='appRootParent'>
-                <div className='appRoot'>
+            <div className="appRootParent">
+                <div className="appRoot">
                     <Header></Header>
-                    <LogView logEntries={ this.props.logEntries }></LogView>
+                    <LogView logEntries={this.props.logEntries}></LogView>
                     <Footer
-                        canGoBack={ this.props.logEntries.pageIndex > 0 }
-                        canGoForward={ canGoForward }
-                        goBack={ this.goBack }
-                        goForward={ this.goForward }></Footer>
-                    { children }
+                        canGoBack={this.props.logEntries.pageIndex > 0}
+                        canGoForward={canGoForward}
+                        goBack={this.goBack}
+                        goForward={this.goForward}
+                    ></Footer>
+                    {children}
                 </div>
-                { this.props.logEntries && this.props.logEntries.selected ? <Commit /> : '' }
+                {this.props.logEntries && this.props.logEntries.selected ? <Commit /> : ''}
             </div>
         );
     }
     private goBack = async () => {
         await this.props.getPreviousCommits();
-        document.getElementById('scrollCnt').scrollTo(0,0);
-    }
+        document.getElementById('scrollCnt').scrollTo(0, 0);
+    };
     private goForward = async () => {
-        await  this.props.getNextCommits();
-        document.getElementById('scrollCnt').scrollTo(0,0);
-    }
+        await this.props.getNextCommits();
+        document.getElementById('scrollCnt').scrollTo(0, 0);
+    };
 }
 
 function mapStateToProps(state: RootState) {
     return {
         configuration: state.vscode.configuration,
         settings: state.settings,
-        logEntries: state.logEntries
+        logEntries: state.logEntries,
     };
 }
 
@@ -71,11 +73,8 @@ function mapDispatchToProps(dispatch) {
         getCommits: () => dispatch(ResultActions.getCommits()),
         getNextCommits: () => dispatch(ResultActions.getNextCommits()),
         getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits()),
-        search: (text: string) => dispatch(ResultActions.search(text))
+        search: (text: string) => dispatch(ResultActions.search(text)),
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
