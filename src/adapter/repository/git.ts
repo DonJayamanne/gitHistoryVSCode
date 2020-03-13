@@ -376,6 +376,7 @@ export class Git implements IGitService {
     @captureTelemetry()
     public async removeTag(tagName: string) {
         await this.exec('tag', '-d', tagName);
+        await this.repo.status();
         this.refHashesMap.delete(tagName);
     }
 
