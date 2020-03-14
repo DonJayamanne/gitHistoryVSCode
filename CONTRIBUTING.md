@@ -11,3 +11,6 @@
 - From the terminal, go to the repo's folder
 - From the debug panel of the new VS Code instance, run the `Launch Extension` option or press F5. This will open a new instance of VS Code in dev mode
 - See [VS Code Docs](https://code.visualstudio.com/docs/extensions/developing-extensions#_launching-your-extension) for additional details
+
+## Storybook
+- `npm run storybook`
