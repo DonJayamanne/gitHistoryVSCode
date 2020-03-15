@@ -16,7 +16,6 @@ import { IGitArgsService } from './types';
 import { GitBranchesService } from './gitBranchService';
 import { GitRemoteService } from './gitRemoteService';
 import { captureTelemetry } from '../../common/telemetry';
-import { StopWatch } from '../../common/stopWatch';
 
 @injectable()
 export class Git implements IGitService {
@@ -165,8 +164,6 @@ export class Git implements IGitService {
         lineNumber?: number,
         author?: string,
     ): Promise<LogEntries> {
-        const stopWatch = new StopWatch();
-        console.warn('Step0', stopWatch.elapsedTime);
         if (pageSize <= 0) {
             const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
@@ -183,19 +180,12 @@ export class Git implements IGitService {
             author,
         );
 
-        console.warn('Step1', stopWatch.elapsedTime);
         const gitRepoPath = this.getGitRoot();
         const countPromise = lineNumber
             ? Promise.resolve(-1)
             : this.exec(...args.counterArgs).then(value => parseInt(value));
         const [output] = await Promise.all([this.exec(...args.logArgs), this.loadDereferenceHashes()]);
-        console.warn('Step2', stopWatch.elapsedTime);
 
-        // if (!lineNumber) {
-        //     count = parseInt(await this.exec(...args.counterArgs));
-        // }
-        console.warn('Step3', stopWatch.elapsedTime);
-        const start = new Date().getTime();
         const items = output
             .split(LOG_ENTRY_SEPARATOR)
             .map(entry => {
@@ -211,11 +201,8 @@ export class Git implements IGitService {
                 return logEntry!;
             });
 
-        console.warn('Completed', new Date().getTime() - start);
-        console.warn('Step4', stopWatch.elapsedTime);
         const headHashes = this.getHeadHashes();
         const count = await countPromise;
-        console.warn('Step5', stopWatch.elapsedTime);
         const headHashesOnly = headHashes.map(item => item.hash);
 
         items
@@ -224,7 +211,6 @@ export class Git implements IGitService {
                 item.isLastCommit = true;
             });
 
-        console.warn('Step6', stopWatch.elapsedTime);
         // @ts-ignore
         return {
             items,
