@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.6.3 (15/03/2020)
+- [bf48916] Add support for react storybook (#526) 
+- [4078b0d] vscode-test is a dev dependency (#527) 
+- [a2900cf] Minor perf improvements to fetching commits (#529) 
+- [3e4054f] Updated CHANGELOG.md - Github Actions - @ole1986
 - [12b4899] Use `git tag v*` and `git push --tags` to prerelease a version - @ole1986
 - [150f201] Updated CHANGELOG.md - Github Actions - @ole1986
 - [868d8e0] Always display icon in scm  toolbar (#520) 
