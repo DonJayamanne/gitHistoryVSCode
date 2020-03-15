@@ -21,7 +21,7 @@ export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler
         const gitService = await this.serviceContainer
             .get<IGitServiceFactory>(IGitServiceFactory)
             .createGitService(commit.workspaceFolder);
-        const currentBranch = await gitService.getCurrentBranch();
+        const currentBranch = gitService.getCurrentBranch();
 
         const msg = `Cherry pick ${commit.logEntry.hash.short} into ${currentBranch}?`;
         const yesNo = showPrompt

@@ -60,7 +60,7 @@ export class HtmlViewer {
             }
         });
 
-        let branchName = await gitService.getCurrentBranch();
+        let branchName = gitService.getCurrentBranch();
         let branchSelection = BranchSelection.Current;
 
         // check if the current branch is detached
