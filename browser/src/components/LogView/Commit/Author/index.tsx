@@ -11,7 +11,7 @@ type AuthorProps = {
     selectAuthor(author: string): void;
 };
 
-function Author(props: AuthorProps) {
+export function Author(props: AuthorProps) {
     function selectAuthor(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
         event.preventDefault();
         event.stopPropagation();
