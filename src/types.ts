@@ -131,12 +131,12 @@ export const IOutputChannel = Symbol.for('IOutputChannel');
 
 export interface IGitService {
     getGitRoot(): string;
-    getGitRelativePath(file: Uri): Promise<string>;
-    getHeadHashes(): Promise<{ ref?: string; hash?: string }[]>;
+    getGitRelativePath(file: Uri): string;
+    getHeadHashes(): { ref?: string; hash?: string }[];
     getAuthors(): Promise<ActionedUser[]>;
     getDetachedHash(): string | undefined;
     getBranches(): Promise<Branch[]>;
-    getCurrentBranch(): Promise<string>;
+    getCurrentBranch(): string;
     getRefsContainingCommit(hash: string): Ref[];
     getLogEntries(
         pageIndex?: number,

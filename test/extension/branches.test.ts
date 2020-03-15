@@ -115,7 +115,7 @@ describe('Branches', () => {
     async function assertCurrentBranch(gitService: IGitService, expectedBranch: string) {
         let currentBranch = '';
         async function isBranchCorrect() {
-            currentBranch = await gitService.getCurrentBranch();
+            currentBranch = gitService.getCurrentBranch();
             return currentBranch === `heads/${expectedBranch}` || currentBranch === expectedBranch;
         }
 
