@@ -21,7 +21,7 @@ export class GitMergeCommandHandler implements IGitMergeCommandHandler {
         const gitService = await this.serviceContainer
             .get<IGitServiceFactory>(IGitServiceFactory)
             .createGitService(commit.workspaceFolder);
-        const currentBranch = await gitService.getCurrentBranch();
+        const currentBranch = gitService.getCurrentBranch();
 
         const commitBranches = gitService
             .getRefsContainingCommit(commit.logEntry.hash.full)

@@ -74,7 +74,7 @@ export class ApiController {
         const hash: string = args.hash;
 
         const gitRoot = this.gitService.getGitRoot();
-        const branch = await this.gitService.getCurrentBranch();
+        const branch = this.gitService.getCurrentBranch();
 
         const commit = await this.gitService.getCommit(hash);
         this.commitViewer.viewCommitTree(new CommitDetails(gitRoot, branch, commit as LogEntry));
@@ -127,7 +127,7 @@ export class ApiController {
     }
     public async doAction(args: any) {
         const gitRoot = this.gitService.getGitRoot();
-        const branch = await this.gitService.getCurrentBranch();
+        const branch = this.gitService.getCurrentBranch();
 
         const actionName = args.name;
         const value: string = decodeURIComponent(args.value);
@@ -159,7 +159,7 @@ export class ApiController {
     }
     public async doSomethingWithCommit(args: any) {
         const gitRoot = this.gitService.getGitRoot();
-        const branch = await this.gitService.getCurrentBranch();
+        const branch = this.gitService.getCurrentBranch();
         const logEntry = args.logEntry as LogEntry;
 
         this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
@@ -167,7 +167,7 @@ export class ApiController {
     @captureTelemetry()
     public async selectCommittedFile(args: any) {
         const gitRoot = this.gitService.getGitRoot();
-        const branch = await this.gitService.getCurrentBranch();
+        const branch = this.gitService.getCurrentBranch();
 
         this.commandManager.executeCommand(
             'git.commit.file.select',
