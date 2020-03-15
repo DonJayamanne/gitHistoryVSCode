@@ -1,6 +1,8 @@
 # Changelog
 
-## v0.6.3 (14/03/2020)
+## v0.6.3 (15/03/2020)
+- [12b4899] Use `git tag v*` and `git push --tags` to prerelease a version - @ole1986
+- [150f201] Updated CHANGELOG.md - Github Actions - @ole1986
 - [868d8e0] Always display icon in scm  toolbar (#520) 
 - [61c2528] ignore prereleases in vsce-publish.yml - @ole1986
 - [30e9ca5] Fixed #517 (#518) - @ole1986
