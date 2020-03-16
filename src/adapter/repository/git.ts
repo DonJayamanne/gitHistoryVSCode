@@ -211,8 +211,7 @@ export class Git implements IGitService {
                 item.isLastCommit = true;
             });
 
-        // @ts-ignore
-        return {
+        const data = {
             items,
             count,
             branch,
@@ -221,6 +220,12 @@ export class Git implements IGitService {
             pageSize,
             searchText,
         } as LogEntries;
+
+        fs.writeFileSync(
+            '/Users/donjayamanne/Desktop/Development/vsc/gitHistoryVSCode/pvscCommits.json',
+            JSON.stringify(data),
+        );
+        return data;
     }
 
     @captureTelemetry()
