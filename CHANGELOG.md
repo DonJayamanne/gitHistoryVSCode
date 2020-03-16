@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.6.3 (15/03/2020)
+## v0.6.3 (16/03/2020)
 - [bf48916] Add support for react storybook (#526) 
 - [4078b0d] vscode-test is a dev dependency (#527) 
 - [a2900cf] Minor perf improvements to fetching commits (#529) 
