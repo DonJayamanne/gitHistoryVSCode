@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.6.3 (16/03/2020)
+- [42a4238] Updated CHANGELOG.md - Github Actions - @ole1986
 - [ff4cdc9] remove vsce-publish.yml from master branch to make sure it is not being used - @ole1986
 - [3af6409] uups - @ole1986
 - [52f4782] Updated CHANGELOG.md - Github Actions - @ole1986
