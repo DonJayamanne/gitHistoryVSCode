@@ -1,0 +1,40 @@
+name: Publish and Upload
+
+on:
+    release:
+      types: [published]
+
+jobs:
+  build:
+    if: "!github.event.release.prerelease"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+    - run: npm install
+    - run: npm install -g vsce github-release-notes
+    - name: Read package.json verison
+      uses: tyankatsu0105/read-package-version-actions@v1
+      id: package-version
+    - name: Generate and Commit Changelog
+      env:
+        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git fetch origin master
+        git checkout master
+        gren changelog --override
+        git -c user.name="ole1986" -c user.email="ole.k@web.de" commit --no-verify -m "Updated CHANGELOG.md - Github Actions" -- CHANGELOG.md
+        git push
+    - name: vsce publish
+      run: vsce publish -p "${{ secrets.VSCE_TOKEN }}"
+    - name: Upload to Release
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        asset_path: ${{ format('githistory-{0}.vsix', steps.package-version.outputs.version) }}
+        asset_name: ${{ format('githistory-{0}.vsix', steps.package-version.outputs.version) }}
+        asset_content_type: application/zip
