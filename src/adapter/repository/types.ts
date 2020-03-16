@@ -19,7 +19,7 @@ export interface IGitArgsService {
     getLogArgs(
         pageIndex?: number,
         pageSize?: number,
-        branch?: string,
+        branches?: string[],
         searchText?: string,
         relativeFilePath?: string,
         lineNumber?: number,

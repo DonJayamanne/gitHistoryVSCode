@@ -168,7 +168,7 @@ describe('Branches', () => {
 
         await assertCurrentBranch(gitService, commonNameAcrossAll);
 
-        const logEntries = await gitService.getLogEntries(0, 100, commonNameAcrossAll);
+        const logEntries = await gitService.getLogEntries(0, 100, [commonNameAcrossAll]);
         assert.isOk(logEntries);
         assert.equal(logEntries.count, 406);
         assert.equal(logEntries.items.length, 100);

@@ -43,14 +43,14 @@ export class GitArgsService implements IGitArgsService {
     public getLogArgs(
         pageIndex = 0,
         pageSize = 100,
-        branch = '',
+        branches: string[] = [],
         searchText = '',
         relativeFilePath?: string,
         lineNumber?: number,
         author?: string,
     ): GitLogArgs {
-        const allBranches = branch.trim().length === 0;
-        const currentBranch = branch.trim() === '*';
+        const allBranches = branches.length === 0;
+        const currentBranch = branches.length === 1 && branches[0].trim() === '*';
         const specificBranch = !allBranches && !currentBranch;
 
         const authorArgs: string[] = [];
@@ -103,9 +103,9 @@ export class GitArgsService implements IGitArgsService {
         }
 
         if (specificBranch && lineArgs.length === 0) {
-            logArgs.push(branch);
-            fileStatArgs.push(branch);
-            counterArgs.push(branch);
+            logArgs.push(...branches);
+            fileStatArgs.push(...branches);
+            counterArgs.push(...branches);
         }
 
         // Check if we need a specific file

@@ -51,7 +51,7 @@ export class ApiController {
         const entries = await this.gitService.getLogEntries(
             pageIndex,
             pageSize,
-            branch,
+            [branch],
             searchText,
             file,
             lineNumber,
