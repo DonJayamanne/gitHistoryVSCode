@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.6.3 (16/03/2020)
+- [334c043] updated package.json to match version - @ole1986
+- [ed206d5] use actions/checkout@v2 to allow git push on current (#533) - @ole1986
+- [a13ea9d] Updated CHANGELOG.md - Github Actions - @ole1986
 - [21009c9] Updated CHANGELOG.md - Github Actions - @ole1986
 - [42a4238] Updated CHANGELOG.md - Github Actions - @ole1986
 - [ff4cdc9] remove vsce-publish.yml from master branch to make sure it is not being used - @ole1986
