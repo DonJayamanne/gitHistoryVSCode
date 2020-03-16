@@ -1,6 +1,11 @@
 # Changelog
 
 ## v0.6.3 (16/03/2020)
+- [ff4cdc9] remove vsce-publish.yml from master branch to make sure it is not being used - @ole1986
+- [3af6409] uups - @ole1986
+- [52f4782] Updated CHANGELOG.md - Github Actions - @ole1986
+- [aa12618] use version number from package.json in vsce-package.yml (#531) and generate changelog - @ole1986
+- [216bd50] Updated CHANGELOG.md - Github Actions - @ole1986
 - [bf48916] Add support for react storybook (#526) 
 - [4078b0d] vscode-test is a dev dependency (#527) 
 - [a2900cf] Minor perf improvements to fetching commits (#529) 
