@@ -17,13 +17,4 @@ jobs:
     - name: Write PreRelease Notes
       env:
         GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gren release --override -P --tags=${{ github.event.ref }}
-    - name: Generate and Commit Changelog
-      env:
-        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git fetch origin master
-        git checkout master
-        gren changelog --override
-        git -c user.name="ole1986" -c user.email="ole.k@web.de" commit -m "Updated CHANGELOG.md - Github Actions" -- CHANGELOG.md
-        git push origin master
+      run: gren release --override -d --tags=${{ github.event.ref }}

@@ -16,18 +16,27 @@ jobs:
       with:
         node-version: '10.x'
     - run: npm install
-    - run: npm install -g vsce
+    - run: npm install -g vsce github-release-notes
+    - name: Generate and Commit Changelog
+      env:
+        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git fetch origin master
+        git checkout master
+        gren changelog --override
+        git -c user.name="ole1986" -c user.email="ole.k@web.de" commit -m "Updated CHANGELOG.md - Github Actions" -- CHANGELOG.md
+        git push origin master
     - name: vsce package
       run: vsce package
     - name: Upload to Release
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PACKAGE_VERSION: $(cat package.json | grep '"version":' | sed -E 's/.*([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
       with:
         upload_url: ${{ github.event.release.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ${{ format('githistory-{0}.vsix', github.event.release.tag_name) }}
-        asset_name: ${{ format('githistory-{0}.vsix', github.event.release.tag_name) }}
+        asset_path: ${{ format('githistory-{0}.vsix', $PACKAGE_VERSION) }}
+        asset_name: ${{ format('githistory-{0}.vsix', $PACKAGE_VERSION) }}
         asset_content_type: application/zip
     - name: vsce publish 
       run: vsce publish -p "${{ secrets.VSCE_TOKEN }}"
-      
