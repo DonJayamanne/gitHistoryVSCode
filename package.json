@@ -200,7 +200,12 @@
                 {
                     "command": "git.viewHistory",
                     "group": "navigation",
-                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0 && config.gitHistory.sourceCodeProviderIntegrationLocation == 'Inline'"
+                },
+                {
+                    "command": "git.viewHistory",
+                    "group": "inline",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0 && config.gitHistory.sourceCodeProviderIntegrationLocation == 'More Actions'"
                 }
             ],
             "scm/resourceState/context": [
@@ -359,6 +364,19 @@
                     ],
                     "scope": "window",
                     "description": "Output log information"
+                },
+                "gitHistory.sourceCodeProviderIntegrationLocation": {
+                    "type": "string",
+                    "enum": [
+                        "Inline",
+                        "More Actions"
+                    ],
+                    "enumDescriptions": [
+                        "Show the 'Git: View History' action on the title of SCM Providers",
+                        "Show the 'Git: View History' action in the 'More Actions...' menu on the title of SCM Providers"
+                    ],
+                    "default": "Inline",
+                    "description": "Specifies where the 'Git: View History' action appears on the title of SCM Providers."
                 }
             }
         }
