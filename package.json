@@ -325,6 +325,12 @@
             "type": "object",
             "title": "Git History",
             "properties": {
+                "gitHistory.alwaysPromptRepositoryPicker": {
+                    "type": "boolean",
+                    "default": false,
+                    "scope": "window",
+                    "description": "Always prompt with repository picker when running Git History"
+                },
                 "gitHistory.hideCommitViewExplorer": {
                     "type": "boolean",
                     "default": false,
