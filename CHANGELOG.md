@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.4 (23/04/2020)
+- [3fd1ffb] Version updated - @ole1986
+- [163da0a] Setting to always prompt for repository picker (#540) - @ole1986
+- [bdf75e0] Setting to display icon in scm toolbar (#535) - @Lej77
+- [fd79059] use vsce package after vsce publish to make file available - @ole1986
+- [c09266f] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.3 (16/03/2020)
 - [334c043] updated package.json to match version - @ole1986
 - [ed206d5] use actions/checkout@v2 to allow git push on current (#533) - @ole1986
@@ -232,13 +241,3 @@ e.g. don't show compare with previous if file not present in previous commit.
 - Improve readability of picklist for commits of a file (2 line display)
 - Improve gitPath logic and performance.
 - Make git log default page size 50 for performance.
----
-
-## Version 0.1.5 (16/01/2017)
-- Fix HTML chars in filenames [#53](https://github.com/DonJayamanne/gitHistoryVSCode/pull/53)
-- Fix git log above repo root (Credit to [malytskyy](https://github.com/malytskyy)) [#77](https://github.com/DonJayamanne/gitHistoryVSCode/pull/77) 
-- Rename outChannel to 'Git History' [#83](https://github.com/DonJayamanne/gitHistoryVSCode/pull/83) 
-- Don't use incorrectly configured git.path [#78](https://github.com/DonJayamanne/gitHistoryVSCode/pull/78) and [#46](https://github.com/DonJayamanne/gitHistoryVSCode/pull/46) 
-- Add error handling for spawned processes (Credit to [SE2Dev](https://github.com/SE2Dev)) [#46](https://github.com/DonJayamanne/gitHistoryVSCode/pull/46) 
-- tmp file cleanup.  There is a lot of effort to manually cleanup when tmp does it all anyway. [#88](https://github.com/DonJayamanne/gitHistoryVSCode/pull/88) 
-- Update typescript to 2.1 and update to ES6 target (allowing async await in place of .then) [#81](https://github.com/DonJayamanne/gitHistoryVSCode/pull/81) 
