@@ -9,18 +9,22 @@ import { ILogParser } from '../parsers/types';
 import { Git } from './git';
 import { API } from './git.d';
 import { IGitArgsService } from './types';
+import { IWorkspaceService } from '../../application/types/workspace';
 
 @injectable()
 export class GitServiceFactory implements IGitServiceFactory {
     private readonly gitServices = new Map<string, IGitService>();
     private readonly gitApi: Promise<API>;
     private repoIndex: number;
+    private workspace: IWorkspaceService;
+
     constructor(
         @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
     ) {
+        this.workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
         this.gitApi = this.gitCmdExecutor.gitApi;
         this.repoIndex = -1;
     }
@@ -65,6 +69,10 @@ export class GitServiceFactory implements IGitServiceFactory {
         const resourceUri = typeof resource === 'string' ? Uri.file(resource) : resource;
         const gitApi = await this.gitApi;
         if (!resourceUri) {
+            if (this.workspace.getConfiguration('gitHistory').get<boolean>('alwaysPromptRepositoryPicker', false)) {
+                this.repoIndex = -1;
+            }
+
             if (this.repoIndex === -1 && gitApi.repositories.length === 1) {
                 this.repoIndex = 0;
             } else {
