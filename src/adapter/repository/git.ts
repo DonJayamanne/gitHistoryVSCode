@@ -136,7 +136,19 @@ export class Git implements IGitService {
             return x.name! + '^{}';
         });
 
-        const result = await this.exec(...['rev-parse', ...tagNames]);
+        const maxTagNamesLength = 500;
+        let result: string;
+        if (tagNames.length > maxTagNamesLength) {
+            const tagNamesChunks: Array<Array<string>> = [];
+            while (tagNames.length) {
+                tagNamesChunks.push(tagNames.splice(0, maxTagNamesLength));
+            }
+            result = await Promise.all(
+                tagNamesChunks.map(tagNamesChunk => this.exec(...['rev-parse', ...tagNamesChunk])),
+            ).then(resultChunks => resultChunks.join(''));
+        } else {
+            result = await this.exec(...['rev-parse', ...tagNames]);
+        }
 
         result
             .trim()
