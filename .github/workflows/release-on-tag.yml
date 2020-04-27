@@ -1,7 +1,7 @@
 name: Generate Release Notes
 
 on:
-  create:
+  push:
     tags:
       - v*
 
