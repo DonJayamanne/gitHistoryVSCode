@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.6.5 (27/04/2020)
+- [a6bf8c7] ups - @ole1986
+- [1643c8d] Github Actions: use proper tag name when generating release notes - @ole1986
+- [10d420d] generate release nots on push tags - @ole1986
+- [1bb30cd] Possible fix for #542 (#543) - @ole1986
+- [efb737a] Updated version to 0.6.5 - @ole1986
+- [db97f61] Load dereferenced hashes for tags in chunks. (#541) - @damianfijorek
+- [5a853a6] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.4 (23/04/2020)
 - [3fd1ffb] Version updated - @ole1986
 - [163da0a] Setting to always prompt for repository picker (#540) - @ole1986
@@ -228,16 +239,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 - Ability to search from within the history viewer
 - Display history viewer when viewing history of files
 - Miscellaneous fixes
-
----
-
-## Version 0.2.0 (07/03/2017)
-- Move to Async programing pattern (internal)
-- Add logging and better error surfacing  - output windows 'Git History Log' 
-- Add a seperate output window for non logging display 'Git History Info'
-- Fix #43 #63 - error when file in not present in a commit
-- File actions pick list - only show applicable actions
-e.g. don't show compare with previous if file not present in previous commit.
-- Improve readability of picklist for commits of a file (2 line display)
-- Improve gitPath logic and performance.
-- Make git log default page size 50 for performance.
