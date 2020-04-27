@@ -20,6 +20,4 @@ jobs:
         GITHUB_EVENT_REF: ${{ github.event.ref }}
       run: |
         tagname="${GITHUB_EVENT_REF/refs\/tags\//}"
-        echo $tagname
-        echo "::set-env name=tagname::$tagname"
-      run: gren release --override -d --tags=$tagname
+        gren release --override -d --tags=$tagname
