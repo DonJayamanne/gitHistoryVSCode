@@ -110,7 +110,7 @@ export class GitArgsService implements IGitArgsService {
 
         // Check if we need a specific file
         if (relativeFilePath && lineArgs.length === 0) {
-            const formattedPath = relativeFilePath.indexOf(' ') > 0 ? `"${relativeFilePath}"` : relativeFilePath;
+            const formattedPath = relativeFilePath;
             logArgs.push('--follow', '--', formattedPath);
             fileStatArgs.push('--follow', '--', formattedPath);
             counterArgs.push('--', formattedPath);
