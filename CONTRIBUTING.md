@@ -1,5 +1,5 @@
 ## How to build
-- Install nodejs 8.9.1+
+- Install nodejs 12.8.+
 - install npm
 - Clone repo
 - Open repo folder in VS Code
