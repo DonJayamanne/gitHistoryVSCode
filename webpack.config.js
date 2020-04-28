@@ -33,10 +33,9 @@ const browser = {
             // .ts, .tsx
             {
                 test: /\.tsx?$/,
-                loader: 'awesome-typescript-loader?',
+                loader: 'ts-loader',
                 options: {
-                    module: 'es6',
-                    configFileName: './browser/tsconfig.json',
+                    configFile: 'browser/tsconfig.json',
                 },
             },
             // scss

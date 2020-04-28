@@ -435,7 +435,6 @@
         "@types/redux-actions": "^2.2.2",
         "@typescript-eslint/eslint-plugin": "^2.21.0",
         "@typescript-eslint/parser": "^2.21.0",
-        "awesome-typescript-loader": "5.2.1",
         "babel-loader": "^8.0.6",
         "bootstrap": "^3.4.1",
         "chai": "^4.1.2",
