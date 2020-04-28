@@ -1,5 +1,5 @@
 import * as React from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import { CommittedFile, LogEntry } from '../../../definitions';
 import { RootState } from '../../../reducers';
