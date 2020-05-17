@@ -64,6 +64,13 @@ export namespace ResultActions {
             }).then(x => {
                 dispatch(ResultActions.getBranches());
                 dispatch(updateCommitInList(x));
+
+                switch (name) {
+                    case 'checkoutBranch':
+                        // switch to the branch on client side
+                        dispatch(selectBranch(ref.name, BranchSelection.Current));
+                        break;
+                }
             });
         };
     };

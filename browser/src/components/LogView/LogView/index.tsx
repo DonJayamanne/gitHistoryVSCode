@@ -84,6 +84,13 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                     { logEntry, ref, name },
                 );
                 break;
+            case 'checkoutBranch':
+                this.dialog.showConfirm(
+                    `Checkout to branch ${ref.name}?`,
+                    `Do you want to checkout branch ${ref.name}?`,
+                    { logEntry, ref, name },
+                );
+                break;
             case 'removeRemote':
                 this.dialog.showConfirm(
                     `Remove remote branch ${ref.name}?`,
@@ -147,6 +154,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                 this.props.actionCommit(args.entry, args.name);
                 break;
             case 'removeRemote':
+            case 'checkoutBranch':
             case 'removeBranch':
             case 'removeTag':
                 this.props.actionRef(args.logEntry, args.ref, args.name);

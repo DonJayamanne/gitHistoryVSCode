@@ -29,6 +29,7 @@ export type Ref = {
     type: RefType;
     name?: string;
     onRemove?(): void;
+    onAction?(name: string): void;
 };
 export type Remote = {
     name: string;

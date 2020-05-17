@@ -119,6 +119,9 @@ export class ApiController {
             case 'removeBranch':
                 await this.gitService.removeBranch(refEntry.name!);
                 break;
+            case 'checkoutBranch':
+                await this.gitService.checkout(refEntry.name!);
+                break;
             case 'removeRemote':
                 await this.gitService.removeRemoteBranch(refEntry.name!);
         }

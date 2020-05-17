@@ -242,10 +242,14 @@ div.appRoot {
 .refs a.remove {
 	color: #ff6565;
     border-left: 1px solid var(--vscode-editorGroup-border);
-    margin-left: 10px;
+    margin-left: 5px;
     padding-left: 5px;
     font-size: 140%;
     line-height: 10px;
+}
+
+.refs a.checkout, .refs a.checkout:hover {
+	color: white;
 }
 
 .commit-remote-container .refs span:first-child,
