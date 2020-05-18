@@ -1,7 +1,7 @@
 name: Generate Release Notes
 
 on:
-  push:
+  create:
     tags:
       - v*
 
@@ -17,7 +17,4 @@ jobs:
     - name: Write PreRelease Notes
       env:
         GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT_REF: ${{ github.event.ref }}
-      run: |
-        tagname="${GITHUB_EVENT_REF/refs\/tags\//}"
-        gren release --override -d --tags=$tagname
+      run: gren release --override -d --tags=${{ github.event.ref }}
