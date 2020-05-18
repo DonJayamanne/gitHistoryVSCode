@@ -1,7 +1,7 @@
 name: Generate Release Notes
 
 on:
-  create:
+  push:
     tags:
       - v*
 
@@ -13,8 +13,11 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.8.x'
-    - run: npm install github-release-notes -g
+    - run: npm install github-release-notes@0.17.1 -g
     - name: Write PreRelease Notes
       env:
         GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gren release --override -d --tags=${{ github.event.ref }}
+        GITHUB_EVENT_REF: ${{ github.event.ref }}
+      run: |
+        tagname="${GITHUB_EVENT_REF/refs\/tags\//}"
+        gren release --override -d --tags=$tagname
