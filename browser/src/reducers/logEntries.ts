@@ -9,7 +9,7 @@ const initialState: LogEntriesState = {
     isLoading: false,
     isLoadingCommit: undefined,
     items: [],
-    pageIndex: 0,
+    startIndex: 0,
 };
 
 function fixDates(logEntry: LogEntry) {
@@ -24,13 +24,20 @@ function fixDates(logEntry: LogEntry) {
 export default handleActions<LogEntriesState, any>(
     {
         [Actions.FETCHED_COMMITS]: (state, action: ReduxActions.Action<LogEntriesResponse>) => {
-            action.payload!.items.forEach(x => {
+            action.payload!.items.forEach((x, i) => {
                 fixDates(x);
+                if (state.items[i + action.payload.startIndex] !== undefined) {
+                    state.items.splice(i + action.payload.startIndex, 1, x);
+                } else {
+                    state.items.splice(i + action.payload.startIndex, 0, x);
+                }
             });
 
             return {
                 ...state,
-                ...action.payload!,
+                startIndex: action.payload.startIndex,
+                stopIndex: action.payload.stopIndex,
+                count: action.payload.count,
                 selected: undefined,
                 isLoading: false,
                 isLoadingCommit: undefined,

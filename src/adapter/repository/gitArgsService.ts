@@ -41,8 +41,8 @@ export class GitArgsService implements IGitArgsService {
     }
 
     public getLogArgs(
-        pageIndex = 0,
-        pageSize = 100,
+        startIndex = 0,
+        stopIndex = 100,
         branches: string[] = [],
         searchText = '',
         relativeFilePath?: string,
@@ -52,6 +52,7 @@ export class GitArgsService implements IGitArgsService {
         const allBranches = branches.length === 0;
         const currentBranch = branches.length === 1 && branches[0].trim() === '*';
         const specificBranch = !allBranches && !currentBranch;
+        const maxCount = stopIndex - startIndex > 0 ? stopIndex - startIndex : 1;
 
         const authorArgs: string[] = [];
         if (author && author.length > 0) {
@@ -84,12 +85,12 @@ export class GitArgsService implements IGitArgsService {
                 });
         }
 
-        logArgs.push('--date-order', '--decorate=full', `--skip=${pageIndex * pageSize}`, `--max-count=${pageSize}`);
+        logArgs.push('--date-order', '--decorate=full', `--skip=${startIndex}`, `--max-count=${maxCount}`);
         fileStatArgs.push(
             '--date-order',
             '--decorate=full',
-            `--skip=${pageIndex * pageSize}`,
-            `--max-count=${pageSize}`,
+            `--skip=${stopIndex * startIndex}`,
+            `--max-count=${maxCount}`,
         );
 
         // Count only the number of lines in the log

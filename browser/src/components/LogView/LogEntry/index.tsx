@@ -13,6 +13,7 @@ import { GoGitCommit, GoClippy, GoPlus, GoFileSymlinkFile, GoFileSymlinkDirector
 
 type ResultListProps = {
     logEntry: LogEntry;
+    style: any;
     selected?: LogEntry;
     isLoadingCommit?: string;
     onViewCommit(entry: LogEntry): void;
@@ -26,7 +27,8 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
     }
 
     private isLoading() {
-        return this.props.isLoadingCommit === this.props.logEntry.hash.full;
+        if (this.props.logEntry === undefined) return true;
+        return this.props.isLoadingCommit === this.props.logEntry!.hash!.full;
     }
 
     private showLoading() {
@@ -54,7 +56,13 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
         );
     }
 
+    private getHash(full = false) {
+        if (this.props.logEntry === undefined) return '';
+        return full ? this.props.logEntry.hash.full : this.props.logEntry.hash.short;
+    }
+
     private renderRemoteRefs() {
+        if (this.props.logEntry === undefined) return <span />;
         return this.props.logEntry.refs
             .filter(ref => ref.type === RefType.RemoteHead)
             .map(ref => (
@@ -67,6 +75,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
     }
 
     private renderHeadRef() {
+        if (this.props.logEntry === undefined) return <span />;
         return this.props.logEntry.refs
             .filter(ref => ref.type === RefType.Head)
             .map(ref => (
@@ -80,6 +89,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
     }
 
     private renderTagRef() {
+        if (this.props.logEntry === undefined) return <span />;
         return this.props.logEntry.refs
             .filter(ref => ref.type === RefType.Tag)
             .map(ref => (
@@ -114,7 +124,11 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
             event.stopPropagation();
         }
         return (
-            <div className={cssClassName} onClick={() => this.props.onViewCommit(this.props.logEntry)}>
+            <div
+                className={cssClassName}
+                style={this.props.style}
+                onClick={() => this.props.onViewCommit(this.props.logEntry)}
+            >
                 <div className="media right">
                     <div className="media-image">
                         <div className="ref" onClick={preventPropagation}>
@@ -124,12 +138,12 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                         </div>
                         <div className="buttons" onClick={() => this.props.onViewCommit(this.props.logEntry)}>
                             <div>
-                                <CopyToClipboard text={this.props.logEntry.hash.full}>
+                                <CopyToClipboard text={this.getHash(true)}>
                                     <span
                                         className="btnx hash clipboard hint--top-left hint--rounded hint--bounce"
                                         aria-label="Copy hash to clipboard"
                                     >
-                                        {this.props.logEntry.hash.short}&nbsp;
+                                        {this.getHash()}&nbsp;
                                         <GoClippy></GoClippy>
                                     </span>
                                 </CopyToClipboard>
@@ -208,12 +222,12 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                         </div>
                     </div>
                     <div role="button" className="media-content">
-                        <div className="commit-subject" title={gitmojify(this.props.logEntry.subject)}>
-                            {gitmojify(this.props.logEntry.subject)}
+                        <div className="commit-subject" title={gitmojify(this.props.logEntry?.subject)}>
+                            {gitmojify(this.props.logEntry?.subject)}
                             <span style={{ marginLeft: '.5em' }}>{this.isLoading() ? this.showLoading() : ''}</span>
                         </div>
-                        <Avatar result={this.props.logEntry.author}></Avatar>
-                        <Author result={this.props.logEntry.author}></Author>
+                        <Avatar result={this.props.logEntry?.author}></Avatar>
+                        <Author result={this.props.logEntry?.author}></Author>
                     </div>
                 </div>
             </div>

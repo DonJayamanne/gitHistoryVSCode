@@ -77,8 +77,8 @@ export type ActionedDetails = ActionedUser & {
 export type LogEntriesResponse = {
     items: LogEntry[];
     count: number;
-    pageIndex?: number;
-    pageSize?: number;
+    startIndex?: number;
+    stopIndex?: number;
     lineNumber?: number;
     selected?: LogEntry;
     isLoading?: boolean;

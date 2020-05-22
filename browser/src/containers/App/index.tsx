@@ -9,19 +9,15 @@ import LogView from '../../components/LogView/LogView';
 import { ISettings } from '../../definitions';
 import { LogEntriesState, RootState } from '../../reducers';
 import { IConfiguration } from '../../reducers/vscode';
-import Footer from '../../components/Footer';
 
 type AppProps = {
     configuration: IConfiguration;
     settings: ISettings;
     logEntries: LogEntriesState;
-    getCommits: typeof ResultActions.getCommits;
-    getPreviousCommits: typeof ResultActions.getPreviousCommits;
-    getNextCommits: typeof ResultActions.getNextCommits;
     search: typeof ResultActions.search;
 } & typeof ResultActions;
 
-interface AppState {}
+interface AppState { }
 
 class App extends React.Component<AppProps, AppState> {
     private splitPane;
@@ -65,9 +61,6 @@ class App extends React.Component<AppProps, AppState> {
 
     public render() {
         const { children } = this.props;
-        const canGoForward =
-            this.props.logEntries.count === -1 ||
-            (this.props.logEntries.pageIndex + 1) * this.props.configuration.pageSize < this.props.logEntries.count;
         return (
             <div className="appRootParent">
                 <div className="appRoot">
@@ -90,12 +83,6 @@ class App extends React.Component<AppProps, AppState> {
                             </div>
                         )}
                     </SplitPane>
-                    <Footer
-                        canGoBack={this.props.logEntries.pageIndex > 0}
-                        canGoForward={canGoForward}
-                        goBack={this.goBack}
-                        goForward={this.goForward}
-                    ></Footer>
                 </div>
                 {children}
             </div>
@@ -114,9 +101,6 @@ function mapStateToProps(state: RootState) {
 function mapDispatchToProps(dispatch) {
     return {
         ...bindActionCreators({ ...ResultActions }, dispatch),
-        getCommits: () => dispatch(ResultActions.getCommits()),
-        getNextCommits: () => dispatch(ResultActions.getNextCommits()),
-        getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits()),
         search: (text: string) => dispatch(ResultActions.search(text)),
     };
 }

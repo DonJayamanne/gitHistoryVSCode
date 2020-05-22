@@ -112,20 +112,7 @@ export namespace ResultActions {
             }
         };
     };
-    export const getNextCommits = () => {
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const state = getState();
-            const pageIndex = state.logEntries.pageIndex + 1;
-            return fetchCommits(dispatch, state, pageIndex, undefined);
-        };
-    };
-    export const getPreviousCommits = () => {
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const state = getState();
-            const pageIndex = state.logEntries.pageIndex - 1;
-            return fetchCommits(dispatch, state, pageIndex, undefined);
-        };
-    };
+
     export const search = (searchText: string) => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(updateSettings({ searchText }));
@@ -164,12 +151,12 @@ export namespace ResultActions {
         };
     };
 
-    export function getCommits() {
+    export const getCommits = (startIndex: number, stopIndex: number) => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
-            fetchCommits(dispatch, state);
+            return fetchCommits(dispatch, state, startIndex, stopIndex);
         };
-    }
+    };
     export const getBranches = () => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
@@ -183,12 +170,17 @@ export namespace ResultActions {
         };
     };
 }
-function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
+function fetchCommits(
+    dispatch: Dispatch<any>,
+    store: RootState,
+    startIndex?: number,
+    stopIndex?: number,
+): Promise<any> {
     dispatch(notifyIsLoading());
-    post<LogEntriesResponse>('getLogEntries', {
+    return post<LogEntriesResponse>('getLogEntries', {
         ...store.settings,
-        pageIndex,
-        pageSize,
+        startIndex,
+        stopIndex,
     }).then(x => {
         dispatch(addResults(x));
     });

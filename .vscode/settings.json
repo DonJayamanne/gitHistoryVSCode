@@ -4,8 +4,6 @@
         "node_modules": true,
         ".vscode-test": true,
         "coverage": true,
-        "out": true,
-        "dist": true
     },
     "search.exclude": {
         "out": true,

@@ -3,7 +3,6 @@ import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import * as tmp from 'tmp';
 import * as vscode from 'vscode';
-import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
 import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry, Ref, FsUri } from '../../types';
@@ -204,8 +203,8 @@ export class Git implements IGitService {
 
     @captureTelemetry()
     public async getLogEntries(
-        pageIndex = 0,
-        pageSize = 0,
+        startIndex = 0,
+        stopIndex = 0,
         branches: string[] = [],
         searchText = '',
         file?: vscode.Uri,
@@ -213,15 +212,11 @@ export class Git implements IGitService {
         author?: string,
     ): Promise<LogEntries> {
         branches = Array.isArray(branches) ? branches : [];
-        if (pageSize <= 0) {
-            const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
-            pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
-        }
         const relativePath = file ? this.getGitRelativePath(file) : undefined;
 
         const args = this.gitArgsService.getLogArgs(
-            pageIndex,
-            pageSize,
+            startIndex,
+            stopIndex,
             branches,
             searchText,
             relativePath,
@@ -268,8 +263,8 @@ export class Git implements IGitService {
             count,
             branches,
             file,
-            pageIndex,
-            pageSize,
+            startIndex,
+            stopIndex,
             searchText,
         } as LogEntries;
     }
