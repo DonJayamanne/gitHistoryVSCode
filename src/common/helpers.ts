@@ -14,7 +14,10 @@ export async function createTemporaryFile(
             if (err) {
                 return reject(err);
             }
-            resolve({ filePath: tmpFile, cleanupCallback: cleanupCallback });
+            resolve({
+                filePath: tmpFile,
+                cleanupCallback: cleanupCallback,
+            });
         });
     });
 }

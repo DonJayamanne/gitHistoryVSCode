@@ -44,6 +44,12 @@ export default handleActions<LogEntriesState, any>(
             };
         },
 
+        [Actions.CLEAR_COMMITS]: (state, action) => {
+            state.items = [];
+            return {
+                ...state,
+            };
+        },
         [Actions.UPDATE_COMMIT_IN_LIST]: (state, action: ReduxActions.Action<LogEntry>) => {
             const index = state.items.findIndex(item => item.hash.full === action.payload.hash.full);
 
@@ -68,7 +74,10 @@ export default handleActions<LogEntriesState, any>(
         },
 
         [Actions.IS_FETCHING_COMMIT]: (state, action: ReduxActions.Action<string>) => {
-            return { ...state, isLoadingCommit: action.payload } as LogEntriesState;
+            return {
+                ...state,
+                isLoadingCommit: action.payload,
+            } as LogEntriesState;
         },
         [Actions.CLEAR_SELECTED_COMMIT]: (state, action: any) => {
             return { ...state, selected: undefined } as LogEntriesState;

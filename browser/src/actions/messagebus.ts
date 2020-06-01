@@ -13,7 +13,10 @@ function uuid() {
     );
 }
 
-function createPromiseFromMessageEvent(requestId): Promise<any> {
+function createPromiseFromMessageEvent(
+    requestId: string,
+    persistentCallback: (requestId: string, data: any) => any = undefined,
+): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         const handleEvent = (e: MessageEvent) => {
             if (requestId === e.data.requestId) {
@@ -27,12 +30,24 @@ function createPromiseFromMessageEvent(requestId): Promise<any> {
             }
         };
 
-        window.addEventListener('message', handleEvent);
+        if (persistentCallback !== undefined) {
+            window.addEventListener('message', e => persistentCallback(requestId, e.data));
+        } else {
+            window.addEventListener('message', handleEvent);
+        }
     });
 }
 
-export function post<T>(cmd: string, payload: any): Promise<T> {
+export function post<T>(
+    cmd: string,
+    payload: any,
+    persistentCallback: (requestId: string, data: any) => any = undefined,
+): Promise<T> {
     const requestId = uuid();
+
+    if (persistentCallback !== undefined) {
+        payload.requestId = requestId;
+    }
 
     vsc.postMessage({
         requestId,
@@ -40,7 +55,7 @@ export function post<T>(cmd: string, payload: any): Promise<T> {
         payload,
     });
 
-    return createPromiseFromMessageEvent(requestId);
+    return createPromiseFromMessageEvent(requestId, persistentCallback);
 }
 
 export function initialize(vscodeApi: any) {

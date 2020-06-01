@@ -11,7 +11,8 @@ import { IGitCheckoutCommandHandler } from '../types';
 export class GitCheckoutCommandHandler implements IGitCheckoutCommandHandler {
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
     ) {}
 

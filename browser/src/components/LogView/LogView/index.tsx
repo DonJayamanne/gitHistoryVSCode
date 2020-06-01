@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
-import { LogEntry, Ref } from '../../../definitions';
-import { LogEntriesState, RootState } from '../../../reducers';
-import BranchGraph from '../BranchGraph';
+import { LogEntries, LogEntry, Ref } from '../../../definitions';
+import { RootState } from '../../../reducers';
 import LogEntryList from '../LogEntryList';
 import Dialog, { DialogType } from '../../Dialog';
 import { IConfiguration } from 'src/reducers/vscode';
@@ -35,8 +34,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
 
     public render() {
         return (
-            <div className="log-view" id="scrollCnt">
-                <BranchGraph></BranchGraph>
+            <div>
                 <LogEntryList
                     onViewCommit={this.onViewCommit}
                     onAction={this.onAction}

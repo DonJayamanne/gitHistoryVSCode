@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { ResultActions } from '../../actions/results';
 import SplitPane from 'react-split-pane';
 import Header from '../../components/Header';
@@ -9,12 +8,13 @@ import LogView from '../../components/LogView/LogView';
 import { ISettings } from '../../definitions';
 import { LogEntriesState, RootState } from '../../reducers';
 import { IConfiguration } from '../../reducers/vscode';
+import { initialize } from '../../actions/messagebus';
 
 type AppProps = {
     configuration: IConfiguration;
     settings: ISettings;
     logEntries: LogEntriesState;
-    search: typeof ResultActions.search;
+    dispatch: any;
 } & typeof ResultActions;
 
 interface AppState { }
@@ -26,18 +26,18 @@ class App extends React.Component<AppProps, AppState> {
     constructor(props?: AppProps, context?: any) {
         super(props, context);
 
+        initialize(window['vscode']);
+
+        props.dispatch(ResultActions.getCommits(0, 30));
+        props.dispatch(ResultActions.getBranches());
+        props.dispatch(ResultActions.getAuthors());
+        props.dispatch(ResultActions.fetchAvatars());
+
+        props.dispatch(ResultActions.onStateChanged(this.hasStateChanged.bind(this)));
+
         this.splitPane = React.createRef();
         this.prevSplitterPos = '50%';
     }
-
-    private goBack = async () => {
-        await this.props.getPreviousCommits();
-        document.getElementById('scrollCnt').scrollTo(0, 0);
-    };
-    private goForward = async () => {
-        await this.props.getNextCommits();
-        document.getElementById('scrollCnt').scrollTo(0, 0);
-    };
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.logEntries.selected != prevProps.logEntries.selected) {
@@ -57,6 +57,10 @@ class App extends React.Component<AppProps, AppState> {
 
     onSplitterChanged(s) {
         this.prevSplitterPos = s;
+    }
+
+    public hasStateChanged(requestId: string, data: any) {
+        console.log('### STATE HAS CHANGED', requestId, data);
     }
 
     public render() {
@@ -98,11 +102,4 @@ function mapStateToProps(state: RootState) {
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        ...bindActionCreators({ ...ResultActions }, dispatch),
-        search: (text: string) => dispatch(ResultActions.search(text)),
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

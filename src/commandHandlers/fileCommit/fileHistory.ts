@@ -18,7 +18,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         @inject(ICommandManager) private commandManager: ICommandManager,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
         @inject(IFileSystem) private fileSystem: IFileSystem,
-    ) {}
+    ) { }
 
     @command('git.commit.FileEntry.ViewFileContents', IGitFileHistoryCommandHandler)
     public async viewFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
@@ -60,7 +60,9 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
             Uri.file(tmpFile.fsPath),
             Uri.file(fileCommit.committedFile.uri.path),
             title,
-            { preview: true },
+            {
+                preview: true,
+            },
         );
     }
 
@@ -150,8 +152,14 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const [leftFile, rightFile] = await Promise.all([leftFilePromise, rightFilePromise]);
 
         const title = this.getComparisonTitle(
-            { file: Uri.file(fileCommit.committedFile.uri.path), hash: fileCommit.logEntry.hash },
-            { file: Uri.file(fileCommit.committedFile.uri.path), hash: fileCommit.rightCommit.logEntry.hash },
+            {
+                file: Uri.file(fileCommit.committedFile.uri.path),
+                hash: fileCommit.logEntry.hash,
+            },
+            {
+                file: Uri.file(fileCommit.committedFile.uri.path),
+                hash: fileCommit.rightCommit.logEntry.hash,
+            },
         );
 
         await this.commandManager.executeCommand('vscode.diff', leftFile, rightFile, title, { preview: true });

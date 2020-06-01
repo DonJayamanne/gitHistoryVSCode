@@ -19,14 +19,19 @@ import { captureTelemetry } from '../../common/telemetry';
 export class Git implements IGitService {
     private refHashesMap: Map<string, string> = new Map<string, string>();
     private readonly remotesService: GitRemoteService;
+
+    public onStateChanged: vscode.Event<void>;
+
     constructor(
         private repo: Repository,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
+        @inject(IGitCommandExecutor)
+        private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
     ) {
         this.remotesService = new GitRemoteService(repo, this.gitCmdExecutor);
+        this.onStateChanged = this.repo.state.onDidChange;
     }
 
     /**

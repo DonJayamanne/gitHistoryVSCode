@@ -159,7 +159,8 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                                             this.props.onAction(this.props.logEntry, 'reset_soft'),
                                         )}
                                     >
-                                        <GoFileSymlinkFile></GoFileSymlinkFile>Soft
+                                        <GoFileSymlinkFile></GoFileSymlinkFile>
+                                        Soft
                                     </a>
                                 </span>
                                 <span
@@ -173,7 +174,8 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                                             this.props.onAction(this.props.logEntry, 'reset_hard'),
                                         )}
                                     >
-                                        <GoFileSymlinkDirectory></GoFileSymlinkDirectory>Hard
+                                        <GoFileSymlinkDirectory></GoFileSymlinkDirectory>
+                                        Hard
                                     </a>
                                 </span>
                                 <span

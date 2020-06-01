@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
 import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry, Ref } from '../definitions';
 import { BranchesState, RootState } from '../reducers';
-import { BranchSelection, Branch } from '../types';
+import { BranchSelection, Branch, Graph } from '../types';
 import { post } from '../actions/messagebus';
 
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
@@ -11,6 +11,7 @@ export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
 export const updateCommitInList = createAction<LogEntry>(Actions.UPDATE_COMMIT_IN_LIST);
 export const updateSettings = createAction(Actions.UPDATE_SETTINGS);
 export const updateBranchList = createAction<BranchesState>(Actions.FETCHED_BRANCHES);
+export const clearCommits = createAction(Actions.CLEAR_COMMITS);
 export const clearCommitSelection = createAction(Actions.CLEAR_SELECTED_COMMIT);
 export const goToPreviousPage = createAction<void>(Actions.GO_TO_PREVIOUS_PAGE);
 export const goToNextPage = createAction<void>(Actions.GO_TO_NEXT_PAGE);
@@ -21,8 +22,14 @@ export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHO
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ResultActions {
-    export const commitsRendered = createAction<number>(Actions.COMMITS_RENDERED);
+    export const commitsRendered = createAction<Graph>(Actions.COMMITS_RENDERED);
 
+    export const onStateChanged = (listener: (requestId: string, data: any) => any) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+            // register state message handler
+            return post<any>('registerState', {}, listener);
+        };
+    };
     export const actionCommit = (logEntry: LogEntry, name = '', value = '') => {
         return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(notifyIsFetchingCommit(logEntry.hash.full));
@@ -38,7 +45,6 @@ export namespace ResultActions {
                 switch (name) {
                     case 'reset_soft':
                     case 'reset_hard':
-                        dispatch(ResultActions.refresh());
                         break;
                     case 'newtag':
                         break;
@@ -131,6 +137,8 @@ export namespace ResultActions {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             //state.settings.branchName = branchName;
             dispatch(updateSettings({ branchName, branchSelection }));
+            dispatch(clearCommits());
+            dispatch(notifyIsLoading());
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
@@ -142,15 +150,6 @@ export namespace ResultActions {
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
-    export const refresh = () => {
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const state = getState();
-            // update branches
-            fetchBranches(dispatch, state);
-            return fetchCommits(dispatch, state, undefined, undefined);
-        };
-    };
-
     export const getCommits = (startIndex: number, stopIndex: number) => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
@@ -176,7 +175,6 @@ function fetchCommits(
     startIndex?: number,
     stopIndex?: number,
 ): Promise<any> {
-    dispatch(notifyIsLoading());
     return post<LogEntriesResponse>('getLogEntries', {
         ...store.settings,
         startIndex,

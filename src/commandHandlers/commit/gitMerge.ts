@@ -11,7 +11,8 @@ import { IGitMergeCommandHandler } from '../types';
 export class GitMergeCommandHandler implements IGitMergeCommandHandler {
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
     ) {}
 
@@ -45,7 +46,9 @@ export class GitMergeCommandHandler implements IGitMergeCommandHandler {
 
         const msg = `Merge ${type} '${rev}' into ${currentBranch}?`;
         const yesNo = showPrompt
-            ? await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg })
+            ? await this.applicationShell.showQuickPick(['Yes', 'No'], {
+                  placeHolder: msg,
+              })
             : 'Yes';
 
         if (yesNo === undefined || yesNo === 'No') {

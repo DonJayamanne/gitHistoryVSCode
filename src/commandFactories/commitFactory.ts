@@ -22,13 +22,20 @@ import { ICommitCommandFactory } from './types';
 @injectable()
 export class CommitCommandFactory implements ICommitCommandFactory {
     constructor(
-        @inject(IGitCherryPickCommandHandler) private cherryPickHandler: IGitCherryPickCommandHandler,
-        @inject(IGitCheckoutCommandHandler) private checkoutHandler: IGitCheckoutCommandHandler,
-        @inject(IGitCompareCommandHandler) private compareHandler: IGitCompareCommandHandler,
-        @inject(IGitMergeCommandHandler) private mergeHandler: IGitMergeCommandHandler,
-        @inject(IGitRebaseCommandHandler) private rebaseHandler: IGitRebaseCommandHandler,
-        @inject(IGitRevertCommandHandler) private revertHandler: IGitRevertCommandHandler,
-        @inject(IGitCommitViewDetailsCommandHandler) private viewChangeLogHandler: IGitCommitViewDetailsCommandHandler,
+        @inject(IGitCherryPickCommandHandler)
+        private cherryPickHandler: IGitCherryPickCommandHandler,
+        @inject(IGitCheckoutCommandHandler)
+        private checkoutHandler: IGitCheckoutCommandHandler,
+        @inject(IGitCompareCommandHandler)
+        private compareHandler: IGitCompareCommandHandler,
+        @inject(IGitMergeCommandHandler)
+        private mergeHandler: IGitMergeCommandHandler,
+        @inject(IGitRebaseCommandHandler)
+        private rebaseHandler: IGitRebaseCommandHandler,
+        @inject(IGitRevertCommandHandler)
+        private revertHandler: IGitRevertCommandHandler,
+        @inject(IGitCommitViewDetailsCommandHandler)
+        private viewChangeLogHandler: IGitCommitViewDetailsCommandHandler,
     ) {}
     public async createCommands(commit: CommitDetails): Promise<ICommand<CommitDetails>[]> {
         const commands: ICommand<CommitDetails>[] = [

@@ -18,12 +18,18 @@ export class CommitViewerFactory implements ICommitViewerFactory {
     private compareViewer: ICommitViewer;
     constructor(
         @inject(IOutputChannel) private outputChannel: OutputChannel,
-        @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,
+        @inject(ICommitViewFormatter)
+        private commitFormatter: ICommitViewFormatter,
         @inject(ICommandManager) private commandManager: ICommandManager,
         @inject(IPlatformService) private platformService: IPlatformService,
-        @inject(IFileCommitCommandFactory) private fileCommitFactory: IFileCommitCommandFactory,
-        @inject(INodeFactory) @named('standard') private standardNodeFactory: INodeFactory,
-        @inject(INodeFactory) @named('comparison') private compareNodeFactory: INodeFactory,
+        @inject(IFileCommitCommandFactory)
+        private fileCommitFactory: IFileCommitCommandFactory,
+        @inject(INodeFactory)
+        @named('standard')
+        private standardNodeFactory: INodeFactory,
+        @inject(INodeFactory)
+        @named('comparison')
+        private compareNodeFactory: INodeFactory,
     ) {}
     public getCommitViewer(): ICommitViewer {
         if (this.commitViewer) {

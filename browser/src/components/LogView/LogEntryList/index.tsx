@@ -6,7 +6,9 @@ import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
 
 import LogEntryView from '../LogEntry';
-import { LogEntry, Ref } from '../../../../../src/types';
+import { LogEntry, Ref, Graph } from '../../../../../src/types';
+import BranchGraph from '../BranchGraph';
+import { RenderedRows } from 'react-virtualized/dist/es/List';
 
 interface ResultProps {
     logEntries?: LogEntriesState;
@@ -14,14 +16,41 @@ interface ResultProps {
     onViewCommit(entry: LogEntry): void;
     onAction(entry: LogEntry, name: string): void;
     onRefAction(logEntry: LogEntry, ref: Ref, name: string): void;
+    commitsRendered: typeof ResultActions.commitsRendered;
 }
 
 interface LogEntryTableState {}
 
 class LogEntryVirtualizedTable extends React.Component<ResultProps, LogEntryTableState> {
+    private ref: React.RefObject<InfiniteLoader>;
+    private sizer: React.RefObject<AutoSizer>;
+
     constructor(props?: ResultProps, context?: any) {
         super(props, context);
-        this.state = {};
+        this.state = { updateGraph: true };
+        this.ref = React.createRef();
+        this.sizer = React.createRef();
+    }
+
+    componentDidUpdate(prevProps: ResultProps) {
+        if (!prevProps.logEntries.isLoading && this.props.logEntries.isLoading) {
+            this.props.commitsRendered({
+                itemHeight: 59.8,
+                height: this.sizer.current.state.height,
+                hideGraph: true,
+                startIndex: 0,
+            });
+
+            this.ref.current.resetLoadMoreRowsCache(true);
+            setTimeout(() => {
+                this.props.commitsRendered({
+                    itemHeight: 59.8,
+                    height: this.sizer.current.state.height,
+                    hideGraph: false,
+                    startIndex: 0,
+                });
+            }, 1000);
+        }
     }
 
     isRowLoaded = ({ index }) => {
@@ -53,30 +82,59 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, LogEntryTabl
         );
     };
 
+    private timer: any;
+
+    rowsRendered = (r: RenderedRows, height: number, callback: any = null) => {
+        if (callback) callback(r);
+
+        if (this.timer) {
+            clearTimeout(this.timer);
+            this.props.commitsRendered({
+                itemHeight: 59.8,
+                height: height,
+                hideGraph: true,
+                startIndex: r.startIndex,
+            });
+        }
+
+        this.timer = setTimeout(() => {
+            this.props.commitsRendered({
+                itemHeight: 59.8,
+                height: height,
+                hideGraph: false,
+                startIndex: r.startIndex,
+            });
+        }, 700);
+    };
+
     render() {
         return (
-            <InfiniteLoader
-                isRowLoaded={this.isRowLoaded}
-                loadMoreRows={this.loadMoreRows}
-                rowCount={this.props.logEntries.count}
-                threshold={15}
-            >
-                {({ onRowsRendered, registerChild }) => (
-                    <AutoSizer>
-                        {({ height, width }) => (
-                            <List
-                                height={height}
-                                width={width}
-                                rowHeight={59.87}
-                                onRowsRendered={onRowsRendered}
-                                ref={registerChild}
-                                rowCount={this.props.logEntries.count}
-                                rowRenderer={this.rowRenderer}
-                            />
-                        )}
-                    </AutoSizer>
-                )}
-            </InfiniteLoader>
+            <div className="log-view" id="scrollCnt">
+                <BranchGraph />
+                <InfiniteLoader
+                    ref={this.ref}
+                    minimumBatchSize={20}
+                    isRowLoaded={this.isRowLoaded}
+                    loadMoreRows={this.loadMoreRows}
+                    rowCount={this.props.logEntries.count}
+                >
+                    {({ onRowsRendered, registerChild }) => (
+                        <AutoSizer ref={this.sizer}>
+                            {({ height, width }) => (
+                                <List
+                                    height={height}
+                                    width={width}
+                                    rowHeight={59.87}
+                                    onRowsRendered={info => this.rowsRendered(info, height, onRowsRendered)}
+                                    ref={registerChild}
+                                    rowCount={this.props.logEntries.count}
+                                    rowRenderer={this.rowRenderer}
+                                />
+                            )}
+                        </AutoSizer>
+                    )}
+                </InfiniteLoader>
+            </div>
         );
     }
 }
@@ -91,6 +149,7 @@ function mapDispatchToProps(dispatch) {
     return {
         getCommits: (startIndex: number, stopIndex: number) =>
             dispatch(ResultActions.getCommits(startIndex, stopIndex)),
+        commitsRendered: (graph: Graph) => dispatch(ResultActions.commitsRendered(graph)),
     };
 }
 

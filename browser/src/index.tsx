@@ -2,8 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { ResultActions } from './actions/results';
-import { initialize } from './actions/messagebus';
 import App from './containers/App';
 import { ISettings } from './definitions';
 import configureStore from './store';
@@ -30,10 +28,3 @@ ReactDOM.render(
     </div>,
     document.getElementById('root'),
 );
-
-initialize(window['vscode']);
-
-store.dispatch<any>(ResultActions.getCommits(0, 5));
-store.dispatch<any>(ResultActions.getBranches());
-store.dispatch<any>(ResultActions.getAuthors());
-store.dispatch<any>(ResultActions.fetchAvatars());

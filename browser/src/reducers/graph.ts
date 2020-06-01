@@ -1,18 +1,25 @@
 import { handleActions } from 'redux-actions';
 import * as Actions from '../constants/actions';
+import { Graph } from '../../../src/types';
 
 export interface IGraphState {
-    height?: string;
+    hideGraph?: boolean;
     width?: string;
+    height?: number;
     itemHeight?: number;
     updateTick?: number;
+    startIndex?: number;
 }
 const initialState: IGraphState = {};
 
 export default handleActions<IGraphState, any>(
     {
-        [Actions.COMMITS_RENDERED]: (state, action: ReduxActions.Action<number>) => {
-            return { ...state, updateTick: new Date().getTime(), itemHeight: action.payload } as IGraphState;
+        [Actions.COMMITS_RENDERED]: (state, action: ReduxActions.Action<Graph>) => {
+            return {
+                ...state,
+                ...action.payload,
+                updateTick: new Date().getTime(),
+            } as IGraphState;
         },
     },
     initialState,

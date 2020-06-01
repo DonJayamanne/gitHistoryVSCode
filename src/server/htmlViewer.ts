@@ -1,7 +1,7 @@
 import { inject } from 'inversify';
 import * as path from 'path';
 import * as querystring from 'query-string';
-import { Disposable, env, Uri, ViewColumn, Webview, WebviewPanel, workspace } from 'vscode';
+import { Disposable, env, Uri, ViewColumn, Webview, workspace } from 'vscode';
 import { window } from 'vscode';
 import { ICommandManager } from '../application/types';
 import { IServiceContainer } from '../ioc/types';
@@ -11,13 +11,14 @@ import { ApiController } from './apiController';
 export class HtmlViewer {
     private readonly disposable: Disposable[] = [];
     private readonly commandManager: ICommandManager;
-    private readonly htmlView: Map<string, WebviewPanel>;
+    private readonly htmlView: Map<string, ApiController>;
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(IGitServiceFactory) private gitServiceFactory: IGitServiceFactory,
+        @inject(IGitServiceFactory)
+        private gitServiceFactory: IGitServiceFactory,
         private extensionPath: string,
     ) {
-        this.htmlView = new Map<string, WebviewPanel>();
+        this.htmlView = new Map<string, ApiController>();
         this.commandManager = serviceContainer.get<ICommandManager>(ICommandManager);
         this.disposable.push(this.commandManager.registerCommand('previewHtml', this.onPreviewHtml));
     }
@@ -32,11 +33,8 @@ export class HtmlViewer {
         if (this.htmlView.has(uri.toString())) {
             // skip recreating a webview, when already exist
             // and reveal it in tab view
-            const webviewPanel = this.htmlView.get(uri.toString());
-            if (webviewPanel) {
-                webviewPanel.reveal();
-            }
-
+            const apiController = this.htmlView.get(uri.toString());
+            apiController?.getWebviewPanel().reveal();
             return;
         }
 
@@ -49,14 +47,17 @@ export class HtmlViewer {
             enableScripts: true,
             retainContextWhenHidden: true,
         });
+
         webviewPanel.iconPath = Uri.file(`${this.extensionPath}/images/icon.png`);
-        this.htmlView.set(uri.toString(), webviewPanel);
 
         const gitService = this.gitServiceFactory.getService(id);
-        new ApiController(webviewPanel.webview, gitService, this.serviceContainer, this.commandManager);
+        const apiController = new ApiController(webviewPanel, gitService, this.serviceContainer, this.commandManager);
+
+        this.htmlView.set(uri.toString(), apiController);
 
         webviewPanel.onDidDispose(() => {
             if (this.htmlView.has(uri.toString())) {
+                this.htmlView.get(uri.toString())?.dispose();
                 this.htmlView.delete(uri.toString());
             }
         });
@@ -95,9 +96,9 @@ export class HtmlViewer {
                 <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
                 <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* vscode-resource: 'unsafe-inline' 'unsafe-eval'; img-src * vscode-resource:" />
                 <link rel='stylesheet' type='text/css' href='${this.getRelativeResource(
-                    webview,
-                    'dist/browser/bundle.css',
-                )}' />
+            webview,
+            'dist/browser/bundle.css',
+        )}' />
             <title>Git History</title>
             <script type="text/javascript">
                 window['vscode'] = acquireVsCodeApi();
