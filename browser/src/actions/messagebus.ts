@@ -15,7 +15,7 @@ function uuid() {
 
 function createPromiseFromMessageEvent(
     requestId: string,
-    persistentCallback: (requestId: string, data: any) => any = undefined,
+    persistentCallback: (requestId: string, data: any) => any = null,
 ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         const handleEvent = (e: MessageEvent) => {
@@ -30,7 +30,7 @@ function createPromiseFromMessageEvent(
             }
         };
 
-        if (persistentCallback !== undefined) {
+        if (persistentCallback !== null) {
             window.addEventListener('message', e => persistentCallback(requestId, e.data));
         } else {
             window.addEventListener('message', handleEvent);
@@ -41,11 +41,11 @@ function createPromiseFromMessageEvent(
 export function post<T>(
     cmd: string,
     payload: any,
-    persistentCallback: (requestId: string, data: any) => any = undefined,
+    persistentCallback: (requestId: string, data: any) => any = null,
 ): Promise<T> {
     const requestId = uuid();
 
-    if (persistentCallback !== undefined) {
+    if (persistentCallback !== null) {
         payload.requestId = requestId;
     }
 

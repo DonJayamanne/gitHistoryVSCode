@@ -20,9 +20,7 @@ interface ResultProps {
     commitsRendered: typeof ResultActions.commitsRendered;
 }
 
-interface LogEntryTableState {}
-
-class LogEntryVirtualizedTable extends React.Component<ResultProps, LogEntryTableState> {
+class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
     private ref: React.RefObject<InfiniteLoader>;
     private sizer: React.RefObject<AutoSizer>;
 

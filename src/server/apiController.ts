@@ -49,8 +49,8 @@ export class ApiController extends Disposable {
         let searchText = args.searchText;
         searchText = typeof searchText === 'string' && searchText.length === 0 ? undefined : searchText;
 
-        const startIndex: number | undefined = args.startIndex ? parseInt(args.startIndex) : 0;
-        const stopIndex: number | undefined = args.stopIndex ? parseInt(args.stopIndex) : 30;
+        const startIndex: number | undefined = args.startIndex ? parseInt(args.startIndex, 10) : 0;
+        const stopIndex: number | undefined = args.stopIndex ? parseInt(args.stopIndex, 10) : 30;
 
         const author: string | undefined = typeof args.authorFilter === 'string' ? args.authorFilter : undefined;
         const lineNumber: number | undefined = args.line ? parseInt(args.line, 10) : undefined;
