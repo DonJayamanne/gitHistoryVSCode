@@ -1,11 +1,12 @@
-import { LogEntry } from '../../../definitions';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../../../reducers';
+import { RootState, LogEntriesState } from '../../../reducers';
 import { IGraphState } from '../../../reducers/graph';
+import { ISettings } from '../../../../../src/types';
 
 type BranchGrapProps = IGraphState & {
-    logEntries: LogEntry[];
+    logEntries: LogEntriesState;
+    settings: ISettings;
 };
 
 const COLORS = [
@@ -220,16 +221,16 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
     let maxLevel = 0;
 
     branchLines.push({
-        hash: props.logEntries[0].hash.full,
+        hash: props.logEntries.items[0].hash.full,
         path: document.createElementNS('http://www.w3.org/2000/svg', 'path'),
         level: 0,
     });
     try {
         // only up to the necessary entries
-        for (i; i < props.logEntries.length; i++) {
-            const hash = props.logEntries[i].hash.full;
-            const nextEntry = props.logEntries.length > i + 1 ? props.logEntries[i + 1] : null;
-            const parents = props.logEntries[i].parents.map(x => x.full);
+        for (i; i < props.logEntries.items.length; i++) {
+            const hash = props.logEntries.items[i].hash.full;
+            const nextEntry = props.logEntries.items.length > i + 1 ? props.logEntries.items[i + 1] : null;
+            const parents = props.logEntries.items[i].parents.map(x => x.full);
 
             let branchLine = branchLines.filter(x => x.hash === hash).shift();
 
@@ -376,17 +377,25 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
 }
 
 class BrachGraph extends React.Component<BranchGrapProps> {
-    componentWillUpdate(newProps: BranchGrapProps) {
-        if (newProps.hideGraph) {
+    componentDidUpdate(prevProps: BranchGrapProps) {
+        if (this.props.logEntries?.items?.length == 0 || !this.props.itemHeight) {
+            return;
+        }
+
+        // clear the graph when in loading state
+        if (this.props.logEntries.isLoading) {
             this.svg.innerHTML = '';
             return;
         }
-        if (newProps.updateTick === this.props.updateTick) {
+
+        // do not display graph when filtering is achieved
+        if (this.props.settings.searchText || this.props.settings.authorFilter) {
+            this.svg.innerHTML = '';
             return;
         }
 
         this.svg.innerHTML = '';
-        drawGraph(this.svg, newProps);
+        drawGraph(this.svg, this.props);
     }
 
     private svg: SVGSVGElement;
@@ -398,7 +407,8 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 function mapStateToProps(state: RootState): BranchGrapProps {
     return {
         ...state.graph,
-        logEntries: state.logEntries.items,
+        logEntries: state.logEntries,
+        settings: state.settings,
     };
 }
 

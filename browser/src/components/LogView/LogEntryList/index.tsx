@@ -6,12 +6,13 @@ import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
 
 import LogEntryView from '../LogEntry';
-import { LogEntry, Ref, Graph } from '../../../../../src/types';
+import { LogEntry, Ref, Graph, ISettings } from '../../../../../src/types';
 import BranchGraph from '../BranchGraph';
 import { RenderedRows } from 'react-virtualized/dist/es/List';
 
 interface ResultProps {
     logEntries?: LogEntriesState;
+    settings?: ISettings;
     getCommits?(startIndex: number, stopIndex: number): Promise<any>;
     onViewCommit(entry: LogEntry): void;
     onAction(entry: LogEntry, name: string): void;
@@ -34,22 +35,15 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, LogEntryTabl
 
     componentDidUpdate(prevProps: ResultProps) {
         if (!prevProps.logEntries.isLoading && this.props.logEntries.isLoading) {
-            this.props.commitsRendered({
-                itemHeight: 59.8,
-                height: this.sizer.current.state.height,
-                hideGraph: true,
-                startIndex: 0,
-            });
-
             this.ref.current.resetLoadMoreRowsCache(true);
-            setTimeout(() => {
+
+            /*setTimeout(() => {
                 this.props.commitsRendered({
                     itemHeight: 59.8,
                     height: this.sizer.current.state.height,
-                    hideGraph: false,
                     startIndex: 0,
                 });
-            }, 1000);
+            }, 1000);*/
         }
     }
 
@@ -89,19 +83,12 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, LogEntryTabl
 
         if (this.timer) {
             clearTimeout(this.timer);
-            this.props.commitsRendered({
-                itemHeight: 59.8,
-                height: height,
-                hideGraph: true,
-                startIndex: r.startIndex,
-            });
         }
 
         this.timer = setTimeout(() => {
             this.props.commitsRendered({
                 itemHeight: 59.8,
                 height: height,
-                hideGraph: false,
                 startIndex: r.startIndex,
             });
         }, 700);
@@ -142,6 +129,7 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, LogEntryTabl
 function mapStateToProps(state: RootState) {
     return {
         logEntries: state.logEntries,
+        settings: state.settings,
     };
 }
 

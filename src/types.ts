@@ -12,7 +12,6 @@ export enum BranchSelection {
 }
 
 export type Graph = {
-    hideGraph: boolean;
     height: number;
     itemHeight: number;
     startIndex: number;
