@@ -101,7 +101,6 @@ export class HtmlViewer {
         )}' />
             <title>Git History</title>
             <script type="text/javascript">
-                window['vscode'] = acquireVsCodeApi();
                 window['extensionPath'] = ${JSON.stringify(this.getRelativeResource(webview, '').toString())};
                 window['configuration'] = ${JSON.stringify(config)};
                 window['settings'] = ${JSON.stringify(settings)};

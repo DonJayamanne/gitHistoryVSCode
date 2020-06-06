@@ -131,6 +131,7 @@ export namespace ResultActions {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(notifyIsLoading());
             dispatch(updateSettings({ searchText: '', authorFilter: undefined }));
+            dispatch(clearCommits());
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };

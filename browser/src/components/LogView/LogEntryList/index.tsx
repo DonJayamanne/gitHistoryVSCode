@@ -11,6 +11,7 @@ import BranchGraph from '../BranchGraph';
 import { RenderedRows } from 'react-virtualized/dist/es/List';
 
 interface ResultProps {
+    graph: Graph;
     logEntries?: LogEntriesState;
     settings?: ISettings;
     getCommits?(startIndex: number, stopIndex: number): Promise<any>;
@@ -23,25 +24,37 @@ interface ResultProps {
 class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
     private ref: React.RefObject<InfiniteLoader>;
     private sizer: React.RefObject<AutoSizer>;
+    private itemHeight: number;
 
     constructor(props?: ResultProps, context?: any) {
         super(props, context);
-        this.state = { updateGraph: true };
         this.ref = React.createRef();
         this.sizer = React.createRef();
+
+        this.itemHeight = 59.8;
+    }
+
+    private timer: any;
+
+    updateGraph(startIndex: number) {
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
+
+        this.timer = setTimeout(() => {
+            this.props.commitsRendered({
+                itemHeight: this.itemHeight,
+                height: this.sizer.current.state.height,
+                startIndex,
+            });
+        }, 700);
     }
 
     componentDidUpdate(prevProps: ResultProps) {
         if (!prevProps.logEntries.isLoading && this.props.logEntries.isLoading) {
             this.ref.current.resetLoadMoreRowsCache(true);
-
-            /*setTimeout(() => {
-                this.props.commitsRendered({
-                    itemHeight: 59.8,
-                    height: this.sizer.current.state.height,
-                    startIndex: 0,
-                });
-            }, 1000);*/
+            this.props.commitsRendered(null);
+            return;
         }
     }
 
@@ -50,7 +63,9 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
     };
 
     loadMoreRows = ({ startIndex, stopIndex }) => {
-        return this.props.getCommits(startIndex, stopIndex);
+        return this.props.getCommits(startIndex, stopIndex).then(() => {
+            if (this.props.graph === null && startIndex === 0) this.updateGraph(0);
+        });
     };
 
     rowRenderer = ({
@@ -74,22 +89,10 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
         );
     };
 
-    private timer: any;
-
     rowsRendered = (r: RenderedRows, height: number, callback: any = null) => {
-        if (callback) callback(r);
-
-        if (this.timer) {
-            clearTimeout(this.timer);
-        }
-
-        this.timer = setTimeout(() => {
-            this.props.commitsRendered({
-                itemHeight: 59.8,
-                height: height,
-                startIndex: r.startIndex,
-            });
-        }, 700);
+        this.props.commitsRendered(null);
+        this.updateGraph(r.startIndex);
+        callback(r);
     };
 
     render() {
@@ -109,7 +112,7 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
                                 <List
                                     height={height}
                                     width={width}
-                                    rowHeight={59.87}
+                                    rowHeight={this.itemHeight}
                                     onRowsRendered={info => this.rowsRendered(info, height, onRowsRendered)}
                                     ref={registerChild}
                                     rowCount={this.props.logEntries.count}
@@ -126,6 +129,7 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
 
 function mapStateToProps(state: RootState) {
     return {
+        graph: state.graph,
         logEntries: state.logEntries,
         settings: state.settings,
     };

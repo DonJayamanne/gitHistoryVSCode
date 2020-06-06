@@ -5,9 +5,10 @@ import authors from './authors';
 import avatars from './avatars';
 import branches from './branches';
 import settings from './settings';
-import { default as graph, IGraphState } from './graph';
+import graph from './graph';
 import logEntries from './logEntries';
 import vscode, { IVSCodeSettings } from './vscode';
+import { Graph } from '../../../src/types';
 
 export type LogEntriesState = LogEntriesResponse & {
     isLoading: boolean;
@@ -29,7 +30,7 @@ export type RootState = {
     avatars?: AvatarsState;
     authors?: AuthorsState;
     settings?: ISettings;
-    graph: IGraphState;
+    graph: Graph;
 };
 
 export default combineReducers<RootState>({

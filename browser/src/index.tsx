@@ -10,7 +10,7 @@ const defaultSettings: ISettings = window['settings'];
 
 const store = configureStore({
     settings: defaultSettings,
-    graph: {},
+    graph: null,
     vscode: {
         theme: document.body.className,
         locale: window['locale'],

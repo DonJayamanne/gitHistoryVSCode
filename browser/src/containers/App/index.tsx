@@ -26,9 +26,10 @@ class App extends React.Component<AppProps, AppState> {
     constructor(props?: AppProps, context?: any) {
         super(props, context);
 
-        initialize(window['vscode']);
+        // @ts-ignore
+        initialize(acquireVsCodeApi());
 
-        props.dispatch(ResultActions.getCommits(0, 30));
+        props.dispatch(ResultActions.getCommits(0, 10));
         props.dispatch(ResultActions.getBranches());
         props.dispatch(ResultActions.getAuthors());
         props.dispatch(ResultActions.fetchAvatars());

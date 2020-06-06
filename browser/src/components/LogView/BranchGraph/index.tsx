@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState, LogEntriesState } from '../../../reducers';
-import { IGraphState } from '../../../reducers/graph';
-import { ISettings } from '../../../../../src/types';
+import { ISettings, Graph } from '../../../../../src/types';
 
-type BranchGrapProps = IGraphState & {
+type BranchGrapProps = {
     logEntries: LogEntriesState;
+    graph: Graph;
     settings: ISettings;
 };
 
@@ -207,7 +207,7 @@ const COLORS = [
 type BranchGraphItem = { path: SVGPathElement; hash: string; level: number };
 
 function drawGraph(svg: SVGElement, props: BranchGrapProps) {
-    const cy = props.itemHeight / 2;
+    const cy = props.graph.itemHeight / 2;
     const r = 4;
     const cx = 15;
     let cyOffset = 0;
@@ -344,7 +344,7 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
                 //const activeLineCount = branchLines.length - 1;
                 branchLine.path.setAttribute(
                     'd',
-                    'M' + (nextLevel * cx).toFixed() + ' ' + (cyOffset + props.itemHeight).toFixed(),
+                    'M' + (nextLevel * cx).toFixed() + ' ' + (cyOffset + props.graph.itemHeight).toFixed(),
                 );
                 branchLine.path.setAttribute('style', 'stroke:' + COLORS[nextLevel]);
             }
@@ -364,38 +364,43 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
 
     circles.forEach(x => svg.appendChild(x));
 
-    const scrollOffset = props.itemHeight * props.startIndex;
+    const scrollOffset = props.graph.itemHeight * props.graph.startIndex;
     svg.style.top = scrollOffset * -1 + 'px';
-    svg.setAttribute('height', (props.height + scrollOffset).toString());
+    svg.setAttribute('height', (props.graph.height + scrollOffset).toString());
 
+    setGraphOffset(svg, (maxLevel + 1) * (cx + r));
     // find the React virtualize grid to add some padding
     ((svg.nextSibling as HTMLDivElement).firstChild as HTMLDivElement).style.paddingLeft =
         (maxLevel + 1) * (cx + r) + 'px';
 }
 
-class BrachGraph extends React.Component<BranchGrapProps> {
-    componentDidUpdate(prevProps: BranchGrapProps) {
-        if (this.props.logEntries?.items?.length == 0 || !this.props.itemHeight) {
-            return;
-        }
+function setGraphOffset(svg: SVGElement, offset: number) {
+    // find the React virtualize grid to add some padding
+    ((svg.nextSibling as HTMLDivElement).firstChild as HTMLDivElement).style.paddingLeft = offset + 'px';
+}
 
-        // clear the graph when in loading state
-        if (this.props.logEntries.isLoading) {
-            this.svg.innerHTML = '';
+class BrachGraph extends React.Component<BranchGrapProps> {
+    private svg: SVGElement;
+
+    componentDidUpdate(prevProps: BranchGrapProps) {
+        // clear previous dawing
+        this.svg.innerHTML = '';
+        // reset the padding offset
+        setGraphOffset(this.svg, 0);
+
+        // clear the graph when in loading state (due to isLoading)
+        if (!this.props.graph) {
             return;
         }
 
         // do not display graph when filtering is achieved
         if (this.props.settings.searchText || this.props.settings.authorFilter) {
-            this.svg.innerHTML = '';
             return;
         }
 
-        this.svg.innerHTML = '';
         drawGraph(this.svg, this.props);
     }
 
-    private svg: SVGSVGElement;
     render() {
         return <svg className="commitGraph" ref={ref => (this.svg = ref)} xmlns="http://www.w3.org/2000/svg"></svg>;
     }
@@ -403,7 +408,7 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 
 function mapStateToProps(state: RootState): BranchGrapProps {
     return {
-        ...state.graph,
+        graph: state.graph,
         logEntries: state.logEntries,
         settings: state.settings,
     };
