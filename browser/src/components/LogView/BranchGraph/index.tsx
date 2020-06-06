@@ -223,7 +223,7 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
     branchLines.push({
         hash: props.logEntries.items[0].hash.full,
         path: document.createElementNS('http://www.w3.org/2000/svg', 'path'),
-        level: 0,
+        level: 1,
     });
     try {
         // only up to the necessary entries
@@ -234,12 +234,8 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
 
             let branchLine = branchLines.filter(x => x.hash === hash).shift();
 
-            if (branchLine === undefined) {
-                throw 'branchLine not found';
-            }
-
             cyOffset += cy;
-            cxOffset = (branchLine.level + 1) * cx;
+            cxOffset = branchLine.level * cx;
 
             const filtered = branchLines.filter(xc => xc.hash === hash);
 
@@ -249,7 +245,7 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
                     const index = branchLines.indexOf(found);
                     const p =
                         ' L' +
-                        (found.level + 1) * cx +
+                        found.level * cx +
                         ' ' +
                         (cyOffset - cy).toFixed() +
                         ' L ' +
@@ -266,7 +262,6 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
 
             if (parents.length > 1) {
                 if (isNewBranch) {
-                    const activeLineCount = branchLines.length - 1;
                     branchLine.path.setAttribute(
                         'd',
                         'M' +
@@ -274,16 +269,19 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
                             ' ' +
                             cyOffset.toFixed() +
                             ' L' +
-                            ((activeLineCount + 1) * cx).toFixed() +
+                            (branchLine.level * cx).toFixed() +
                             ' ' +
                             (cyOffset + cy).toFixed(),
                     );
-                    branchLine.path.setAttribute('style', 'stroke:' + COLORS[activeLineCount]);
+                    branchLine.path.setAttribute('style', 'stroke:' + COLORS[branchLine.level]);
                     isNewBranch = false;
                 }
 
                 // continue the previous
                 branchLine.path.setAttribute('d', branchLine.path.getAttribute('d') + ' L' + cxOffset + ' ' + cyOffset);
+
+                const currentMaxLevel = Math.max(...branchLines.map(x => x.level));
+                const nextLevel = currentMaxLevel + 1;
 
                 //parents.shift();
                 parents.forEach(x => {
@@ -291,7 +289,7 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
                     branchLine = {
                         hash: x,
                         path: document.createElementNS('http://www.w3.org/2000/svg', 'path'),
-                        level: branchLines.length,
+                        level: nextLevel,
                     };
                     branchLines.push(branchLine);
                     isNewBranch = true;
@@ -304,7 +302,6 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
             const foundIndex = branchLines.indexOf(found);
 
             if (isNewBranch) {
-                const activeLineCount = branchLines.length - 1;
                 branchLine.path.setAttribute(
                     'd',
                     'M' +
@@ -312,11 +309,11 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
                         ' ' +
                         cyOffset.toFixed() +
                         ' L' +
-                        ((activeLineCount + 1) * cx).toFixed() +
+                        (branchLine.level * cx).toFixed() +
                         ' ' +
                         (cyOffset + cy).toFixed(),
                 );
-                branchLine.path.setAttribute('style', 'stroke:' + COLORS[activeLineCount]);
+                branchLine.path.setAttribute('style', 'stroke:' + COLORS[branchLine.level]);
                 isNewBranch = false;
             } else {
                 branchLine.path.setAttribute(
@@ -347,7 +344,7 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
                 //const activeLineCount = branchLines.length - 1;
                 branchLine.path.setAttribute(
                     'd',
-                    'M' + ((nextLevel + 1) * cx).toFixed() + ' ' + (cyOffset + props.itemHeight).toFixed(),
+                    'M' + (nextLevel * cx).toFixed() + ' ' + (cyOffset + props.itemHeight).toFixed(),
                 );
                 branchLine.path.setAttribute('style', 'stroke:' + COLORS[nextLevel]);
             }
