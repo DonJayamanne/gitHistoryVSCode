@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.6.6 (13/07/2020)
+- [96c29c4] #561 (#562) - @ole1986
+- [0b15420] An option to checkout the branch. but requires to update properly using git api (#551) - @ole1986
+- [e6253f3] gren does not properly compare against previous version (gren > 0.17.1) - @ole1986
+- [6a08dfb] Resolve issue with gren when using "on: push" github event - @ole1986
+- [85775b7] Version 0.6.6 and npm audit fixup - @ole1986
+- [109611d] Update node to version 12.8.* (#509) 
+- [cbe77d6] Use ts-loader for browser building (#544) - @ole1986
+- [b7fc737] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.5 (27/04/2020)
 - [a6bf8c7] ups - @ole1986
 - [1643c8d] Github Actions: use proper tag name when generating release notes - @ole1986
@@ -232,10 +244,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 
 ## Version 0.4.0 (06/05/2018)
 - Fix display of random avatars [#230](https://github.com/DonJayamanne/gitHistoryVSCode/pull/230), [#229](https://github.com/DonJayamanne/gitHistoryVSCode/pull/229), [#228](https://github.com/DonJayamanne/gitHistoryVSCode/pull/228), [#227](https://github.com/DonJayamanne/gitHistoryVSCode/pull/227)
----
-
-## Version 0.3.0 (17/01/2018)
-- Improvements to the graph
-- Ability to search from within the history viewer
-- Display history viewer when viewing history of files
-- Miscellaneous fixes
