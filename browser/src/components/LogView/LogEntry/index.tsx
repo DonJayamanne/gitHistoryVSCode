@@ -73,6 +73,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                 <HeadRef
                     key={ref.name}
                     onRemove={() => this.props.onRefAction(this.props.logEntry, ref, 'removeBranch')}
+                    onAction={name => this.props.onRefAction(this.props.logEntry, ref, name)}
                     {...ref}
                 />
             ));

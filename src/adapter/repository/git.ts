@@ -356,7 +356,7 @@ export class Git implements IGitService {
 
     @captureTelemetry()
     public async checkout(hash: string): Promise<void> {
-        await this.exec('checkout', hash);
+        await this.repo.checkout(hash);
     }
 
     @captureTelemetry()
