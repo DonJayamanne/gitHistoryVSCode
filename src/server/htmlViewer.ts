@@ -92,7 +92,7 @@ export class HtmlViewer {
         <html>
             <head>
                 <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
-                <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* vscode-resource: 'unsafe-inline' 'unsafe-eval'; img-src * vscode-resource:" />
+                <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* vscode-resource: 'unsafe-inline' 'unsafe-eval';" />
                 <link rel='stylesheet' type='text/css' href='${this.getRelativeResource(
                     webview,
                     'dist/browser/bundle.css',
@@ -100,7 +100,7 @@ export class HtmlViewer {
             <title>Git History</title>
             <script type="text/javascript">
                 window['vscode'] = acquireVsCodeApi();
-                window['extensionPath'] = ${JSON.stringify(this.extensionPath)};
+                window['extensionPath'] = ${JSON.stringify(this.getRelativeResource(webview, '').toString())};
                 window['configuration'] = ${JSON.stringify(config)};
                 window['settings'] = ${JSON.stringify(settings)};
                 window['locale'] = '${env.language}';
