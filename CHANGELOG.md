@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.7 (16/07/2020)
+- [daea259] Updated package-lock.json - @ole1986
+- [eaf4479] Fixed status icon path in browser view (#564) - @ole1986
+- [931f918] Version 0.6.7 - @ole1986
+- [4022a00] Fixed #560 (#563) - @ole1986
+- [4976868] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.6 (13/07/2020)
 - [96c29c4] #561 (#562) - @ole1986
 - [0b15420] An option to checkout the branch. but requires to update properly using git api (#551) - @ole1986
@@ -239,8 +248,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 ## Version 0.4.2 (29/09/2018)
 - Comparison fails at times [#293](https://github.com/DonJayamanne/gitHistoryVSCode/issues/293), [#291](https://github.com/DonJayamanne/gitHistoryVSCode/issues/291), [#290](https://github.com/DonJayamanne/gitHistoryVSCode/issues/290)
 - Unable to view history when `Author` name is empty [#294](https://github.com/DonJayamanne/gitHistoryVSCode/issues/294)
-
----
-
-## Version 0.4.0 (06/05/2018)
-- Fix display of random avatars [#230](https://github.com/DonJayamanne/gitHistoryVSCode/pull/230), [#229](https://github.com/DonJayamanne/gitHistoryVSCode/pull/229), [#228](https://github.com/DonJayamanne/gitHistoryVSCode/pull/228), [#227](https://github.com/DonJayamanne/gitHistoryVSCode/pull/227)
