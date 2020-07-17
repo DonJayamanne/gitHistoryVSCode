@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.8 (17/07/2020)
+- [afbd2e8] Version 0.6.8 - @ole1986
+- [39c8910] Fixed #565 and #556 due to decoding issues in querystring.parse([...]) - @ole1986
+- [4e4b77c] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.7 (16/07/2020)
 - [daea259] Updated package-lock.json - @ole1986
 - [eaf4479] Fixed status icon path in browser view (#564) - @ole1986
@@ -242,9 +249,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 - Fix GitHub origin detection for SSH remotes  [#319](https://github.com/DonJayamanne/gitHistoryVSCode/pull/319)
 - Read current remote name (defaulting to origin)  [#318](https://github.com/DonJayamanne/gitHistoryVSCode/pull/318)
 - getGitReposInFolder: fix async folder filtering  [#311](https://github.com/DonJayamanne/gitHistoryVSCode/pull/311)
-
----
-
-## Version 0.4.2 (29/09/2018)
-- Comparison fails at times [#293](https://github.com/DonJayamanne/gitHistoryVSCode/issues/293), [#291](https://github.com/DonJayamanne/gitHistoryVSCode/issues/291), [#290](https://github.com/DonJayamanne/gitHistoryVSCode/issues/290)
-- Unable to view history when `Author` name is empty [#294](https://github.com/DonJayamanne/gitHistoryVSCode/issues/294)
