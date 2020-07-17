@@ -40,7 +40,7 @@ export class HtmlViewer {
             return;
         }
 
-        const query = querystring.parse(uri.query.toString());
+        const query = querystring.parse(uri.query.toString(), { decode: false });
         const id: number = parseInt(query.id!.toString(), 10);
         const file: string = decodeURIComponent(query.file!.toString());
         const line: number | undefined = query.line ? parseInt(query.line.toString()) : undefined;
