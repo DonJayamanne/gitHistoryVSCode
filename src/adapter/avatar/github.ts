@@ -1,4 +1,4 @@
-import * as fetch from 'node-fetch';
+import axios, { AxiosResponse } from 'axios';
 import { inject, injectable } from 'inversify';
 import { IStateStore, IStateStoreFactory } from '../../application/types/stateStore';
 import { IServiceContainer } from '../../ioc/types';
@@ -116,10 +116,11 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
             headers = { 'If-Modified-Since': cachedUser.lastModified };
         }
 
-        const info = await fetch(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { headers })
-            .then(async (response: any) => {
-                const user: GithubUserResponse = await response.json();
-                user.lastModified = response.headers.get('last-modified');
+        const info = await axios
+            .get(`https://api.github.com/users/${encodeURIComponent(loginName)}`, { headers })
+            .then((response: AxiosResponse) => {
+                const user: GithubUserResponse = response.data;
+                user.lastModified = response.headers['last-modified'];
 
                 return user;
             })
@@ -141,14 +142,14 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
      * @param repoPath relative repository path
      */
     private getContributors(repoPath: string) {
-        const promise = fetch(`https://api.github.com/repos/${repoPath}/contributors`);
+        const promise = axios.get(`https://api.github.com/repos/${repoPath}/contributors`);
 
-        return promise.then(async (response: Response) => {
+        return promise.then((response: AxiosResponse) => {
             if (response.status === 403) {
                 // max API limit exceeded
                 return [] as GithubUserSearchResponseItem[];
             }
-            return (await response.json()) as GithubUserSearchResponseItem[];
+            return response.data as GithubUserSearchResponseItem[];
         });
     }
 }
