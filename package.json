@@ -456,7 +456,7 @@
         "jest-standard-reporter": "^1.0.4",
         "lint-staged": "^10.0.8",
         "node-emoji": "1.10.0",
-        "node-fetch": "2.6.0",
+        "axios": "^0.19.2",
         "prettier": "^1.19.1",
         "re-resizable": "6.2.0",
         "react": "^16.13.0",

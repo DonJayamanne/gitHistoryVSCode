@@ -9,6 +9,7 @@ import { FileNode } from '../nodes/types';
 import { IGitServiceFactory } from '../types';
 import { command } from './registration';
 import { IGitHistoryCommandHandler } from './types';
+import { Repository } from '../adapter/repository/git.d';
 
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
@@ -55,7 +56,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         return this.viewHistory(fileUri, currentLineNumber);
     }
     @command('git.viewHistory', IGitHistoryCommandHandler)
-    public async viewBranchHistory(): Promise<void> {
+    public async viewBranchHistory(repo?: Repository): Promise<void> {
+        if (repo) {
+            return this.viewHistory(repo.rootUri);
+        }
         return this.viewHistory();
     }
 
@@ -64,6 +68,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
 
         const gitService = await gitServiceFactory.createGitService(fileUri);
         const gitRoot = gitService.getGitRoot();
+
+        if (gitRoot === fileUri?.path) {
+            fileUri = undefined;
+        }
 
         const id = gitServiceFactory.getIndex();
 
