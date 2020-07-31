@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.9 (31/07/2020)
+- [1de9795] Version 0.6.9 - @ole1986
+- [f3e2a58] Replace node-fetch with axios again to resolve #567 (#573) - @ole1986
+- [70aef67] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.8 (17/07/2020)
 - [afbd2e8] Version 0.6.8 - @ole1986
 - [39c8910] Fixed #565 and #556 due to decoding issues in querystring.parse([...]) - @ole1986
@@ -240,12 +247,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 - use of vscode.git extension api to fetch git path
 - Merged PR [#329](https://github.com/DonJayamanne/gitHistoryVSCode/pull/329)
 - Merged PR [#330](https://github.com/DonJayamanne/gitHistoryVSCode/pull/330)
----
-
-## Version 0.4.3 (01/10/2018)
-- Workaround on Uri.fsPath getting '/' (slash) prefix PR [#316](https://github.com/DonJayamanne/gitHistoryVSCode/pull/316)
-- fixFileUri is no more  [#316](https://github.com/DonJayamanne/gitHistoryVSCode/pull/316)
-- Fixed ViewFileContents from committed files  [#316](https://github.com/DonJayamanne/gitHistoryVSCode/pull/316)
-- Fix GitHub origin detection for SSH remotes  [#319](https://github.com/DonJayamanne/gitHistoryVSCode/pull/319)
-- Read current remote name (defaulting to origin)  [#318](https://github.com/DonJayamanne/gitHistoryVSCode/pull/318)
-- getGitReposInFolder: fix async folder filtering  [#311](https://github.com/DonJayamanne/gitHistoryVSCode/pull/311)
