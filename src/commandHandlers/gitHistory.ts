@@ -10,13 +10,17 @@ import { IGitServiceFactory } from '../types';
 import { command } from './registration';
 import { IGitHistoryCommandHandler } from './types';
 import { Repository } from '../adapter/repository/git.d';
+import { IWorkspaceService } from '../application/types/workspace';
 
 @injectable()
 export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
+    private workspace: IWorkspaceService;
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommandManager) private commandManager: ICommandManager,
-    ) {}
+    ) {
+        this.workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
+    }
 
     @command('git.viewFileHistory', IGitHistoryCommandHandler)
     public async viewFileHistory(info?: FileCommitDetails | Uri): Promise<void> {
@@ -92,6 +96,14 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             }
         }
 
-        this.commandManager.executeCommand('previewHtml', uri, ViewColumn.One, title);
+        let column = ViewColumn.One;
+        const showFileHistorySplit = this.workspace
+            .getConfiguration('gitHistory')
+            .get<boolean>('showFileHistorySplit', false);
+        if (showFileHistorySplit && window.activeTextEditor?.document.uri.path == fileUri?.path) {
+            column = ViewColumn.Two;
+        }
+
+        this.commandManager.executeCommand('previewHtml', uri, column, title);
     }
 }
