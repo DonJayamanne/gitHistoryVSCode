@@ -25,10 +25,10 @@ export class HtmlViewer {
     public dispose() {
         this.disposable.forEach(disposable => disposable.dispose());
     }
-    private onPreviewHtml = (uri: string, column: ViewColumn, title: string) => {
-        this.createHtmlView(Uri.parse(uri), column, title);
+    private onPreviewHtml = (uri: string, column: ViewColumn, title: string, fileName?: string) => {
+        this.createHtmlView(Uri.parse(uri), column, title, fileName);
     };
-    private async createHtmlView(uri: Uri, column: ViewColumn, title: string) {
+    private async createHtmlView(uri: Uri, column: ViewColumn, title: string, fileName?: string) {
         if (this.htmlView.has(uri.toString())) {
             // skip recreating a webview, when already exist
             // and reveal it in tab view
@@ -78,7 +78,7 @@ export class HtmlViewer {
             branchSelection,
         };
 
-        webviewPanel.webview.html = this.getHtmlContent(webviewPanel.webview, settings);
+        webviewPanel.webview.html = this.getHtmlContent(webviewPanel.webview, settings, fileName);
     }
 
     private getRelativeResource(webview: Webview, relativePath: string) {
@@ -86,7 +86,7 @@ export class HtmlViewer {
         return webview.asWebviewUri(Uri.file(path.join(this.extensionPath, relativePath)));
     }
 
-    private getHtmlContent(webview, settings) {
+    private getHtmlContent(webview, settings, fileName?: string) {
         const config = workspace.getConfiguration('gitHistory');
         return `<!DOCTYPE html>
         <html>
@@ -104,6 +104,7 @@ export class HtmlViewer {
                 window['configuration'] = ${JSON.stringify(config)};
                 window['settings'] = ${JSON.stringify(settings)};
                 window['locale'] = '${env.language}';
+                window['fileName'] = '${fileName}';
             </script>
             </head>
             <body>

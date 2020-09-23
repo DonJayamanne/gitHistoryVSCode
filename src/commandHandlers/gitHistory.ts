@@ -104,6 +104,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
             column = ViewColumn.Two;
         }
 
-        this.commandManager.executeCommand('previewHtml', uri, column, title);
+        const fileName = fileUri != null ? path.basename(fileUri.fsPath) : null;
+        this.commandManager.executeCommand('previewHtml', uri, column, title, fileName);
     }
 }
