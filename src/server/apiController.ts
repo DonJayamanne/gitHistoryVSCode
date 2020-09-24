@@ -6,7 +6,7 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { Avatar, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
+import { Avatar, BranchSelection, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
 import { captureTelemetry } from '../common/telemetry';
 
 export class ApiController {
@@ -36,7 +36,9 @@ export class ApiController {
 
         const lineNumber: number | undefined = args.line ? parseInt(args.line, 10) : undefined;
 
-        const branch = args.branchName;
+        const branches: string[] = [];
+
+        if (args.branchSelection != BranchSelection.All) branches.push(args.branchName);
 
         let pageSize: number | undefined = args.pageSize ? parseInt(args.pageSize, 10) : undefined;
         // When getting history for a line, then always get 10 pages, cuz `git log -L` also spits out the diff, hence slow
@@ -51,7 +53,7 @@ export class ApiController {
         const entries = await this.gitService.getLogEntries(
             pageIndex,
             pageSize,
-            [branch],
+            branches,
             searchText,
             file,
             lineNumber,
