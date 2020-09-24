@@ -344,7 +344,7 @@
                 },
                 "gitHistory.showFileHistorySplit": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "scope": "window",
                     "description": "Split show file history when file is active."
                 },
