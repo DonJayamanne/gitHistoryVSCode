@@ -55,11 +55,11 @@ const browser = {
         ],
     },
     plugins: [
-        new CopyWebpackPlugin([
-            {
-                from: 'index.ejs',
-            },
-        ]),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: 'index.ejs', to: path.join(outPath, 'browser', 'src', 'index.ejs') },
+            ]
+        }),
     ],
 };
 
