@@ -70,6 +70,11 @@ export class FileEntry extends React.Component<FileEntryProps> {
 
         const oldFile = ''; //this.props.committedFile.oldRelativePath || '';
         const constFileMovementSymbol = ''; //this.props.committedFile.oldRelativePath ? ' => ' : '';
+        let fileName = this.props.committedFile.relativePath;
+        if (fileName.lastIndexOf('/') != -1) {
+            fileName = fileName.substr(fileName.lastIndexOf('/') + 1);
+        }
+        const fileNameClass = fileName == globalThis.fileName ? 'file-name-active' : 'file-name';
 
         return (
             <div className="diff-row">
@@ -78,7 +83,7 @@ export class FileEntry extends React.Component<FileEntryProps> {
                     {blocks}
                     {this.renderStatus()}
                     <div className="file-name-cnt">
-                        <span className="file-name" onClick={this.onSelect}>
+                        <span className={fileNameClass} onClick={this.onSelect}>
                             {oldFile}
                             {constFileMovementSymbol}
                             {this.props.committedFile.relativePath}

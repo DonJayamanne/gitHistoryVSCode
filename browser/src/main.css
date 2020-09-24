@@ -497,6 +497,19 @@ a.file-name {
 	color: transparent;
 }
 
+.file-name-active {
+	display: inline-block;
+	padding-left: 0.5em;
+	color:#91b748;
+}
+
+a.file-name-active {
+	position: absolute;
+	top: 0;
+	left: 0;
+	color: transparent;
+}
+
 .file-name-cnt:hover .file-name , .file-name-cnt:hover .file-name {
 	text-decoration: underline;
 	cursor: pointer;
