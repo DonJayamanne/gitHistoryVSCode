@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.10 (24/09/2020)
+- [fe22ab2] Version 0.6.10 - @ole1986
+- [f797425] Support fetching commits for more than 1 branch (#532) 
+- [50ba3e0] support split show history and highlight filename (#582) - @cweijan
+- [5e92a43] Allow vscode-resource to display images again (#584) - @ole1986
+- [7fc7af4] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.9 (31/07/2020)
 - [1de9795] Version 0.6.9 - @ole1986
 - [f3e2a58] Replace node-fetch with axios again to resolve #567 (#573) - @ole1986
@@ -236,14 +245,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 
 ## Version 0.4.5 (16/02/2019)
 - Make search case-insensitive PR [#334](https://github.com/DonJayamanne/gitHistoryVSCode/pull/334)
----
-
-## Version 0.4.4 (18/10/2018)
-- Merged PR [#328](https://github.com/DonJayamanne/gitHistoryVSCode/pull/328)
-- Updated webpack to resolve three compile errors
-- reduced some compile errors by adding default values
-- display the explorer view when using "compare commits" [#326](https://github.com/DonJayamanne/gitHistoryVSCode/issues/326)
-- support for commit checkout in git history context menu [#303](https://github.com/DonJayamanne/gitHistoryVSCode/issues/303)
-- use of vscode.git extension api to fetch git path
-- Merged PR [#329](https://github.com/DonJayamanne/gitHistoryVSCode/pull/329)
-- Merged PR [#330](https://github.com/DonJayamanne/gitHistoryVSCode/pull/330)
