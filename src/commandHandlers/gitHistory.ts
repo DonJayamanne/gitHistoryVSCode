@@ -73,7 +73,7 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         const gitService = await gitServiceFactory.createGitService(fileUri);
         const gitRoot = gitService.getGitRoot();
 
-        if (gitRoot === fileUri?.path) {
+        if (gitRoot === fileUri?.fsPath) {
             fileUri = undefined;
         }
 
