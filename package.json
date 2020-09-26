@@ -190,9 +190,9 @@
             ],
             "editor/title": [
                 {
-                    "command": "git.viewHistory",
+                    "command": "git.viewFileHistory",
                     "group": "navigation",
-                    "when": "config.git.enabled && gitOpenRepositoryCount != 0 && config.gitHistory.showEditorTitleMenuBarIcons"
+                    "when": "config.git.enabled && resourceScheme == file && gitOpenRepositoryCount != 0 && config.gitHistory.showEditorTitleMenuBarIcons"
                 }
             ],
             "editor/title/context": [
