@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.11 (03/10/2020)
+- [ed63a0e] Version 0.6.11 - @ole1986
+- [3b74493] Fixes "Git History" not opening from submodule (wrong path translation?!) (#586) - @ole1986
+- [e00d0bf] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.10 (24/09/2020)
 - [fe22ab2] Version 0.6.10 - @ole1986
 - [f797425] Support fetching commits for more than 1 branch (#532) 
@@ -241,7 +248,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 ## Version 0.4.6 (16/02/2019)
 - Handle cases where folder/file names conflicts with brancch names #205, #340
 - Adds support for multi-root workspace folders #346
----
-
-## Version 0.4.5 (16/02/2019)
-- Make search case-insensitive PR [#334](https://github.com/DonJayamanne/gitHistoryVSCode/pull/334)
