@@ -25,12 +25,12 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
     private ref: React.RefObject<InfiniteLoader>;
     private sizer: React.RefObject<AutoSizer>;
     private itemHeight: number;
+    private scrollTop: number;
 
     constructor(props?: ResultProps, context?: any) {
         super(props, context);
         this.ref = React.createRef();
         this.sizer = React.createRef();
-
         this.itemHeight = 59.8;
     }
 
@@ -46,6 +46,7 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
                 itemHeight: this.itemHeight,
                 height: this.sizer.current.state.height,
                 startIndex,
+                scrollTop: this.scrollTop,
             });
         }, 700);
     }
@@ -95,6 +96,10 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
         callback(r);
     };
 
+    listScroll = (info: { clientHeight: number; scrollHeight: number; scrollTop: number }) => {
+        this.scrollTop = info.scrollTop;
+    };
+
     render() {
         return (
             <div className="log-view" id="scrollCnt">
@@ -113,6 +118,7 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
                                     height={height}
                                     width={width}
                                     rowHeight={this.itemHeight}
+                                    onScroll={info => this.listScroll(info)}
                                     onRowsRendered={info => this.rowsRendered(info, height, onRowsRendered)}
                                     ref={registerChild}
                                     rowCount={this.props.logEntries.count}

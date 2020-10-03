@@ -15,6 +15,7 @@ export type Graph = {
     height: number;
     itemHeight: number;
     startIndex: number;
+    scrollTop: number;
 };
 
 export type FsUri = {

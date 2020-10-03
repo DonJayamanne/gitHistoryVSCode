@@ -364,9 +364,9 @@ function drawGraph(svg: SVGElement, props: BranchGrapProps) {
 
     circles.forEach(x => svg.appendChild(x));
 
-    const scrollOffset = props.graph.itemHeight * props.graph.startIndex;
-    svg.style.top = scrollOffset * -1 + 'px';
-    svg.setAttribute('height', (props.graph.height + scrollOffset).toString());
+    //const scrollOffset = props.graph.itemHeight * props.graph.startIndex;
+    svg.style.top = props.graph.scrollTop * -1 + 'px';
+    svg.setAttribute('height', (props.graph.height + props.graph.scrollTop).toString());
 
     setGraphOffset(svg, (maxLevel + 1) * (cx + r));
     // find the React virtualize grid to add some padding

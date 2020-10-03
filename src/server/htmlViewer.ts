@@ -96,9 +96,9 @@ export class HtmlViewer {
                 <style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; }</style>
                 <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:* http://127.0.0.1:* vscode-resource: 'unsafe-inline' 'unsafe-eval'; img-src * vscode-resource:" />
                 <link rel='stylesheet' type='text/css' href='${this.getRelativeResource(
-            webview,
-            'dist/browser/bundle.css',
-        )}' />
+                    webview,
+                    'dist/browser/bundle.css',
+                )}' />
             <title>Git History</title>
             <script type="text/javascript">
                 window['extensionPath'] = ${JSON.stringify(this.getRelativeResource(webview, '').toString())};
