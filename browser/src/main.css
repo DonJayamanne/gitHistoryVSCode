@@ -481,49 +481,50 @@ div.details-view-cnt .commit-notes:empty {
 }
 
 .diff-row div.file-name-cnt {
-	display: inline-block;
-	position: relative;
-}
-
-.file-name {
-	display: inline-block;
-	padding-left: 0.5em;
-}
-
-a.file-name {
-	position: absolute;
-	top: 0;
-	left: 0;
-	color: transparent;
+	flex-grow: 1;
+	white-space: normal;
+	margin-left: .5em;
 }
 
 .file-name-active {
-	display: inline-block;
-	padding-left: 0.5em;
 	color:#91b748;
 }
 
-a.file-name-active {
-	position: absolute;
-	top: 0;
-	left: 0;
-	color: transparent;
+.file-action {
+	padding: .3em;
 }
 
-.file-action > .btnx {
+.file-action a {
+	color: var(--vscode-textLink-foreground);
+	text-decoration: none;
+}
+
+.file-action svg {
+	height: 1.3em;
+	width: 1.3em;
+	vertical-align: bottom;
+}
+
+.file-action .btnx {
 	text-decoration: none;
 	margin-right: 1em;
+}
+
+.file-action .btnx:last-child {
+	margin-right: 0em;
 }
 
 .diff-row {
 	margin-left: 2em;
 	margin-right: 2em;
+	padding-left: .4em;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-    border: 1px solid gray;
-    background: #313131;
-    padding: .4em;
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--vscode-editorGroup-border);
+	background: var(--vscode-scrollbarSlider-background);
 }
 
 .diff-stats .diff-block {

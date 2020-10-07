@@ -88,7 +88,7 @@ export class FileEntry extends React.Component<FileEntryProps> {
                         {this.props.committedFile.relativePath}
                     </span>
                 </div>
-                <div className="file-action" style={{ textAlign: 'right', flexGrow: 1 }}>
+                <div className="file-action">
                     <span
                         role="button"
                         className="btnx hint--left hint--rounded hint--bounce"
