@@ -6,7 +6,7 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { Avatar, BranchSelection, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
+import { Avatar, BranchSelection, CommittedFile, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
 import { captureTelemetry } from '../common/telemetry';
 
 export class ApiController {
@@ -169,6 +169,43 @@ export class ApiController {
 
         this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
     }
+
+    @captureTelemetry()
+    public async doActionFile(args: any) {
+        const actionName = args.name;
+        const logEntry = args.logEntry as LogEntry;
+        const committedFile = args.committedFile as CommittedFile;
+
+        const gitRoot = this.gitService.getGitRoot();
+        const branch = this.gitService.getCurrentBranch();
+
+        const fileCommitDetails = new FileCommitDetails(gitRoot, branch, logEntry, committedFile);
+
+        switch (actionName) {
+            default:
+            case 'view':
+                await this.commandManager.executeCommand('git.commit.FileEntry.ViewFileContents', fileCommitDetails);
+                break;
+            case 'compare_workspace':
+                await this.commandManager.executeCommand(
+                    'git.commit.FileEntry.CompareAgainstWorkspace',
+                    fileCommitDetails,
+                );
+                break;
+            case 'compare_previous':
+                await this.commandManager.executeCommand(
+                    'git.commit.FileEntry.CompareAgainstPrevious',
+                    fileCommitDetails,
+                );
+                break;
+            case 'history':
+                await this.commandManager.executeCommand('git.viewFileHistory', Uri.file(committedFile.uri.path));
+                break;
+        }
+
+        return committedFile;
+    }
+
     @captureTelemetry()
     public async selectCommittedFile(args: any) {
         const gitRoot = this.gitService.getGitRoot();

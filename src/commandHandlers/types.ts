@@ -11,7 +11,6 @@ export interface IGitHistoryCommandHandler extends ICommandHandler {
 
 export const IGitFileHistoryCommandHandler = Symbol.for('IGitFileHistoryCommandHandler');
 export interface IGitFileHistoryCommandHandler extends ICommandHandler {
-    doSomethingWithFile(fileCommit: FileCommitDetails): Promise<void>;
     viewFile(fileCommit: FileCommitDetails): Promise<void>;
     compareFileWithWorkspace(fileCommit: FileCommitDetails): Promise<void>;
     compareFileWithPrevious(fileCommit: FileCommitDetails): Promise<void>;

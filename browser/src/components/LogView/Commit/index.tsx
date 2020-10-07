@@ -15,7 +15,7 @@ interface CommitProps {
     selectedEntry?: LogEntry;
     theme: string;
     closeCommitView: typeof ResultActions.closeCommitView;
-    selectCommittedFile: typeof ResultActions.selectCommittedFile;
+    actionFile: typeof ResultActions.actionFile;
 }
 
 interface CommitState {
@@ -51,8 +51,8 @@ class Commit extends React.Component<CommitProps, CommitState> {
         this.setState({ searchText: '' });
     }
 
-    private onSelectFile = (fileEntry: CommittedFile) => {
-        this.props.selectCommittedFile(this.props.selectedEntry, fileEntry);
+    private onActionFile = (fileEntry: CommittedFile, name) => {
+        this.props.actionFile(this.props.selectedEntry, fileEntry, name);
     };
     private onClose = () => {
         this.props.closeCommitView();
@@ -66,7 +66,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
                         theme={this.props.theme}
                         committedFile={fileEntry}
                         key={index + fileEntry.relativePath}
-                        onSelect={this.onSelectFile}
+                        onAction={this.onActionFile}
                     />
                 ));
         } else {
@@ -75,7 +75,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
                     theme={this.props.theme}
                     committedFile={fileEntry}
                     key={index + fileEntry.relativePath}
-                    onSelect={this.onSelectFile}
+                    onAction={this.onActionFile}
                 />
             ));
         }
@@ -168,8 +168,8 @@ function mapStateToProps(state: RootState) {
 function mapDispatchToProps(dispatch) {
     return {
         closeCommitView: () => dispatch(ResultActions.closeCommitView()),
-        selectCommittedFile: (logEntry: LogEntry, committedFile: CommittedFile) =>
-            dispatch(ResultActions.selectCommittedFile(logEntry, committedFile)),
+        actionFile: (logEntry: LogEntry, committedFile: CommittedFile, name) =>
+            dispatch(ResultActions.actionFile(logEntry, committedFile, name)),
     };
 }
 

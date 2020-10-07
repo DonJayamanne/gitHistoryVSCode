@@ -510,23 +510,20 @@ a.file-name-active {
 	color: transparent;
 }
 
-.file-name-cnt:hover .file-name , .file-name-cnt:hover .file-name {
-	text-decoration: underline;
-	cursor: pointer;
+.file-action > .btnx {
+	text-decoration: none;
+	margin-right: 1em;
 }
 
-.diff-row .diff-stats {
-	display: inline-block;
-	vertical-align: -0.1em;
-}
-
-.diff-stats .diff-count {
-	display: inline-block;
-	vertical-align: middle;
-	font-family: Consolas, Courier New, monospace;
-	font-size: 0.9em;
-	text-align: right;
-	width: 4em;
+.diff-row {
+	margin-left: 2em;
+	margin-right: 2em;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+    border: 1px solid gray;
+    background: #313131;
+    padding: .4em;
 }
 
 .diff-stats .diff-block {

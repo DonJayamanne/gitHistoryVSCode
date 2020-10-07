@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Uri } from 'vscode';
 import { IApplicationShell } from '../../application/types';
 import { ICommandManager } from '../../application/types/commandManager';
-import { CompareFileCommitDetails, FileCommitDetails, IUiService } from '../../common/types';
+import { CompareFileCommitDetails, FileCommitDetails } from '../../common/types';
 import { IServiceContainer } from '../../ioc/types';
 import { FileNode } from '../../nodes/types';
 import { IFileSystem } from '../../platform/types';
@@ -19,15 +19,6 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
         @inject(IFileSystem) private fileSystem: IFileSystem,
     ) {}
-
-    @command('git.commit.file.select', IGitFileHistoryCommandHandler)
-    public async doSomethingWithFile(fileCommit: FileCommitDetails) {
-        const cmd = await this.serviceContainer.get<IUiService>(IUiService).selectFileCommitCommandAction(fileCommit);
-        if (!cmd) {
-            return;
-        }
-        return cmd.execute();
-    }
 
     @command('git.commit.FileEntry.ViewFileContents', IGitFileHistoryCommandHandler)
     public async viewFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
@@ -49,6 +40,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const gitService = await this.serviceContainer
             .get<IGitServiceFactory>(IGitServiceFactory)
             .createGitService(fileCommit.workspaceFolder);
+
         if (fileCommit.committedFile.status === Status.Deleted) {
             return this.applicationShell
                 .showErrorMessage('File cannot be compared with, as it was deleted')
@@ -62,11 +54,11 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
 
         const tmpFile = await gitService.getCommitFile(fileCommit.logEntry.hash.full, fileCommit.committedFile.uri);
         const fileName = path.basename(fileCommit.committedFile.uri.path);
-        const title = `${fileName} (Working Tree)`;
+        const title = `${fileName} (${fileCommit.logEntry.hash.short} ↔ Working File)`;
         await this.commandManager.executeCommand(
             'vscode.diff',
-            Uri.file(fileCommit.committedFile.uri.path),
             Uri.file(tmpFile.fsPath),
+            Uri.file(fileCommit.committedFile.uri.path),
             title,
             { preview: true },
         );
@@ -102,8 +94,8 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         const previousTmpFile = await gitService.getCommitFile(previousCommitHash.full, previousFile);
 
         const title = this.getComparisonTitle(
-            { file: Uri.file(fileCommit.committedFile.uri.path), hash: fileCommit.logEntry.hash },
             { file: Uri.file(previousFile.path), hash: previousCommitHash },
+            { file: Uri.file(fileCommit.committedFile.uri.path), hash: fileCommit.logEntry.hash },
         );
         await this.commandManager.executeCommand('vscode.diff', previousTmpFile, tmpFile, title, { preview: true });
     }

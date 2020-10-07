@@ -283,7 +283,7 @@ export class Git implements IGitService {
         //const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.path.toString();
 
-        const content = await this.repo.show(hash, filePath);
+        const content = await this.repo.buffer(hash, filePath);
 
         return new Promise<Uri>((resolve, reject) => {
             tmp.file({ postfix: path.extname(filePath) }, async (err: Error, tmpPath: string) => {

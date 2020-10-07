@@ -1,18 +1,15 @@
 import { CommittedFile, Status } from '../../../../definitions';
 import * as React from 'react';
+import { GoEye, GoGitCompare, GoHistory } from 'react-icons/go';
 
 interface FileEntryProps {
     committedFile: CommittedFile;
     theme: string;
-    onSelect: (CommittedFile) => void;
+    onAction: (CommittedFile, string) => void;
 }
 
 const TotalDiffBlocks = 5;
 export class FileEntry extends React.Component<FileEntryProps> {
-    onSelect = () => {
-        this.props.onSelect(this.props.committedFile);
-    };
-
     renderStatus() {
         let icon = '';
         const theme = this.props.theme.indexOf('dark') >= 0 ? 'dark' : 'light';
@@ -78,18 +75,63 @@ export class FileEntry extends React.Component<FileEntryProps> {
 
         return (
             <div className="diff-row">
-                <span className="diff-stats hint--right hint--rounded hint--bounce" aria-label={summary}>
-                    <span className="diff-count">{totalDiffs}</span>
-                    {blocks}
-                    {this.renderStatus()}
-                    <div className="file-name-cnt">
-                        <span className={fileNameClass} onClick={this.onSelect}>
-                            {oldFile}
-                            {constFileMovementSymbol}
-                            {this.props.committedFile.relativePath}
-                        </span>
-                    </div>
-                </span>
+                <div>
+                    <span className="diff-stats hint--right hint--rounded hint--bounce" aria-label={summary}>
+                        {blocks}
+                    </span>
+                </div>
+                <div>{this.renderStatus()}</div>
+                <div className="file-name-cnt">
+                    <span className={fileNameClass}>
+                        {oldFile}
+                        {constFileMovementSymbol}
+                        {this.props.committedFile.relativePath}
+                    </span>
+                </div>
+                <div className="file-action" style={{ textAlign: 'right', flexGrow: 1 }}>
+                    <span
+                        role="button"
+                        className="btnx hint--left hint--rounded hint--bounce"
+                        aria-label="View file content"
+                    >
+                        <a role="button" onClick={() => this.props.onAction(this.props.committedFile, 'view')}>
+                            <GoEye></GoEye> View
+                        </a>
+                    </span>
+                    <span
+                        role="button"
+                        className="btnx hint--left hint--rounded hint--bounce"
+                        aria-label="Compare file with current workspace"
+                    >
+                        <a
+                            role="button"
+                            onClick={() => this.props.onAction(this.props.committedFile, 'compare_workspace')}
+                        >
+                            <GoGitCompare></GoGitCompare> Compare with Workspace
+                        </a>
+                    </span>
+                    <span
+                        role="button"
+                        className="btnx hint--left hint--rounded hint--bounce"
+                        aria-label="Compare file with previous commit"
+                    >
+                        <a
+                            role="button"
+                            onClick={() => this.props.onAction(this.props.committedFile, 'compare_previous')}
+                        >
+                            <GoGitCompare></GoGitCompare> Compare with previous
+                        </a>
+                    </span>
+                    <span
+                        role="button"
+                        className="btnx hint--left hint--rounded hint--bounce"
+                        aria-label="View file history"
+                    >
+                        <a role="button" onClick={() => this.props.onAction(this.props.committedFile, 'history')}>
+                            <GoHistory></GoHistory> History
+                        </a>
+                    </span>
+                </div>
             </div>
         );
     }
