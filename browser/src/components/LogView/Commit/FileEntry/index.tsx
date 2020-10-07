@@ -107,7 +107,7 @@ export class FileEntry extends React.Component<FileEntryProps> {
                             role="button"
                             onClick={() => this.props.onAction(this.props.committedFile, 'compare_workspace')}
                         >
-                            <GoGitCompare></GoGitCompare> Compare with Workspace
+                            <GoGitCompare></GoGitCompare> Workspace
                         </a>
                     </span>
                     <span
@@ -119,7 +119,7 @@ export class FileEntry extends React.Component<FileEntryProps> {
                             role="button"
                             onClick={() => this.props.onAction(this.props.committedFile, 'compare_previous')}
                         >
-                            <GoGitCompare></GoGitCompare> Compare with previous
+                            <GoGitCompare></GoGitCompare> Previous
                         </a>
                     </span>
                     <span

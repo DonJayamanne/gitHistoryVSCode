@@ -97,17 +97,6 @@ export namespace ResultActions {
             });
         };
     };
-    export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => {
-        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const store = getState();
-
-            post<void>('selectCommittedFile', {
-                ...store.settings,
-                logEntry,
-                committedFile,
-            });
-        };
-    };
     export const closeCommitView = () => {
         return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             await dispatch(clearCommitSelection());

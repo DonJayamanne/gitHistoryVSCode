@@ -109,6 +109,8 @@ export class ApiController {
 
         return avatars;
     }
+
+    @captureTelemetry()
     public async doActionRef(args: any) {
         const actionName = args.name;
         const hash = decodeURIComponent(args.hash);
@@ -130,6 +132,8 @@ export class ApiController {
 
         return this.gitService.getCommit(hash, true);
     }
+
+    @captureTelemetry()
     public async doAction(args: any) {
         const gitRoot = this.gitService.getGitRoot();
         const branch = this.gitService.getCurrentBranch();
@@ -161,13 +165,6 @@ export class ApiController {
         }
 
         return logEntry;
-    }
-    public async doSomethingWithCommit(args: any) {
-        const gitRoot = this.gitService.getGitRoot();
-        const branch = this.gitService.getCurrentBranch();
-        const logEntry = args.logEntry as LogEntry;
-
-        this.commandManager.executeCommand('git.commit.doSomething', new CommitDetails(gitRoot, branch, logEntry));
     }
 
     @captureTelemetry()
@@ -204,17 +201,6 @@ export class ApiController {
         }
 
         return committedFile;
-    }
-
-    @captureTelemetry()
-    public async selectCommittedFile(args: any) {
-        const gitRoot = this.gitService.getGitRoot();
-        const branch = this.gitService.getCurrentBranch();
-
-        this.commandManager.executeCommand(
-            'git.commit.file.select',
-            new FileCommitDetails(gitRoot, branch, args.logEntry, args.committedFile),
-        );
     }
 
     private postMessageParser = async (message: IPostMessage) => {

@@ -492,6 +492,7 @@ div.details-view-cnt .commit-notes:empty {
 
 .file-action {
 	padding: .3em;
+	background: var(--vscode-scrollbarSlider-background);
 }
 
 .file-action a {
@@ -519,12 +520,10 @@ div.details-view-cnt .commit-notes:empty {
 	margin-right: 2em;
 	padding-left: .4em;
 	display: flex;
-	align-items: center;
 	justify-content: space-between;
-	border-width: 1px;
-	border-style: solid;
-	border-color: var(--vscode-editorGroup-border);
-	background: var(--vscode-scrollbarSlider-background);
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: var(--vscode-editorGroup-border);
 }
 
 .diff-stats .diff-block {
