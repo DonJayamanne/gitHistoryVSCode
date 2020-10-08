@@ -66,6 +66,15 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         }
         return this.viewHistory();
     }
+    @command('git.viewChooser', IGitHistoryCommandHandler)
+    public async viewChooser(url?: Uri): Promise<void> {
+        const openRepo = this.workspace.getConfiguration('gitHistory').get<boolean>('editorTitleButtonOpenRepo', false);
+        if (openRepo) {
+            return this.viewHistory();
+        } else {
+            return this.viewFileHistory(url);
+        }
+    }
 
     public async viewHistory(fileUri?: Uri, lineNumber?: number): Promise<void> {
         const gitServiceFactory = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);

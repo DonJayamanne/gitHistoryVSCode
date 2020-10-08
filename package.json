@@ -87,6 +87,14 @@
                 }
             },
             {
+                "command": "git.viewChooser",
+                "title": "Git: View History",
+                "icon": {
+                    "dark": "./resources/icons/dark/git.svg",
+                    "light": "./resources/icons/light/git.svg"
+                }
+            },
+            {
                 "command": "git.viewFileHistory",
                 "title": "Git: View File History",
                 "icon": {
@@ -190,7 +198,7 @@
             ],
             "editor/title": [
                 {
-                    "command": "git.viewFileHistory",
+                    "command": "git.viewChooser",
                     "group": "navigation",
                     "when": "config.git.enabled && resourceScheme == file && gitOpenRepositoryCount != 0 && config.gitHistory.showEditorTitleMenuBarIcons"
                 }
@@ -359,6 +367,12 @@
                     "default": true,
                     "scope": "window",
                     "description": "Whether to display a button in the editor title menu bar"
+                },
+                "gitHistory.editorTitleButtonOpenRepo": {
+                    "type": "boolean",
+                    "default": false,
+                    "scope": "window",
+                    "description": "Prefer to open repository (instead of file) when pressing the editor title button"
                 },
                 "gitHistory.pageSize": {
                     "type": "number",
