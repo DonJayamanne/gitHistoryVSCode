@@ -481,52 +481,49 @@ div.details-view-cnt .commit-notes:empty {
 }
 
 .diff-row div.file-name-cnt {
-	display: inline-block;
-	position: relative;
-}
-
-.file-name {
-	display: inline-block;
-	padding-left: 0.5em;
-}
-
-a.file-name {
-	position: absolute;
-	top: 0;
-	left: 0;
-	color: transparent;
+	flex-grow: 1;
+	white-space: normal;
+	margin-left: .5em;
 }
 
 .file-name-active {
-	display: inline-block;
-	padding-left: 0.5em;
 	color:#91b748;
 }
 
-a.file-name-active {
-	position: absolute;
-	top: 0;
-	left: 0;
-	color: transparent;
+.file-action {
+	padding: .3em;
+	background: var(--vscode-scrollbarSlider-background);
 }
 
-.file-name-cnt:hover .file-name , .file-name-cnt:hover .file-name {
-	text-decoration: underline;
-	cursor: pointer;
+.file-action a {
+	color: var(--vscode-textLink-foreground);
+	text-decoration: none;
 }
 
-.diff-row .diff-stats {
-	display: inline-block;
-	vertical-align: -0.1em;
+.file-action svg {
+	height: 1.3em;
+	width: 1.3em;
+	vertical-align: bottom;
 }
 
-.diff-stats .diff-count {
-	display: inline-block;
-	vertical-align: middle;
-	font-family: Consolas, Courier New, monospace;
-	font-size: 0.9em;
-	text-align: right;
-	width: 4em;
+.file-action .btnx {
+	text-decoration: none;
+	margin-right: 1em;
+}
+
+.file-action .btnx:last-child {
+	margin-right: 0em;
+}
+
+.diff-row {
+	margin-left: 2em;
+	margin-right: 2em;
+	padding-left: .4em;
+	display: flex;
+	justify-content: space-between;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: var(--vscode-editorGroup-border);
 }
 
 .diff-stats .diff-block {

@@ -74,6 +74,18 @@ export namespace ResultActions {
             });
         };
     };
+    export const actionFile = (logEntry: LogEntry, committedFile: CommittedFile, name = '') => {
+        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
+            const store = getState();
+
+            post<LogEntry>('doActionFile', {
+                ...store.settings,
+                logEntry,
+                committedFile,
+                name,
+            });
+        };
+    };
     export const fetchAvatars = () => {
         return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             const store = getState();
@@ -82,17 +94,6 @@ export namespace ResultActions {
                 ...store.settings,
             }).then(x => {
                 dispatch(fetchedAvatar(x));
-            });
-        };
-    };
-    export const selectCommittedFile = (logEntry: LogEntry, committedFile: CommittedFile) => {
-        return async (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const store = getState();
-
-            post<void>('selectCommittedFile', {
-                ...store.settings,
-                logEntry,
-                committedFile,
             });
         };
     };
