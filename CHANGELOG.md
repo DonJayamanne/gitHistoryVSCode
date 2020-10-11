@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6.12 (11/10/2020)
+- [cb0b886] Version 0.6.12 - @ole1986
+- [505d788] Resolved issue #589 using configuration setting "gitHistory.editorTitleButtonOpenRepo" - @ole1986
+- [55a1546] A quicker access to file actions within a commit (#588) - @ole1986
+- [2548db7] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.11 (03/10/2020)
 - [ed63a0e] Version 0.6.11 - @ole1986
 - [3b74493] Fixes "Git History" not opening from submodule (wrong path translation?!) (#586) - @ole1986
@@ -243,8 +251,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 ## Version 0.4.7 (21/02/2019)
 - Always request github users API (when avatar cache expires) and check for modifications
 - Fixed avatar issues (#349, #287) using remote contributors and added avatar cache extension setting (default 1 hour)
----
-
-## Version 0.4.6 (16/02/2019)
-- Handle cases where folder/file names conflicts with brancch names #205, #340
-- Adds support for multi-root workspace folders #346
