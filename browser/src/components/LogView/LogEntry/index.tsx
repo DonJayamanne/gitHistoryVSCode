@@ -113,7 +113,11 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
             event.stopPropagation();
         }
         return (
-            <div className={cssClassName} onClick={() => this.props.onViewCommit(this.props.logEntry)}>
+            <div
+                className={cssClassName}
+                onClick={() => this.props.onViewCommit(this.props.logEntry)}
+                onContextMenu={() => this.props.onAction(this.props.logEntry, '')}
+            >
                 <div className="media right">
                     <div className="media-image">
                         <div className="ref" onClick={preventPropagation}>
