@@ -111,6 +111,10 @@ div.appRoot {
 	position: relative;
 }
 
+.log-entry-gray{
+	color: gray;
+}
+
 .log-entry .media-content {
 	position: relative;
 	overflow: hidden;
