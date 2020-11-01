@@ -96,7 +96,8 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
             this.props.logEntry &&
             this.props.selected &&
             this.props.selected.hash.full === this.props.logEntry.hash.full;
-        let cssClassName = `log-entry ${isActive ? 'active' : ''}`;
+        let cssClassName = `log-entry ${this.props.logEntry.parents.length > 1 ? 'log-entry-gray' : ''}
+                                 ${isActive ? 'active' : ''}`;
 
         if (this.isLoading()) {
             cssClassName += ' loading';
