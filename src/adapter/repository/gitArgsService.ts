@@ -16,13 +16,13 @@ export class GitArgsService implements IGitArgsService {
         return ['show', '--numstat', '--format=', '-M', hash];
     }
     public getCommitNameStatusArgs(hash: string): string[] {
-        return ['show', '--name-status', '--format=', '-M', hash];
+        return ['-c', 'core.quotePath=false', 'show', '--name-status', '--format=', '-M', hash];
     }
     public getCommitWithNumStatArgsForMerge(hash: string) {
-        return ['show', '--numstat', '--format=', '-M', '--first-parent', hash];
+        return ['-c', 'core.quotePath=false', 'show', '--numstat', '--format=', '-M', '--first-parent', hash];
     }
     public getCommitNameStatusArgsForMerge(hash: string): string[] {
-        return ['show', '--name-status', '--format=', '-M', '--first-parent', hash];
+        return ['-c', 'core.quotePath=false', 'show', '--name-status', '--format=', '-M', '--first-parent', hash];
     }
     public getObjectHashArgs(object: string): string[] {
         return ['show', `--format=${Helpers.GetCommitInfoFormatCode(CommitInfo.FullHash)}`, '--shortstat', object];
