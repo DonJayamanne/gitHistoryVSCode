@@ -18,7 +18,7 @@ export class GitFileHistoryCommandHandler implements IGitFileHistoryCommandHandl
         @inject(ICommandManager) private commandManager: ICommandManager,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
         @inject(IFileSystem) private fileSystem: IFileSystem,
-    ) { }
+    ) {}
 
     @command('git.commit.FileEntry.ViewFileContents', IGitFileHistoryCommandHandler)
     public async viewFile(nodeOrFileCommit: FileNode | FileCommitDetails): Promise<void> {
