@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.6.13 (07/11/2020)
+- [2137af8] Version 0.6.13 - @ole1986
+- [382eadc] Use native git api to get local branches (Also fixes #572 and #601) (#600) - @ole1986
+- [7b1b9ad] Delete config.yml - @ole1986
+- [cec540c] Delete issue_template.md - @ole1986
+- [d36b16c] Create  config.yml - @ole1986
+- [d1c7dfb] Create issue_template.md - @ole1986
+- [57e7cf6] Set merge history color to gray. (#597) - @cweijan
+- [7f42d22] Set webview icon as extension icon. (#594) - @cweijan
+- [6ebaf3f] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.12 (11/10/2020)
 - [cb0b886] Version 0.6.12 - @ole1986
 - [505d788] Resolved issue #589 using configuration setting "gitHistory.editorTitleButtonOpenRepo" - @ole1986
@@ -246,8 +259,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 - Fixed typo (PR #399)
 - Fixed #397 
 - Several other improvements on styling, code coverage and user experience
----
-
-## Version 0.4.7 (21/02/2019)
-- Always request github users API (when avatar cache expires) and check for modifications
-- Fixed avatar issues (#349, #287) using remote contributors and added avatar cache extension setting (default 1 hour)
