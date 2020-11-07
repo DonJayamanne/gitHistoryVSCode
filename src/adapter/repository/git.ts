@@ -13,14 +13,12 @@ import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './co
 import { Repository, RefType } from './git.d';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
-import { GitBranchesService } from './gitBranchService';
 import { GitRemoteService } from './gitRemoteService';
 import { captureTelemetry } from '../../common/telemetry';
 
 @injectable()
 export class Git implements IGitService {
     private refHashesMap: Map<string, string> = new Map<string, string>();
-    private readonly branchesService: GitBranchesService;
     private readonly remotesService: GitRemoteService;
     constructor(
         private repo: Repository,
@@ -30,7 +28,6 @@ export class Git implements IGitService {
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
     ) {
         this.remotesService = new GitRemoteService(repo, this.gitCmdExecutor);
-        this.branchesService = new GitBranchesService(repo, this.remotesService);
     }
 
     /**
@@ -63,9 +60,36 @@ export class Git implements IGitService {
     }
 
     @captureTelemetry()
-    public async getBranches(): Promise<Branch[]> {
-        return this.branchesService.getBranches();
+    public async getBranches(withRemote = false): Promise<Branch[]> {
+        const gitRoot = this.getGitRoot();
+
+        // get only the local branches
+        const branches = await this.repo.getBranches({ remote: withRemote });
+
+        return Promise.all(
+            branches.map(async r => {
+                let remoteUrl: string | undefined = undefined;
+
+                // fetch the remote from local branch using upstreamRef (received only with getBranch)
+                const remoteName = (await this.repo.getBranch(r.name || 'master')).upstream?.remote;
+
+                if (remoteName) {
+                    remoteUrl = this.repo.state.remotes.find(x => x.name === remoteName)?.fetchUrl;
+                }
+
+                const originType = await this.remotesService.getOriginType(remoteUrl);
+
+                return {
+                    gitRoot: gitRoot,
+                    name: r.name,
+                    remote: remoteUrl,
+                    remoteType: originType,
+                    current: this.getCurrentBranch() === r.name,
+                } as Branch;
+            }),
+        );
     }
+
     public getCurrentBranch(): string {
         return this.repo.state.HEAD!.name || '';
     }
