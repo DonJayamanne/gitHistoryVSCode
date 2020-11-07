@@ -110,40 +110,44 @@ class Commit extends React.Component<CommitProps, CommitState> {
             >
                 <div id="detail-view">
                     <div className="authorAndCommitInfoContainer">
-                        <Avatar result={this.props.selectedEntry.author}></Avatar>
-                        <h1 className="commit-subject">
-                            {gitmojify(this.props.selectedEntry.subject)}
-                            &nbsp;
-                            <CopyToClipboard
-                                text={this.props.selectedEntry.subject + '\n' + this.props.selectedEntry.body}
-                            >
-                                <span
-                                    className="btnx clipboard hint--right hint--rounded hint--bounce"
-                                    aria-label="Copy commit text"
+                        <div style={{ minWidth: '80px' }}>
+                            <Avatar result={this.props.selectedEntry.author}></Avatar>
+                        </div>
+                        <div style={{ flexGrow: 1 }}>
+                            <h1 className="commit-subject">
+                                {gitmojify(this.props.selectedEntry.subject)}
+                                &nbsp;
+                                <CopyToClipboard
+                                    text={this.props.selectedEntry.subject + '\n' + this.props.selectedEntry.body}
                                 >
-                                    <GoClippy></GoClippy>
-                                </span>
-                            </CopyToClipboard>
-                        </h1>
-                        <Author result={this.props.selectedEntry.author}></Author>
-                        <div className="commit-body">{gitmojify(this.props.selectedEntry.body)}</div>
-                        <div className="commit-notes">{gitmojify(this.props.selectedEntry.notes)}</div>
-                    </div>
-                    <div className="actions">
-                        <input
-                            ref={x => {
-                                this.ref = x;
-                            }}
-                            className={'textInput'}
-                            type="text"
-                            value={this.state.searchText}
-                            placeholder="Find file"
-                            onKeyDown={this.handleKeyDown}
-                            onChange={this.handleSearchChange}
-                        />
-                        <a role="button" className="action-btn close-btn" onClick={this.onClose}>
-                            <GoX></GoX>
-                        </a>
+                                    <span
+                                        className="btnx clipboard hint--right hint--rounded hint--bounce"
+                                        aria-label="Copy commit text"
+                                    >
+                                        <GoClippy></GoClippy>
+                                    </span>
+                                </CopyToClipboard>
+                            </h1>
+                            <Author result={this.props.selectedEntry.author}></Author>
+                            <div className="commit-body">{gitmojify(this.props.selectedEntry.body)}</div>
+                            <div className="commit-notes">{gitmojify(this.props.selectedEntry.notes)}</div>
+                        </div>
+                        <div className="actions">
+                            <input
+                                ref={x => {
+                                    this.ref = x;
+                                }}
+                                className={'textInput'}
+                                type="text"
+                                value={this.state.searchText}
+                                placeholder="Find file"
+                                onKeyDown={this.handleKeyDown}
+                                onChange={this.handleSearchChange}
+                            />
+                            <a role="button" className="action-btn close-btn" onClick={this.onClose}>
+                                <GoX></GoX>
+                            </a>
+                        </div>
                     </div>
                     <div className="comitted-files">{this.renderFileEntries()}</div>
                 </div>
