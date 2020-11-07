@@ -194,6 +194,10 @@
                 {
                     "command": "git.commit.compare.view.show",
                     "when": "!git.commit.compare.view.show"
+                },
+                {
+                    "command": "git.viewChooser",
+                    "when": "false"
                 }
             ],
             "editor/title": [
