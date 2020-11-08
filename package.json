@@ -52,10 +52,7 @@
                 "command": "git.commit.view.hide",
                 "title": "Hide Commit View Explorer",
                 "category": "Git",
-                "icon": {
-                    "dark": "resources/icons/misc/close-dark.svg",
-                    "light": "resources/icons/misc/close.svg"
-                }
+                "icon": "$(close)"
             },
             {
                 "command": "git.commit.view.show",
@@ -65,10 +62,7 @@
                 "command": "git.commit.compare.view.hide",
                 "title": "Hide Commit Comparison View Explorer",
                 "category": "Git",
-                "icon": {
-                    "dark": "resources/icons/misc/close-dark.svg",
-                    "light": "resources/icons/misc/close.svg"
-                }
+                "icon": "$(close)"
             },
             {
                 "command": "git.commit.compare.view.show",
