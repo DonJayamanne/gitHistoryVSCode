@@ -2,7 +2,7 @@
     "name": "githistory",
     "displayName": "Git History",
     "description": "View git log, file history, compare branches or commits",
-    "version": "0.6.12",
+    "version": "0.6.13",
     "publisher": "donjayamanne",
     "author": {
         "name": "Don Jayamanne",
@@ -185,6 +185,10 @@
                 {
                     "command": "git.commit.compare.view.show",
                     "when": "!git.commit.compare.view.show"
+                },
+                {
+                    "command": "git.viewChooser",
+                    "when": "false"
                 }
             ],
             "editor/title": [

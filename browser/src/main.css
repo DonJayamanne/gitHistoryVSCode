@@ -416,7 +416,7 @@ div.details-view-cnt .commit-subject {
 div.details-view-cnt .commit-body,
 div.details-view-cnt .commit-notes {
 	margin: 1em 0;
-	white-space: pre;
+	/*white-space: pre;*/
 }
 
 div.details-view-cnt .commit-body:empty,
@@ -433,7 +433,9 @@ div.details-view-cnt .commit-notes:empty {
 }
 
 #detail-view .authorAndCommitInfoContainer {
-    flex: 1 1;
+	flex: 1 1;
+	display: flex;
+	justify-content: space-between;
 }
 #detail-view .authorAndCommitInfoContainer img.avatar {
     height:80px;
@@ -457,12 +459,7 @@ div.details-view-cnt .commit-notes:empty {
 }
 
 #detail-view div.actions {
-	position: sticky;
-	top: 0px;
-	align-self: flex-start;
 	white-space: nowrap;
-	flex: 0 1;
-	text-align: right;
 }
 
 #detail-view .comitted-files {
