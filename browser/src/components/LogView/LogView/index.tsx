@@ -5,7 +5,7 @@ import { LogEntries, LogEntry, Ref } from '../../../definitions';
 import { RootState } from '../../../reducers';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
-import Dialog from '../../Dialog';
+import Dialog, { DialogType } from '../../Dialog';
 
 type LogViewProps = {
     logEntries: LogEntries;
@@ -74,6 +74,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                 this.dialog.showConfirm(
                     `Remove tag ${ref.name}?`,
                     `Do you really want to remove the tag ${ref.name}?`,
+                    DialogType.Warning,
                     { logEntry, ref, name },
                 );
                 break;
@@ -81,6 +82,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                 this.dialog.showConfirm(
                     `Remove branch ${ref.name}?`,
                     `Do you really want to remove the branch ${ref.name}?`,
+                    DialogType.Warning,
                     { logEntry, ref, name },
                 );
                 break;
@@ -88,6 +90,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                 this.dialog.showConfirm(
                     `Checkout to branch ${ref.name}?`,
                     `Do you want to checkout branch ${ref.name}?`,
+                    DialogType.Info,
                     { logEntry, ref, name },
                 );
                 break;
@@ -95,6 +98,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                 this.dialog.showConfirm(
                     `Remove remote branch ${ref.name}?`,
                     `Do you really want to remove the remote branch ${ref.name}?`,
+                    DialogType.Warning,
                     { logEntry, ref, name },
                 );
                 break;
@@ -108,6 +112,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                     `Create a new tag on ${entry.hash.short}`,
                     `<strong>${entry.subject}</strong><br />${entry.author.name} on ${entry.author.date.toISOString()}`,
                     'Enter tag here',
+                    DialogType.Info,
                     { entry, name },
                 );
                 break;
@@ -116,24 +121,27 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                     `Create a branch from ${entry.hash.short}`,
                     `<strong>${entry.subject}</strong><br />${entry.author.name} on ${entry.author.date.toISOString()}`,
                     'Enter branch name here',
+                    DialogType.Info,
                     { entry, name },
                 );
                 break;
             case 'reset_soft':
                 this.dialog.showConfirm(
-                    `Reset to ${entry.hash.short}?`,
+                    `Soft reset to ${entry.hash.short}?`,
                     `<p><strong>${entry.subject}</strong><br />${
                         entry.author.name
                     } on ${entry.author.date.toISOString()}</p><small>All affected files will be merged and kept in local workspace</small>`,
+                    DialogType.Info,
                     { entry, name },
                 );
                 break;
             case 'reset_hard':
                 this.dialog.showConfirm(
-                    `Reset hard to ${entry.hash.short}?`,
+                    `Hard reset commit to ${entry.hash.short}?`,
                     `<p><strong>${entry.subject}</strong><br />${
                         entry.author.name
-                    } on ${entry.author.date.toISOString()}</p><small style='color: red'>All affected files will be dropped</small>`,
+                    } on ${entry.author.date.toISOString()}</p><div>This is IRREVERSIBLE TO YOUR CURRENT WORKING SET. UNCOMMITTED LOCAL FILES WILL BE REMOVED</div>`,
+                    DialogType.Warning,
                     { entry, name },
                 );
                 break;

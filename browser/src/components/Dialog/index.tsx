@@ -14,6 +14,7 @@ type DialogProps = {
 
 type DialogState = {
     title: string;
+    type: DialogType;
     description: string;
     input: boolean;
     placeholder: string;
@@ -22,6 +23,10 @@ type DialogState = {
     value: string;
 };
 
+export enum DialogType {
+    Info = 0,
+    Warning = 1,
+}
 /**
  * A simple dialog component to display a modal window
  */
@@ -34,6 +39,7 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
         super(props);
         this.state = {
             show: false,
+            type: DialogType.Info,
             value: '',
             title: '',
             placeholder: 'Please enter a value here',
@@ -128,8 +134,13 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
      * @param description description with html entities support
      * @param args optional arguments
      */
-    public showMessage(title: string, description: string, args: any = undefined) {
-        this.setState({ show: true, title, description, input: false, buttons: DialogButtons.Ok });
+    public showMessage(
+        title: string,
+        description: string,
+        dialogType: DialogType = DialogType.Info,
+        args: any = undefined,
+    ) {
+        this.setState({ show: true, title, description, input: false, buttons: DialogButtons.Ok, type: dialogType });
         this.args = args;
     }
 
@@ -140,11 +151,19 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
      * @param description description with html entities support
      * @param args optional arguments
      */
-    public showConfirm(title: string, description: string, args: any = undefined) {
-        this.setState({ show: true, title, description, input: false, buttons: DialogButtons.OkCancel }, () => {
-            const buttonEl = ReactDOM.findDOMNode(this.buttonOk) as HTMLButtonElement;
-            buttonEl.focus();
-        });
+    public showConfirm(
+        title: string,
+        description: string,
+        dialogType: DialogType = DialogType.Info,
+        args: any = undefined,
+    ) {
+        this.setState(
+            { show: true, title, description, input: false, buttons: DialogButtons.OkCancel, type: dialogType },
+            () => {
+                const buttonEl = ReactDOM.findDOMNode(this.buttonOk) as HTMLButtonElement;
+                buttonEl.focus();
+            },
+        );
         this.args = args;
     }
 
@@ -155,9 +174,23 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
      * @param description description with html entities support
      * @param args optional arguments
      */
-    public showInput(title: string, description: string, placeholder = '', args: any = undefined) {
+    public showInput(
+        title: string,
+        description: string,
+        placeholder = '',
+        dialogType: DialogType = DialogType.Info,
+        args: any = undefined,
+    ) {
         this.setState(
-            { show: true, input: true, title, description, placeholder, buttons: DialogButtons.OkCancel },
+            {
+                show: true,
+                input: true,
+                title,
+                description,
+                placeholder,
+                buttons: DialogButtons.OkCancel,
+                type: dialogType,
+            },
             () => {
                 this.inputField.focus();
                 this.inputField.select();
@@ -173,28 +206,43 @@ export default class Dialog extends React.Component<DialogProps, DialogState> {
         return this.state.value;
     }
 
+    public getTypeIcon() {
+        switch (this.state.type) {
+            default:
+            case DialogType.Info:
+                return `${window['extensionPath']}/resources/icons/misc/dialog-info.svg`;
+            case DialogType.Warning:
+                return `${window['extensionPath']}/resources/icons/misc/dialog-warning.svg`;
+        }
+    }
+
     public render() {
         return (
             <div id="dialog" hidden={!this.state.show}>
                 <div>
-                    <div>
-                        <h4>{this.state.title}</h4>
-                        <div dangerouslySetInnerHTML={{ __html: this.state.description }}></div>
-                    </div>
-                    <div style={{ textAlign: 'center', marginTop: '1em' }}>
-                        <input
-                            hidden={!this.state.input}
-                            ref={i => (this.inputField = i)}
-                            className={'textInput'}
-                            type="text"
-                            value={this.state.value}
-                            onKeyDown={this.handleKeyDown.bind(this)}
-                            onChange={this.handleChange.bind(this)}
-                            placeholder={this.state.placeholder}
-                        />
+                    <div className="dialog-content">
+                        <img src={this.getTypeIcon()} height={50} />
+                        <div style={{ flexGrow: 1 }}>
+                            <h4>{this.state.title}</h4>
+                            <div dangerouslySetInnerHTML={{ __html: this.state.description }}></div>
+                        </div>
                     </div>
                     <hr />
-                    <div style={{ textAlign: 'right' }}>{this.createButtons()}</div>
+                    <div className="dialog-footer">
+                        <div>
+                            <input
+                                hidden={!this.state.input}
+                                ref={i => (this.inputField = i)}
+                                className={'textInput'}
+                                type="text"
+                                value={this.state.value}
+                                onKeyDown={this.handleKeyDown.bind(this)}
+                                onChange={this.handleChange.bind(this)}
+                                placeholder={this.state.placeholder}
+                            />
+                        </div>
+                        <div style={{ textAlign: 'right' }}>{this.createButtons()}</div>
+                    </div>
                 </div>
             </div>
         );
