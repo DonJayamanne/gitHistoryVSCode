@@ -9,7 +9,6 @@ export const IGitArgsService = Symbol.for('IGitArgsService');
 
 export interface IGitArgsService {
     getAuthorsArgs(): string[];
-    getCommitArgs(hash: string): string[];
     getCommitParentHashesArgs(hash: string): string[];
     getCommitWithNumStatArgs(hash: string): string[];
     getCommitNameStatusArgs(hash: string): string[];
