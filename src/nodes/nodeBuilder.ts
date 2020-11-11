@@ -1,10 +1,11 @@
 import { inject, injectable } from 'inversify';
+import { ThemeIcon } from 'vscode';
 import * as path from 'path';
 import { IFileCommitCommandFactory } from '../commandFactories/types';
 import { CommitDetails } from '../common/types';
 import { IPlatformService } from '../platform/types';
 import { CommittedFile, Status } from '../types';
-import { AddedIcon, FileIcon, FolderIcon, ModifiedIcon, RemovedIcon } from './nodeIcons';
+import { AddedIcon, ModifiedIcon, RemovedIcon } from './nodeIcons';
 import { DirectoryTreeItem, FileTreeItem } from './treeNodes';
 import { DirectoryNode, FileNode, INodeBuilder, INodeFactory } from './types';
 
@@ -74,7 +75,7 @@ export class NodeBuilder implements INodeBuilder {
     }
     public buildDirectoryTreeItem(element: DirectoryNode): DirectoryTreeItem {
         const treeItem = new DirectoryTreeItem(element);
-        treeItem.iconPath = FolderIcon;
+        treeItem.iconPath = ThemeIcon.Folder;
         treeItem.contextValue = 'folder';
         if (treeItem.command) {
             treeItem.command.tooltip = 'sdafasfef.';
@@ -102,7 +103,7 @@ export class NodeBuilder implements INodeBuilder {
                 break;
             }
             default: {
-                treeItem.iconPath = FileIcon;
+                treeItem.iconPath = ThemeIcon.File;
             }
         }
         treeItem.contextValue = 'file';
