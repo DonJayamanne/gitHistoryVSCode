@@ -60,29 +60,22 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
         return this.viewHistory(fileUri, currentLineNumber);
     }
     @command('git.viewHistory', IGitHistoryCommandHandler)
-    public async viewBranchHistory(repo?: Repository): Promise<void> {
-        if (repo) {
-            return this.viewHistory(repo.rootUri);
+    public async viewBranchHistory(repo?: Repository | Uri): Promise<void> {
+        if (repo instanceof Uri) {
+            return this.viewHistory(repo, undefined, true);
+        } else if (repo !== undefined) {
+            return this.viewHistory(repo!.rootUri);
         }
         return this.viewHistory();
     }
-    @command('git.viewChooser', IGitHistoryCommandHandler)
-    public async viewChooser(url?: Uri): Promise<void> {
-        const openRepo = this.workspace.getConfiguration('gitHistory').get<boolean>('editorTitleButtonOpenRepo', false);
-        if (openRepo) {
-            return this.viewHistory();
-        } else {
-            return this.viewFileHistory(url);
-        }
-    }
 
-    public async viewHistory(fileUri?: Uri, lineNumber?: number): Promise<void> {
+    public async viewHistory(fileUri?: Uri, lineNumber?: number, forceOpenBranchHistory = false): Promise<void> {
         const gitServiceFactory = this.serviceContainer.get<IGitServiceFactory>(IGitServiceFactory);
 
         const gitService = await gitServiceFactory.createGitService(fileUri);
         const gitRoot = gitService.getGitRoot();
 
-        if (gitRoot === fileUri?.fsPath) {
+        if (gitRoot === fileUri?.fsPath || forceOpenBranchHistory) {
             fileUri = undefined;
         }
 

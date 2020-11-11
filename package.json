@@ -78,11 +78,6 @@
                 "icon": "$(history)"
             },
             {
-                "command": "git.viewChooser",
-                "title": "Git: View History",
-                "icon": "$(history)"
-            },
-            {
                 "command": "git.viewFileHistory",
                 "title": "Git: View File History",
                 "icon": "$(history)"
@@ -179,17 +174,18 @@
                 {
                     "command": "git.commit.compare.view.show",
                     "when": "!git.commit.compare.view.show"
-                },
-                {
-                    "command": "git.viewChooser",
-                    "when": "false"
                 }
             ],
             "editor/title": [
                 {
-                    "command": "git.viewChooser",
+                    "command": "git.viewFileHistory",
                     "group": "navigation",
-                    "when": "config.git.enabled && resourceScheme == file && gitOpenRepositoryCount != 0 && config.gitHistory.showEditorTitleMenuBarIcons"
+                    "when": "config.git.enabled && !config.gitHistory.editorTitleButtonOpenRepo && resourceScheme == file && gitOpenRepositoryCount != 0 && config.gitHistory.showEditorTitleMenuBarIcons"
+                },
+                {
+                    "command": "git.viewHistory",
+                    "group": "navigation",
+                    "when": "config.git.enabled && config.gitHistory.editorTitleButtonOpenRepo && resourceScheme == file && gitOpenRepositoryCount != 0 && config.gitHistory.showEditorTitleMenuBarIcons"
                 }
             ],
             "editor/title/context": [
