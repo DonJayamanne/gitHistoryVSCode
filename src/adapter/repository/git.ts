@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { Uri } from 'vscode';
+import * as vscode from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
@@ -40,7 +40,7 @@ export class Git implements IGitService {
     public getGitRoot(): string {
         return this.repo.rootUri.fsPath;
     }
-    public getGitRelativePath(file: Uri) {
+    public getGitRelativePath(file: vscode.Uri) {
         if (!path.isAbsolute(file.fsPath)) {
             return file.fsPath;
         }
@@ -144,10 +144,21 @@ export class Git implements IGitService {
 
     /**
      * Used to load dereferenced hashes for (annotation) tags
+     *
+     * This is used in vscode versions prior to 1.52 because
+     * annotation references to not correct point to the assocated commit
+     *
+     * See https://github.com/microsoft/vscode/issues/92146
      */
     private async loadDereferenceHashes() {
-        this.refHashesMap.clear();
+        const vsCodeVersionNumber = parseFloat(vscode.version);
 
+        if (vsCodeVersionNumber >= 1.52) {
+            // skip it when vscode.git extension correctly dereferences the commit id
+            return;
+        }
+
+        this.refHashesMap.clear();
         const tags = this.repo.state.refs.filter(x => x.type === RefType.Tag);
 
         if (tags.length === 0) {
@@ -196,7 +207,7 @@ export class Git implements IGitService {
         pageSize = 0,
         branches: string[] = [],
         searchText = '',
-        file?: Uri,
+        file?: vscode.Uri,
         lineNumber?: number,
         author?: string,
     ): Promise<LogEntries> {
@@ -221,6 +232,8 @@ export class Git implements IGitService {
         const countPromise = lineNumber
             ? Promise.resolve(-1)
             : this.exec(...args.counterArgs).then(value => parseInt(value));
+        ``;
+
         const [output] = await Promise.all([this.exec(...args.logArgs), this.loadDereferenceHashes()]);
 
         const items = output
@@ -303,13 +316,13 @@ export class Git implements IGitService {
 
     @cache('IGitService')
     @captureTelemetry()
-    public async getCommitFile(hash: string, file: FsUri | string): Promise<Uri> {
+    public async getCommitFile(hash: string, file: FsUri | string): Promise<vscode.Uri> {
         //const gitRootPath = await this.getGitRoot();
         const filePath = typeof file === 'string' ? file : file.path.toString();
 
         const content = await this.repo.buffer(hash, filePath);
 
-        return new Promise<Uri>((resolve, reject) => {
+        return new Promise<vscode.Uri>((resolve, reject) => {
             tmp.file({ postfix: path.extname(filePath) }, async (err: Error, tmpPath: string) => {
                 if (err) {
                     return reject(err);
@@ -322,7 +335,7 @@ export class Git implements IGitService {
                     const tmpFile = path.join(tmpFilePath, path.basename(filePath));
                     await fs.ensureDir(tmpFilePath);
                     await fs.writeFile(tmpFile, content);
-                    resolve(Uri.file(tmpFile));
+                    resolve(vscode.Uri.file(tmpFile));
                 } catch (ex) {
                     console.error('Git History: failed to get file contents (again)');
                     console.error(ex);
