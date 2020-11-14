@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.6.14 (14/11/2020)
+- [68397e9] Version 0.6.14 - @ole1986
+- [5d31edc] ignore temp directory when building vsix - @ole1986
+- [02c64af] vscode v1.52 fixes the dereference issue on annotation tags (#603) - @ole1986
+- [0d1da91] Icon removal and replacements with native ThemeIcon (#609) - @ole1986
+- [4e055f2] Improved user experiance when opening history from editor title navigation #602 - @ole1986
+- [d0b6c5d] Replace extension icon with VSCode builtin history icon (#604) - @tjx666
+- [8edc0b4] Fixed newlines in commit messages #608 - @ole1986
+- [0363df0] Improved dialog to support dialog icons and improve message on hard reset (#605) (#606) - @ole1986
+- [26ca4b4] Updated CHANGELOG.md - Github Actions - @ole1986
+
+---
+
 ## v0.6.13 (07/11/2020)
 - [2137af8] Version 0.6.13 - @ole1986
 - [382eadc] Use native git api to get local branches (Also fixes #572 and #601) (#600) - @ole1986
@@ -249,13 +262,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 
 ## Version 0.4.9 (30/11/2019)
 * Fixed issue #411
----
-
-## Version 0.4.8 (29/11/2019)
-- Remote support (PR #401)
-- Browser improvements (PR #406, PR #407)
-- Style amendments by passing `--vscode-*` into the iframe (PR #360)
-- Slightly improved finding submodules using git extension api (PR #358)
-- Fixed typo (PR #399)
-- Fixed #397 
-- Several other improvements on styling, code coverage and user experience
