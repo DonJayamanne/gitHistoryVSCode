@@ -29,15 +29,19 @@ export function Author(props: AuthorProps) {
                     <GoEye></GoEye>
                 </a>
             </span>
-            <span className="name hint--right hint--rounded hint--bounce" aria-label={props.result.email}>
-                {props.result.name}
+            <span className="name hint--right hint--rounded hint--bounce" aria-label={props.result?.email}>
+                {props.result?.name}
             </span>
-            <span className="timestamp"> on {formatDateTime(props.locale, props.result.date)}</span>
+            <span className="timestamp"> on {formatDateTime(props.locale, props.result?.date)}</span>
         </div>
     );
 }
 
 function formatDateTime(locale: string, date?: Date) {
+    if (date === undefined) {
+        return '';
+    }
+
     if (date && typeof date.toLocaleDateString !== 'function') {
         return '';
     }

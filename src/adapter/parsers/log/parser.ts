@@ -8,7 +8,8 @@ import { IActionDetailsParser, IFileStatParser, ILogParser } from '../types';
 export class LogParser implements ILogParser {
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(IActionDetailsParser) private actionDetailsParser: IActionDetailsParser,
+        @inject(IActionDetailsParser)
+        private actionDetailsParser: IActionDetailsParser,
     ) {}
     public parse(
         gitRepoPath: string,

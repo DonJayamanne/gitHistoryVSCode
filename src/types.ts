@@ -1,4 +1,4 @@
-import { Uri } from 'vscode';
+import { Uri, Event } from 'vscode';
 import { GitOriginType } from './adapter/repository/index';
 import { CommitDetails } from './common/types';
 
@@ -10,6 +10,13 @@ export enum BranchSelection {
     All = 2,
     Detached = 3,
 }
+
+export type Graph = {
+    height: number;
+    itemHeight: number;
+    startIndex: number;
+    scrollTop: number;
+};
 
 export type FsUri = {
     scheme: string;
@@ -77,8 +84,8 @@ export type ActionedDetails = ActionedUser & {
 export type LogEntriesResponse = {
     items: LogEntry[];
     count: number;
-    pageIndex?: number;
-    pageSize?: number;
+    startIndex?: number;
+    stopIndex?: number;
     lineNumber?: number;
     selected?: LogEntry;
     isLoading?: boolean;
@@ -131,6 +138,7 @@ export const IGitService = Symbol.for('IGitService');
 export const IOutputChannel = Symbol.for('IOutputChannel');
 
 export interface IGitService {
+    onStateChanged: Event<void>;
     getGitRoot(): string;
     getGitRelativePath(file: Uri): string;
     getHeadHashes(): { ref?: string; hash?: string }[];

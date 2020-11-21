@@ -9,7 +9,8 @@ import { IGitCommitViewExplorerCommandHandler } from '../types';
 export class GitCommitViewExplorerCommandHandler implements IGitCommitViewExplorerCommandHandler {
     constructor(
         @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
     ) {}
 
     @command('git.commit.view.hide', IGitCommitViewExplorerCommandHandler)

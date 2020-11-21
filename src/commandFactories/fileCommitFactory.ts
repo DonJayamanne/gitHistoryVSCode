@@ -16,8 +16,10 @@ import { IFileCommitCommandFactory } from './types';
 @injectable()
 export class FileCommitCommandFactory implements IFileCommitCommandFactory {
     constructor(
-        @inject(IGitFileHistoryCommandHandler) private fileHistoryCommandHandler: IGitFileHistoryCommandHandler,
-        @inject(IGitCompareFileCommandHandler) private fileCompareHandler: IGitCompareFileCommandHandler,
+        @inject(IGitFileHistoryCommandHandler)
+        private fileHistoryCommandHandler: IGitFileHistoryCommandHandler,
+        @inject(IGitCompareFileCommandHandler)
+        private fileCompareHandler: IGitCompareFileCommandHandler,
         @inject(ICommandManager) private commandManager: ICommandManager,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
     ) {}

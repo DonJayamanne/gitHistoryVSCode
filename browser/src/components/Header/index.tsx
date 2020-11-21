@@ -26,7 +26,10 @@ interface HeaderState {
 export class Header extends React.Component<HeaderProps, HeaderState> {
     constructor(props: HeaderProps) {
         super(props);
-        this.state = { isLoading: props.isLoading, searchText: props.searchText };
+        this.state = {
+            isLoading: props.isLoading,
+            searchText: props.searchText,
+        };
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -40,17 +43,10 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
         }
     };
     private onClear = () => {
-        this.setState({ isLoading: this.state.isLoading });
+        this.setState({ isLoading: this.state.isLoading, searchText: '' });
         if (!this.state.isLoading) {
             this.setState({ isLoading: true });
             this.props.clearSearch();
-        }
-    };
-    private onRefresh = () => {
-        this.setState({ isLoading: this.state.isLoading });
-        if (!this.state.isLoading) {
-            this.setState({ isLoading: true });
-            this.props.refresh();
         }
     };
 
@@ -103,7 +99,10 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
     }
 
     private handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ isLoading: this.state.isLoading, searchText: e.target.value });
+        this.setState({
+            isLoading: this.state.isLoading,
+            searchText: e.target.value,
+        });
     };
 
     private handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -133,9 +132,6 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
                 <Button bsSize="small" disabled={this.state.isLoading} onClick={this.onClear}>
                     Clear
                 </Button>
-                <Button bsSize="small" disabled={this.state.isLoading} onClick={this.onRefresh}>
-                    Refresh
-                </Button>
                 <span className={'links'}>{this.remoteLink()}</span>
             </header>
         );
@@ -158,7 +154,6 @@ function mapDispatchToProps(dispatch) {
     return {
         search: (text: string) => dispatch(ResultActions.search(text)),
         clearSearch: () => dispatch(ResultActions.clearSearch()),
-        refresh: () => dispatch(ResultActions.refresh()),
     };
 }
 

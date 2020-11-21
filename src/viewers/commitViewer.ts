@@ -24,7 +24,8 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     }
     constructor(
         @inject(IOutputChannel) private outputChannel: OutputChannel,
-        @inject(ICommitViewFormatter) private commitFormatter: ICommitViewFormatter,
+        @inject(ICommitViewFormatter)
+        private commitFormatter: ICommitViewFormatter,
         @inject(ICommandManager) private commandManager: ICommandManager,
         private nodeBuilder: INodeBuilder,
         private treeId: string,

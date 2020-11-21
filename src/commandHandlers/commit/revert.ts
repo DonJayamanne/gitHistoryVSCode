@@ -11,7 +11,8 @@ import { IGitRevertCommandHandler } from '../types';
 export class GitRevertCommandHandler implements IGitRevertCommandHandler {
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
     ) {}
 
@@ -24,7 +25,9 @@ export class GitRevertCommandHandler implements IGitRevertCommandHandler {
 
         const msg = `Are you sure you want to revert this '${commit.logEntry.hash.short}' commit?`;
         const yesNo = showPrompt
-            ? await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg })
+            ? await this.applicationShell.showQuickPick(['Yes', 'No'], {
+                  placeHolder: msg,
+              })
             : 'Yes';
 
         if (yesNo === undefined || yesNo === 'No') {

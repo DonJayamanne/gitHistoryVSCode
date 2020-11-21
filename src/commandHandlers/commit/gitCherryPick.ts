@@ -11,7 +11,8 @@ import { IGitCherryPickCommandHandler } from '../types';
 export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler {
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
     ) {}
 
@@ -25,7 +26,9 @@ export class GitCherryPickCommandHandler implements IGitCherryPickCommandHandler
 
         const msg = `Cherry pick ${commit.logEntry.hash.short} into ${currentBranch}?`;
         const yesNo = showPrompt
-            ? await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg })
+            ? await this.applicationShell.showQuickPick(['Yes', 'No'], {
+                  placeHolder: msg,
+              })
             : 'Yes';
 
         if (yesNo === undefined || yesNo === 'No') {

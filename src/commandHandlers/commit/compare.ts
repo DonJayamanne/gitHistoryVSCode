@@ -14,7 +14,8 @@ export class GitCompareCommitCommandHandler implements IGitCompareCommandHandler
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private application: IApplicationShell,
     ) {}
 

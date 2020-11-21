@@ -61,7 +61,10 @@ export class FileStatParser implements IFileStatParser {
             const current = fileInfo.replace(partWithDifference, parts[1]);
             const currentPathParts = current.split(/\/|\/\/|\\|\\\\/g).filter(part => part.length > 0);
 
-            return { original: path.join(...originalPathParts), current: path.join(...currentPathParts) };
+            return {
+                original: path.join(...originalPathParts),
+                current: path.join(...currentPathParts),
+            };
         }
     }
 

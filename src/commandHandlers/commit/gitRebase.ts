@@ -11,7 +11,8 @@ import { IGitRebaseCommandHandler } from '../types';
 export class GitRebaseCommandHandler implements IGitRebaseCommandHandler {
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
     ) {}
 
@@ -25,7 +26,9 @@ export class GitRebaseCommandHandler implements IGitRebaseCommandHandler {
 
         const msg = `Rebase ${currentBranch} onto '${commit.logEntry.hash.short}'?`;
         const yesNo = showPrompt
-            ? await this.applicationShell.showQuickPick(['Yes', 'No'], { placeHolder: msg })
+            ? await this.applicationShell.showQuickPick(['Yes', 'No'], {
+                  placeHolder: msg,
+              })
             : 'Yes';
 
         if (yesNo === undefined || yesNo === 'No') {

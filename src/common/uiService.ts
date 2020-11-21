@@ -41,7 +41,11 @@ export class UiService implements IUiService {
         const commands = await this.serviceContainer
             .get<IFileCommitCommandFactory>(IFileCommitCommandFactory)
             .createCommands(fileCommit);
-        const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
+        const options = {
+            matchOnDescription: true,
+            matchOnDetail: true,
+            token: this.selectionActionToken.token,
+        };
 
         return this.application.showQuickPick(commands, options);
     }
@@ -53,7 +57,11 @@ export class UiService implements IUiService {
         const commands = await this.serviceContainer
             .get<ICommitCommandFactory>(ICommitCommandFactory)
             .createCommands(commit);
-        const options = { matchOnDescription: true, matchOnDetail: true, token: this.selectionActionToken.token };
+        const options = {
+            matchOnDescription: true,
+            matchOnDetail: true,
+            token: this.selectionActionToken.token,
+        };
 
         return this.application.showQuickPick(commands, options);
     }

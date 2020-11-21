@@ -38,7 +38,10 @@ export abstract class BaseAvatarProvider implements IAvatarProvider {
 
         if (retry) {
             const avatars = await this.getAvatarsImplementation(repository);
-            await this.avatarStateStore.set<AvatarResponse>(key, { timestamp: new Date().getTime(), items: avatars });
+            await this.avatarStateStore.set<AvatarResponse>(key, {
+                timestamp: new Date().getTime(),
+                items: avatars,
+            });
             return avatars;
         } else if (cachedAvatars) {
             return cachedAvatars.items;

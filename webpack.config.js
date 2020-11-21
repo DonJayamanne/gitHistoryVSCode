@@ -27,7 +27,7 @@ const browser = {
         extensions: ['.js', '.ts', '.tsx'],
         mainFields: ['main'],
     },
-    devtool: isProduction ? false : 'source-map',
+    devtool: isProduction ? false : 'eval-cheap-module-source-map',
     module: {
         rules: [
             // .ts, .tsx
@@ -41,6 +41,7 @@ const browser = {
             // scss
             {
                 test: /\.css$/,
+                exclude: /(node_modules)/,
                 use: [
                     {
                         loader: 'file-loader',

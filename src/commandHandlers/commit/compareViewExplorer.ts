@@ -8,7 +8,8 @@ import { IGitCompareCommitViewExplorerCommandHandler } from '../types';
 export class GitCompareCommitViewExplorerCommandHandler implements IGitCompareCommitViewExplorerCommandHandler {
     constructor(
         @inject(ICommandManager) private commandManager: ICommandManager,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
     ) {}
 
     @command('git.commit.compare.view.hide', IGitCompareCommitViewExplorerCommandHandler)

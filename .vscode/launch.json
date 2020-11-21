@@ -14,7 +14,7 @@
             "smartStep": true,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/dist/**/*.js"
+                "${workspaceRoot}/dist/src/*.js"
             ],
             "preLaunchTask": "webpack-dev",
             "skipFiles": [

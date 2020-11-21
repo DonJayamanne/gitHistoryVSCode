@@ -10,7 +10,8 @@ import { StopWatch } from '../common/stopWatch';
 @injectable()
 export class CommandHandlerManager implements ICommandHandlerManager {
     constructor(
-        @inject(IDisposableRegistry) private disposableRegistry: IDisposableRegistry,
+        @inject(IDisposableRegistry)
+        private disposableRegistry: IDisposableRegistry,
         @inject(ICommandManager) private commandManager: ICommandManager,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
     ) {}
