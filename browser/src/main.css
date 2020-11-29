@@ -72,15 +72,15 @@ div.appRootParent {
 div.appRoot {
 	display: flex;
 	flex-direction: column;
-	height: 100vh;
-	overflow: hidden;
+	justify-content: stretch;
 }
 
 .log-view {
-	position: relative;
+	/*position: relative;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	height: 100vh;
+	height: 100vh;*/
+	flex-grow: 1;
 }
 
 .log-view svg.commitGraph {
@@ -285,9 +285,6 @@ div.appRoot {
 	background-color: #ffffff11;
 }
 
-header {
-    margin-bottom: 0.5em;
-}
 
 header input, header button {
     margin: 0.2em;
@@ -304,12 +301,65 @@ header .links {
 	vertical-align: middle;
 }
 
+/* SplitPanel - Resizer */
+.Resizer {
+	background: #999;
+	z-index: 1;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding;
+	background-clip: padding-box;
+  }
+  
+  .Resizer:hover {
+	-webkit-transition: all 2s ease;
+	transition: all 2s ease;
+  }
+  
+  .Resizer.horizontal {
+	height: 11px;
+	margin: -5px 0;
+	border-top: 5px solid rgba(255, 255, 255, 0);
+	border-bottom: 5px solid rgba(255, 255, 255, 0);
+	cursor: row-resize;
+	width: 100%;
+  }
+  
+  .Resizer.horizontal:hover {
+	border-top: 5px solid rgba(0, 0, 0, 0.5);
+	border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+  }
+  
+  .Resizer.vertical {
+	width: 11px;
+	margin: 0 -5px;
+	border-left: 5px solid rgba(255, 255, 255, 0);
+	border-right: 5px solid rgba(255, 255, 255, 0);
+	cursor: col-resize;
+  }
+  
+  .Resizer.vertical:hover {
+	border-left: 5px solid rgba(0, 0, 0, 0.5);
+	border-right: 5px solid rgba(0, 0, 0, 0.5);
+  }
+  .Resizer.disabled {
+	cursor: not-allowed;
+  }
+  .Resizer.disabled:hover {
+	border-color: transparent;
+  }
+
 /* Navigation*/
 
 #history-navbar {
 	text-align: right;
 	/* Approximation for scroll bar width of 15px*/
 	margin: 0.5em 1em;
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
 }
 
 #history-navbar .navbar {
@@ -371,7 +421,7 @@ header .links {
 	position: fixed;
 	top: 0px;
 	width: 100%;
-	max-width: ;
+	max-width: 600px;
 	height: 100%;
 	background-color: var(--vscode-scrollbarSlider-background);
 	z-index: 99999;
@@ -408,40 +458,43 @@ header .links {
 	display:none;
 }
 
-div.details-view-cnt {
-	position: fixed !important;
-    background-color: var(--vscode-editor-background);
-	border-top-width: 1px;
-	border-top-style: solid;
-	border-top-color: var(--vscode-editorGroup-border);
-	bottom: 45px !important;
-	top: unset !important;
-	padding: 1rem 1rem 0 1rem;
+.Pane2 {
+	background-color: #222;
 }
 
-div.details-view-cnt .commit-subject {
-	font-size: 1.4em;
-	font-weight: lighter;
-	margin: 0;
-}
-
-div.details-view-cnt .commit-body,
-div.details-view-cnt .commit-notes {
-	margin: 1em 0;
-	white-space: pre-wrap;
-}
-
-div.details-view-cnt .commit-body:empty,
-div.details-view-cnt .commit-notes:empty {
-	display: none;
+.detail-view-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	color: gray;
 }
 
 #detail-view {
+	margin: .5em;
 	display: flex;
 	overflow-y: auto;
 	flex-flow: row wrap;
 	justify-content: space-between;
 	max-height:  100%;
+}
+
+#detail-view .commit-subject {
+	font-size: 1.2em;
+	font-weight: lighter;
+	margin: 0;
+}
+
+#detail-view .commit-body,
+#detail-view .commit-notes {
+	margin: 1em 0;
+	white-space: pre-wrap;
+}
+
+#detail-view .commit-body:empty,
+#detail-view .commit-notes:empty {
+	display: none;
 }
 
 #detail-view .authorAndCommitInfoContainer {

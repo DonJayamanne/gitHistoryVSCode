@@ -371,6 +371,12 @@
                     "scope": "window",
                     "description": "Avatar image cache expiration (0 = cache disabled)"
                 },
+                "gitHistory.sideBySide": {
+                    "type": "boolean",
+                    "default": false,
+                    "scope": "window",
+                    "description": "Show commit details in side-by-side view"
+                },
                 "gitHistory.logLevel": {
                     "type": "string",
                     "default": "Info",
@@ -469,7 +475,7 @@
         "lint-staged": "^10.0.8",
         "node-emoji": "1.10.0",
         "prettier": "^1.19.1",
-        "re-resizable": "6.2.0",
+        "react-split-pane": "0.1.92",
         "react": "^16.13.0",
         "react-bootstrap": "^0.32.4",
         "react-copy-to-clipboard": "^5.0.1",

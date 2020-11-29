@@ -2,13 +2,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ResultActions } from '../../actions/results';
-import Footer from '../../components/Footer';
+import SplitPane from 'react-split-pane';
 import Header from '../../components/Header';
 import Commit from '../../components/LogView/Commit';
 import LogView from '../../components/LogView/LogView';
 import { ISettings } from '../../definitions';
 import { LogEntriesState, RootState } from '../../reducers';
 import { IConfiguration } from '../../reducers/vscode';
+import Footer from '../../components/Footer';
 
 type AppProps = {
     configuration: IConfiguration;
@@ -27,6 +28,15 @@ class App extends React.Component<AppProps, AppState> {
         super(props, context);
     }
 
+    private goBack = async () => {
+        await this.props.getPreviousCommits();
+        document.getElementById('scrollCnt').scrollTo(0, 0);
+    };
+    private goForward = async () => {
+        await this.props.getNextCommits();
+        document.getElementById('scrollCnt').scrollTo(0, 0);
+    };
+
     public render() {
         const { children } = this.props;
         const canGoForward =
@@ -36,27 +46,33 @@ class App extends React.Component<AppProps, AppState> {
             <div className="appRootParent">
                 <div className="appRoot">
                     <Header></Header>
-                    <LogView logEntries={this.props.logEntries}></LogView>
+                    <SplitPane
+                        split={this.props.configuration.sideBySide ? 'vertical' : 'horizontal'}
+                        pane1Style={{ overflowY: 'auto' }}
+                        defaultSize="50%"
+                        style={{ marginTop: '40px' }}
+                        primary="first"
+                    >
+                        <LogView logEntries={this.props.logEntries} configuration={this.props.configuration}></LogView>
+                        {this.props.logEntries && this.props.logEntries.selected ? (
+                            <Commit />
+                        ) : (
+                            <div className="detail-view-info">
+                                <div>Pick a commit from the list to view details</div>
+                            </div>
+                        )}
+                    </SplitPane>
                     <Footer
                         canGoBack={this.props.logEntries.pageIndex > 0}
                         canGoForward={canGoForward}
                         goBack={this.goBack}
                         goForward={this.goForward}
                     ></Footer>
-                    {children}
                 </div>
-                {this.props.logEntries && this.props.logEntries.selected ? <Commit /> : ''}
+                {children}
             </div>
         );
     }
-    private goBack = async () => {
-        await this.props.getPreviousCommits();
-        document.getElementById('scrollCnt').scrollTo(0, 0);
-    };
-    private goForward = async () => {
-        await this.props.getNextCommits();
-        document.getElementById('scrollCnt').scrollTo(0, 0);
-    };
 }
 
 function mapStateToProps(state: RootState) {

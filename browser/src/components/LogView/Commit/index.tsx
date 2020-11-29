@@ -7,7 +7,6 @@ import Author from './Author';
 import Avatar from './Avatar';
 import { FileEntry } from './FileEntry';
 import { GoX, GoClippy } from 'react-icons/go';
-import { Resizable } from 're-resizable';
 import { ResultActions } from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
 
@@ -21,12 +20,6 @@ interface CommitProps {
 interface CommitState {
     searchText: string;
 }
-
-// const ContainerStyle = { width: '50%' };
-const ContainerStyle = {
-    width: '100vw',
-    height: '100vh',
-};
 
 class Commit extends React.Component<CommitProps, CommitState> {
     private ref: HTMLInputElement;
@@ -89,69 +82,50 @@ class Commit extends React.Component<CommitProps, CommitState> {
         }
     };
     public render() {
-        const resizing = {
-            top: true,
-            right: false,
-            bottom: false,
-            left: false,
-            topRight: false,
-            bottomRight: false,
-            bottomLeft: false,
-            topLeft: false,
-        };
-
         return (
-            <Resizable
-                className="details-view-cnt"
-                defaultSize={ContainerStyle}
-                minHeight={90}
-                maxHeight="50%"
-                enable={resizing}
-            >
-                <div id="detail-view">
-                    <div className="authorAndCommitInfoContainer">
-                        <div style={{ minWidth: '80px' }}>
-                            <Avatar result={this.props.selectedEntry.author}></Avatar>
-                        </div>
-                        <div style={{ flexGrow: 1 }}>
-                            <h1 className="commit-subject">
-                                {gitmojify(this.props.selectedEntry.subject)}
-                                &nbsp;
-                                <CopyToClipboard
-                                    text={this.props.selectedEntry.subject + '\n' + this.props.selectedEntry.body}
-                                >
-                                    <span
-                                        className="btnx clipboard hint--right hint--rounded hint--bounce"
-                                        aria-label="Copy commit text"
-                                    >
-                                        <GoClippy></GoClippy>
-                                    </span>
-                                </CopyToClipboard>
-                            </h1>
-                            <Author result={this.props.selectedEntry.author}></Author>
-                            <div className="commit-body">{gitmojify(this.props.selectedEntry.body)}</div>
-                            <div className="commit-notes">{gitmojify(this.props.selectedEntry.notes)}</div>
-                        </div>
-                        <div className="actions">
-                            <input
-                                ref={x => {
-                                    this.ref = x;
-                                }}
-                                className={'textInput'}
-                                type="text"
-                                value={this.state.searchText}
-                                placeholder="Find file"
-                                onKeyDown={this.handleKeyDown}
-                                onChange={this.handleSearchChange}
-                            />
-                            <a role="button" className="action-btn close-btn" onClick={this.onClose}>
-                                <GoX></GoX>
-                            </a>
-                        </div>
+            <div id="detail-view">
+                <div className="authorAndCommitInfoContainer">
+                    <div style={{ minWidth: '80px' }}>
+                        <Avatar result={this.props.selectedEntry.author}></Avatar>
                     </div>
-                    <div className="comitted-files">{this.renderFileEntries()}</div>
+                    <div style={{ flexGrow: 1 }}>
+                        <h1 className="commit-subject">
+                            {gitmojify(this.props.selectedEntry.subject)}
+                            &nbsp;
+                            <CopyToClipboard
+                                text={this.props.selectedEntry.subject + '\n' + this.props.selectedEntry.body}
+                            >
+                                <span
+                                    className="btnx clipboard hint--right hint--rounded hint--bounce"
+                                    aria-label="Copy commit text"
+                                >
+                                    <GoClippy></GoClippy>
+                                </span>
+                            </CopyToClipboard>
+                        </h1>
+                        <Author result={this.props.selectedEntry.author}></Author>
+                        <div className="commit-body">{gitmojify(this.props.selectedEntry.body)}</div>
+                        <div className="commit-notes">{gitmojify(this.props.selectedEntry.notes)}</div>
+                    </div>
+                    <div className="actions">
+                        <input
+                            ref={x => {
+                                this.ref = x;
+                            }}
+                            className={'textInput'}
+                            type="text"
+                            value={this.state.searchText}
+                            placeholder="Find file"
+                            onKeyDown={this.handleKeyDown}
+                            onChange={this.handleSearchChange}
+                        />
+                        <a role="button" className="action-btn close-btn" onClick={this.onClose}>
+                            <GoX></GoX>
+                        </a>
+                    </div>
                 </div>
-            </Resizable>
+                <div className="comitted-files">{this.renderFileEntries()}</div>
+            </div>
         );
     }
 }
