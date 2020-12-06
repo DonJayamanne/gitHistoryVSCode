@@ -81,7 +81,10 @@ export class GitHistoryCommandHandler implements IGitHistoryCommandHandler {
 
         const id = gitServiceFactory.getIndex();
 
-        const queryArgs = [`id=${id}`, `file=${fileUri ? encodeURIComponent(fileUri.fsPath) : ''}`];
+        const queryArgs = [
+            `id=${id}`,
+            `file=${fileUri ? encodeURIComponent(fileUri.fsPath.replace(/&/g, '&amp;')) : ''}`,
+        ];
 
         if (lineNumber) {
             queryArgs.push(`line=${lineNumber}`);
