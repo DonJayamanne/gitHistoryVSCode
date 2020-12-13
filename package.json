@@ -505,7 +505,7 @@
         "hash.js": "^1.1.7",
         "iconv-lite": "^0.5.1",
         "inversify": "^5.0.1",
-        "query-string": "^6.11.0",
+        "query-string": "^6.13.7",
         "reflect-metadata": "^0.1.12",
         "stack-trace": "0.0.10",
         "tmp": "0.1.0",
