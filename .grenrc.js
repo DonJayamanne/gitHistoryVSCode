@@ -4,6 +4,12 @@ function getAuthor(placeholders) {
         // skip owner
         return '';
     }
+
+    if (placeholders.author === null) {
+        // skip when no author could be found
+        return '';
+    }
+
     return `- @${placeholders.author}`;
 }
 function parseCommitLine(placeholders) {
