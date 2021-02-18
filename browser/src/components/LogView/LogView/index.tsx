@@ -1,18 +1,22 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
-import { LogEntries, LogEntry, Ref } from '../../../definitions';
-import { RootState } from '../../../reducers';
+import { LogEntry, Ref } from '../../../definitions';
+import { LogEntriesState, RootState } from '../../../reducers';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
 import Dialog, { DialogType } from '../../Dialog';
+import { IConfiguration } from 'src/reducers/vscode';
 
 type LogViewProps = {
-    logEntries: LogEntries;
+    logEntries: LogEntriesState;
+    configuration: IConfiguration;
     commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
     actionCommit: typeof ResultActions.actionCommit;
     actionRef: typeof ResultActions.actionRef;
+    getPreviousCommits: typeof ResultActions.getPreviousCommits;
+    getNextCommits: typeof ResultActions.getNextCommits;
 };
 
 interface LogViewState {}
@@ -170,9 +174,10 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
         }
     };
 }
-function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntries }) {
+function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntriesState; configuration: IConfiguration }) {
     return {
         logEntries: wrapper.logEntries,
+        configuration: state.vscode.configuration,
     };
 }
 
@@ -184,6 +189,8 @@ function mapDispatchToProps(dispatch) {
             dispatch(ResultActions.actionCommit(logEntry, name, value)),
         actionRef: (logEntry: LogEntry, ref: Ref, name: string) =>
             dispatch(ResultActions.actionRef(logEntry, ref, name)),
+        getNextCommits: () => dispatch(ResultActions.getNextCommits()),
+        getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits()),
     };
 }
 
