@@ -421,7 +421,6 @@ header .links {
 	position: fixed;
 	top: 0px;
 	width: 100%;
-	max-width: 600px;
 	height: 100%;
 	background-color: var(--vscode-scrollbarSlider-background);
 	z-index: 99999;
