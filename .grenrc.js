@@ -4,7 +4,7 @@ function getAuthor(placeholders) {
         // skip owner
         return '';
     }
-    return `- ${placeholders.author ? `@${placeholders.author}` : name}`;
+    return `- @${placeholders.author}`;
 }
 function parseCommitLine(placeholders) {
     return `- [${placeholders.sha.substr(0, 7)}] ${placeholders.message} ${getAuthor(placeholders)}`
