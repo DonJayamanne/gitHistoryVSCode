@@ -50,7 +50,7 @@ class App extends React.Component<AppProps, AppState> {
                         split={this.props.configuration.sideBySide ? 'vertical' : 'horizontal'}
                         pane1Style={{ overflowY: 'auto' }}
                         defaultSize="50%"
-                        style={{ marginTop: '40px' }}
+                        style={{ paddingTop: '40px' }}
                         primary="first"
                     >
                         <LogView logEntries={this.props.logEntries} configuration={this.props.configuration}></LogView>
