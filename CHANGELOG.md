@@ -1,12 +1,12 @@
 # Changelog
 
-## v0.6.15 (18/02/2021)
+## v0.6.15 (08/03/2021)
 - [8b8fde1] Possible fix in .grenrc.js - @ole1986
 - [57be8ad] Version 0.6.15 - @ole1986
 - [91d4409] Using react-split-pane to provide side-by-side view (#612) - @ole1986
 - [2a6e049] Possible fix for #610 (#611) - @ole1986
-- [0b8104a] Updated CHANGELOG.md - Github Actions - @null
-- [68397e9] Version 0.6.14 - @null
+- [0b8104a] Updated CHANGELOG.md - Github Actions
+- [68397e9] Version 0.6.14
 
 ---
 
