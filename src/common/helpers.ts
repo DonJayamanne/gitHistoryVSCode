@@ -30,6 +30,7 @@ export function formatDate(date: Date) {
         minute: 'numeric',
     };
 
+    // @ts-ignore
     return date.toLocaleString(lang, dateOptions);
 }
 
