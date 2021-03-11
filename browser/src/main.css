@@ -80,7 +80,7 @@ div.appRoot > header {
 }
 
 .log-view {
-	flex-grow: 1;
+	width: 100%;
 }
 
 .log-view svg.commitGraph {
@@ -457,6 +457,7 @@ header .links {
 
 .Pane2 {
 	background-color: var(--vscode-editor-background);
+	overflow-y: auto;
 }
 
 .detail-view-info {
@@ -471,7 +472,6 @@ header .links {
 #detail-view {
 	margin: .5em;
 	display: flex;
-	overflow-y: auto;
 	flex-flow: row wrap;
 	justify-content: space-between;
 	max-height:  100%;
