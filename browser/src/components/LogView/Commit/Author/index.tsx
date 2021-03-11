@@ -54,6 +54,7 @@ function formatDateTime(locale: string, date?: Date) {
         locale = typeof locale === 'string' ? locale.replace('_', '-') : locale;
         return date.toLocaleString(locale);
     } catch {
+        // @ts-ignore
         return date.toLocaleString(undefined, dateOptions);
     }
 }
