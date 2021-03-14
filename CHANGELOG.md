@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.16 (14/03/2021)
+- [0c3530c] Version 0.6.16 - @ole1986
+- [79b9418] Resolved styling issues (#634) - @ole1986
+- [d1b465a] Updated CHANGELOG.md - Github Actions 
+
+---
+
 ## v0.6.15 (08/03/2021)
 - [8b8fde1] Possible fix in .grenrc.js - @ole1986
 - [57be8ad] Version 0.6.15 - @ole1986
@@ -261,10 +268,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 * Reveal "Git History" and "File History" tab when already opened #382 #365 
 * Added files search box into commit view #393
 * Replaced react-rnd with re-resizer package for better user experience (when resizing)
----
-
-## Version 0.4.10 (03/12/2019)
-* Fixed #287 
-* Fixed #412
-* Copy commit message from detail view #413  #378 
-* Some typescript hygiene and unused package removal
