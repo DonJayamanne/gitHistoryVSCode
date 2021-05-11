@@ -126,7 +126,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                             <div>
                                 <CopyToClipboard text={this.props.logEntry.hash.full}>
                                     <span
-                                        className="btnx hash clipboard hint--left hint--rounded hint--bounce"
+                                        className="btnx hash clipboard hint--top-left hint--rounded hint--bounce"
                                         aria-label="Copy hash to clipboard"
                                     >
                                         {this.props.logEntry.hash.short}&nbsp;
@@ -136,7 +136,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                                 &nbsp;
                                 <span
                                     role="button"
-                                    className="btnx hint--left hint--rounded hint--bounce"
+                                    className="btnx hint--top-left hint--rounded hint--bounce"
                                     aria-label="Soft reset to this commit"
                                 >
                                     <a
@@ -150,7 +150,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                                 </span>
                                 <span
                                     role="button"
-                                    className="btnx hint--left hint--rounded hint--bounce"
+                                    className="btnx hint--top-left hint--rounded hint--bounce"
                                     aria-label="Hard reset to this commit"
                                 >
                                     <a
@@ -164,7 +164,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                                 </span>
                                 <span
                                     role="button"
-                                    className="btnx hint--left hint--rounded hint--bounce"
+                                    className="btnx hint--top-left hint--rounded hint--bounce"
                                     aria-label="Create a new tag"
                                 >
                                     <a
@@ -178,7 +178,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                                 </span>
                                 <span
                                     role="button"
-                                    className="btnx hint--left hint--rounded hint--bounce"
+                                    className="btnx hint--top-left hint--rounded hint--bounce"
                                     aria-label="Create a new branch from here"
                                 >
                                     <a
@@ -192,7 +192,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                                 </span>
                                 <span
                                     role="button"
-                                    className="btnx hint--left hint--rounded hint--bounce"
+                                    className="btnx hint--top-left hint--rounded hint--bounce"
                                     aria-label="Cherry pick, Compare, etc"
                                 >
                                     <a
