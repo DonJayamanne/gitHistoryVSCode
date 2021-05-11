@@ -547,6 +547,7 @@ header .links {
 	flex-grow: 1;
 	white-space: normal;
 	margin-left: .5em;
+	word-break: break-all;
 }
 
 .file-name-active {
