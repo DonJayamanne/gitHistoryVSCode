@@ -1,3 +1,4 @@
+import * as fs from 'fs-extra';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
 import { QuickPickItem, Uri } from 'vscode';
@@ -87,11 +88,12 @@ export class GitServiceFactory implements IGitServiceFactory {
         }
 
         if (resourceUri) {
+            const realResourcePath: string = fs.realpathSync(resourceUri!.fsPath);
             // find the correct repository from the given resource uri
             let i = 0;
             for (const x of gitApi.repositories) {
                 if (
-                    resourceUri!.fsPath.startsWith(x.rootUri.fsPath) &&
+                    realResourcePath.startsWith(x.rootUri.fsPath) &&
                     x.rootUri.fsPath === gitApi.repositories[i].rootUri.fsPath
                 ) {
                     this.repoIndex = i;
