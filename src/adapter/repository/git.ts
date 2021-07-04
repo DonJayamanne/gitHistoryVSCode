@@ -45,7 +45,8 @@ export class Git implements IGitService {
             return file.fsPath;
         }
         const gitRoot: string = this.getGitRoot();
-        return path.relative(gitRoot, file.fsPath).replace(/\\/g, '/');
+        const filerealpath: string = fs.realpathSync(file.fsPath);
+        return path.relative(gitRoot, filerealpath).replace(/\\/g, '/');
     }
     public getHeadHashes(): { ref?: string; hash?: string }[] {
         return this.repo.state.refs
