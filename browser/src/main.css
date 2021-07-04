@@ -524,6 +524,10 @@ header .links {
 	white-space: nowrap;
 }
 
+#detail-view div.actions button, #detail-view div.actions input {
+	margin: 0.2em;
+}
+
 #detail-view .comitted-files {
 	width: 100%;
 }
@@ -547,6 +551,7 @@ header .links {
 	flex-grow: 1;
 	white-space: normal;
 	margin-left: .5em;
+	word-break: break-all;
 }
 
 .file-name-active {

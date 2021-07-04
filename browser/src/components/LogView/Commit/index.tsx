@@ -77,6 +77,12 @@ class Commit extends React.Component<CommitProps, CommitState> {
         this.setState({ searchText: e.target.value });
     };
     private handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Escape' && !this.state.searchText) {
+            // close commit view when ESC is pressen (but only when no text given)
+            this.onClose();
+            return;
+        }
+
         if (e.key === 'Escape') {
             this.setState({ searchText: '' });
         }
@@ -119,9 +125,14 @@ class Commit extends React.Component<CommitProps, CommitState> {
                             onKeyDown={this.handleKeyDown}
                             onChange={this.handleSearchChange}
                         />
-                        <a role="button" className="action-btn close-btn" onClick={this.onClose}>
-                            <GoX></GoX>
-                        </a>
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-default hint--bottom-left hint--rounded hint--bounce"
+                            aria-label="Close the detail view"
+                            onClick={this.onClose}
+                        >
+                            <GoX />
+                        </button>
                     </div>
                 </div>
                 <div className="comitted-files">{this.renderFileEntries()}</div>

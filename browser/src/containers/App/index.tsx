@@ -24,8 +24,14 @@ type AppProps = {
 interface AppState {}
 
 class App extends React.Component<AppProps, AppState> {
+    private splitPane;
+    private prevSplitterPos;
+
     constructor(props?: AppProps, context?: any) {
         super(props, context);
+
+        this.splitPane = React.createRef();
+        this.prevSplitterPos = '50%';
     }
 
     private goBack = async () => {
@@ -37,6 +43,26 @@ class App extends React.Component<AppProps, AppState> {
         document.getElementById('scrollCnt').scrollTo(0, 0);
     };
 
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.logEntries.selected != prevProps.logEntries.selected) {
+            if (!this.props.logEntries.selected) {
+                this.prevSplitterPos = this.props.configuration.sideBySide
+                    ? this.splitPane.current.pane1.style.width
+                    : this.splitPane.current.pane1.style.height;
+                if (this.props.configuration.sideBySide) this.splitPane.current.pane1.style.width = '100%';
+                else this.splitPane.current.pane1.style.height = '100%';
+            } else {
+                if (this.props.configuration.sideBySide)
+                    this.splitPane.current.pane1.style.width = this.prevSplitterPos;
+                else this.splitPane.current.pane1.style.height = this.prevSplitterPos;
+            }
+        }
+    }
+
+    onSplitterChanged(s) {
+        this.prevSplitterPos = s;
+    }
+
     public render() {
         const { children } = this.props;
         const canGoForward =
@@ -47,9 +73,11 @@ class App extends React.Component<AppProps, AppState> {
                 <div className="appRoot">
                     <Header></Header>
                     <SplitPane
+                        ref={this.splitPane}
                         split={this.props.configuration.sideBySide ? 'vertical' : 'horizontal'}
+                        onChange={this.onSplitterChanged.bind(this)}
                         pane1Style={{ overflowY: 'auto' }}
-                        defaultSize="50%"
+                        defaultSize="100%"
                         style={{ paddingTop: '40px' }}
                         primary="first"
                     >
