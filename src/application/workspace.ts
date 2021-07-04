@@ -21,7 +21,7 @@ export class WorkspaceService implements IWorkspaceService {
     public get onDidChangeConfiguration(): Event<ConfigurationChangeEvent> {
         return workspace.onDidChangeConfiguration;
     }
-    public get workspaceFolders(): WorkspaceFolder[] | undefined {
+    public get workspaceFolders(): ReadonlyArray<WorkspaceFolder> | undefined {
         return workspace.workspaceFolders;
     }
     public get onDidChangeWorkspaceFolders(): Event<WorkspaceFoldersChangeEvent> {

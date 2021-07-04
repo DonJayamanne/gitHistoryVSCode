@@ -14,9 +14,9 @@ import { ICommitViewer } from './types';
 export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNode | FileNode> {
     private registered = false;
     private commit?: CommitDetails;
-    private _onDidChangeTreeData = new EventEmitter<DirectoryNode | FileNode>();
+    private _onDidChangeTreeData = new EventEmitter<DirectoryNode | FileNode | undefined>();
     private fileView = false;
-    public get onDidChangeTreeData(): Event<DirectoryNode | FileNode> {
+    public get onDidChangeTreeData(): Event<DirectoryNode | FileNode | undefined> {
         return this._onDidChangeTreeData.event;
     }
     public get selectedCommit(): Readonly<CommitDetails> {
@@ -37,7 +37,7 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
             this.registered = true;
             window.registerTreeDataProvider(this.treeId, this);
         }
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
         this.commandManager.executeCommand('setContext', this.visibilityContextVariable, true);
     }
     public showCommit(commit: CommitDetails): void {
@@ -47,11 +47,11 @@ export class CommitViewer implements ICommitViewer, TreeDataProvider<DirectoryNo
     }
     public showFilesView(): void {
         this.fileView = true;
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
     }
     public showFolderView(): void {
         this.fileView = false;
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
     }
     public async getTreeItem(element: DirectoryNode | FileNode): Promise<TreeItem> {
         const treeItem = await this.nodeBuilder.getTreeItem(element);

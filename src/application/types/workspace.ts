@@ -19,7 +19,7 @@ export interface IWorkspaceService {
      *
      * @readonly
      */
-    readonly workspaceFolders: WorkspaceFolder[] | undefined;
+    readonly workspaceFolders: ReadonlyArray<WorkspaceFolder> | undefined;
 
     /**
      * An event that is emitted when a workspace folder is added or removed.
