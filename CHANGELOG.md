@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.6.17 (04/07/2021)
+- [0ec5580] Fixed package testing (#665) - @ole1986
+- [6d5d225] Version 0.6.17 - @ole1986
+- [220bddf] Some visual improvements (#650) - @ole1986
+- [67594e5] use realpath to expand symlinks (#659) - @silvavelosa
+- [cfcc98f] chore: upgrade vscode engine to 1.46.0 (#637) - @hacke2
+- [235112f] Updated CHANGELOG.md - Github Actions 
+
+---
+
 ## v0.6.16 (14/03/2021)
 - [0c3530c] Version 0.6.16 - @ole1986
 - [79b9418] Resolved styling issues (#634) - @ole1986
@@ -262,9 +272,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 ## Version 0.4.12 (21/12/2019)
 * Fixed #417 using scrollbars for now
 * Added PR #419 allowing to create tags or branches from git history view
----
-
-## Version 0.4.11 (07/12/2019)
-* Reveal "Git History" and "File History" tab when already opened #382 #365 
-* Added files search box into commit view #393
-* Replaced react-rnd with re-resizer package for better user experience (when resizing)
