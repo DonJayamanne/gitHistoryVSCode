@@ -10,14 +10,7 @@ export class LogParser implements ILogParser {
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
         @inject(IActionDetailsParser) private actionDetailsParser: IActionDetailsParser,
     ) {}
-    public parse(
-        gitRepoPath: string,
-        summaryEntry: string,
-        itemEntrySeparator: string,
-        logFormatArgs: string[],
-        filesWithNumStat?: string,
-        filesWithNameStatus?: string,
-    ): LogEntry {
+    public parse(summaryEntry: string, itemEntrySeparator: string, logFormatArgs: string[]): LogEntry {
         const logItems = summaryEntry.split(itemEntrySeparator);
 
         const fullParentHash = this.getCommitInfo(logItems, logFormatArgs, CommitInfo.ParentFullHash)
@@ -29,7 +22,6 @@ export class LogParser implements ILogParser {
         const parents = fullParentHash.map((hash, index) => {
             return { full: hash, short: shortParentHash[index] };
         });
-        const committedFiles = this.parserCommittedFiles(gitRepoPath, filesWithNumStat, filesWithNameStatus);
 
         return {
             refs: [],
@@ -38,7 +30,6 @@ export class LogParser implements ILogParser {
             body: this.getCommitInfo(logItems, logFormatArgs, CommitInfo.Body),
             notes: this.getCommitInfo(logItems, logFormatArgs, CommitInfo.Notes),
             parents,
-            committedFiles,
             hash: {
                 full: this.getCommitInfo(logItems, logFormatArgs, CommitInfo.FullHash),
                 short: this.getCommitInfo(logItems, logFormatArgs, CommitInfo.ShortHash),
@@ -50,7 +41,8 @@ export class LogParser implements ILogParser {
             subject: this.getCommitInfo(logItems, logFormatArgs, CommitInfo.Subject),
         };
     }
-    private parserCommittedFiles(
+
+    public parserCommittedFiles(
         gitRepoPath: string,
         filesWithNumStat?: string,
         filesWithNameStatus?: string,
@@ -70,6 +62,7 @@ export class LogParser implements ILogParser {
             return [];
         }
     }
+
     private getCommitInfo(logItems: string[], logFormatArgs: string[], info: CommitInfo): string {
         const commitInfoFormatCode = Helpers.GetCommitInfoFormatCode(info);
         const indexInArgs = logFormatArgs.indexOf(commitInfoFormatCode);

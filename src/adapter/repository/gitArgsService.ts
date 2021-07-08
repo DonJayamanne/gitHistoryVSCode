@@ -6,9 +6,6 @@ import { GitLogArgs, IGitArgsService } from './types';
 
 @injectable()
 export class GitArgsService implements IGitArgsService {
-    public getCommitArgs(hash: string): string[] {
-        return ['show', LOG_FORMAT, '--decorate=full', '--numstat', hash];
-    }
     public getCommitParentHashesArgs(hash: string): string[] {
         return ['log', '--format=%p', '-n1', hash];
     }
