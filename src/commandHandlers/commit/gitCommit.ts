@@ -11,7 +11,8 @@ import { IGitCommitCommandHandler } from '../types';
 export class GitCommitCommandHandler implements IGitCommitCommandHandler {
     constructor(
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,
-        @inject(ICommitViewerFactory) private commitViewerFactory: ICommitViewerFactory,
+        @inject(ICommitViewerFactory)
+        private commitViewerFactory: ICommitViewerFactory,
         @inject(IApplicationShell) private applicationShell: IApplicationShell,
     ) {}
 
@@ -30,7 +31,10 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
         const description = 'Please provide a tag name';
         newTagName =
             typeof newTagName !== 'string' || newTagName.trim().length === 0
-                ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description })
+                ? await this.applicationShell.showInputBox({
+                      placeHolder: msg,
+                      prompt: description,
+                  })
                 : newTagName;
 
         if (typeof newTagName !== 'string' || newTagName.length === 0) {
@@ -50,7 +54,10 @@ export class GitCommitCommandHandler implements IGitCommitCommandHandler {
         const description = 'Please provide a branch name';
         newBranchName =
             typeof newBranchName !== 'string' || newBranchName.trim().length === 0
-                ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description })
+                ? await this.applicationShell.showInputBox({
+                      placeHolder: msg,
+                      prompt: description,
+                  })
                 : newBranchName;
 
         if (typeof newBranchName !== 'string' || newBranchName.length === 0) {

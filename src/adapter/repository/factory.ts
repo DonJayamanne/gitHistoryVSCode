@@ -20,7 +20,8 @@ export class GitServiceFactory implements IGitServiceFactory {
     private workspace: IWorkspaceService;
 
     constructor(
-        @inject(IGitCommandExecutor) private gitCmdExecutor: IGitCommandExecutor,
+        @inject(IGitCommandExecutor)
+        private gitCmdExecutor: IGitCommandExecutor,
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
         @inject(IServiceContainer) private serviceContainer: IServiceContainer,

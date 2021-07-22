@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { ResultActions } from '../../actions/results';
 import SplitPane from 'react-split-pane';
 import Header from '../../components/Header';
@@ -9,16 +8,13 @@ import LogView from '../../components/LogView/LogView';
 import { ISettings } from '../../definitions';
 import { LogEntriesState, RootState } from '../../reducers';
 import { IConfiguration } from '../../reducers/vscode';
-import Footer from '../../components/Footer';
+import { initialize } from '../../actions/messagebus';
 
 type AppProps = {
     configuration: IConfiguration;
     settings: ISettings;
     logEntries: LogEntriesState;
-    getCommits: typeof ResultActions.getCommits;
-    getPreviousCommits: typeof ResultActions.getPreviousCommits;
-    getNextCommits: typeof ResultActions.getNextCommits;
-    search: typeof ResultActions.search;
+    dispatch: any;
 } & typeof ResultActions;
 
 interface AppState {}
@@ -30,18 +26,19 @@ class App extends React.Component<AppProps, AppState> {
     constructor(props?: AppProps, context?: any) {
         super(props, context);
 
+        // @ts-ignore
+        initialize(acquireVsCodeApi());
+
+        props.dispatch(ResultActions.getCommits(0, 10));
+        props.dispatch(ResultActions.getBranches());
+        props.dispatch(ResultActions.getAuthors());
+        props.dispatch(ResultActions.fetchAvatars());
+
+        props.dispatch(ResultActions.onStateChanged(this.hasStateChanged.bind(this)));
+
         this.splitPane = React.createRef();
         this.prevSplitterPos = '50%';
     }
-
-    private goBack = async () => {
-        await this.props.getPreviousCommits();
-        document.getElementById('scrollCnt').scrollTo(0, 0);
-    };
-    private goForward = async () => {
-        await this.props.getNextCommits();
-        document.getElementById('scrollCnt').scrollTo(0, 0);
-    };
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.logEntries.selected != prevProps.logEntries.selected) {
@@ -63,11 +60,12 @@ class App extends React.Component<AppProps, AppState> {
         this.prevSplitterPos = s;
     }
 
+    public hasStateChanged(requestId: string, data: any) {
+        console.log('### STATE HAS CHANGED', requestId, data);
+    }
+
     public render() {
         const { children } = this.props;
-        const canGoForward =
-            this.props.logEntries.count === -1 ||
-            (this.props.logEntries.pageIndex + 1) * this.props.configuration.pageSize < this.props.logEntries.count;
         return (
             <div className="appRootParent">
                 <div className="appRoot">
@@ -90,12 +88,6 @@ class App extends React.Component<AppProps, AppState> {
                             </div>
                         )}
                     </SplitPane>
-                    <Footer
-                        canGoBack={this.props.logEntries.pageIndex > 0}
-                        canGoForward={canGoForward}
-                        goBack={this.goBack}
-                        goForward={this.goForward}
-                    ></Footer>
                 </div>
                 {children}
             </div>
@@ -111,14 +103,4 @@ function mapStateToProps(state: RootState) {
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        ...bindActionCreators({ ...ResultActions }, dispatch),
-        getCommits: () => dispatch(ResultActions.getCommits()),
-        getNextCommits: () => dispatch(ResultActions.getNextCommits()),
-        getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits()),
-        search: (text: string) => dispatch(ResultActions.search(text)),
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

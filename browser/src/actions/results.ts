@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import * as Actions from '../constants/resultActions';
 import { ActionedUser, Avatar, CommittedFile, LogEntriesResponse, LogEntry, Ref } from '../definitions';
 import { BranchesState, RootState } from '../reducers';
-import { BranchSelection, Branch } from '../types';
+import { BranchSelection, Branch, Graph } from '../types';
 import { post } from '../actions/messagebus';
 
 export const addResults = createAction<Partial<LogEntriesResponse>>(Actions.FETCHED_COMMITS);
@@ -11,6 +11,7 @@ export const updateCommit = createAction<LogEntry>(Actions.FETCHED_COMMIT);
 export const updateCommitInList = createAction<LogEntry>(Actions.UPDATE_COMMIT_IN_LIST);
 export const updateSettings = createAction(Actions.UPDATE_SETTINGS);
 export const updateBranchList = createAction<BranchesState>(Actions.FETCHED_BRANCHES);
+export const clearCommits = createAction(Actions.CLEAR_COMMITS);
 export const clearCommitSelection = createAction(Actions.CLEAR_SELECTED_COMMIT);
 export const goToPreviousPage = createAction<void>(Actions.GO_TO_PREVIOUS_PAGE);
 export const goToNextPage = createAction<void>(Actions.GO_TO_NEXT_PAGE);
@@ -21,8 +22,14 @@ export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHO
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ResultActions {
-    export const commitsRendered = createAction<number>(Actions.COMMITS_RENDERED);
+    export const commitsRendered = createAction<Graph>(Actions.COMMITS_RENDERED);
 
+    export const onStateChanged = (listener: (requestId: string, data: any) => any) => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+            // register state message handler
+            return post<any>('registerState', {}, listener);
+        };
+    };
     export const actionCommit = (logEntry: LogEntry, name = '', value = '') => {
         return async (dispatch: Dispatch<any>, getState: () => RootState) => {
             dispatch(notifyIsFetchingCommit(logEntry.hash.full));
@@ -38,7 +45,6 @@ export namespace ResultActions {
                 switch (name) {
                     case 'reset_soft':
                     case 'reset_hard':
-                        dispatch(ResultActions.refresh());
                         break;
                     case 'newtag':
                         break;
@@ -112,22 +118,10 @@ export namespace ResultActions {
             }
         };
     };
-    export const getNextCommits = () => {
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const state = getState();
-            const pageIndex = state.logEntries.pageIndex + 1;
-            return fetchCommits(dispatch, state, pageIndex, undefined);
-        };
-    };
-    export const getPreviousCommits = () => {
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const state = getState();
-            const pageIndex = state.logEntries.pageIndex - 1;
-            return fetchCommits(dispatch, state, pageIndex, undefined);
-        };
-    };
+
     export const search = (searchText: string) => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
+            dispatch(notifyIsLoading());
             dispatch(updateSettings({ searchText }));
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
@@ -135,7 +129,9 @@ export namespace ResultActions {
     };
     export const clearSearch = () => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
+            dispatch(notifyIsLoading());
             dispatch(updateSettings({ searchText: '', authorFilter: undefined }));
+            dispatch(clearCommits());
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
@@ -143,33 +139,27 @@ export namespace ResultActions {
     export const selectBranch = (branchName: string, branchSelection: BranchSelection) => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             //state.settings.branchName = branchName;
+            dispatch(notifyIsLoading());
             dispatch(updateSettings({ branchName, branchSelection }));
+            dispatch(clearCommits());
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
     export const selectAuthor = (authorName: string) => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
+            dispatch(notifyIsLoading());
             dispatch(updateSettings({ authorFilter: authorName }));
             const state = getState();
             return fetchCommits(dispatch, state, 0, undefined);
         };
     };
-    export const refresh = () => {
+    export const getCommits = (startIndex: number, stopIndex: number) => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
-            // update branches
-            fetchBranches(dispatch, state);
-            return fetchCommits(dispatch, state, undefined, undefined);
+            return fetchCommits(dispatch, state, startIndex, stopIndex);
         };
     };
-
-    export function getCommits() {
-        return (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const state = getState();
-            fetchCommits(dispatch, state);
-        };
-    }
     export const getBranches = () => {
         return (dispatch: Dispatch<any>, getState: () => RootState) => {
             const state = getState();
@@ -183,12 +173,16 @@ export namespace ResultActions {
         };
     };
 }
-function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
-    dispatch(notifyIsLoading());
-    post<LogEntriesResponse>('getLogEntries', {
+function fetchCommits(
+    dispatch: Dispatch<any>,
+    store: RootState,
+    startIndex?: number,
+    stopIndex?: number,
+): Promise<any> {
+    return post<LogEntriesResponse>('getLogEntries', {
         ...store.settings,
-        pageIndex,
-        pageSize,
+        startIndex,
+        stopIndex,
     }).then(x => {
         dispatch(addResults(x));
     });

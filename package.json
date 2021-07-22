@@ -504,6 +504,8 @@
         "webpack-cli": "^3.3.11"
     },
     "dependencies": {
+        "@material-ui/core": "latest",
+        "@types/react-virtualized": "^9.21.10",
         "event-stream": "4.0.1",
         "fs-extra": "^8.1.0",
         "gravatar": "^1.8.1",
@@ -511,6 +513,7 @@
         "iconv-lite": "^0.5.1",
         "inversify": "^5.0.1",
         "query-string": "^6.13.7",
+        "react-virtualized": "latest",
         "reflect-metadata": "^0.1.12",
         "stack-trace": "0.0.10",
         "tmp": "0.1.0",

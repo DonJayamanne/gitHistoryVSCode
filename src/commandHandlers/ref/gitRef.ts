@@ -20,7 +20,10 @@ export class GitRefCommandHandler implements IGitRefCommandHandler {
 
         tagName =
             typeof tagName !== 'string' || tagName.trim().length === 0
-                ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description })
+                ? await this.applicationShell.showInputBox({
+                      placeHolder: msg,
+                      prompt: description,
+                  })
                 : tagName;
 
         if (typeof tagName !== 'string' || tagName.length === 0) {
@@ -42,7 +45,10 @@ export class GitRefCommandHandler implements IGitRefCommandHandler {
 
         branchName =
             typeof branchName !== 'string' || branchName.trim().length === 0
-                ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description })
+                ? await this.applicationShell.showInputBox({
+                      placeHolder: msg,
+                      prompt: description,
+                  })
                 : branchName;
 
         if (typeof branchName !== 'string' || branchName.length === 0) {
@@ -64,7 +70,10 @@ export class GitRefCommandHandler implements IGitRefCommandHandler {
 
         remoteName =
             typeof remoteName !== 'string' || remoteName.trim().length === 0
-                ? await this.applicationShell.showInputBox({ placeHolder: msg, prompt: description })
+                ? await this.applicationShell.showInputBox({
+                      placeHolder: msg,
+                      prompt: description,
+                  })
                 : remoteName;
 
         if (typeof remoteName !== 'string' || remoteName.length === 0) {

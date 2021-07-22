@@ -5,5 +5,8 @@
     "tests": "npm test",
     "build": "cd .. && npx webpack -p --progress --colors",
     "watch": "cd .. && npx webpack --progress --colors --watch"
+  },
+  "devDependencies": {
+    "@types/react-virtualized": "^9.21.10"
   }
 }

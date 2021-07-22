@@ -1,68 +1,44 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
-import { LogEntry, Ref } from '../../../definitions';
+import { LogEntries, LogEntry, Ref } from '../../../definitions';
 import { LogEntriesState, RootState } from '../../../reducers';
-import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
+import BranchGraph from '../BranchGraph';
 import Dialog, { DialogType } from '../../Dialog';
 import { IConfiguration } from 'src/reducers/vscode';
 
 type LogViewProps = {
-    logEntries: LogEntriesState;
+    logEntries: LogEntries;
     configuration: IConfiguration;
-    commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
     actionCommit: typeof ResultActions.actionCommit;
     actionRef: typeof ResultActions.actionRef;
-    getPreviousCommits: typeof ResultActions.getPreviousCommits;
-    getNextCommits: typeof ResultActions.getNextCommits;
 };
 
 interface LogViewState {}
 
 class LogView extends React.Component<LogViewProps, LogViewState> {
-    private ref: React.RefObject<LogEntryList>;
     private dialog: Dialog;
     constructor(props?: LogViewProps, context?: any) {
         super(props, context);
-        // this.state = { height: '', width: '', itemHeight: 0 };
-        this.ref = React.createRef<LogEntryList>();
     }
 
-    public componentDidUpdate() {
-        const el = this.ref.current.ref;
-
+    public componentWillUpdate(prevProp: LogViewProps) {
         if (this.props.logEntries.selected) {
             return;
-        }
-
-        if (
-            el.hasChildNodes() &&
-            this.props.logEntries &&
-            !this.props.logEntries.isLoading &&
-            !this.props.logEntries.isLoadingCommit &&
-            Array.isArray(this.props.logEntries.items) &&
-            this.props.logEntries.items.length > 0
-        ) {
-            // use the total height to be more accurate in positioning the dots from BranchGraph
-            const totalHeight = el.offsetHeight;
-            const logEntryHeight = totalHeight / this.props.logEntries.items.length;
-            this.props.commitsRendered(logEntryHeight);
         }
     }
 
     public render() {
         return (
             <div className="log-view" id="scrollCnt">
-                <BranchGraph></BranchGraph>
+                <BranchGraph />
                 <LogEntryList
-                    ref={this.ref}
-                    logEntries={this.props.logEntries.items}
+                    onViewCommit={this.onViewCommit}
                     onAction={this.onAction}
                     onRefAction={this.onRefAction}
-                    onViewCommit={this.onViewCommit}
-                ></LogEntryList>
+                />
                 <Dialog ref={r => (this.dialog = r)} onOk={this.onDialogOk.bind(this)} />
             </div>
         );
@@ -183,14 +159,11 @@ function mapStateToProps(state: RootState, wrapper: { logEntries: LogEntriesStat
 
 function mapDispatchToProps(dispatch) {
     return {
-        commitsRendered: (height: number) => dispatch(ResultActions.commitsRendered(height)),
         onViewCommit: (hash: string) => dispatch(ResultActions.selectCommit(hash)),
         actionCommit: (logEntry: LogEntry, name: string, value = '') =>
             dispatch(ResultActions.actionCommit(logEntry, name, value)),
         actionRef: (logEntry: LogEntry, ref: Ref, name: string) =>
             dispatch(ResultActions.actionRef(logEntry, ref, name)),
-        getNextCommits: () => dispatch(ResultActions.getNextCommits()),
-        getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits()),
     };
 }
 
