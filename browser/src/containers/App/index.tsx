@@ -17,7 +17,7 @@ type AppProps = {
     dispatch: any;
 } & typeof ResultActions;
 
-interface AppState { }
+interface AppState {}
 
 class App extends React.Component<AppProps, AppState> {
     private splitPane;

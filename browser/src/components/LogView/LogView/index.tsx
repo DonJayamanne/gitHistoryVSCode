@@ -2,23 +2,21 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
 import { LogEntries, LogEntry, Ref } from '../../../definitions';
-import { RootState } from '../../../reducers';
+import { LogEntriesState, RootState } from '../../../reducers';
 import LogEntryList from '../LogEntryList';
+import BranchGraph from '../BranchGraph';
 import Dialog, { DialogType } from '../../Dialog';
 import { IConfiguration } from 'src/reducers/vscode';
 
 type LogViewProps = {
     logEntries: LogEntries;
     configuration: IConfiguration;
-    commitsRendered: typeof ResultActions.commitsRendered;
     onViewCommit: typeof ResultActions.selectCommit;
     actionCommit: typeof ResultActions.actionCommit;
     actionRef: typeof ResultActions.actionRef;
-    getPreviousCommits: typeof ResultActions.getPreviousCommits;
-    getNextCommits: typeof ResultActions.getNextCommits;
 };
 
-interface LogViewState { }
+interface LogViewState {}
 
 class LogView extends React.Component<LogViewProps, LogViewState> {
     private dialog: Dialog;
@@ -34,7 +32,8 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
 
     public render() {
         return (
-            <div>
+            <div className="log-view" id="scrollCnt">
+                <BranchGraph />
                 <LogEntryList
                     onViewCommit={this.onViewCommit}
                     onAction={this.onAction}
@@ -109,7 +108,8 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
             case 'reset_soft':
                 this.dialog.showConfirm(
                     `Soft reset to ${entry.hash.short}?`,
-                    `<p><strong>${entry.subject}</strong><br />${entry.author.name
+                    `<p><strong>${entry.subject}</strong><br />${
+                        entry.author.name
                     } on ${entry.author.date.toISOString()}</p><small>All affected files will be merged and kept in local workspace</small>`,
                     DialogType.Info,
                     { entry, name },
@@ -118,7 +118,8 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
             case 'reset_hard':
                 this.dialog.showConfirm(
                     `Hard reset commit to ${entry.hash.short}?`,
-                    `<p><strong>${entry.subject}</strong><br />${entry.author.name
+                    `<p><strong>${entry.subject}</strong><br />${
+                        entry.author.name
                     } on ${entry.author.date.toISOString()}</p><div>This is IRREVERSIBLE TO YOUR CURRENT WORKING SET. UNCOMMITTED LOCAL FILES WILL BE REMOVED</div>`,
                     DialogType.Warning,
                     { entry, name },
@@ -163,8 +164,6 @@ function mapDispatchToProps(dispatch) {
             dispatch(ResultActions.actionCommit(logEntry, name, value)),
         actionRef: (logEntry: LogEntry, ref: Ref, name: string) =>
             dispatch(ResultActions.actionRef(logEntry, ref, name)),
-        getNextCommits: () => dispatch(ResultActions.getNextCommits()),
-        getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits()),
     };
 }
 

@@ -7,7 +7,6 @@ import { ResultActions } from '../../../actions/results';
 
 import LogEntryView from '../LogEntry';
 import { LogEntry, Ref, Graph, ISettings } from '../../../../../src/types';
-import BranchGraph from '../BranchGraph';
 import { RenderedRows } from 'react-virtualized/dist/es/List';
 
 interface ResultProps {
@@ -102,33 +101,30 @@ class LogEntryVirtualizedTable extends React.Component<ResultProps, {}> {
 
     render() {
         return (
-            <div className="log-view" id="scrollCnt">
-                <BranchGraph />
-                <InfiniteLoader
-                    ref={this.ref}
-                    minimumBatchSize={20}
-                    isRowLoaded={this.isRowLoaded}
-                    loadMoreRows={this.loadMoreRows}
-                    rowCount={this.props.logEntries.count}
-                >
-                    {({ onRowsRendered, registerChild }) => (
-                        <AutoSizer ref={this.sizer}>
-                            {({ height, width }) => (
-                                <List
-                                    height={height}
-                                    width={width}
-                                    rowHeight={this.itemHeight}
-                                    onScroll={info => this.listScroll(info)}
-                                    onRowsRendered={info => this.rowsRendered(info, height, onRowsRendered)}
-                                    ref={registerChild}
-                                    rowCount={this.props.logEntries.count}
-                                    rowRenderer={this.rowRenderer}
-                                />
-                            )}
-                        </AutoSizer>
-                    )}
-                </InfiniteLoader>
-            </div>
+            <InfiniteLoader
+                ref={this.ref}
+                minimumBatchSize={20}
+                isRowLoaded={this.isRowLoaded}
+                loadMoreRows={this.loadMoreRows}
+                rowCount={this.props.logEntries.count}
+            >
+                {({ onRowsRendered, registerChild }) => (
+                    <AutoSizer ref={this.sizer}>
+                        {({ height, width }) => (
+                            <List
+                                height={height}
+                                width={width}
+                                rowHeight={this.itemHeight}
+                                onScroll={info => this.listScroll(info)}
+                                onRowsRendered={info => this.rowsRendered(info, height, onRowsRendered)}
+                                ref={registerChild}
+                                rowCount={this.props.logEntries.count}
+                                rowRenderer={this.rowRenderer}
+                            />
+                        )}
+                    </AutoSizer>
+                )}
+            </InfiniteLoader>
         );
     }
 }

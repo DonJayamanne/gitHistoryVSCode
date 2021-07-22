@@ -398,7 +398,9 @@ class BrachGraph extends React.Component<BranchGrapProps> {
             return;
         }
 
-        drawGraph(this.svg, this.props);
+        if (this.props.logEntries?.items?.length > 0) {
+            drawGraph(this.svg, this.props);
+        }
     }
 
     render() {
