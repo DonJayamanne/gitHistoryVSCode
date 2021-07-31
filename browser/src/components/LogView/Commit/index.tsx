@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import { CommittedFile, LogEntry } from '../../../definitions';
 import { RootState } from '../../../reducers';
@@ -9,6 +8,7 @@ import { FileEntry } from './FileEntry';
 import { GoX, GoClippy } from 'react-icons/go';
 import { ResultActions } from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
+import copyText from '../../../actions/copyText';
 
 interface CommitProps {
     selectedEntry?: LogEntry;
@@ -87,6 +87,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
             this.setState({ searchText: '' });
         }
     };
+
     public render() {
         return (
             <div id="detail-view">
@@ -98,16 +99,15 @@ class Commit extends React.Component<CommitProps, CommitState> {
                         <h1 className="commit-subject">
                             {gitmojify(this.props.selectedEntry.subject)}
                             &nbsp;
-                            <CopyToClipboard
-                                text={this.props.selectedEntry.subject + '\n' + this.props.selectedEntry.body}
+                            <span
+                                onClick={e =>
+                                    copyText(e, this.props.selectedEntry.subject + '\n' + this.props.selectedEntry.body)
+                                }
+                                className="btnx clipboard hint--right hint--rounded hint--bounce"
+                                aria-label="Copy commit text"
                             >
-                                <span
-                                    className="btnx clipboard hint--right hint--rounded hint--bounce"
-                                    aria-label="Copy commit text"
-                                >
-                                    <GoClippy></GoClippy>
-                                </span>
-                            </CopyToClipboard>
+                                <GoClippy></GoClippy>
+                            </span>
                         </h1>
                         <Author result={this.props.selectedEntry.author}></Author>
                         <div className="commit-body">{gitmojify(this.props.selectedEntry.body)}</div>

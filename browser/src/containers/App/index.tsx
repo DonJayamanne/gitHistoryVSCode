@@ -36,11 +36,11 @@ class App extends React.Component<AppProps, AppState> {
 
     private goBack = async () => {
         await this.props.getPreviousCommits();
-        document.getElementById('scrollCnt').scrollTo(0, 0);
+        document.querySelector('.Pane1').scroll(0, 0);
     };
     private goForward = async () => {
         await this.props.getNextCommits();
-        document.getElementById('scrollCnt').scrollTo(0, 0);
+        document.querySelector('.Pane1').scroll(0, 0);
     };
 
     componentDidUpdate(prevProps, prevState) {
