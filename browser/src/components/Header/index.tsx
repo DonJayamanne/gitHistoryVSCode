@@ -42,7 +42,7 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
     private onClear = () => {
         this.setState({ isLoading: this.state.isLoading });
         if (!this.state.isLoading) {
-            this.setState({ isLoading: true });
+            this.setState({ isLoading: true, searchText: '' });
             this.props.clearSearch();
         }
     };
