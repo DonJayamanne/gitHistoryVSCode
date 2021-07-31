@@ -335,6 +335,12 @@
                     "scope": "window",
                     "description": "Always prompt with repository picker when running Git History"
                 },
+                "gitHistory.includeRemoteBranches": {
+                    "type": "boolean",
+                    "default": false,
+                    "scope": "resource",
+                    "description": "Include remote branches when opening Git History"
+                },
                 "gitHistory.showFileHistorySplit": {
                     "type": "boolean",
                     "default": true,

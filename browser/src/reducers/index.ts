@@ -1,6 +1,6 @@
 import { routerReducer as routing } from 'react-router-redux';
 import { combineReducers } from 'redux';
-import { ActionedUser, Avatar, ISettings, LogEntriesResponse } from '../definitions';
+import { ActionedUser, Avatar, ISettings, LogEntriesResponse, RefType } from '../definitions';
 import authors from './authors';
 import avatars from './avatars';
 import branches from './branches';
@@ -14,7 +14,7 @@ export type LogEntriesState = LogEntriesResponse & {
     isLoadingCommit?: string;
 };
 
-export type BranchesState = { name: string; current: boolean; remote: string; remoteType: number }[];
+export type BranchesState = { name: string; type: RefType; current: boolean; remote: string; remoteType: number }[];
 export type AuthorsState = ActionedUser[];
 export type AvatarsState = Avatar[];
 export type RootState = {

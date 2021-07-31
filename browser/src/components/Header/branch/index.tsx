@@ -3,7 +3,7 @@ import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
 import { RootState, BranchesState } from '../../../reducers/index';
-import { BranchSelection, ISettings } from '../../../types';
+import { BranchSelection, ISettings, RefType } from '../../../types';
 
 interface BranchProps {
     isLoading?: boolean;
@@ -83,21 +83,24 @@ export class Branch extends React.Component<BranchProps, BranchState> {
             branches = branches.filter(x => x.name.toLowerCase().indexOf(this.state.searchText.toLowerCase()) !== -1);
         }
 
-        return branches.map(branch => {
-            if (branch.name === selectedBranch) {
-                return (
-                    <MenuItem key={branch.name} active eventKey={branch.name}>
-                        {branch.name}
-                    </MenuItem>
-                );
-            } else {
-                return (
-                    <MenuItem key={branch.name} eventKey={branch.name}>
-                        {branch.name}
-                    </MenuItem>
-                );
-            }
-        });
+        const localBranches = branches
+            .filter(p => p.type != RefType.RemoteHead)
+            .map(branch => (
+                <MenuItem key={branch.name} active={branch.name === selectedBranch} eventKey={branch.name}>
+                    {branch.name}
+                </MenuItem>
+            ));
+        const remoteBranches = branches
+            .filter(p => p.type == RefType.RemoteHead)
+            .map(branch => (
+                <MenuItem key={branch.name} active={branch.name === selectedBranch} eventKey={branch.name}>
+                    {branch.name}
+                </MenuItem>
+            ));
+
+        return remoteBranches.length > 0
+            ? localBranches.concat([<MenuItem divider>Remotes</MenuItem>]).concat(remoteBranches)
+            : localBranches;
     }
 
     private onClick = (e: React.MouseEvent<any, MouseEvent>) => {
