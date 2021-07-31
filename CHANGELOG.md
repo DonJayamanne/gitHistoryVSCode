@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.18 (31/07/2021)
+- [af95816] Version 0.6.18 - @ole1986
+- [5658e32] Some visual improvement and fixes (#669) - @ole1986
+- [12373b6] Updated CHANGELOG.md - Github Actions 
+
+---
+
 ## v0.6.17 (04/07/2021)
 - [0ec5580] Fixed package testing (#665) - @ole1986
 - [6d5d225] Version 0.6.17 - @ole1986
@@ -266,9 +273,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 
 ## Version 0.4.13 (06/01/2020)
 - Applied PR [#420](https://github.com/DonJayamanne/gitHistoryVSCode/pull/420) to fix repositories with no remote, thanks to @jsejcksn
-
----
-
-## Version 0.4.12 (21/12/2019)
-* Fixed #417 using scrollbars for now
-* Added PR #419 allowing to create tags or branches from git history view
