@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import { LogEntry, Ref, RefType } from '../../../definitions';
 import { RootState } from '../../../reducers/index';
@@ -10,6 +9,7 @@ import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
 import TagRef from '../Refs/Tag';
 import { GoGitCommit, GoClippy, GoPlus, GoFileSymlinkFile, GoFileSymlinkDirectory } from 'react-icons/go';
+import copyText from '../../../actions/copyText';
 
 type ResultListProps = {
     logEntry: LogEntry;
@@ -109,6 +109,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                 handler();
             };
         }
+
         function preventPropagation(event: React.MouseEvent<HTMLElement, MouseEvent>) {
             event.preventDefault();
             event.stopPropagation();
@@ -124,15 +125,14 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                         </div>
                         <div className="buttons" onClick={() => this.props.onViewCommit(this.props.logEntry)}>
                             <div>
-                                <CopyToClipboard text={this.props.logEntry.hash.full}>
-                                    <span
-                                        className="btnx hash clipboard hint--top-left hint--rounded hint--bounce"
-                                        aria-label="Copy hash to clipboard"
-                                    >
-                                        {this.props.logEntry.hash.short}&nbsp;
-                                        <GoClippy></GoClippy>
-                                    </span>
-                                </CopyToClipboard>
+                                <span
+                                    onClick={e => copyText(e, this.props.logEntry.hash.full)}
+                                    className="btnx hash clipboard hint--top-left hint--rounded hint--bounce"
+                                    aria-label="Copy hash to clipboard"
+                                >
+                                    {this.props.logEntry.hash.short}&nbsp;
+                                    <GoClippy></GoClippy>
+                                </span>
                                 &nbsp;
                                 <span
                                     role="button"

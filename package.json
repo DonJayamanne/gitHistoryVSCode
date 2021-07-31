@@ -477,7 +477,6 @@
         "prettier": "^1.19.1",
         "react": "^16.13.0",
         "react-bootstrap": "^0.32.4",
-        "react-copy-to-clipboard": "^5.0.1",
         "react-docgen-typescript-loader": "^3.7.1",
         "react-dom": "^16.13.0",
         "react-icons": "^3.9.0",
