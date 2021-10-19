@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Describe the bug**
+**Describe the Bug**
 
 Description of what the bug is.
 
@@ -17,7 +17,7 @@ Description of what the bug is.
 2.
 3.
 
-**Expected behavior**
+**Expected Behavior**
 
 What you expected to happen.
 
