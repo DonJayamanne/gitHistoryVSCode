@@ -39,6 +39,7 @@ export type Remote = {
 export type Branch = {
     gitRoot: string;
     name: string;
+    type: RefType;
     remote: string;
     remoteType: GitOriginType | undefined;
     current: boolean;
@@ -136,7 +137,7 @@ export interface IGitService {
     getHeadHashes(): { ref?: string; hash?: string }[];
     getAuthors(): Promise<ActionedUser[]>;
     getDetachedHash(): string | undefined;
-    getBranches(): Promise<Branch[]>;
+    getBranches(withRemote?: boolean): Promise<Branch[]>;
     getCurrentBranch(): string;
     getRefsContainingCommit(hash: string): Ref[];
     getLogEntries(

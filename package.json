@@ -335,6 +335,12 @@
                     "scope": "window",
                     "description": "Always prompt with repository picker when running Git History"
                 },
+                "gitHistory.includeRemoteBranches": {
+                    "type": "boolean",
+                    "default": false,
+                    "scope": "resource",
+                    "description": "Include remote branches when opening Git History"
+                },
                 "gitHistory.showFileHistorySplit": {
                     "type": "boolean",
                     "default": true,
@@ -452,7 +458,7 @@
         "@types/vscode": "^1.46.0",
         "@typescript-eslint/eslint-plugin": "^2.21.0",
         "@typescript-eslint/parser": "^2.21.0",
-        "axios": "^0.21.1",
+        "axios": "^0.21.4",
         "babel-loader": "^8.0.6",
         "bootstrap": "^3.4.1",
         "chai": "^4.1.2",

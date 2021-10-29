@@ -8,10 +8,13 @@ import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
 import { Avatar, BranchSelection, CommittedFile, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
 import { captureTelemetry } from '../common/telemetry';
+import { IWorkspaceService } from '../application/types/workspace';
 
 export class ApiController {
     private readonly commitViewer: IGitCommitViewDetailsCommandHandler;
     private readonly applicationShell: IApplicationShell;
+    private workspace: IWorkspaceService;
+
     constructor(
         private webview: Webview,
         private gitService: IGitService,
@@ -22,6 +25,8 @@ export class ApiController {
             IGitCommitViewDetailsCommandHandler,
         );
         this.applicationShell = this.serviceContainer.get<IApplicationShell>(IApplicationShell);
+
+        this.workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
 
         this.webview.onDidReceiveMessage(this.postMessageParser.bind(this));
     }
@@ -67,7 +72,9 @@ export class ApiController {
         };
     }
     public async getBranches() {
-        return this.gitService.getBranches();
+        return this.gitService.getBranches(
+            this.workspace.getConfiguration('gitHistory').get<boolean>('includeRemoteBranches', false),
+        );
     }
     public async getAuthors() {
         return this.gitService.getAuthors();

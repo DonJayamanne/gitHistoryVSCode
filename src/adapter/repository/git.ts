@@ -83,6 +83,7 @@ export class Git implements IGitService {
                 return {
                     gitRoot: gitRoot,
                     name: r.name,
+                    type: r.type.valueOf(),
                     remote: remoteUrl,
                     remoteType: originType,
                     current: this.getCurrentBranch() === r.name,
