@@ -73,7 +73,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     }
     protected async getAvatarsImplementation(repository: IGitService): Promise<Avatar[]> {
         const remoteUrl = await repository.getOriginUrl();
-        const remoteRepoPath = remoteUrl.replace(/.*?github.com\//, '');
+        const remoteRepoPath = remoteUrl.replace(/.*?github.com(\/|:)/, '');
         const remoteRepoWithNoGitSuffix = remoteRepoPath.replace(/\.git\/?$/, '');
         const contributors = await this.getContributors(remoteRepoWithNoGitSuffix);
 
@@ -144,12 +144,15 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     private getContributors(repoPath: string) {
         const promise = axios.get(`https://api.github.com/repos/${repoPath}/contributors`);
 
-        return promise.then((response: AxiosResponse) => {
-            if (response.status === 403) {
-                // max API limit exceeded
+        return promise
+            .then((response: AxiosResponse) => {
+                return response.data as GithubUserSearchResponseItem[];
+            })
+            .catch(() => {
+                // Errors can be as follow
+                // 403 - max API limit has been exceeded by the client
+                // 404 - not found due to wrong path or its a private repository
                 return [] as GithubUserSearchResponseItem[];
-            }
-            return response.data as GithubUserSearchResponseItem[];
-        });
+            });
     }
 }

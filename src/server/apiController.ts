@@ -211,7 +211,7 @@ export class ApiController {
                 payload: result,
             });
         } catch (ex) {
-            this.applicationShell.showErrorMessage(ex);
+            this.applicationShell.showErrorMessage((ex as Error).message);
             this.webview.postMessage({
                 requestId: message.requestId,
                 error: ex,

@@ -408,7 +408,7 @@ export class Git implements IGitService {
         try {
             await this.repo.createBranch(branchName, false, hash);
         } catch (ex) {
-            throw ex.stderr;
+            throw (ex as any).stderr;
         }
     }
 
@@ -432,7 +432,7 @@ export class Git implements IGitService {
         try {
             await this.repo.deleteBranch(branchName);
         } catch (ex) {
-            throw ex.stderr;
+            throw (ex as any).stderr;
         }
     }
 
