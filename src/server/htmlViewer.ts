@@ -49,7 +49,10 @@ export class HtmlViewer {
             enableScripts: true,
             retainContextWhenHidden: true,
         });
-        webviewPanel.iconPath = Uri.file(`${this.extensionPath}/images/icon.png`);
+        webviewPanel.iconPath = {
+            dark: Uri.file(`${this.extensionPath}/images/icon-dark.svg`),
+            light: Uri.file(`${this.extensionPath}/images/icon-light.svg`)
+        };
         this.htmlView.set(uri.toString(), webviewPanel);
 
         const gitService = this.gitServiceFactory.getService(id);
