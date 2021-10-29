@@ -51,7 +51,7 @@ export class HtmlViewer {
         });
         webviewPanel.iconPath = {
             dark: Uri.file(`${this.extensionPath}/images/icon-dark.svg`),
-            light: Uri.file(`${this.extensionPath}/images/icon-light.svg`)
+            light: Uri.file(`${this.extensionPath}/images/icon-light.svg`),
         };
         this.htmlView.set(uri.toString(), webviewPanel);
 
