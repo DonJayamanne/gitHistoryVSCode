@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.6.19 (29/10/2021)
+- [82bf1dd] Version 0.6.19 - @ole1986
+- [8975a3e] Remote branch option (#671) - @ole1986
+- [4fae8e2] Create github issue template for bug reports (#689) - @MansurAliKoroglu
+- [38aa61f] Fix for Github avatars using ssh remote (#691) - @ole1986
+- [f0581b2] Use `history` codicon for webview icon (#683) - @SNDST00M
+- [6453c12] Updated CHANGELOG.md - Github Actions 
+
+---
+
 ## v0.6.18 (31/07/2021)
 - [af95816] Version 0.6.18 - @ole1986
 - [5658e32] Some visual improvement and fixes (#669) - @ole1986
@@ -269,7 +279,3 @@ PLEASE NOTE: It may be necessary to select the correct repository from vscode so
 - Slightly amended scrollbar and dropdown style to match theme colors [#423]
 - Added browser actionbar for quicker access to relevant functions (E.g. create tag, create branch) [#428]
 - Added modal window to allow user input and confirmation dialogs [#429]
----
-
-## Version 0.4.13 (06/01/2020)
-- Applied PR [#420](https://github.com/DonJayamanne/gitHistoryVSCode/pull/420) to fix repositories with no remote, thanks to @jsejcksn
