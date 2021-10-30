@@ -53,19 +53,19 @@ export class GitCommandExecutor implements IGitCommandExecutor {
         const stopWatch = new StopWatch();
         const gitShow = spawn(gitPathCommand, args, childProcOptions);
 
-        let stdout: Buffer = new Buffer('');
-        let stderr: Buffer = new Buffer('');
+        let stdout: Buffer;
+        let stderr: Buffer;
 
         if (binaryOuput) {
             gitShow.stdout.pipe(destination);
         } else {
             gitShow.stdout.on('data', data => {
-                stdout = Buffer.concat([stdout, data as Buffer]);
+                stdout = Buffer.from(data, childProcOptions.encoding);
             });
         }
 
         gitShow.stderr.on('data', data => {
-            stderr = Buffer.concat([stderr, data as Buffer]);
+            stderr = Buffer.from(data, childProcOptions.encoding);
         });
 
         return new Promise<any>((resolve, reject) => {
@@ -78,7 +78,7 @@ export class GitCommandExecutor implements IGitCommandExecutor {
                 if (code === 0) {
                     const stdOut = binaryOuput ? undefined : decode(stdout, childProcOptions.encoding);
                     this.loggers.forEach(logger => {
-                        logger.trace(binaryOuput ? '<binary>' : stdout);
+                        logger.trace(binaryOuput ? '<binary>' : stdOut);
                     });
                     resolve(stdOut);
                 } else {
