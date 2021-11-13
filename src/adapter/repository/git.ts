@@ -27,7 +27,7 @@ export class Git implements IGitService {
         @inject(ILogParser) private logParser: ILogParser,
         @inject(IGitArgsService) private gitArgsService: IGitArgsService,
     ) {
-        this.remotesService = new GitRemoteService(repo, this.gitCmdExecutor);
+        this.remotesService = new GitRemoteService(repo);
     }
 
     /**
