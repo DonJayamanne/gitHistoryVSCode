@@ -32,6 +32,12 @@
         "*"
     ],
     "main": "./dist/src/extension",
+    "capabilities": {
+        "virtualWorkspaces": false,
+        "untrustedWorkspaces": {
+            "supported": false
+          }
+    },
     "contributes": {
         "views": {
             "explorer": [
@@ -513,7 +519,6 @@
         "fs-extra": "^8.1.0",
         "gravatar": "^1.8.1",
         "hash.js": "^1.1.7",
-        "iconv-lite": "^0.5.1",
         "inversify": "^5.0.1",
         "query-string": "^6.13.7",
         "reflect-metadata": "^0.1.12",
