@@ -32,6 +32,9 @@
         "*"
     ],
     "main": "./dist/src/extension",
+    "capabilities": {
+        "virtualWorkspaces": false
+    },
     "contributes": {
         "views": {
             "explorer": [
