@@ -33,7 +33,10 @@
     ],
     "main": "./dist/src/extension",
     "capabilities": {
-        "virtualWorkspaces": false
+        "virtualWorkspaces": false,
+        "untrustedWorkspaces": {
+            "supported": false
+          }
     },
     "contributes": {
         "views": {
