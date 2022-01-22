@@ -230,7 +230,6 @@ export class Git implements IGitService {
             author,
         );
 
-        const gitRepoPath = this.getGitRoot();
         const countPromise = lineNumber
             ? Promise.resolve(-1)
             : this.exec(...args.counterArgs).then(value => parseInt(value));
@@ -244,7 +243,7 @@ export class Git implements IGitService {
                 if (entry.length === 0) {
                     return;
                 }
-                return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS);
+                return this.logParser.parse(entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS);
             })
             .filter(logEntry => logEntry !== undefined)
             .map(logEntry => {
@@ -277,43 +276,47 @@ export class Git implements IGitService {
 
     @captureTelemetry()
     public async getCommit(hash: string, withRefs = false): Promise<LogEntry | undefined> {
-        const commitArgs = this.gitArgsService.getCommitArgs(hash);
+        const commitMessage = await this.repo.getCommit(hash);
+
+        const numStatusArgs = this.gitArgsService.getCommitWithNumStatArgsForMerge(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgsForMerge(hash);
 
         const gitRootPath = this.getGitRoot();
-        const commitOutput = await this.exec(...commitArgs);
+        const [filesWithNumStatus, filesWithNameStatus] = await Promise.all([
+            this.exec(...numStatusArgs),
+            this.exec(...nameStatusArgs),
+        ]);
 
-        const filesWithNumStat = commitOutput.slice(
-            commitOutput.lastIndexOf(ITEM_ENTRY_SEPARATOR) + ITEM_ENTRY_SEPARATOR.length,
+        const committedFiles = this.logParser.parserCommittedFiles(
+            gitRootPath,
+            filesWithNumStatus,
+            filesWithNameStatus,
         );
-        const filesWithNameStatus = await this.exec(...nameStatusArgs);
 
-        const entries = commitOutput
-            .split(LOG_ENTRY_SEPARATOR)
-            .map(entry => {
-                if (entry.trim().length === 0) {
-                    return undefined;
-                }
-                return this.logParser.parse(
-                    gitRootPath,
-                    entry,
-                    ITEM_ENTRY_SEPARATOR,
-                    LOG_FORMAT_ARGS,
-                    filesWithNumStat,
-                    filesWithNameStatus,
-                );
-            })
-            .filter(entry => entry !== undefined)
-            .map(entry => entry!);
+        const lineBreakIndex = commitMessage.message.indexOf('\n');
+        let title = commitMessage.message;
 
-        if (entries.length > 0) {
-            if (withRefs) {
-                entries[0].refs = this.getRefsContainingCommit(hash);
-            }
-            return entries[0];
+        if (lineBreakIndex > 0) {
+            title = title.substr(0, lineBreakIndex);
         }
 
-        return undefined;
+        return {
+            author: {
+                name: commitMessage.authorName,
+                email: commitMessage.authorEmail,
+                date: commitMessage.authorDate,
+            },
+            parents: commitMessage.parents.map<Hash>(x => {
+                return { full: x, short: x.substr(0, 8) };
+            }),
+            hash: { full: commitMessage.hash, short: commitMessage.hash.substr(0, 8) } as Hash,
+            tree: { full: commitMessage.hash, short: commitMessage.hash.substr(0, 8) } as Hash,
+            refs: withRefs ? this.getRefsContainingCommit(hash) : [],
+            subject: title,
+            notes: '',
+            body: lineBreakIndex > 0 ? commitMessage.message.substr(lineBreakIndex + 1).trimLeft() : '',
+            committedFiles: committedFiles,
+        } as LogEntry;
     }
 
     @cache('IGitService')

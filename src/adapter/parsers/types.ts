@@ -17,12 +17,6 @@ export interface IActionDetailsParser {
 }
 export const ILogParser = Symbol.for('ILogParser');
 export interface ILogParser {
-    parse(
-        gitRepoPath: string,
-        summaryEntry: string,
-        itemEntrySeparator: string,
-        logFormatArgs: string[],
-        filesWithNumStat?: string,
-        filesWithNameStatus?: string,
-    ): LogEntry;
+    parse(summaryEntry: string, itemEntrySeparator: string, logFormatArgs: string[]): LogEntry;
+    parserCommittedFiles(gitRepoPath: string, filesWithNumStat?: string, filesWithNameStatus?: string): CommittedFile[];
 }
