@@ -78,7 +78,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
     };
     private handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Escape' && !this.state.searchText) {
-            // close commit view when ESC is pressen (but only when no text given)
+            // close commit view when ESC is pressed (but only when no text given)
             this.onClose();
             return;
         }

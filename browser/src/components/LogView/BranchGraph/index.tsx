@@ -14,7 +14,7 @@ class BrachGraph extends React.Component<BranchGrapProps> {
         }
 
         // Hack, first clear before rebuilding.
-        // Remember, we will need to support apending results, as opposed to clearing page
+        // Remember, we will need to support appending results, as opposed to clearing page
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, []);
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, this.props.logEntries);
     }
