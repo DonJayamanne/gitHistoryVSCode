@@ -138,7 +138,7 @@ export class GithubAvatarProvider extends BaseAvatarProvider implements IAvatarP
     }
 
     /**
-     * Fetch all constributors from the remote repository through Github API
+     * Fetch all contributors from the remote repository through Github API
      * @param repoPath relative repository path
      */
     private getContributors(repoPath: string) {

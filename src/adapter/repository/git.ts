@@ -148,7 +148,7 @@ export class Git implements IGitService {
      * Used to load dereferenced hashes for (annotation) tags
      *
      * This is used in vscode versions prior to 1.52 because
-     * annotation references to not correct point to the assocated commit
+     * annotation references to not correct point to the associated commit
      *
      * See https://github.com/microsoft/vscode/issues/92146
      */

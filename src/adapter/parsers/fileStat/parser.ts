@@ -20,7 +20,7 @@ export class FileStatParser implements IFileStatParser {
         // src/{client/common/comms/another dir => }/id Dispenser.ts
         // src/test/jupyter/{extension.jupyter.comms.jupyterKernelManager.test.ts => jupyterKernelManager.test.ts}
 
-        // Another exampe is as follows, where a tab is used as a separator
+        // Another example is as follows, where a tab is used as a separator
         // src/vs/workbench/services/extensions/node/ipcRemoteCom.ts       src/vs/workbench/services/extensions/node/rpcProtocol.ts
 
         const diffSeparator = [' => ', '\t'].reduce<string | undefined>((separator, item) => {
