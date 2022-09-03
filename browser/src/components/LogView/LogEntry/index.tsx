@@ -126,6 +126,23 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                         <div className="buttons" onClick={() => this.props.onViewCommit(this.props.logEntry)}>
                             <div>
                                 <span
+                                    role="button"
+                                    className="btnx hint--top-left hint--rounded hint--bounce"
+                                    aria-label="Quick Compare file with previous commit"
+                                >
+                                    <a
+                                        role="button"
+                                        onClick={() => {
+                                            //Put the following function on the macro queue. after onViewCommit execute "getCommit" that micro queue，get the latest committedFiles field
+                                            setTimeout(() => {
+                                                this.props.onAction(this.props.logEntry, 'quick_compare_previous');
+                                            }, 0);
+                                        }}
+                                    >
+                                        quick look diff
+                                    </a>
+                                </span>
+                                <span
                                     onClick={e => copyText(e, this.props.logEntry.hash.full)}
                                     className="btnx hash clipboard hint--top-left hint--rounded hint--bounce"
                                     aria-label="Copy hash to clipboard"

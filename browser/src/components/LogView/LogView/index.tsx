@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
-import { LogEntry, Ref } from '../../../definitions';
+import { CommittedFile, LogEntry, Ref } from '../../../definitions';
 import { LogEntriesState, RootState } from '../../../reducers';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
@@ -17,6 +17,7 @@ type LogViewProps = {
     actionRef: typeof ResultActions.actionRef;
     getPreviousCommits: typeof ResultActions.getPreviousCommits;
     getNextCommits: typeof ResultActions.getNextCommits;
+    actionFile: typeof ResultActions.actionFile;
 };
 
 interface LogViewState {}
@@ -149,6 +150,15 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                     { entry, name },
                 );
                 break;
+            case 'quick_compare_previous':
+                this.props.actionFile(
+                    this.props.logEntries.selected,
+                    this.props.logEntries.selected.committedFiles.find(
+                        el => el.uri.fsPath === this.props.logEntries.file.fsPath,
+                    ),
+                    'compare_previous',
+                );
+                break;
             default:
                 this.props.actionCommit(entry, name);
                 break;
@@ -191,6 +201,9 @@ function mapDispatchToProps(dispatch) {
             dispatch(ResultActions.actionRef(logEntry, ref, name)),
         getNextCommits: () => dispatch(ResultActions.getNextCommits()),
         getPreviousCommits: () => dispatch(ResultActions.getPreviousCommits()),
+        actionFile: (logEntry: LogEntry, committedFile: CommittedFile, name) => {
+            dispatch(ResultActions.actionFile(logEntry, committedFile, name));
+        },
     };
 }
 
