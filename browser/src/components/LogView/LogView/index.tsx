@@ -154,7 +154,7 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
                 this.props.actionFile(
                     this.props.logEntries.selected,
                     this.props.logEntries.selected.committedFiles.find(
-                        el => el.uri.fsPath === this.props.logEntries.file.fsPath,
+                        (el) => el.uri.fsPath === this.props.logEntries.file.fsPath,
                     ),
                     'compare_previous',
                 );
