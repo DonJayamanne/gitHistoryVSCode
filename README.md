@@ -1,5 +1,17 @@
 # Git History, Search and More (including _git log_)
 
+// todo:
+// server/apiController.ts:190
+/*
+case 'goto':
+    await await this.commandManager.executeCommand('git.openFileInViewer', committedFile.uri);
+    break;
+*/
+// src/components/LogView/Commit/FileEntry/index.tsx:88
+/*
+<a onClick={() => this.props.onAction(this.props.committedFile, 'goto')}>{this.props.committedFile.relativePath}</a>
+*/
+
 * View and search git log along with the graph and details.
 * View a previous copy of the file.
 * View and search the history
