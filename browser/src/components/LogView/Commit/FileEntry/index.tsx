@@ -85,7 +85,15 @@ export class FileEntry extends React.Component<FileEntryProps> {
                     <span className={fileNameClass}>
                         {oldFile}
                         {constFileMovementSymbol}
-                        {this.props.committedFile.relativePath}
+                        <a
+                            style={{ cursor: 'pointer' }} // not work withot
+                            className="hint--right hint--rounded hint--bounce"
+                            aria-label={this.props.committedFile.uri.fsPath}
+                            // href={'file://' + this.props.committedFile.uri.fsPath} // don't know why it not work
+                            onClick={() => this.props.onAction(this.props.committedFile, 'goto')}
+                        >
+                            {this.props.committedFile.relativePath}
+                        </a>
                     </span>
                 </div>
                 <div className="file-action">

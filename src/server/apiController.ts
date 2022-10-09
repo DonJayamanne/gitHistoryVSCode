@@ -205,6 +205,12 @@ export class ApiController {
             case 'history':
                 await this.commandManager.executeCommand('git.viewFileHistory', Uri.file(committedFile.uri.path));
                 break;
+            case 'goto':
+                await await this.commandManager.executeCommand(
+                    'git.openFileInViewer',
+                    Uri.file(committedFile.uri.path),
+                );
+                break;
         }
 
         return committedFile;
