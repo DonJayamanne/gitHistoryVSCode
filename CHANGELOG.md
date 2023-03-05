@@ -2,7 +2,7 @@
 
 ## v0.6.20 (01/01/1970)
 - [8310261] Update to point to main branch
-- [c60d699] Use new API to get refs (fix #730)
+- [c60d699] Use new API to get refs (fixes #730, #732)
 - [75575aa] Updated CHANGELOG.md - Github Actions
 
 ## v0.6.19 (29/10/2021)
