@@ -35,13 +35,13 @@ You can add keyboard short cuts for the above commands by following the directio
 
 NOTE: The file for which the history is to be viewed, must already be opened.
 
-![Image of Git Log](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/gitLogv3.gif)
+![Image of Git Log](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/main/images/gitLogv3.gif)
 
-![Image of File History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/fileHistoryCommandv3.gif)
+![Image of File History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/main/images/fileHistoryCommandv3.gif)
 
-![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/lineHistoryCommandv3.gif)
+![Image of Line History](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/main/images/lineHistoryCommandv3.gif)
 
-![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/master/images/compareCommits.gif)
+![Image of Compare](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/main/images/compareCommits.gif)
 
 
 ## Source
@@ -52,4 +52,4 @@ NOTE: The file for which the history is to be viewed, must already be opened.
 
 ## License
 
-[MIT](https://raw.githubusercontent.com/DonJayamanne/bowerVSCode/master/LICENSE)
+[MIT](https://raw.githubusercontent.com/DonJayamanne/gitHistoryVSCode/main/LICENSE)

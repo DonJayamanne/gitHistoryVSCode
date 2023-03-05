@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: '12.8.x'
+        node-version: '16.14.x'
     - run: npm install
     - run: npm install -g vsce github-release-notes
     - name: Read package.json verison
@@ -22,8 +22,8 @@ jobs:
       env:
         GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git fetch origin master
-        git checkout master
+        git fetch origin main
+        git checkout main
         gren changelog --override
         git -c user.name="ole1986" -c user.email="ole.k@web.de" commit --no-verify -m "Updated CHANGELOG.md - Github Actions" -- CHANGELOG.md
         git push

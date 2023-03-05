@@ -78,7 +78,7 @@ export class Git implements IGitService {
                 let remoteUrl: string | undefined = undefined;
 
                 // fetch the remote from local branch using upstreamRef (received only with getBranch)
-                const remoteName = (await this.repo.getBranch(r.name || 'master')).upstream?.remote;
+                const remoteName = (await this.repo.getBranch(r.name || 'main')).upstream?.remote;
 
                 if (remoteName) {
                     remoteUrl = this.repo.state.remotes.find(x => x.name === remoteName)?.fetchUrl;
