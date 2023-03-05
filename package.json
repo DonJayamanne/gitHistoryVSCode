@@ -29,7 +29,6 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
     ],
     "main": "./dist/src/extension",
     "contributes": {
