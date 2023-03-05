@@ -14,19 +14,19 @@ jobs:
       with:
         node-version: '16.14.x'
     - run: npm install
-    - run: npm install -g @vscode/vsce github-release-notes
+    # - run: npm install -g @vscode/vsce github-release-notes
     - name: Read package.json verison
       uses: tyankatsu0105/read-package-version-actions@v1
       id: package-version
-    - name: Generate and Commit Changelog
-      env:
-        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git fetch origin main
-        git checkout main
-        gren changelog --override
-        git -c user.name="ole1986" -c user.email="ole.k@web.de" commit --no-verify -m "Updated CHANGELOG.md - Github Actions" -- CHANGELOG.md
-        git push
+    # - name: Generate and Commit Changelog
+    #   env:
+    #     GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     git fetch origin main
+    #     git checkout main
+    #     gren changelog --override
+    #     git -c user.name="Don Jayamanne" -c user.email="don.jayamanne@yahoo.com" commit --no-verify -m "Updated CHANGELOG.md - Github Actions" -- CHANGELOG.md
+    #     git push
     - name: vsce publish
       run: vsce publish -p "${{ secrets.VSCE_TOKEN }}"
     - name: vsce package
