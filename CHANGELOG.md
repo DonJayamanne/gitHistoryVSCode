@@ -1,19 +1,24 @@
 # Changelog
 
+## v0.6.20 (01/01/1970)
+- [8310261] Update to point to main branch
+- [c60d699] Use new API to get refs (fix #730)
+- [75575aa] Updated CHANGELOG.md - Github Actions
+
 ## v0.6.19 (29/10/2021)
 - [82bf1dd] Version 0.6.19 - @ole1986
 - [8975a3e] Remote branch option (#671) - @ole1986
 - [4fae8e2] Create github issue template for bug reports (#689) - @MansurAliKoroglu
 - [38aa61f] Fix for Github avatars using ssh remote (#691) - @ole1986
 - [f0581b2] Use `history` codicon for webview icon (#683) - @SNDST00M
-- [6453c12] Updated CHANGELOG.md - Github Actions 
+- [6453c12] Updated CHANGELOG.md - Github Actions
 
 ---
 
 ## v0.6.18 (31/07/2021)
 - [af95816] Version 0.6.18 - @ole1986
 - [5658e32] Some visual improvement and fixes (#669) - @ole1986
-- [12373b6] Updated CHANGELOG.md - Github Actions 
+- [12373b6] Updated CHANGELOG.md - Github Actions
 
 ---
 
@@ -23,14 +28,14 @@
 - [220bddf] Some visual improvements (#650) - @ole1986
 - [67594e5] use realpath to expand symlinks (#659) - @silvavelosa
 - [cfcc98f] chore: upgrade vscode engine to 1.46.0 (#637) - @hacke2
-- [235112f] Updated CHANGELOG.md - Github Actions 
+- [235112f] Updated CHANGELOG.md - Github Actions
 
 ---
 
 ## v0.6.16 (14/03/2021)
 - [0c3530c] Version 0.6.16 - @ole1986
 - [79b9418] Resolved styling issues (#634) - @ole1986
-- [d1b465a] Updated CHANGELOG.md - Github Actions 
+- [d1b465a] Updated CHANGELOG.md - Github Actions
 
 ---
 
@@ -87,7 +92,7 @@
 
 ## v0.6.10 (24/09/2020)
 - [fe22ab2] Version 0.6.10 - @ole1986
-- [f797425] Support fetching commits for more than 1 branch (#532) 
+- [f797425] Support fetching commits for more than 1 branch (#532)
 - [50ba3e0] support split show history and highlight filename (#582) - @cweijan
 - [5e92a43] Allow vscode-resource to display images again (#584) - @ole1986
 - [7fc7af4] Updated CHANGELOG.md - Github Actions - @ole1986
@@ -123,7 +128,7 @@
 - [e6253f3] gren does not properly compare against previous version (gren > 0.17.1) - @ole1986
 - [6a08dfb] Resolve issue with gren when using "on: push" github event - @ole1986
 - [85775b7] Version 0.6.6 and npm audit fixup - @ole1986
-- [109611d] Update node to version 12.8.* (#509) 
+- [109611d] Update node to version 12.8.* (#509)
 - [cbe77d6] Use ts-loader for browser building (#544) - @ole1986
 - [b7fc737] Updated CHANGELOG.md - Github Actions - @ole1986
 
@@ -160,29 +165,29 @@
 - [52f4782] Updated CHANGELOG.md - Github Actions - @ole1986
 - [aa12618] use version number from package.json in vsce-package.yml (#531) and generate changelog - @ole1986
 - [216bd50] Updated CHANGELOG.md - Github Actions - @ole1986
-- [bf48916] Add support for react storybook (#526) 
-- [4078b0d] vscode-test is a dev dependency (#527) 
-- [a2900cf] Minor perf improvements to fetching commits (#529) 
+- [bf48916] Add support for react storybook (#526)
+- [4078b0d] vscode-test is a dev dependency (#527)
+- [a2900cf] Minor perf improvements to fetching commits (#529)
 - [3e4054f] Updated CHANGELOG.md - Github Actions - @ole1986
 - [12b4899] Use `git tag v*` and `git push --tags` to prerelease a version - @ole1986
 - [150f201] Updated CHANGELOG.md - Github Actions - @ole1986
-- [868d8e0] Always display icon in scm  toolbar (#520) 
+- [868d8e0] Always display icon in scm  toolbar (#520)
 - [61c2528] ignore prereleases in vsce-publish.yml - @ole1986
 - [30e9ca5] Fixed #517 (#518) - @ole1986
-- [c18d271] Move svg generator into separate location (#519) 
-- [1ed74ef] Format tsx using prettier/eslint (Fixes #511) (#512) 
-- [ea2fff5] Capture telemetry to detect feature usage and crashes (#516) 
-- [1c4bc1a] Support clicking entire row to view commit (Fixes #513) (#514) 
-- [f22511f] Get branches faster (fixes #492) (#507) 
-- [eed4bf2] Split jobs in PR (#505) 
-- [283f7dd] Add tests for getting commit count for a specific branch (#504) 
-- [91c1d19] Add tests for get list of branches and current branch (#498) 
+- [c18d271] Move svg generator into separate location (#519)
+- [1ed74ef] Format tsx using prettier/eslint (Fixes #511) (#512)
+- [ea2fff5] Capture telemetry to detect feature usage and crashes (#516)
+- [1c4bc1a] Support clicking entire row to view commit (Fixes #513) (#514)
+- [f22511f] Get branches faster (fixes #492) (#507)
+- [eed4bf2] Split jobs in PR (#505)
+- [283f7dd] Add tests for getting commit count for a specific branch (#504)
+- [91c1d19] Add tests for get list of branches and current branch (#498)
 - [6d5035f] Fixes to getting total commit count (Fixes #499) (#500) - @ole1986
-- [7578d58] VS Code tests using jest (#495) 
-- [a42056b] Ensure we wait for vscode.git to activate (#493) 
-- [f9cbf91] Use Symbol.for instead of Symbol, for equality (#497) 
-- [0489597] Ensure extension is always active (#494) 
-- [f026e09] Replace mocha with jest (#490) 
+- [7578d58] VS Code tests using jest (#495)
+- [a42056b] Ensure we wait for vscode.git to activate (#493)
+- [f9cbf91] Use Symbol.for instead of Symbol, for equality (#497)
+- [0489597] Ensure extension is always active (#494)
+- [f026e09] Replace mocha with jest (#490)
 
 ---
 
@@ -191,7 +196,7 @@
 - Applied PR [#483](https://github.com/DonJayamanne/gitHistoryVSCode/pull/483)
 - Added PR validator using Github actions [#481](https://github.com/DonJayamanne/gitHistoryVSCode/pull/481)
 - Fixed line history shows empty list [#486](https://github.com/DonJayamanne/gitHistoryVSCode/issues/486)
-- Auto fix eslint issues and add recommended extensions [#488] (https://github.com/DonJayamanne/gitHistoryVSCode/pull/488) @DonJayamanne 
+- Auto fix eslint issues and add recommended extensions [#488] (https://github.com/DonJayamanne/gitHistoryVSCode/pull/488) @DonJayamanne
 - Fixed references not updating and disappearing [#484](https://github.com/DonJayamanne/gitHistoryVSCode/pull/484)
 
 ---
