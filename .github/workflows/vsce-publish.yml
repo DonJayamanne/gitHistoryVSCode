@@ -14,7 +14,7 @@ jobs:
       with:
         node-version: '16.14.x'
     - run: npm install
-    - run: npm install -g vsce github-release-notes
+    - run: npm install -g @vscode/vsce github-release-notes
     - name: Read package.json verison
       uses: tyankatsu0105/read-package-version-actions@v1
       id: package-version
