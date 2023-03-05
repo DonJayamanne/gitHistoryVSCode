@@ -10,7 +10,7 @@ import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, Log
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
-import { Repository, RefType } from './git.d';
+import { Repository, RefType, Ref as GitRef } from './git.d';
 import { GitOriginType } from './index';
 import { IGitArgsService } from './types';
 import { GitRemoteService } from './gitRemoteService';
@@ -48,12 +48,18 @@ export class Git implements IGitService {
         const filerealpath: string = fs.realpathSync(file.fsPath);
         return path.relative(gitRoot, filerealpath).replace(/\\/g, '/');
     }
-    public getHeadHashes(): { ref?: string; hash?: string }[] {
-        return this.repo.state.refs
-            .filter(x => x.type <= 1)
-            .map(x => {
-                return { ref: x.name, hash: x.commit };
-            });
+    public async getHeadHashes(): Promise<{ ref?: string; hash?: string }[]> {
+        try {
+            const refs = await this.repo.getRefs({});
+            return refs
+                .filter(x => x.type <= 1)
+                .map(x => {
+                    return { ref: x.name, hash: x.commit };
+                });
+        } catch (ex) {
+            console.error('Failed to get refs', ex);
+            return [];
+        }
     }
 
     public getDetachedHash(): string | undefined {
@@ -161,7 +167,7 @@ export class Git implements IGitService {
         }
 
         this.refHashesMap.clear();
-        const tags = this.repo.state.refs.filter(x => x.type === RefType.Tag);
+        const tags = (await this.repo.getRefs({})).filter(x => x.type === RefType.Tag);
 
         if (tags.length === 0) {
             return;
@@ -195,8 +201,13 @@ export class Git implements IGitService {
             });
     }
 
-    public getRefsContainingCommit(hash: string): Ref[] {
-        return this.repo.state.refs
+    private refPromise = new Map<string, Promise<GitRef[]>>();
+    public async getRefsContainingCommit(hash: string): Promise<Ref[]> {
+        const cacheKey = this.repo.state.HEAD?.commit || '';
+        if (!this.refPromise.has(cacheKey)) {
+            this.refPromise.set(cacheKey, this.repo.getRefs({}));
+        }
+        return (await this.refPromise.get(cacheKey)!)
             .filter(x => (x.type === RefType.Tag && this.refHashesMap.get(x.name!) === hash) || x.commit === hash)
             .map(x => {
                 return { type: x.type as any, name: x.name } as Ref;
@@ -236,25 +247,29 @@ export class Git implements IGitService {
             : this.exec(...args.counterArgs).then(value => parseInt(value));
         ``;
 
-        const [output] = await Promise.all([this.exec(...args.logArgs), this.loadDereferenceHashes()]);
+        const itemsPromise = Promise.all([this.exec(...args.logArgs), this.loadDereferenceHashes()]).then(
+            ([output]) => {
+                console.error(output);
+                return Promise.all(
+                    output
+                        .split(LOG_ENTRY_SEPARATOR)
+                        .map(entry => {
+                            if (entry.length === 0) {
+                                return;
+                            }
+                            return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS);
+                        })
+                        .filter(logEntry => logEntry !== undefined)
+                        .map(async logEntry => {
+                            // fill the refs from native git extension
+                            logEntry!.refs = await this.getRefsContainingCommit(logEntry!.hash.full);
+                            return logEntry!;
+                        }),
+                );
+            },
+        );
 
-        const items = output
-            .split(LOG_ENTRY_SEPARATOR)
-            .map(entry => {
-                if (entry.length === 0) {
-                    return;
-                }
-                return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS);
-            })
-            .filter(logEntry => logEntry !== undefined)
-            .map(logEntry => {
-                // fill the refs from native git extension
-                logEntry!.refs = this.getRefsContainingCommit(logEntry!.hash.full);
-                return logEntry!;
-            });
-
-        const headHashes = this.getHeadHashes();
-        const count = await countPromise;
+        const [items, headHashes, count] = await Promise.all([itemsPromise, this.getHeadHashes(), countPromise]);
         const headHashesOnly = headHashes.map(item => item.hash);
 
         items
@@ -308,7 +323,7 @@ export class Git implements IGitService {
 
         if (entries.length > 0) {
             if (withRefs) {
-                entries[0].refs = this.getRefsContainingCommit(hash);
+                entries[0].refs = await this.getRefsContainingCommit(hash);
             }
             return entries[0];
         }
