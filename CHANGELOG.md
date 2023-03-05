@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.6.20 (01/01/1970)
+## v0.6.20 (05/03/2023)
 - [8310261] Update to point to main branch 
 - [c60d699] Use new API to get refs (fix #730) 
 - [75575aa] Updated CHANGELOG.md - Github Actions 
