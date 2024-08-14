@@ -1,4 +1,4 @@
-# Changelog
+#sudo su # Changelog
 
 ## v0.6.20 (05/03/2023)
 - [8310261] Update to point to main branch 
