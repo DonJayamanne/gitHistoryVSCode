@@ -1,39 +1,11 @@
 import { Repository } from './git.d';
-import { IGitCommandExecutor } from '..';
 import { GitOriginType } from '.';
 import { captureTelemetry } from '../../common/telemetry';
 
 export class GitRemoteService {
-    constructor(private readonly repo: Repository, private readonly gitCmdExecutor: IGitCommandExecutor) {}
+    constructor(private readonly repo: Repository) {}
     private get currentBranch(): string {
         return this.repo.state.HEAD!.name || '';
-    }
-
-    public async getBranchesConfiguredForPullForRemote(remoteName: string): Promise<string[]> {
-        const gitShowRemoteOutput = await this.gitCmdExecutor.exec(
-            this.repo.rootUri.fsPath,
-            ...['remote', 'show', remoteName, '-n'],
-        );
-
-        const lines = gitShowRemoteOutput
-            .split(/\r?\n/g)
-            .map(line => line.trim())
-            .filter(line => line.length > 0);
-
-        const startLineIndex = lines.findIndex(line => line.startsWith('Local branches configured for'));
-        const endLineIndex = lines.findIndex(line => line.startsWith('Local ref configured for'));
-
-        if (startLineIndex === -1 || endLineIndex == -1) {
-            // TODO: Capture telemetry, something is wrong.
-            return [];
-        }
-        if (startLineIndex > endLineIndex) {
-            // TODO: Capture telemetry, something is wrong.
-            return [];
-        }
-
-        // Branch name is first word in the line
-        return lines.slice(startLineIndex + 1, endLineIndex).map(line => line.split(' ')[0]);
     }
     public async getOriginType(url?: string): Promise<GitOriginType | undefined> {
         if (!url) {

@@ -77,7 +77,13 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
                     <a
                         className="hint--right hint--rounded hint--bounce"
                         aria-label="Open repository on Github"
-                        href={selectedBranch.remote.replace(/\.git$/, '') + '/tree/' + encodeURI(selectedBranch.name)}
+                        href={
+                            selectedBranch.remote
+                                .replace(/.*?github.com(\/|:)/, 'https://github.com/')
+                                .replace(/.git?$/, '') +
+                            '/tree/' +
+                            encodeURI(selectedBranch.name)
+                        }
                     >
                         <GoMarkGithub />
                     </a>
