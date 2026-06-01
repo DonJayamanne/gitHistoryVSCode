@@ -23,11 +23,18 @@ async function main() {
 
         await setupDefaultRepo();
 
-        // Download VS Code, unzip it and run the integration test
+        // Download VS Code, unzip it and run the integration test.
+        // Pin to a VS Code version compatible with the targeted engine (`^1.76.0`);
+        // override with VSCODE_TEST_VERSION (e.g. 'stable') when needed.
+        // NOTE: we must NOT pass `--disable-extensions` here - that disables the
+        // built-in `vscode.git` extension whose API the extension depends on.
+        // `--disable-workspace-trust` prevents the untrusted-workspace prompt from
+        // blocking the git extension's API from initializing in headless runs.
         await runTests({
+            version: process.env.VSCODE_TEST_VERSION || '1.76.1',
             extensionDevelopmentPath,
             extensionTestsPath,
-            launchArgs: [path.join(tempRepoFolder, 'test_gitHistory'), '--disable-extensions'],
+            launchArgs: [path.join(tempRepoFolder, 'test_gitHistory'), '--disable-workspace-trust'],
             extensionTestsEnv: { IS_TEST_MODE: '1' },
         });
 
