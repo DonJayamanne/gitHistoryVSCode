@@ -12,84 +12,23 @@ const repoPath = 'https://github.com/DonJayamanne/test_gitHistory.git';
 describe('Branches', () => {
     let serviceManager: IServiceManager;
     const localPath = getLocalPath(repoPath);
+    const remote = 'https://github.com/DonJayamanne/test_gitHistory.git';
+    // NOTE: VS Code's built-in git API (>=1.76) added a `type` field to every
+    // branch ref and now reports local branches with `remoteType: 2` and an
+    // `undefined` remote. Branch ordering also groups local branches (ascending)
+    // immediately after the last remote-tracking branch they were created from.
     const expectedBranches = [
-        {
-            gitRoot: '',
-            name: 'addBranchTests',
-            remote: 'https://github.com/DonJayamanne/test_gitHistory.git',
-            remoteType: 2,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'part1FixStartup',
-            remote: 'https://github.com/DonJayamanne/test_gitHistory.git',
-            remoteType: 2,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'master',
-            remote: 'https://github.com/DonJayamanne/test_gitHistory.git',
-            remoteType: 2,
-            current: true,
-        },
-        {
-            gitRoot: '',
-            name: 'addTests',
-            remote: 'https://github.com/DonJayamanne/test_gitHistory.git',
-            remoteType: 2,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'jest',
-            remote: 'https://github.com/DonJayamanne/test_gitHistory.git',
-            remoteType: 2,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'replace-webserver-with-postmessage',
-            remote: 'https://github.com/DonJayamanne/test_gitHistory.git',
-            remoteType: 2,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'localBranch3',
-            remote: '',
-            remoteType: undefined,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'localBranch2',
-            remote: '',
-            remoteType: undefined,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'localBranch1',
-            remote: '',
-            remoteType: undefined,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'curvyGraphs',
-            remote: 'https://github.com/DonJayamanne/test_gitHistory.git',
-            remoteType: 2,
-            current: false,
-        },
-        {
-            gitRoot: '',
-            name: 'WIP',
-            remote: 'https://github.com/DonJayamanne/test_gitHistory.git',
-            remoteType: 2,
-            current: false,
-        },
+        { gitRoot: '', name: 'addBranchTests', remote, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'part1FixStartup', remote, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'master', remote, remoteType: 2, current: true, type: 0 },
+        { gitRoot: '', name: 'addTests', remote, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'jest', remote, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'localBranch1', remote: undefined, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'localBranch2', remote: undefined, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'localBranch3', remote: undefined, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'replace-webserver-with-postmessage', remote, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'curvyGraphs', remote, remoteType: 2, current: false, type: 0 },
+        { gitRoot: '', name: 'WIP', remote, remoteType: 2, current: false, type: 0 },
     ];
 
     beforeAll(async () => {
@@ -137,12 +76,14 @@ describe('Branches', () => {
         expect(branches.length).toBeGreaterThanOrEqual(expectedBranches.length);
         // We might have a few extra branches created during tests, so exclude those.
         const branchesToMatch = branches.filter(branch => expectedBranches.find(item => item.name === branch.name));
+        // `remote` is typed as `string` on Branch, but the git API returns `undefined`
+        // for local branches; cast keeps the structural runtime compare intact.
         assert.deepEqual(
             branchesToMatch,
             expectedBranches.map(item => ({
                 ...item,
                 gitRoot: localPath,
-            })),
+            })) as unknown as typeof branchesToMatch,
         );
     }, 1_000);
     test('Return current branch', async () => {
