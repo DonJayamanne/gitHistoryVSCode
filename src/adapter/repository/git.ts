@@ -225,10 +225,11 @@ export class Git implements IGitService {
         author?: string,
     ): Promise<LogEntries> {
         branches = Array.isArray(branches) ? branches : [];
+        const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
         if (pageSize <= 0) {
-            const workspace = this.serviceContainer.get<IWorkspaceService>(IWorkspaceService);
             pageSize = workspace.getConfiguration('gitHistory').get<number>('pageSize', 100);
         }
+        const simplifyMerges = workspace.getConfiguration('gitHistory').get<boolean>('simplifyMerges', false);
         const relativePath = file ? this.getGitRelativePath(file) : undefined;
 
         const args = this.gitArgsService.getLogArgs(
@@ -239,6 +240,7 @@ export class Git implements IGitService {
             relativePath,
             lineNumber,
             author,
+            simplifyMerges,
         );
 
         const gitRepoPath = this.getGitRoot();

@@ -26,10 +26,13 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 }
 
 function mapStateToProps(state: RootState): BranchGrapProps {
+    const simplifyMerges =
+        state && state.vscode && state.vscode.configuration && state.vscode.configuration.simplifyMerges;
     const hideGraph =
         state &&
         state.logEntries &&
-        ((state.settings.searchText && state.settings.searchText.length > 0) ||
+        (simplifyMerges ||
+            (state.settings.searchText && state.settings.searchText.length > 0) ||
             (state.settings.file && state.settings.file.length > 0) ||
             (state.settings.authorFilter && state.settings.authorFilter.length > 0) ||
             state.logEntries.isLoading);

@@ -48,6 +48,7 @@ export class GitArgsService implements IGitArgsService {
         relativeFilePath?: string,
         lineNumber?: number,
         author?: string,
+        simplifyMerges = false,
     ): GitLogArgs {
         const allBranches = branches.length === 0;
         const currentBranch = branches.length === 1 && branches[0].trim() === '*';
@@ -62,15 +63,17 @@ export class GitArgsService implements IGitArgsService {
             typeof lineNumber === 'number' && relativeFilePath
                 ? [`-L${lineNumber},${lineNumber}:${relativeFilePath.replace(/\\/g, '/')}`]
                 : [];
-        const logArgs = ['log', ...authorArgs, ...lineArgs, '--full-history', LOG_FORMAT];
+        const firstParentArgs = simplifyMerges ? ['--first-parent'] : [];
+        const logArgs = ['log', ...authorArgs, ...lineArgs, '--full-history', ...firstParentArgs, LOG_FORMAT];
         const fileStatArgs = [
             'log',
             ...authorArgs,
             ...lineArgs,
             '--full-history',
+            ...firstParentArgs,
             `--format=${LOG_ENTRY_SEPARATOR}${newLineFormatCode}`,
         ];
-        const counterArgs = ['rev-list', ...authorArgs, '--full-history'];
+        const counterArgs = ['rev-list', ...authorArgs, '--full-history', ...firstParentArgs];
 
         if (searchText && searchText.length > 0) {
             searchText
@@ -97,9 +100,19 @@ export class GitArgsService implements IGitArgsService {
 
         // Don't use `--all`, cuz that will result in stashes `ref/stash` being included included in the logs.
         if (allBranches && lineArgs.length === 0) {
-            logArgs.push('--branches', '--tags', '--remotes');
-            fileStatArgs.push('--branches', '--tags', '--remotes');
-            counterArgs.push('--all');
+            if (simplifyMerges) {
+                // When simplifyMerges is enabled, use HEAD with --first-parent so that
+                // merge commits are shown as a single entry without their internal commits.
+                // Using --branches --tags --remotes with --first-parent would still show
+                // the internal merge commits because they are reachable from other refs.
+                logArgs.push('HEAD');
+                fileStatArgs.push('HEAD');
+                counterArgs.push('HEAD');
+            } else {
+                logArgs.push('--branches', '--tags', '--remotes');
+                fileStatArgs.push('--branches', '--tags', '--remotes');
+                counterArgs.push('--all');
+            }
         }
 
         if (specificBranch && lineArgs.length === 0) {
