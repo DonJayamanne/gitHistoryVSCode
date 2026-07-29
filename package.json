@@ -405,6 +405,12 @@
                     ],
                     "default": "Inline",
                     "description": "Specifies where the 'Git: View History' action appears on the title of SCM Providers."
+                },
+                "gitHistory.simplifyMerges": {
+                    "type": "boolean",
+                    "default": false,
+                    "scope": "window",
+                    "description": "Show merge commits as a single entry without listing the internal commits of the merge. When enabled, uses --first-parent to simplify the history."
                 }
             }
         }

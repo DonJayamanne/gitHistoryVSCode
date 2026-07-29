@@ -4,6 +4,7 @@ export type IConfiguration = {
     sideBySide: boolean;
     logLevel: string;
     pageSize: number;
+    simplifyMerges?: boolean;
 };
 
 export type IVSCodeSettings = {

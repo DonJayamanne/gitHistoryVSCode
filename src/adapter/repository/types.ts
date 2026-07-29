@@ -24,6 +24,7 @@ export interface IGitArgsService {
         relativeFilePath?: string,
         lineNumber?: number,
         author?: string,
+        simplifyMerges?: boolean,
     ): GitLogArgs;
     getDiffCommitWithNumStatArgs(hash1: string, hash2: string): string[];
     getDiffCommitNameStatusArgs(hash1: string, hash2: string): string[];
